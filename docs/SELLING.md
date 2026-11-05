@@ -25,6 +25,12 @@ At setup each client chooses a profile (general, fast food, pharmacy, medical st
 (kitchen display and riders; prescriptions, batches and delivery slots; …), sets product fields, theme colours and a starter home page.
 Everything can be changed afterwards under **Store settings → Modules**.
 
+## Making each client’s store different
+
+No code per client. Under **Storefront** the client (or you) can switch header, product-page and footer parts on or off, rename any word in any language
+(**Interface text**), build the menus and footer columns, pick colours and logo, and compose the home page from eleven section types.
+Hand them [CUSTOMIZING.md](CUSTOMIZING.md). Roles are editable too, so a client can create e.g. a *cashier* role without you.
+
 ## Handing over a store
 
 1. Provision and start the deployment, open the site and run the wizard with the client’s details (or let them).

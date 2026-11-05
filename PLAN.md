@@ -100,5 +100,17 @@ kiya ja sake.
 - Docs, update mechanism, backups, Docker deploy
 - Optional: multi-tenant SaaS mode, subscriptions
 
-## 5. Is session ka agla step
-Phase 0 complete → Phase 1 start.
+### Phase 8 — Safety, security & storefront overhaul ✅ (v1.1.0)
+- Soft delete everywhere + Recycle Bin, activity log, alerts inbox, roles & permissions editor, customers CRUD
+- Reports hub (7 reports + CSV), log viewer, Laravel Notify
+- Security layer: lockout, 2FA, password policy, CSP, scanner guard, honeypot, reCAPTCHA, Google sign-in
+- Marketplace-style storefront on every customer page, Compare, mega menu, new cards / product page / cart / checkout / account / auth / wizard
+- Everything customisable from the admin: Storefront options, Interface text, menu places, 11 home section types, SEO fields
+- Form validation in browser + server with messages under every field; 100-record demo seeder
+- Docs: README, CUSTOMIZING, SECURITY, ADMIN-GUIDE, DEPLOYMENT, UPGRADE refreshed
+
+## 5. Ideas not built yet
+- Vendors / marketplace mode (sellers, commissions, payouts) — only if you want to run a multi-seller marketplace
+- Newsletter sign-up, password reset by e-mail, SMS / WhatsApp order notifications
+- Editable order statuses and invoice design, admin screen for the admin’s own labels in other languages
+- Multi-currency, multi-tenant SaaS (see docs/SELLING.md)

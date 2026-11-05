@@ -77,4 +77,26 @@ class RolesTest extends TestCase
         $this->post("/admin/trash/brands/{$brand->id}/restore")->assertForbidden();
         $this->delete("/admin/trash/brands/{$brand->id}")->assertForbidden();
     }
+
+    public function test_updates_keep_customised_roles_and_only_add_new_permissions(): void
+    {
+        $manager = Role::findByName('manager');
+        $manager->revokePermissionTo('products.delete');
+        $manager->givePermissionTo('staff.delete');                       // owner chose to allow this
+        \Spatie\Permission\Models\Permission::where('name', 'alerts.view')->delete();   // pretend this permission is new in this update
+        Role::findByName('staff')->givePermissionTo('products.update');
+
+        (new RolesSeeder)->run();                                          // what `nexcart:update` does
+
+        $m = Role::findByName('manager')->fresh();
+        $this->assertFalse($m->hasPermissionTo('products.delete'));         // customisation kept
+        $this->assertTrue($m->hasPermissionTo('staff.delete'));
+        $this->assertTrue($m->hasPermissionTo('alerts.view'));              // new permission arrived
+        $this->assertTrue(Role::findByName('staff')->fresh()->hasPermissionTo('products.update'));
+        $this->assertTrue(Role::findByName('owner')->fresh()->hasPermissionTo('alerts.view'));
+
+        $this->artisan('nexcart:sync-permissions', ['--reset-roles' => true])->assertSuccessful();   // deliberate factory reset
+        $this->assertTrue(Role::findByName('manager')->fresh()->hasPermissionTo('products.delete'));
+        $this->assertFalse(Role::findByName('manager')->fresh()->hasPermissionTo('staff.delete'));
+    }
 }

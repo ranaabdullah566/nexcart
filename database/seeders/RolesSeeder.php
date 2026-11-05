@@ -32,10 +32,16 @@ class RolesSeeder extends Seeder
         'roles' => ['manage'],              // create roles, edit permissions
     ];
 
-    public function run(): void
+    /**
+     * Creates any missing permissions. Roles an owner has already shaped in Admin → Roles & permissions are left alone:
+     * the owner role always gets everything, other existing roles only receive NEW permissions their defaults include.
+     * Pass $reset = true to put the built-in roles back to their factory defaults.
+     */
+    public function run(bool $reset = false): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+        $existing = Permission::pluck('name')->all();
         $all = [];
         foreach (self::PERMISSIONS as $group => $actions) {
             foreach ($actions as $action) {
@@ -54,8 +60,17 @@ class RolesSeeder extends Seeder
             'pharmacist' => ['alerts.view', 'products.view', 'inventory.view', 'inventory.adjust', 'orders.view', 'prescriptions.view', 'prescriptions.verify'],
         ];
 
-        foreach ($matrix as $role => $permissions) {
-            Role::findOrCreate($role, 'web')->syncPermissions($permissions);
+        $new = array_diff($all, $existing);
+        foreach ($matrix as $name => $permissions) {
+            $role = Role::where('name', $name)->where('guard_name', 'web')->first();
+            if (! $role || $reset) {
+                Role::findOrCreate($name, 'web')->syncPermissions($permissions);
+            } elseif ($name === 'owner') {
+                $role->syncPermissions($all);
+            } elseif ($new) {
+                $role->givePermissionTo(array_values(array_intersect($permissions, $new)));
+            }
         }
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }
