@@ -1,9 +1,20 @@
 @extends('layouts.store')
-@php($page = 'checkout')
+@php $page = 'checkout'; @endphp
 @section('title', __('Checkout'))
 
 @section('content')
-<div class="sf-container py-4">
+<div class="sf-container py-3">
+    <nav class="sf-crumbs mk-crumbs" aria-label="Breadcrumb"><a href="{{ route('store.home') }}">{{ __('Home') }}</a><span>›</span><a href="{{ route('store.cart') }}">{{ __('Your cart') }}</a><span>›</span><span>{{ __('Checkout') }}</span></nav>
+    <div class="mk-page-head">
+        <h1>{{ __('Checkout') }}</h1>
+        <span class="mk-secure"><i class="bi bi-lock-fill"></i> {{ __('Secure checkout') }}</span>
+    </div>
+    <ol class="mk-progress" aria-label="{{ __('Checkout steps') }}">
+        <li class="done"><i class="bi bi-check-lg"></i><span>{{ __('Your cart') }}</span></li>
+        <li class="now"><b>2</b><span>{{ __('Details & payment') }}</span></li>
+        <li><b>3</b><span>{{ __('Done') }}</span></li>
+    </ol>
+
     <form method="POST" action="{{ route('store.checkout.place') }}" enctype="multipart/form-data" id="ckForm" novalidate>
         @csrf
         <div class="row g-4 g-xl-5">
@@ -14,8 +25,8 @@
                 @endif
 
                 <section class="ck-sec">
-                    <div class="d-flex justify-content-between align-items-baseline"><h2>{{ __('Contact') }}</h2>
-                        @guest<a href="{{ route('login') }}" class="small">{{ __('Have an account? Sign in') }}</a>@endguest</div>
+                    <div class="d-flex justify-content-between align-items-center"><h2><span class="mk-step">1</span>{{ __('Contact') }}</h2>
+                        @guest<a href="{{ route('login') }}" class="small fw-bold">{{ __('Have an account? Sign in') }}</a>@endguest</div>
                     <div class="row g-3">
                         <div class="col-md-7"><label class="form-label" for="ckEmail">{{ __('Email') }}</label><input id="ckEmail" type="email" name="email" value="{{ old('email', $defaults['email']) }}" required autocomplete="email" class="form-control @error('email') is-invalid @enderror"></div>
                         <div class="col-md-5"><label class="form-label" for="ckPhone">{{ __('Phone') }}</label><input id="ckPhone" type="tel" name="phone" value="{{ old('phone', $defaults['phone']) }}" required autocomplete="tel" inputmode="tel" class="form-control @error('phone') is-invalid @enderror"></div>
@@ -23,7 +34,7 @@
                 </section>
 
                 <section class="ck-sec">
-                    <h2>{{ __('Delivery') }}</h2>
+                    <h2><span class="mk-step">2</span>{{ __('Delivery') }}</h2>
                     <div class="row g-3" id="addrBox">
                         <div class="col-12"><label class="form-label" for="ckName">{{ __('Full name') }}</label><input id="ckName" name="name" value="{{ old('name', $defaults['name']) }}" required autocomplete="name" class="form-control @error('name') is-invalid @enderror"></div>
                         <div class="col-12 addr-only"><label class="form-label" for="ckAddr">{{ __('Address') }}</label><input id="ckAddr" name="address_line" value="{{ old('address_line', $defaults['address_line']) }}" autocomplete="street-address" class="form-control @error('address_line') is-invalid @enderror" placeholder="{{ __('House, street, landmark') }}"></div>
@@ -35,7 +46,7 @@
                 </section>
 
                 <section class="ck-sec">
-                    <h2>{{ __('Shipping method') }}</h2>
+                    <h2><span class="mk-step">3</span>{{ __('Shipping method') }}</h2>
                     <div id="rates" class="d-grid gap-2" role="radiogroup">
                         @forelse ($q['rates'] as $r)
                             <label class="ck-opt"><input type="radio" name="shipping_rate_id" value="{{ $r->id }}" data-pickup="{{ $r->is_pickup ? 1 : 0 }}" @checked($q['rate']?->id === $r->id)>
@@ -50,7 +61,7 @@
 
                 @if ($slotDays)
                     <section class="ck-sec" id="slotSec">
-                        <h2>{{ __('Delivery time') }}</h2>
+                        <h2><span class="mk-step"><i class="bi bi-clock"></i></span>{{ __('Delivery time') }}</h2>
                         <div class="sf-pills mb-3" id="slotDays" role="tablist">
                             @foreach ($slotDays as $i => $d)
                                 <label class="sf-pill"><input type="radio" name="slot_date" value="{{ $d['date'] }}" @checked(old('slot_date', collect($slotDays)->first(fn ($x) => collect($x['slots'])->contains('open', true))['date'] ?? $slotDays[0]['date']) === $d['date'])><span>{{ $d['label'] }}</span></label>
@@ -79,7 +90,7 @@
                 @endif
 
                 <section class="ck-sec">
-                    <h2>{{ __('Payment') }}</h2>
+                    <h2><span class="mk-step"><i class="bi bi-credit-card"></i></span>{{ __('Payment') }}</h2>
                     @if (empty($gateways))
                         <div class="sf-alert">{{ __('No payment method is available right now. Please contact the store.') }}</div>
                     @endif
@@ -107,8 +118,8 @@
 
             {{-- ============ right: summary ============ --}}
             <div class="col-lg-5 order-1 order-lg-2">
-                <aside class="sf-summary ck-summary">
-                    <h2 class="h5 mb-3">{{ __('Order summary') }}</h2>
+                <aside class="mk-summary ck-summary">
+                    <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="mb-0">{{ __('Order summary') }}</h2><a href="{{ route('store.cart') }}" class="small fw-bold">{{ __('Edit cart') }}</a></div>
                     @foreach ($lines['lines'] as $l)
                         <div class="ck-line">
                             <div class="ck-thumb">@if ($l['image'])<img src="{{ $l['image'] }}" alt="">@else<i class="bi bi-box-seam"></i>@endif<span>{{ $l['qty'] }}</span></div>
@@ -134,6 +145,11 @@
                     <div class="ck-row"><span>{{ __('Shipping') }}</span><b class="figure" data-ship>{{ $q['rate'] ? ($q['shipping'] > 0 ? money($q['shipping']) : __('Free')) : '—' }}</b></div>
                     <div class="ck-row" id="rowTax" @if ($q['tax'] <= 0) hidden @endif><span>{{ __('Tax') }} <small class="text-muted" data-taxnote>@if ($q['tax_inclusive'])({{ __('included') }})@endif</small></span><b class="figure" data-tax>{{ money($q['tax']) }}</b></div>
                     <div class="ck-row ck-total"><span>{{ __('Total') }}</span><b class="figure" data-total>{{ money($q['total']) }}</b></div>
+                    <ul class="mk-sum-trust">
+                        <li><i class="bi bi-shield-check"></i> {{ __('Secure checkout') }}</li>
+                        <li><i class="bi bi-truck"></i> {{ __('Delivery to your city') }}</li>
+                        <li><i class="bi bi-arrow-counterclockwise"></i> {{ __('Easy returns') }}</li>
+                    </ul>
                 </aside>
             </div>
         </div>

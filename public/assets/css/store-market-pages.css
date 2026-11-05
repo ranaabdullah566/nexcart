@@ -46,6 +46,31 @@
 .mk-list .mk-card-foot { flex: 0 0 230px; flex-direction: column; justify-content: center; padding: 1rem; border-inline-start: 1px solid var(--border); }
 .mk-list .mk-price { margin-top: .4rem; } .mk-list .mk-price b { font-size: 1.3rem; }
 
+/* ---------- checkout ---------- */
+.mk-secure { display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .9rem; border-radius: 99px; background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.4); color: #16a34a; font-weight: 800; font-size: .82rem; }
+.mk-progress { list-style: none; display: flex; align-items: center; gap: .5rem; padding: 0; margin: 0 0 1.4rem; flex-wrap: wrap; }
+.mk-progress li { display: inline-flex; align-items: center; gap: .5rem; color: var(--text-3); font-weight: 700; font-size: .88rem; }
+.mk-progress li:not(:last-child)::after { content: ""; width: 34px; height: 2px; background: var(--border-strong, var(--border)); margin-inline-start: .5rem; border-radius: 2px; }
+.mk-progress li > b, .mk-progress li > i { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); border: 1px solid var(--border); font-size: .78rem; font-style: normal; }
+.mk-progress li.done { color: #16a34a; } .mk-progress li.done > i { background: #16a34a; border-color: #16a34a; color: #fff; }
+.mk-progress li.now { color: var(--text); } .mk-progress li.now > b { background: var(--grad); border-color: transparent; color: #fff; }
+.sf .ck-sec { padding: 1.25rem 1.3rem; margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); }
+.sf .ck-sec h2 { display: flex; align-items: center; gap: .7rem; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; }
+.sf .ck-sec > .d-flex h2 { margin-bottom: 1rem; }
+.mk-step { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: var(--grad); color: #fff; font-size: .85rem; font-weight: 800; font-family: var(--font-mono); flex: none; }
+.sf .ck-opt { border: 1.5px solid var(--border); border-radius: 14px; padding: .9rem 1rem; }
+.sf .ck-opt:has(input:checked) { border-color: var(--acc-1); background: color-mix(in srgb, var(--acc-1) 9%, var(--surface)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc-1) 18%, transparent); }
+.sf .ck-opt em { font-style: normal; font-weight: 800; }
+.sf .ck-summary { position: sticky; top: 130px; }
+.sf .ck-summary h2 { font-size: 1.1rem; }
+.sf .ck-line { padding: .7rem 0; border-bottom: 1px dashed var(--border); }
+.sf .ck-thumb { background: #f2f4f7; width: 60px; height: 60px; border: 1px solid var(--border); color: #94a3b8; } .sf .ck-thumb img { object-fit: contain; padding: 4px; }
+.sf .ck-row { padding: .45rem 0; }
+.sf .ck-total { border-top: 2px solid var(--border); margin-top: .6rem; padding-top: .9rem; }
+.sf #placeBtn { border-radius: 14px; font-weight: 800; box-shadow: 0 14px 34px -14px var(--acc-2); }
+.sf #couponInput { border-radius: 12px; } .sf #couponBtn { border-radius: 12px; font-weight: 800; }
+@media (max-width: 575.98px) { .mk-progress li:not(:last-child)::after { width: 16px; } .sf .ck-sec { padding: 1rem; } }
+
 /* ---------- cart ---------- */
 .mk-cart { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 1.5rem; align-items: start; }
 .mk-cart-lines { display: grid; gap: .8rem; }
