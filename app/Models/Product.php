@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Audited;
 use App\Models\Concerns\HasSlug;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +17,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Product extends Model implements HasMedia
 {
+    use Audited;
+
+    /** Stock moves on every sale and has its own ledger (Inventory). */
+    protected array $auditExcept = ['stock_qty'];
+
     use HasSlug, HasTranslations, InteractsWithMedia, SoftDeletes;
 
     public const STATUSES = ['draft', 'active', 'archived'];

@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCsvController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SecurityController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ShippingController;
@@ -97,6 +98,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::resource('shipping', ShippingController::class)->except('show')->parameters(['shipping' => 'shipping']);
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
 
+    Route::resource('roles', RoleController::class)->except('show');
+
     // Account security (2FA, password) — every staff member
     Route::get('security', [SecurityController::class, 'index'])->name('security.index');
     Route::post('security/two-factor', [SecurityController::class, 'enable'])->name('security.2fa.enable');
@@ -106,6 +109,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::put('security/password', [SecurityController::class, 'password'])->name('security.password');
     Route::post('security/policy', [SecurityController::class, 'policy'])->name('security.policy');
     Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
+    Route::get('activity/export', [ActivityController::class, 'export'])->name('activity.export');
 
     // Recycle Bin
     Route::get('trash', [TrashController::class, 'index'])->name('trash.index');

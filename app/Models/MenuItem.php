@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Audited;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,8 @@ use Illuminate\Support\Collection;
 
 class MenuItem extends Model
 {
+    use Audited;
+
     use HasTranslations, SoftDeletes;
 
     public const LOCATIONS = ['header', 'footer'];

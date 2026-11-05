@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Audited;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CatalogAttribute extends Model
 {
+    use Audited;
+
     use HasTranslations, SoftDeletes;
 
     public const TYPES = ['text', 'number', 'select', 'boolean'];

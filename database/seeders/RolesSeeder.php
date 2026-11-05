@@ -17,7 +17,7 @@ class RolesSeeder extends Seeder
         'customers' => ['view', 'update', 'delete'],
         'staff' => ['view', 'create', 'update', 'delete'],
         'settings' => ['view', 'update'],
-        'reports' => ['view'],
+        'reports' => ['view', 'export', 'sales', 'products', 'customers', 'inventory', 'finance', 'operations', 'marketing'],
         'prescriptions' => ['view', 'verify'],
         'deliveries' => ['view', 'update'],
         'inventory' => ['view', 'adjust'],
@@ -26,6 +26,9 @@ class RolesSeeder extends Seeder
         'sales_settings' => ['manage'],     // coupons, shipping
         'reviews' => ['manage'],            // moderate product reviews
         'system' => ['manage'],             // health, backups, license — owner only
+        'activity' => ['view'],             // audit / activity log
+        'trash' => ['restore', 'erase'],    // Recycle Bin
+        'roles' => ['manage'],              // create roles, edit permissions
     ];
 
     public function run(): void
@@ -43,7 +46,7 @@ class RolesSeeder extends Seeder
             'owner' => $all,
             'manager' => array_values(array_filter(
                 $all,
-                fn ($p) => ! str_starts_with($p, 'settings.') && ! str_starts_with($p, 'system.') && $p !== 'staff.delete',
+                fn ($p) => ! str_starts_with($p, 'settings.') && ! str_starts_with($p, 'system.') && ! str_starts_with($p, 'roles.') && $p !== 'staff.delete',
             )),
             'staff' => ['products.view', 'categories.view', 'inventory.view', 'orders.view', 'orders.update', 'customers.view'],
             'rider' => ['orders.view', 'deliveries.view', 'deliveries.update'],

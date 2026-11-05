@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Audited;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +12,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class HomeSection extends Model implements HasMedia
 {
+    use Audited;
+
     use HasTranslations, InteractsWithMedia, SoftDeletes;
 
     public const TYPES = ['hero', 'categories', 'products', 'banner', 'features', 'text'];

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Audited;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ModifierGroup extends Model
 {
+    use Audited;
+
     use HasTranslations, SoftDeletes;
 
     protected $fillable = ['name', 'min_select', 'max_select', 'is_active'];

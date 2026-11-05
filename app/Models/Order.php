@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Audited;
 use App\Support\BusinessProfile;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Order extends Model implements HasMedia
 {
+    use Audited;
+
     use InteractsWithMedia;
 
     public const STATUSES = ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'ready', 'completed', 'cancelled', 'refunded'];

@@ -30,6 +30,7 @@ class TrashController extends Controller
 
     public function restore(string $type, int $id): RedirectResponse
     {
+        $this->authorizeTo('trash.restore');
         $record = $this->find($type, $id);
         $record->restore();
         Audit::log('trash.restored', ['type' => $type, 'id' => $id, 'name' => ($this->allowed()[$type]['name'])($record)]);
@@ -39,6 +40,7 @@ class TrashController extends Controller
 
     public function destroy(string $type, int $id): RedirectResponse
     {
+        $this->authorizeTo('trash.erase');
         $record = $this->find($type, $id);
         $name = ($this->allowed()[$type]['name'])($record);
 
@@ -54,6 +56,7 @@ class TrashController extends Controller
     /** Empty the bin of one kind of record. */
     public function empty(string $type): RedirectResponse
     {
+        $this->authorizeTo('trash.erase');
         abort_unless(isset($this->allowed()[$type]), 404);
 
         $n = 0;

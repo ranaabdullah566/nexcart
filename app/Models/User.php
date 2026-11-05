@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Audited;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Support\Totp;
 use Database\Factories\UserFactory;
@@ -17,6 +18,8 @@ use Spatie\Permission\Traits\HasRoles;
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
 {
+    use Audited;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;
 
@@ -25,7 +28,7 @@ class User extends Authenticatable
     /** Anyone holding a staff role may use the admin area. */
     public function isStaff(): bool
     {
-        return $this->hasAnyRole(config('nexcart.roles'));
+        return $this->roles()->exists();
     }
 
     /** A TOTP code, or one single-use recovery code. */

@@ -51,10 +51,11 @@
             ['store.home', 'never', 'box-arrow-up-right', 'View store', null, null],
         ],
         'System' => [
+            ['admin.roles.index', 'admin.roles.*', 'person-lock', 'Roles & permissions', 'roles.manage', null],
             ['admin.security.index', 'admin.security.*', 'shield-check', 'Security', null, null],
             ['admin.trash.index', 'admin.trash.*', 'recycle', 'Recycle Bin', null, null],
             ['log-viewer.index', 'log-viewer.*', 'journal-code', 'Server logs', 'system.manage', null],
-            ['admin.activity.index', 'admin.activity.*', 'shield-lock-fill', 'Activity log', 'system.manage', null],
+            ['admin.activity.index', 'admin.activity.*', 'shield-lock-fill', 'Activity log', 'activity.view', null],
             ['admin.system.index', 'admin.system.*', 'heart-pulse-fill', 'System health', 'system.manage', null],
             ['admin.backups.index', 'admin.backups.*', 'cloud-arrow-down-fill', 'Backups', 'system.manage', null],
             ['admin.license.show', 'admin.license.*', 'patch-check-fill', 'License', 'system.manage', null],

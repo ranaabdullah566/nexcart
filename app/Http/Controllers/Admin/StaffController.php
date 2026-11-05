@@ -37,7 +37,7 @@ class StaffController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190', new UniqueActive('users', 'email', null, true)],
-            'role' => ['required', Rule::in(config('nexcart.roles'))],
+            'role' => ['required', Rule::in(Role::pluck('name')->all())],
             'password' => ['required', 'string', 'confirmed', StrongPassword::rule()],
         ]);
 
@@ -63,7 +63,7 @@ class StaffController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190', new UniqueActive('users', 'email', $staff->id, true)],
-            'role' => ['required', Rule::in(config('nexcart.roles'))],
+            'role' => ['required', Rule::in(Role::pluck('name')->all())],
             'password' => ['nullable', 'string', 'confirmed', StrongPassword::rule()],
         ]);
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Audited;
 use App\Models\Concerns\HasSlug;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use Audited;
+
     use HasSlug, HasTranslations, SoftDeletes;
 
     protected $fillable = ['parent_id', 'name', 'slug', 'description', 'sort_order', 'is_active'];
