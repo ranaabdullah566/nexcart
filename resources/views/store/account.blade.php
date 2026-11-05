@@ -6,7 +6,6 @@
 <div class="sf-container py-4">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4"><h1 class="h2 mb-0">{{ __('My account') }}</h1>
         <form method="POST" action="{{ route('logout') }}">@csrf<button class="sf-btn-ghost"><i class="bi bi-box-arrow-right"></i> {{ __('Sign out') }}</button></form></div>
-    @if (session('success'))<div class="sf-alert mb-3" style="border-color:var(--ok)"><i class="bi bi-check-circle-fill text-success fs-5"></i>{{ session('success') }}</div>@endif
     @if ($errors->any())<div class="sf-alert mb-3" role="alert"><i class="bi bi-exclamation-triangle-fill fs-5"></i><div>@foreach ($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div></div>@endif
 
     <div class="row g-4">

@@ -124,12 +124,7 @@
         </header>
 
         <div class="nx-toasts" id="nxToasts">
-            @if (session('success'))
-                <div class="nx-toast ok"><i class="bi bi-check-circle-fill"></i><div>{{ session('success') }}</div><button class="x" type="button" aria-label="Close"><i class="bi bi-x-lg"></i></button></div>
-            @endif
-            @if (session('error'))
-                <div class="nx-toast bad"><i class="bi bi-exclamation-octagon-fill"></i><div>{{ session('error') }}</div><button class="x" type="button" aria-label="Close"><i class="bi bi-x-lg"></i></button></div>
-            @endif
+            @include('partials.notify')
             @if ($errors->any())
                 <div class="nx-toast bad">
                     <i class="bi bi-exclamation-triangle-fill"></i>

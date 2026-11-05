@@ -81,7 +81,6 @@
     </div>
 </header>
 
-@if (session('notice'))<div class="sf-container pt-3"><div class="sf-alert" style="border-color:var(--acc-1)"><i class="bi bi-info-circle-fill fs-5" style="color:var(--acc-1)"></i>{{ session('notice') }}</div></div>@endif
 <main id="main">@yield('content')</main>
 
 <footer class="sf-footer">
@@ -142,7 +141,7 @@
     </div>
 </div>
 
-<div class="nx-toasts" id="sfToasts" aria-live="polite"></div>
+<div class="nx-toasts" id="sfToasts" aria-live="polite">@include('partials.notify')</div>
 
 @php
     $jsT = [

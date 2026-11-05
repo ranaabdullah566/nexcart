@@ -16,8 +16,6 @@
             <p class="text-muted mb-0">{{ __('Your order :number is in. We sent a confirmation to :email.', ['number' => $order->number, 'email' => $order->email]) }}</p>
         </div></div>
     @endif
-    @if (session('success'))<div class="sf-alert mb-3" style="border-color:var(--ok)"><i class="bi bi-check-circle-fill text-success fs-5"></i>{{ session('success') }}</div>@endif
-    @if (session('error'))<div class="sf-alert mb-3" role="alert"><i class="bi bi-exclamation-triangle-fill fs-5"></i>{{ session('error') }}</div>@endif
 
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
         <div><div class="sf-eyebrow">{{ __('Order') }}</div><h1 class="h2 mb-0 figure">{{ $order->number }}</h1><div class="text-muted small">{{ local_time($order->placed_at, 'd M Y, H:i') }}</div></div>
