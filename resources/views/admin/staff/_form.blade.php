@@ -25,13 +25,13 @@
         </div>
         <div class="col-md-6">
             <label class="form-label fw-medium">{{ __('Password') }} @unless ($editing)<span class="text-danger">*</span>@endunless</label>
-            <input type="password" name="password" minlength="8" autocomplete="new-password" @required(! $editing) class="form-control @error('password') is-invalid @enderror">
+            <input type="password" name="password" minlength="10" autocomplete="new-password" @required(! $editing) class="form-control @error('password') is-invalid @enderror">
             @if ($editing)<div class="form-text">{{ __('Leave blank to keep the current password.') }}</div>@endif
             @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="col-md-6">
             <label class="form-label fw-medium">{{ __('Confirm password') }}</label>
-            <input type="password" name="password_confirmation" minlength="8" autocomplete="new-password" class="form-control">
+            <input type="password" name="password_confirmation" minlength="10" autocomplete="new-password" class="form-control">
         </div>
     </div>
 

@@ -6,6 +6,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+@php
+    $__vm = ['required' => __('This field is required.'), 'email' => __('Enter a valid email address.'), 'url' => __('Enter a valid URL.'), 'number' => __('Enter a number.'), 'integer' => __('Enter a whole number.'),
+        'min' => __('Must be at least :min.'), 'max' => __('Must be at most :max.'), 'minlength' => __('Use at least :min characters.'), 'maxlength' => __('Use at most :max characters.'),
+        'pattern' => __('Please match the requested format.'), 'confirmed' => __('The two values do not match.'), 'strong' => __('At least 10 characters, with letters and numbers.')];
+@endphp
+<meta name="nx-vmsg" content="{{ json_encode($__vm, JSON_UNESCAPED_UNICODE) }}">
+@if (isset($errors) && $errors->any())<meta name="nx-errors" content="{{ json_encode($errors->getBag('default')->toArray(), JSON_UNESCAPED_UNICODE) }}">@endif
 <meta name="csp-nonce" content="{{ csp_nonce() }}">
 <meta name="theme-color" content="#070b16">
 <meta name="nx-tz" content="{{ setting('store.timezone', config('app.timezone')) }}">

@@ -41,8 +41,8 @@
         <div class="row g-3">
             <div class="col-md-6"><label class="form-label">{{ __('Your name') }}</label><input name="name" value="{{ old('name') }}" required class="form-control @error('name') is-invalid @enderror">@error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
             <div class="col-md-6"><label class="form-label">{{ __('Email') }}</label><input type="email" name="email" value="{{ old('email') }}" required class="form-control @error('email') is-invalid @enderror">@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-            <div class="col-md-6"><label class="form-label">{{ __('Password') }}</label><input type="password" name="password" minlength="8" required autocomplete="new-password" class="form-control @error('password') is-invalid @enderror">@error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-            <div class="col-md-6"><label class="form-label">{{ __('Confirm password') }}</label><input type="password" name="password_confirmation" minlength="8" required autocomplete="new-password" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label">{{ __('Password') }}</label><input type="password" name="password" minlength="10" required autocomplete="new-password" class="form-control @error('password') is-invalid @enderror">@error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+            <div class="col-md-6"><label class="form-label">{{ __('Confirm password') }}</label><input type="password" name="password_confirmation" minlength="10" required autocomplete="new-password" class="form-control"></div>
         </div>
     </div></div>
 

@@ -452,6 +452,7 @@
     }
 
     function fieldFor(form, key) {
+        if (window.nxFieldFor) { var f = window.nxFieldFor(form, key); if (f) return f; }
         var parts = key.split('.');
         var name = parts[0], idx = parts.length > 1 ? parseInt(parts[1], 10) : null;
         var sel = idx === null ? '[name="' + name + '"]' : '[name="' + name + '[]"], [name="' + name + '[' + parts[1] + ']"]';

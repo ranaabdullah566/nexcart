@@ -7,6 +7,7 @@ use App\Support\Totp;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\RateLimiter;
 use Tests\TestCase;
 
@@ -131,9 +132,9 @@ class SecurityTest extends TestCase
         $creds = ['email' => $u->email, 'password' => 'Str0ng-pass-99'];
 
         $this->withHeaders($h)->post('/login', $creds)->assertSessionHas('error');                                   // no timestamp: never rendered
-        $fresh = \Illuminate\Support\Facades\Crypt::encryptString((string) time());
+        $fresh = Crypt::encryptString((string) time());
         $this->withHeaders($h)->post('/login', $creds + ['nx_ts' => $fresh])->assertSessionHas('error');             // too fast
-        $old = \Illuminate\Support\Facades\Crypt::encryptString((string) (time() - 10));
+        $old = Crypt::encryptString((string) (time() - 10));
         $this->withHeaders($h)->post('/login', $creds + ['nx_ts' => $old, 'nx_website' => 'http://spam'])->assertSessionHas('error');   // trap filled
         $this->assertGuest();
         $this->withHeaders($h)->post('/login', $creds + ['nx_ts' => $old])->assertRedirect();
@@ -159,5 +160,12 @@ class SecurityTest extends TestCase
         $r = $this->actingAs($this->owner())->get('/admin/security');
         $this->assertStringContainsString('no-store', $r->headers->get('Cache-Control'));
         $this->assertStringContainsString('noindex', $r->headers->get('X-Robots-Tag'));
+    }
+
+    public function test_server_errors_are_handed_to_the_page_for_inline_display_and_validator_script_loads(): void
+    {
+        $r = $this->from('/register')->followingRedirects()->post('/register', ['name' => '', 'email' => 'nope', 'password' => 'x', 'password_confirmation' => 'y']);
+        $r->assertOk()->assertSee('name="nx-errors"', false)->assertSee('nx-validate.js', false)->assertSee('name="nx-vmsg"', false);
+        $this->assertStringContainsString('The name field is required.', html_entity_decode($r->getContent()));
     }
 }

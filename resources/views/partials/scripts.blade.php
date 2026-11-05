@@ -7,6 +7,7 @@
 <script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
 <script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/select2.min.js') }}"></script>
 <script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/chart.umd.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/nx-validate.js') }}?v={{ @filemtime(public_path('assets/js/nx-validate.js')) }}"></script>
 <script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/nexus.js') }}?v={{ @filemtime(public_path('assets/js/nexus.js')) }}"></script>
 <i id="nxPageScripts" hidden></i>
 @php

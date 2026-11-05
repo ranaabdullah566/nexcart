@@ -160,6 +160,7 @@
     };
 </script>
 <script defer src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+<script defer src="{{ asset('assets/js/nx-validate.js') }}?v={{ @filemtime(public_path('assets/js/nx-validate.js')) }}"></script>
 <script defer src="{{ asset('assets/js/storefront.js') }}?v={{ @filemtime(public_path('assets/js/storefront.js')) }}"></script>
 @stack('jsonld')
 @stack('scripts')
