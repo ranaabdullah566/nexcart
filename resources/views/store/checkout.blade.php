@@ -29,8 +29,8 @@
                         <div class="col-12 addr-only"><label class="form-label" for="ckAddr">{{ __('Address') }}</label><input id="ckAddr" name="address_line" value="{{ old('address_line', $defaults['address_line']) }}" autocomplete="street-address" class="form-control @error('address_line') is-invalid @enderror" placeholder="{{ __('House, street, landmark') }}"></div>
                         <div class="col-md-5 addr-only"><label class="form-label" for="ckCity">{{ __('City') }}</label><input id="ckCity" name="city" value="{{ old('city', $defaults['city']) }}" list="ckCities" autocomplete="address-level2" class="form-control @error('city') is-invalid @enderror">
                             <datalist id="ckCities">@foreach ($cities as $c)<option value="{{ $c }}">@endforeach</datalist></div>
-                        <div class="col-md-4 addr-only"><label class="form-label" for="ckArea">{{ __('Area') }}</label><input id="ckArea" name="area" value="{{ old('area', $defaults['area']) }}" class="form-control"></div>
-                        <div class="col-md-3 addr-only"><label class="form-label" for="ckPostal">{{ __('Postal code') }}</label><input id="ckPostal" name="postal_code" value="{{ old('postal_code', $defaults['postal_code']) }}" autocomplete="postal-code" class="form-control figure"></div>
+                        @if (sf('checkout.show_area'))<div class="col-md-4 addr-only"><label class="form-label" for="ckArea">{{ __('Area') }}</label><input id="ckArea" name="area" value="{{ old('area', $defaults['area']) }}" class="form-control"></div>@endif
+                        @if (sf('checkout.show_postal'))<div class="col-md-3 addr-only"><label class="form-label" for="ckPostal">{{ __('Postal code') }}</label><input id="ckPostal" name="postal_code" value="{{ old('postal_code', $defaults['postal_code']) }}" autocomplete="postal-code" class="form-control figure"></div>@endif
                     </div>
                 </section>
 
@@ -93,10 +93,10 @@
                     @error('payment_method')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
                 </section>
 
-                <section class="ck-sec">
+                @if (sf('checkout.show_notes'))<section class="ck-sec">
                     <label class="form-label" for="ckNotes">{{ __('Order notes') }} <span class="text-muted">({{ __('optional') }})</span></label>
                     <textarea id="ckNotes" name="notes" rows="2" maxlength="500" class="form-control" placeholder="{{ __('Anything we should know?') }}">{{ old('notes') }}</textarea>
-                </section>
+                </section>@endif
 
                 <input type="hidden" name="coupon" id="couponField" value="{{ old('coupon', session('coupon')) }}">
                 <x-honeypot />

@@ -20,6 +20,7 @@
         @if ($attributes->isNotEmpty())<li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-specs"><i class="bi bi-sliders2 me-1"></i> {{ __('Details') }}</button></li>@endif
         @if ($modifierGroups->isNotEmpty())<li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-mods"><i class="bi bi-plus-slash-minus me-1"></i> {{ __('Add-ons') }}</button></li>@endif
         <li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-images"><i class="bi bi-images me-1"></i> {{ __('Images') }}</button></li>
+        <li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-seo"><i class="bi bi-search me-1"></i> SEO</button></li>
         <li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-tr"><i class="bi bi-translate me-1"></i> {{ __('Translations') }}</button></li>
     </ul>
 
@@ -173,6 +174,14 @@
             <input type="file" name="images[]" multiple accept="image/jpeg,image/png,image/webp" class="form-control @error('images.*') is-invalid @enderror">
             <div class="form-text">{{ __('JPG, PNG or WebP, up to 4 MB each. The first image is the main one.') }}</div>
             @error('images.*')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+        </div></div></div>
+
+        <div class="tab-pane fade" id="pt-seo"><div class="card mb-3"><div class="card-body">
+    <div class="row g-3">
+        <div class="col-12"><div class="small text-muted"><i class="bi bi-search me-1"></i>{{ __('What Google shows for this page. Leave empty to use the name and description.') }}</div></div>
+        <div class="col-12"><label class="form-label">{{ __('Search title') }}</label><input name="meta_title" maxlength="120" value="{{ old('meta_title', $product->meta_title ?? '') }}" class="form-control"><div class="form-text">{{ __('Up to 120 characters; about 60 show in Google.') }}</div></div>
+        <div class="col-12"><label class="form-label">{{ __('Search description') }}</label><textarea name="meta_description" rows="2" maxlength="300" class="form-control">{{ old('meta_description', $product->meta_description ?? '') }}</textarea><div class="form-text">{{ __('Up to 300 characters; about 155 show in Google.') }}</div></div>
+    </div>
         </div></div></div>
 
         {{-- TRANSLATIONS --}}

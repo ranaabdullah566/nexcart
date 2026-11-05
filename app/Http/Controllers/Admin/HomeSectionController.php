@@ -22,6 +22,17 @@ class HomeSectionController extends Controller
         'products' => ['title'],
         'text' => ['title', 'body'],
         'features' => [],
+        'brands' => ['title', 'subtitle'],
+        'cta' => ['eyebrow', 'title', 'subtitle', 'button_label', 'button2_label'],
+        'steps' => ['title', 'subtitle'],
+        'testimonials' => ['title', 'subtitle'],
+        'faq' => ['title', 'subtitle'],
+    ];
+
+    /** Sections made of a list of items: [max items, fields per item]. */
+    public const ITEMS = [
+        'features' => [4, ['icon', 'title', 'text']], 'steps' => [6, ['icon', 'title', 'text']],
+        'testimonials' => [6, ['title', 'role', 'text']], 'faq' => [10, ['title', 'text']],
     ];
 
     public function index(): View
@@ -103,6 +114,17 @@ class HomeSectionController extends Controller
         return back();
     }
 
+    private function itemRules(string $type): array
+    {
+        [$max, $fields] = self::ITEMS[$type];
+        $rules = ['items' => ['required', 'array', 'max:'.$max], 'title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300']];
+        foreach ($fields as $f) {
+            $rules["items.*.$f"] = $f === 'icon' ? ['nullable', 'regex:/^[a-z0-9-]{2,40}$/'] : ['nullable', 'string', 'max:'.($f === 'text' ? ($type === 'faq' ? 600 : 240) : 80)];
+        }
+
+        return $rules;
+    }
+
     private function formData(HomeSection $section): array
     {
         return ['section' => $section, 'categories' => Category::where('is_active', true)->orderBy('name')->get(), 'translatable' => self::TRANSLATABLE[$section->type]];
@@ -123,12 +145,15 @@ class HomeSectionController extends Controller
             'products' => ['title' => ['nullable', 'string', 'max:120'], 'limit' => ['nullable', 'integer', 'min:1', 'max:24'], 'source' => ['required', Rule::in(['new', 'featured', 'category'])],
                 'category_id' => ['nullable', 'required_if:source,category', 'exists:categories,id']],
             'text' => ['title' => ['nullable', 'string', 'max:120'], 'body' => ['required', 'string', 'max:5000']],
-            'features' => ['items' => ['required', 'array', 'max:4'], 'items.*.icon' => ['nullable', 'regex:/^[a-z0-9-]{2,40}$/'], 'items.*.title' => ['nullable', 'string', 'max:60'], 'items.*.text' => ['nullable', 'string', 'max:160']],
+            'features', 'steps', 'testimonials', 'faq' => $this->itemRules($type),
+            'brands' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:1', 'max:30']],
+            'cta' => ['eyebrow' => ['nullable', 'string', 'max:80'], 'title' => ['required', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'],
+                'button_label' => ['nullable', 'string', 'max:40'], 'button_url' => $url, 'button2_label' => ['nullable', 'string', 'max:40'], 'button2_url' => $url],
         };
         $data = $request->validate($rules);
 
         $settings = collect($data)->except(['is_active', 'tr', 'image'])->all();
-        if ($type === 'features') {
+        if (isset(self::ITEMS[$type])) {
             $settings['items'] = collect($data['items'])->filter(fn ($i) => filled($i['title'] ?? null))->values()->all();
         }
         if ($type === 'categories') {
@@ -146,7 +171,7 @@ class HomeSectionController extends Controller
         if ($request->boolean('remove_image')) {
             $section->clearMediaCollection('image');
         }
-        if ($request->hasFile('image') && in_array($type, ['hero', 'banner'], true)) {
+        if ($request->hasFile('image') && in_array($type, ['hero', 'banner', 'cta'], true)) {
             $section->addMediaFromRequest('image')->toMediaCollection('image');
         }
     }
@@ -165,12 +190,12 @@ class HomeSectionController extends Controller
                     $out[$locale][$field] = mb_substr($text, 0, 5000);
                 }
             }
-            if ($type === 'features') {
+            if (isset(self::ITEMS[$type])) {
                 for ($i = 0; $i < $items; $i++) {
-                    foreach (['title', 'text'] as $f) {
+                    foreach (array_diff(self::ITEMS[$type][1], ['icon']) as $f) {
                         $text = trim((string) ($input[$locale]['items'][$i][$f] ?? ''));
                         if ($text !== '') {
-                            $out[$locale]['items'][$i][$f] = mb_substr($text, 0, 160);
+                            $out[$locale]['items'][$i][$f] = mb_substr($text, 0, 600);
                         }
                     }
                 }

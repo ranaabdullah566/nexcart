@@ -1,7 +1,7 @@
 @extends('layouts.store')
 @php $page = 'product'; @endphp
-@section('title', $product->trans('name'))
-@section('description', $product->trans('short_description') ?: \Illuminate\Support\Str::limit(strip_tags((string) $product->trans('description')), 160))
+@section('title', $product->meta_title ?: $product->trans('name'))
+@section('description', $product->meta_description ?: $product->trans('short_description') ?: \Illuminate\Support\Str::limit(strip_tags((string) $product->trans('description')), 160))
 @section('og_image', $product->getFirstMediaUrl('images') ?: asset('assets/images/icon-512.png'))
 @section('og_type', 'product')
 
@@ -34,11 +34,12 @@
             @if ($imgs->count() > 1)
                 <div class="sf-thumbs">@foreach ($imgs as $i => $m)<button type="button" data-thumb="{{ $m->getUrl() }}" class="{{ $i === 0 ? 'on' : '' }}" aria-label="{{ $i + 1 }}"><img src="{{ $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl() }}" alt=""></button>@endforeach</div>
             @endif
+            @if (sf('product.show_trust'))
             <div class="mk-pd-trust">
-                <div><i class="bi bi-shield-check"></i> {{ __('Secure checkout') }}</div>
-                <div><i class="bi bi-truck"></i> {{ __('Delivery to your city') }}</div>
-                <div><i class="bi bi-calendar-check"></i> {{ __('Listed :when', ['when' => $product->created_at?->diffForHumans()]) }}</div>
+                @foreach (\App\Support\Sf::lines('product.trust_items') as $row)<div><i class="bi bi-{{ \App\Support\Sf::icon($row[0]) }}"></i> {{ $row[1] ?? '' }}</div>@endforeach
+                @if (sf('product.show_listed'))<div><i class="bi bi-calendar-check"></i> {{ __('Listed :when', ['when' => $product->created_at?->diffForHumans()]) }}</div>@endif
             </div>
+            @endif
         </div>
 
         <div class="mk-pd-info">
@@ -54,15 +55,19 @@
 
             <div class="mk-buybox" id="mkBuy">
                 @include('store._buy')
+                @php $bbTrust = \App\Support\Sf::lines('product.bb_trust'); @endphp
+                @if (sf('product.show_save') || sf('product.show_compare') || sf('product.show_share') || (sf('product.show_whatsapp') && filled(setting('store.whatsapp'))))
                 <div class="mk-util">
-                    <button type="button" class="@if ($wished) on @endif" data-wish="{{ $product->id }}" aria-pressed="{{ $wished ? 'true' : 'false' }}"><i class="bi bi-heart"></i><span>{{ __('Save') }}</span></button>
-                    <button type="button" class="@if ($compared) on @endif" data-compare-toggle="{{ $product->id }}" aria-pressed="{{ $compared ? 'true' : 'false' }}"><i class="bi bi-arrow-left-right"></i><span>{{ __('Compare') }}</span></button>
-                    <button type="button" data-share data-title="{{ $product->trans('name') }}"><i class="bi bi-share"></i><span>{{ __('Share') }}</span></button>
-                    @if (filled(setting('store.whatsapp')))<a href="https://wa.me/{{ preg_replace('/\D/', '', setting('store.whatsapp')) }}?text={{ rawurlencode($product->trans('name').' '.url()->current()) }}" target="_blank" rel="noopener noreferrer" class="wa"><i class="bi bi-whatsapp"></i><span>{{ __('Ask us') }}</span></a>@endif
+                    @if (sf('product.show_save'))<button type="button" class="@if ($wished) on @endif" data-wish="{{ $product->id }}" aria-pressed="{{ $wished ? 'true' : 'false' }}"><i class="bi bi-heart"></i><span>{{ __('Save') }}</span></button>@endif
+                    @if (sf('product.show_compare'))<button type="button" class="@if ($compared) on @endif" data-compare-toggle="{{ $product->id }}" aria-pressed="{{ $compared ? 'true' : 'false' }}"><i class="bi bi-arrow-left-right"></i><span>{{ __('Compare') }}</span></button>@endif
+                    @if (sf('product.show_share'))<button type="button" data-share data-title="{{ $product->trans('name') }}"><i class="bi bi-share"></i><span>{{ __('Share') }}</span></button>@endif
+                    @if (sf('product.show_whatsapp') && filled(setting('store.whatsapp')))<a href="https://wa.me/{{ preg_replace('/\D/', '', setting('store.whatsapp')) }}?text={{ rawurlencode($product->trans('name').' '.url()->current()) }}" target="_blank" rel="noopener noreferrer" class="wa"><i class="bi bi-whatsapp"></i><span>{{ __('Ask us') }}</span></a>@endif
                 </div>
-                <div class="mk-bb-trust"><span><i class="bi bi-patch-check-fill"></i> {{ __('Genuine products') }}</span><span><i class="bi bi-lock-fill"></i> {{ __('Private & secure') }}</span><span><i class="bi bi-truck"></i> {{ __('Fast delivery') }}</span></div>
+                @endif
+                @if ($bbTrust)<div class="mk-bb-trust">@foreach ($bbTrust as $row)<span><i class="bi bi-{{ \App\Support\Sf::icon($row[0]) }}"></i> {{ $row[1] ?? '' }}</span>@endforeach</div>@endif
             </div>
 
+            @if (sf('product.show_meta'))
             <div class="mk-meta">
                 @if ($product->sku)<div><span>SKU</span><b class="figure">{{ $product->sku }}</b></div>@endif
                 <div><span>{{ __('Availability') }}</span><b>{{ $inStock ? __('In stock') : __('Out of stock') }}</b></div>
@@ -70,6 +75,7 @@
                 @if ($product->brand)<div><span>{{ __('Brand') }}</span><b>{{ $product->brand->trans('name') }}</b></div>@endif
                 @if ($product->category)<div><span>{{ __('Category') }}</span><b>{{ $product->category->trans('name') }}</b></div>@endif
             </div>
+            @endif
         </div>
     </div>
 
@@ -77,22 +83,22 @@
         <div class="mk-tabbar" role="tablist">
             @if ($product->trans('description'))<button type="button" role="tab" class="on" data-tab="desc">{{ __('Description') }}</button>@endif
             @if ($specs->isNotEmpty())<button type="button" role="tab" data-tab="specs" class="{{ $product->trans('description') ? '' : 'on' }}">{{ __('Details') }}</button>@endif
-            <button type="button" role="tab" data-tab="care" class="{{ ! $product->trans('description') && $specs->isEmpty() ? 'on' : '' }}">{{ __('Delivery & returns') }}</button>
+            @if (sf('product.show_care'))<button type="button" role="tab" data-tab="care" class="{{ ! $product->trans('description') && $specs->isEmpty() ? 'on' : '' }}">{{ sft('product.care_label') }}</button>@endif
             @if (\App\Support\BusinessProfile::hasModule('reviews') && $rating['count'])<button type="button" role="tab" data-tab="reviews">{{ __('Reviews') }} ({{ $rating['count'] }})</button>@endif
         </div>
         @if ($product->trans('description'))<div class="mk-pane on" data-pane="desc"><div class="sf-prose">{!! nl2br(e($product->trans('description'))) !!}</div></div>@endif
         @if ($specs->isNotEmpty())<div class="mk-pane {{ $product->trans('description') ? '' : 'on' }}" data-pane="specs"><table class="sf-specs">@foreach ($specs as $sp)<tr><th>{{ $sp['label'] }}</th><td>{{ $sp['value'] }}</td></tr>@endforeach</table></div>@endif
+        @if (sf('product.show_care'))
         <div class="mk-pane {{ ! $product->trans('description') && $specs->isEmpty() ? 'on' : '' }}" data-pane="care">
             <ul class="mk-care">
-                <li><i class="bi bi-truck"></i><div><b>{{ __('Delivery') }}</b><span>{{ __('Shipping cost and delivery time are shown at checkout for your city.') }}</span></div></li>
-                <li><i class="bi bi-shield-lock"></i><div><b>{{ __('Secure payment') }}</b><span>{{ __('Your details stay private and safe.') }}</span></div></li>
-                <li><i class="bi bi-arrow-counterclockwise"></i><div><b>{{ __('Returns') }}</b><span>{{ __('Problem with your order? Contact us and we will make it right.') }}</span></div></li>
+                @foreach (\App\Support\Sf::lines('product.care_items') as $row)<li><i class="bi bi-{{ \App\Support\Sf::icon($row[0]) }}"></i><div><b>{{ $row[1] ?? '' }}</b><span>{{ $row[2] ?? '' }}</span></div></li>@endforeach
             </ul>
-            @if ($pages->isNotEmpty())
-                <p class="mk-care-title">{{ __('Policies that protect your order') }}</p>
+            @if (sf('product.care_policies') && $pages->isNotEmpty())
+                <p class="mk-care-title">{{ sft('product.care_policies_title') }}</p>
                 <div class="mk-policy-grid">@foreach ($pages as $m)<a class="mk-policy" href="{{ $m['href'] }}"><i class="bi bi-file-earmark-text"></i><b>{{ $m['label'] }}</b><i class="bi bi-chevron-right"></i></a>@endforeach</div>
             @endif
         </div>
+        @endif
         @if (\App\Support\BusinessProfile::hasModule('reviews') && $rating['count'])
             <div class="mk-pane" data-pane="reviews" id="reviews">
                 <div class="d-flex align-items-center gap-2 mb-3"><span class="sf-stars fs-5" aria-hidden="true">@include('store._stars', ['value' => $rating['avg']])</span><b class="figure">{{ $rating['avg'] }}</b><span class="text-muted">{{ trans_choice(':n review|:n reviews', $rating['count'], ['n' => $rating['count']]) }}</span></div>
@@ -108,20 +114,22 @@
         @endif
     </div>
 
-    @if ($related->isNotEmpty())
+    @if (sf('product.show_related') && $related->isNotEmpty())
         <section class="sf-section mk-rail-sec" data-rail>
-            <div class="sf-section-head"><div><h2>{{ __('Related products') }}</h2><p class="mk-sub">{{ __('Hand-picked to go with this item.') }}</p></div>
+            <div class="sf-section-head"><div><h2>{{ sft('product.related_title') }}</h2><p class="mk-sub">{{ sft('product.related_sub') }}</p></div>
                 <div class="mk-rail-ctrl"><button type="button" data-rail-prev aria-label="{{ __('Previous') }}"><i class="bi bi-chevron-left"></i></button><button type="button" data-rail-next aria-label="{{ __('Next') }}"><i class="bi bi-chevron-right"></i></button></div></div>
-            <div class="mk-rail" data-rail-track>@foreach ($related as $p)<div class="mk-rail-item">@include('store._card', ['p' => $p])</div>@endforeach</div>
+            <div class="mk-rail" data-rail-track>@foreach ($related->take(sf('product.related_count')) as $p)<div class="mk-rail-item">@include('store._card', ['p' => $p])</div>@endforeach</div>
         </section>
     @endif
 </div>
 
 {{-- phone: price + button stay in reach once the main buy box scrolls away --}}
+@if (sf('product.show_sticky'))
 <div class="mk-sticky-cta" data-sticky-cta hidden>
     <div><b class="figure">{{ money($product->displayPrice()) }}</b><small>{{ $inStock ? __('In stock') : __('Out of stock') }}</small></div>
     <button type="button" class="btn btn-primary" data-sticky-go>{{ $product->isVariable() ? __('Choose options') : __('Buy now') }}</button>
 </div>
+@endif
 @endsection
 
 @push('jsonld')

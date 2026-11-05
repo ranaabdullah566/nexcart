@@ -4,8 +4,8 @@
     @include('partials.head', ['storefront' => true])
     @php
         $storeName = setting('store.name', config('app.name'));
-        $pageTitle = trim($__env->yieldContent('title'));
-        $metaDesc = trim($__env->yieldContent('description')) ?: (setting('store.tagline') ?: $storeName);
+        $pageTitle = html_entity_decode(trim($__env->yieldContent('title')), ENT_QUOTES);   // @section('x', $value) is already escaped once
+        $metaDesc = html_entity_decode(trim($__env->yieldContent('description')), ENT_QUOTES) ?: (setting('store.tagline') ?: $storeName);
         $ogImage = trim($__env->yieldContent('og_image')) ?: asset('assets/images/icon-512.png');
         $navCats = \App\Models\Category::where('is_active', true)->whereNull('parent_id')->orderBy('sort_order')->orderBy('name')->limit(8)->get();
         $wishCount = count(app(\App\Services\Wishlist::class)->ids());
@@ -29,6 +29,7 @@
     <link href="{{ asset('assets/css/storefront.css') }}?v={{ @filemtime(public_path('assets/css/storefront.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/store-market.css') }}?v={{ @filemtime(public_path('assets/css/store-market.css')) }}" rel="stylesheet">
     <script nonce="{{ csp_nonce() }}">document.documentElement.classList.add('sf-js')</script>
+    <style>.sf{--mk-ratio:{{ sf('cards.ratio') }};--mk-fit:{{ sf('cards.fit') }}}</style>
     @stack('head')
 </head>
 <body class="sf" data-page="{{ $page ?? '' }}">

@@ -16,7 +16,7 @@ class ProductController extends Controller
 
         $related = Product::active()->card()->whereKeyNot($product->id)
             ->when($product->category_id, fn ($q) => $q->where('category_id', $product->category_id))
-            ->latest('id')->limit(4)->get();
+            ->latest('id')->limit(16)->get();
 
         return view('store.product', $this->data($product) + ['related' => $related]);
     }

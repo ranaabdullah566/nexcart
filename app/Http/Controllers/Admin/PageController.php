@@ -57,9 +57,9 @@ class PageController extends Controller
 
     private function save(Page $page, Request $request): void
     {
-        $data = $request->validate(['title' => ['required', 'string', 'max:150'], 'body' => ['nullable', 'string', 'max:50000'], 'tr' => ['nullable', 'array']]);
+        $data = $request->validate(['title' => ['required', 'string', 'max:150'], 'body' => ['nullable', 'string', 'max:50000'], 'tr' => ['nullable', 'array'], 'meta_title' => ['nullable', 'string', 'max:120'], 'meta_description' => ['nullable', 'string', 'max:300'],]);
 
-        $page->fill(['title' => $data['title'], 'body' => $data['body'] ?? null, 'is_published' => $request->boolean('is_published')]);
+        $page->fill(['title' => $data['title'], 'body' => $data['body'] ?? null, 'meta_title' => $data['meta_title'] ?? null, 'meta_description' => $data['meta_description'] ?? null, 'is_published' => $request->boolean('is_published')]);
         $page->setTranslationsFrom($data['tr'] ?? null, ['title', 'body']);
         $page->save();
     }

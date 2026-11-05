@@ -1,5 +1,6 @@
 @extends('layouts.store')
-@section('title', setting('store.tagline') ? setting('store.name').' — '.setting('store.tagline') : '')
+@section('title', filled(sft('seo.title')) ? sft('seo.title') : (setting('store.tagline') ? setting('store.name').' — '.setting('store.tagline') : ''))
+@section('description', sft('seo.description'))
 @php $page = 'home'; @endphp
 
 @section('content')
@@ -10,7 +11,7 @@
 @endphp
 
 @if ($heroes->isNotEmpty())
-<section class="mk-hero" id="mkHero" data-carousel aria-roledescription="carousel" aria-label="{{ __('Highlights') }}">
+<section class="mk-hero" id="mkHero" data-carousel data-autoplay="{{ sf('home.hero_autoplay') ? sf('home.hero_seconds') : 0 }}" aria-roledescription="carousel" aria-label="{{ __('Highlights') }}">
     @foreach ($heroes as $row)
         @include('store.sections.hero', ['s' => $row['section'], 'first' => $loop->first, 'deals' => $deals])
     @endforeach

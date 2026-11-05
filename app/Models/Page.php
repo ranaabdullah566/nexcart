@@ -14,7 +14,7 @@ class Page extends Model
 
     use HasSlug, HasTranslations, SoftDeletes;
 
-    protected $fillable = ['title', 'slug', 'body', 'is_published'];
+    protected $fillable = ['title', 'slug', 'body', 'is_published', 'meta_title', 'meta_description'];
 
     protected function casts(): array
     {

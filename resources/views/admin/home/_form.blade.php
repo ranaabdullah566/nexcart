@@ -45,19 +45,40 @@
         @elseif ($type === 'text')
             <div class="col-12"><label class="form-label">{{ __('Title') }}</label><input name="title" value="{{ $st('title') }}" class="form-control"></div>
             <div class="col-12"><label class="form-label">{{ __('Text') }} <span class="text-danger">*</span></label><textarea name="body" rows="6" required class="form-control @error('body') is-invalid @enderror">{{ $st('body') }}</textarea>@error('body')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-        @elseif ($type === 'features')
-            <div class="col-12 small text-muted">{{ __('Up to four highlights. Icon names come from Bootstrap Icons, e.g. truck, shield-check, headset, gift.') }}</div>
-            @for ($i = 0; $i < 4; $i++)
+        @elseif (isset(\App\Http\Controllers\Admin\HomeSectionController::ITEMS[$type]))
+            @php [$maxItems, $itemFields] = \App\Http\Controllers\Admin\HomeSectionController::ITEMS[$type]; $itemLabels = ['icon' => 'Icon', 'title' => $type === 'testimonials' ? 'Name' : ($type === 'faq' ? 'Question' : 'Title'), 'role' => 'Role / city', 'text' => $type === 'testimonials' ? 'Quote' : ($type === 'faq' ? 'Answer' : 'Text')]; @endphp
+            @if ($type !== 'features')
+                <div class="col-md-6"><label class="form-label">{{ __('Heading') }}</label><input name="title" value="{{ $st('title') }}" maxlength="120" class="form-control"></div>
+                <div class="col-md-6"><label class="form-label">{{ __('Sub-heading') }}</label><input name="subtitle" value="{{ $st('subtitle') }}" maxlength="300" class="form-control"></div>
+            @endif
+            <div class="col-12 small text-muted">@if (in_array('icon', $itemFields)){{ __('Icon names come from Bootstrap Icons, e.g. truck, shield-check, headset, gift.') }} @endif{{ __('Up to :n items; an item with no title is skipped.', ['n' => $maxItems]) }}</div>
+            @for ($i = 0; $i < $maxItems; $i++)
                 <div class="col-12"><div class="row g-2 align-items-end border rounded-3 p-2" style="border-color:var(--border) !important">
-                    <div class="col-md-3"><label class="form-label small">{{ __('Icon') }}</label><input name="items[{{ $i }}][icon]" value="{{ $items[$i]['icon'] ?? '' }}" placeholder="truck" class="form-control figure"></div>
-                    <div class="col-md-4"><label class="form-label small">{{ __('Title') }}</label><input name="items[{{ $i }}][title]" value="{{ $items[$i]['title'] ?? '' }}" class="form-control"></div>
-                    <div class="col-md-5"><label class="form-label small">{{ __('Text') }}</label><input name="items[{{ $i }}][text]" value="{{ $items[$i]['text'] ?? '' }}" class="form-control"></div>
-                    @foreach ($locales as $code => $m)
-                        <div class="col-md-6"><input name="tr[{{ $code }}][items][{{ $i }}][title]" dir="{{ $m['dir'] }}" value="{{ old("tr.$code.items.$i.title", $section->translations[$code]['items'][$i]['title'] ?? '') }}" placeholder="{{ __('Title') }} · {{ $m['label'] }}" class="form-control form-control-sm"></div>
-                        <div class="col-md-6"><input name="tr[{{ $code }}][items][{{ $i }}][text]" dir="{{ $m['dir'] }}" value="{{ old("tr.$code.items.$i.text", $section->translations[$code]['items'][$i]['text'] ?? '') }}" placeholder="{{ __('Text') }} · {{ $m['label'] }}" class="form-control form-control-sm"></div>
+                    @foreach ($itemFields as $f)
+                        <div class="col-md-{{ $f === 'icon' ? 3 : ($f === 'text' ? 12 : 4) }}"><label class="form-label small">{{ __($itemLabels[$f]) }}</label>
+                            @if ($f === 'text' && in_array($type, ['faq', 'testimonials']))<textarea name="items[{{ $i }}][{{ $f }}]" rows="2" maxlength="600" class="form-control">{{ $items[$i][$f] ?? '' }}</textarea>
+                            @else<input name="items[{{ $i }}][{{ $f }}]" value="{{ $items[$i][$f] ?? '' }}" maxlength="240" class="form-control {{ $f === 'icon' ? 'figure' : '' }}" @if ($f === 'icon') placeholder="truck" @endif>@endif</div>
                     @endforeach
+                    @foreach ($locales as $code => $m) @foreach (array_diff($itemFields, ['icon']) as $f)
+                        <div class="col-md-6"><input name="tr[{{ $code }}][items][{{ $i }}][{{ $f }}]" dir="{{ $m['dir'] }}" value="{{ old("tr.$code.items.$i.$f", $section->translations[$code]['items'][$i][$f] ?? '') }}" placeholder="{{ __($itemLabels[$f]) }} · {{ $m['label'] }}" class="form-control form-control-sm"></div>
+                    @endforeach @endforeach
                 </div></div>
             @endfor
+        @elseif ($type === 'brands')
+            <div class="col-md-6"><label class="form-label">{{ __('Heading') }}</label><input name="title" value="{{ $st('title', 'Shop by brand') }}" maxlength="120" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label">{{ __('How many') }}</label><input type="number" min="1" max="30" name="limit" value="{{ $st('limit', 12) }}" class="form-control figure"></div>
+            <div class="col-12"><label class="form-label">{{ __('Sub-heading') }}</label><input name="subtitle" value="{{ $st('subtitle') }}" maxlength="300" class="form-control"></div>
+        @elseif ($type === 'cta')
+            <div class="col-md-6"><label class="form-label">{{ __('Small label') }}</label><input name="eyebrow" value="{{ $st('eyebrow') }}" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label">{{ __('Title') }} <span class="text-danger">*</span></label><input name="title" value="{{ $st('title') }}" required maxlength="120" class="form-control"></div>
+            <div class="col-12"><label class="form-label">{{ __('Subtitle') }}</label><textarea name="subtitle" rows="2" maxlength="300" class="form-control">{{ $st('subtitle') }}</textarea></div>
+            <div class="col-md-6"><label class="form-label">{{ __('Button text') }}</label><input name="button_label" value="{{ $st('button_label') }}" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label">{{ __('Button link') }}</label><input name="button_url" value="{{ $st('button_url', '/shop') }}" class="form-control figure @error('button_url') is-invalid @enderror">@error('button_url')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+            <div class="col-md-6"><label class="form-label">{{ __('Second button text') }}</label><input name="button2_label" value="{{ $st('button2_label') }}" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label">{{ __('Second button link') }}</label><input name="button2_url" value="{{ $st('button2_url') }}" class="form-control figure @error('button2_url') is-invalid @enderror">@error('button2_url')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+            <div class="col-12"><label class="form-label">{{ __('Background image') }}</label>
+                @if ($editing && $section->imageUrl())<div class="mb-2"><img src="{{ $section->imageUrl() }}" alt="" style="height:80px;border-radius:12px"> <div class="form-check d-inline-block ms-3"><input class="form-check-input" type="checkbox" name="remove_image" value="1" id="rmImg2"><label class="form-check-label" for="rmImg2">{{ __('Remove image') }}</label></div></div>@endif
+                <input type="file" name="image" accept="image/jpeg,image/png,image/webp" class="form-control"></div>
         @endif
 
         <div class="col-12"><div class="form-check form-switch"><input type="checkbox" role="switch" class="form-check-input" name="is_active" value="1" id="secActive" @checked(old('is_active', $section->is_active ?? true))><label class="form-check-label" for="secActive">{{ __('Show on the home page') }}</label></div></div>

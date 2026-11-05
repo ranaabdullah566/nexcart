@@ -114,6 +114,7 @@ class ProductController extends Controller
             'stock_qty' => ['nullable', 'integer', 'min:0', 'max:9999999'],
             'low_stock_threshold' => ['nullable', 'integer', 'min:0', 'max:9999999'],
             'tr' => ['nullable', 'array'],
+            'meta_title' => ['nullable', 'string', 'max:120'], 'meta_description' => ['nullable', 'string', 'max:300'],
             'modifier_groups' => ['nullable', 'array'],
             'modifier_groups.*' => ['exists:modifier_groups,id'],
             'variants' => ['required_if:type,variable', 'nullable', 'array', 'max:100'],
@@ -165,6 +166,7 @@ class ProductController extends Controller
                 'low_stock_threshold' => $data['low_stock_threshold'] ?? 5,
                 'requires_prescription' => BusinessProfile::hasModule('prescriptions') && $request->boolean('requires_prescription'),
                 'is_featured' => $request->boolean('is_featured'),
+                'meta_title' => $data['meta_title'] ?? null, 'meta_description' => $data['meta_description'] ?? null,
                 'specs' => $specs ?: null,
             ]);
             $product->setTranslationsFrom($data['tr'] ?? null, ['name', 'short_description', 'description']);

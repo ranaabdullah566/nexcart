@@ -8,8 +8,8 @@
     if (! empty($f['in_stock'])) $active->push(['label' => __('In stock'), 'url' => request()->fullUrlWithQuery(['in_stock' => null, 'page' => null])]);
     foreach ($filterAttrs as $a) { $v = $f['spec'][$a->key] ?? null; if ($v !== null && $v !== '') $active->push(['label' => $a->labelText().': '.($a->type === 'boolean' ? __('Yes') : $v), 'url' => request()->fullUrlWithQuery(['spec' => array_diff_key($f['spec'], [$a->key => 1]), 'page' => null])]); }
 @endphp
-@section('title', $title)
-@section('description', $current?->trans('description') ?? __('Browse all products'))
+@section('title', $current?->meta_title ?: $title)
+@section('description', $current?->meta_description ?: ($current?->trans('description') ?? __('Browse all products')))
 
 @section('content')
 <div class="sf-container">
@@ -75,7 +75,7 @@
             @if ($products->isEmpty())
                 <div class="sf-empty"><i class="bi bi-search"></i><h2 class="h5">{{ __('No products found') }}</h2><p>{{ __('Try removing a filter or searching for something else.') }}</p></div>
             @else
-                @include('store._grid', ['products' => $products, 'cols' => 'row-cols-xl-3'])
+                @include('store._grid', ['products' => $products, 'cols' => 'row-cols-xl-'.max(2, (int) sf('cards.cols') - 1)])
                 <div class="mt-4 d-flex justify-content-center">{{ $products->links('pagination::bootstrap-5') }}</div>
             @endif
         </div>

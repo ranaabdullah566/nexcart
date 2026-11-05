@@ -28,12 +28,12 @@ class CompareTest extends TestCase
 
     public function test_toggle_limit_and_page(): void
     {
-        $ps = collect(range(1, 5))->map(fn ($i) => $this->product("P{$i}"));
+        $ps = collect(range(1, 5))->map(fn ($i) => $this->product("Prod-{$i}x"));
         foreach ($ps->take(4) as $p) {
             $this->postJson("/compare/{$p->id}")->assertOk()->assertJson(['added' => true]);
         }
         $this->postJson("/compare/{$ps[4]->id}")->assertOk()->assertJson(['added' => false, 'full' => true, 'count' => 4]);
-        $this->get('/compare')->assertOk()->assertSee('P1')->assertSee('P4')->assertDontSee('P5');
+        $this->get('/compare')->assertOk()->assertSee('Prod-1x')->assertSee('Prod-4x')->assertDontSee('Prod-5x');
 
         $this->postJson("/compare/{$ps[0]->id}")->assertJson(['added' => false, 'count' => 3]);   // toggles off
         $this->postJson("/compare/{$ps[4]->id}")->assertJson(['added' => true]);                   // room again

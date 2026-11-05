@@ -17,6 +17,7 @@ class HomeController extends Controller
                 $data = match ($s->type) {
                     'categories' => ['categories' => $this->categories($s)],
                     'products' => ['products' => $this->products($s)],
+                    'brands' => ['brands' => \App\Models\Brand::where('is_active', true)->whereHas('products', fn ($q) => $q->active())->withCount(['products' => fn ($q) => $q->active()])->orderBy('name')->limit(max(1, (int) ($s->settings['limit'] ?? 12)))->get()],
                     default => [],
                 };
 
@@ -24,9 +25,12 @@ class HomeController extends Controller
             });
 
         $deals = Product::active()->card()->where('type', 'simple')->whereNotNull('compare_price')->whereColumn('compare_price', '>', 'price')
-            ->orderByRaw('(compare_price - price) / compare_price desc')->limit(3)->get();
+            ->orderByRaw('(compare_price - price) / compare_price desc')->limit((int) sf('home.hero_deals_count'))->get();
         if ($deals->isEmpty()) {
-            $deals = Product::active()->card()->where('is_featured', true)->latest('id')->limit(3)->get();
+            $deals = Product::active()->card()->where('is_featured', true)->latest('id')->limit((int) sf('home.hero_deals_count'))->get();
+        }
+        if (! sf('home.hero_deals')) {
+            $deals = collect();
         }
 
         return view('store.home', ['sections' => $sections, 'deals' => $deals]);

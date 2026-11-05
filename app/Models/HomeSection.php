@@ -16,7 +16,7 @@ class HomeSection extends Model implements HasMedia
 
     use HasTranslations, InteractsWithMedia, SoftDeletes;
 
-    public const TYPES = ['hero', 'categories', 'products', 'banner', 'features', 'text'];
+    public const TYPES = ['hero', 'categories', 'products', 'brands', 'banner', 'cta', 'features', 'steps', 'testimonials', 'faq', 'text'];
 
     protected $fillable = ['type', 'title', 'settings', 'sort_order', 'is_active'];
 

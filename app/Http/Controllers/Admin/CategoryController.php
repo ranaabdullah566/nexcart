@@ -71,6 +71,7 @@ class CategoryController extends Controller
             'description' => ['nullable', 'string', 'max:1000'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:65535'],
             'tr' => ['nullable', 'array'],
+            'meta_title' => ['nullable', 'string', 'max:120'], 'meta_description' => ['nullable', 'string', 'max:300'],
         ]);
 
         $category->fill([
@@ -78,6 +79,7 @@ class CategoryController extends Controller
             'parent_id' => $data['parent_id'] ?? null,
             'description' => $data['description'] ?? null,
             'sort_order' => $data['sort_order'] ?? 0,
+            'meta_title' => $data['meta_title'] ?? null, 'meta_description' => $data['meta_description'] ?? null,
             'is_active' => $request->boolean('is_active'),
         ]);
         $category->setTranslationsFrom($data['tr'] ?? null, ['name', 'description']);

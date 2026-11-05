@@ -73,7 +73,7 @@ class ShopController extends Controller
 
         return view('store.shop', [
             'title' => $title,
-            'products' => $query->paginate(12)->withQueryString(),
+            'products' => $query->paginate((int) sf('cards.per_page'))->withQueryString(),
             'current' => $current,
             'brands' => Brand::where('is_active', true)->whereHas('products', fn ($q) => $q->active())->orderBy('name')->get(),
             'filterAttrs' => $filterAttrs,

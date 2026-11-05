@@ -16,7 +16,7 @@ class Category extends Model
 
     use HasSlug, HasTranslations, SoftDeletes;
 
-    protected $fillable = ['parent_id', 'name', 'slug', 'description', 'sort_order', 'is_active'];
+    protected $fillable = ['parent_id', 'name', 'slug', 'description', 'sort_order', 'is_active', 'meta_title', 'meta_description'];
 
     protected function casts(): array
     {

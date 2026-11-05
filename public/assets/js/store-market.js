@@ -63,9 +63,10 @@
             });
             dots.forEach(function (d, i) { d.classList.toggle('on', i === cur); });
         }
+        var secs = parseInt(c.dataset.autoplay, 10) || 0;
         function auto() {
             clearInterval(timerId);
-            if (!matchMedia('(prefers-reduced-motion: reduce)').matches) timerId = setInterval(function () { go(cur + 1); }, 6500);
+            if (secs > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches) timerId = setInterval(function () { go(cur + 1); }, secs * 1000);
         }
         var p = one('[data-carousel-prev]', c), n = one('[data-carousel-next]', c);
         if (p) p.addEventListener('click', function () { go(cur - 1); auto(); });

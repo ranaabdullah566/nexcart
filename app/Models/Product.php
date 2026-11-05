@@ -29,7 +29,7 @@ class Product extends Model implements HasMedia
     protected $fillable = [
         'category_id', 'brand_id', 'name', 'slug', 'sku', 'type', 'status', 'short_description', 'description',
         'price', 'compare_price', 'cost', 'track_stock', 'stock_qty', 'low_stock_threshold',
-        'requires_prescription', 'is_featured', 'specs',
+        'requires_prescription', 'is_featured', 'specs', 'meta_title', 'meta_description',
     ];
 
     protected function casts(): array

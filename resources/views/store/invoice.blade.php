@@ -22,7 +22,7 @@
 <div class="noprint" style="text-align:center"><button class="btn" id="printBtn">{{ __('Print / Save as PDF') }}</button></div>
 <div class="sheet">
     <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
-        <div><h1>{{ setting('store.name') }}</h1><div class="muted">{{ setting('store.email') }} @if (setting('store.phone')) · {{ setting('store.phone') }}@endif</div></div>
+        <div>@if (sf('invoice.show_logo'))<img src="{{ brand_logo() }}" alt="" style="height:44px;margin-bottom:6px"><br>@endif<h1>{{ setting('store.name') }}</h1>@if (filled(sf('invoice.tax_id')))<div class="muted">{{ __('Tax no.') }} {{ sf('invoice.tax_id') }}</div>@endif<div class="muted">{{ setting('store.email') }} @if (setting('store.phone')) · {{ setting('store.phone') }}@endif</div></div>
         <div style="text-align:end"><div class="muted">{{ __('Invoice') }}</div><div class="num" style="font-size:20px;font-weight:700">{{ $order->number }}</div><div class="muted">{{ local_time($order->placed_at, 'd M Y') }}</div>
             @if ($order->payment_status === 'paid')<div class="paid" style="margin-top:6px">{{ __('Paid') }}</div>@endif</div>
     </div>
@@ -50,6 +50,7 @@
         <tr class="grand"><td>{{ __('Total') }}</td><td class="r num">{{ money($order->total) }}</td></tr>
     </table>
     <p class="muted" style="margin-top:32px;text-align:center">{{ __('Thank you for shopping with :store.', ['store' => setting('store.name')]) }}</p>
+    @if (filled(sft('invoice.footer')))<p class="muted" style="text-align:center;font-size:12px">{{ sft('invoice.footer') }}</p>@endif
 </div>
 <script nonce="{{ csp_nonce() }}">document.getElementById("printBtn").addEventListener("click",function(){window.print()});</script>
 </body>

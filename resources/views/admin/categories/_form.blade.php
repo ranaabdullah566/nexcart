@@ -27,6 +27,13 @@
             <div class="form-check form-switch mb-2"><input type="checkbox" role="switch" class="form-check-input" name="is_active" value="1" id="catActive" @checked(old('is_active', $category->is_active ?? true))><label class="form-check-label" for="catActive">{{ __('Visible in store') }}</label></div>
         </div>
     </div>
+    <div class="mt-3 pt-3" style="border-top:1px dashed var(--border)">
+    <div class="small text-muted mb-2"><i class="bi bi-search me-1"></i>{{ __('Search engines (optional) — what Google shows for this page. Leave empty to use the name and description.') }}</div>
+    <div class="row g-3">
+        <div class="col-12"><label class="form-label">{{ __('Search title') }}</label><input name="meta_title" maxlength="120" value="{{ old('meta_title', $category->meta_title ?? '') }}" class="form-control"><div class="form-text">{{ __('Up to 120 characters; about 60 show in Google.') }}</div></div>
+        <div class="col-12"><label class="form-label">{{ __('Search description') }}</label><textarea name="meta_description" rows="2" maxlength="300" class="form-control">{{ old('meta_description', $category->meta_description ?? '') }}</textarea><div class="form-text">{{ __('Up to 300 characters; about 155 show in Google.') }}</div></div>
+    </div>
+</div>
     @include('partials.translation-fields', ['model' => $category ?? null, 'fields' => ['name' => 'Name', 'description' => ['Description', 'textarea']]])
     <div class="d-flex justify-content-end gap-2 mt-4">
         <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-secondary px-4 nx-cancel">{{ __('Cancel') }}</a>
