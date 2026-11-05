@@ -36,7 +36,7 @@ class StorefrontTest extends TestCase
 
     public function test_home_renders_default_sections_in_each_language(): void
     {
-        $this->get('/')->assertOk()->assertSee('Everything you need, delivered')->assertSee('sf-hero', false)->assertSee('Fast delivery');
+        $this->get('/')->assertOk()->assertSee('Everything you need, delivered')->assertSee('mk-hero', false)->assertSee('Fast delivery');
 
         $this->withSession(['locale' => 'ur'])->get('/')->assertOk()->assertSee('dir="rtl"', false)->assertSee('جو کچھ آپ کو چاہیے')->assertSee('تیز ڈیلیوری');
         $this->withSession(['locale' => 'ur_Latn'])->get('/')->assertSee('Tez delivery');

@@ -179,6 +179,9 @@ Route::get('/cart.json', [Store\CartController::class, 'json'])->name('store.car
 Route::post('/cart/add', [Store\CartController::class, 'add'])->middleware('throttle:60,1')->name('store.cart.add');
 Route::patch('/cart/{key}', [Store\CartController::class, 'update'])->name('store.cart.update');
 Route::delete('/cart/{key}', [Store\CartController::class, 'destroy'])->name('store.cart.remove');
+Route::get('/compare', [Store\CompareController::class, 'index'])->name('store.compare');
+Route::post('/compare/{product}', [Store\CompareController::class, 'toggle'])->whereNumber('product')->middleware('throttle:60,1')->name('store.compare.toggle');
+Route::delete('/compare', [Store\CompareController::class, 'clear'])->name('store.compare.clear');
 Route::get('/wishlist', [Store\WishlistController::class, 'index'])->name('store.wishlist');
 Route::post('/wishlist/{product}', [Store\WishlistController::class, 'toggle'])->middleware('throttle:60,1')->name('store.wishlist.toggle');
 Route::get('/checkout', [Store\CheckoutController::class, 'show'])->name('store.checkout');

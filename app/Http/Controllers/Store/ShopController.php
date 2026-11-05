@@ -13,7 +13,7 @@ use Illuminate\View\View;
 
 class ShopController extends Controller
 {
-    public const SORTS = ['newest', 'price_asc', 'price_desc', 'name'];
+    public const SORTS = ['newest', 'price_asc', 'price_desc', 'name', 'discount'];
 
     public function index(Request $request, ?string $category = null): View
     {
@@ -60,6 +60,7 @@ class ShopController extends Controller
             'price_asc' => $query->orderBy('price'),
             'price_desc' => $query->orderByDesc('price'),
             'name' => $query->orderBy('name'),
+            'discount' => $query->whereNotNull('compare_price')->whereColumn('compare_price', '>', 'price')->orderByRaw('(compare_price - price) / compare_price desc'),
             default => $query->latest('id'),
         };
 

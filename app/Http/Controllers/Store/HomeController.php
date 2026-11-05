@@ -23,7 +23,13 @@ class HomeController extends Controller
                 return ['section' => $s] + $data;
             });
 
-        return view('store.home', ['sections' => $sections]);
+        $deals = Product::active()->card()->where('type', 'simple')->whereNotNull('compare_price')->whereColumn('compare_price', '>', 'price')
+            ->orderByRaw('(compare_price - price) / compare_price desc')->limit(3)->get();
+        if ($deals->isEmpty()) {
+            $deals = Product::active()->card()->where('is_featured', true)->latest('id')->limit(3)->get();
+        }
+
+        return view('store.home', ['sections' => $sections, 'deals' => $deals]);
     }
 
     private function categories(HomeSection $s)

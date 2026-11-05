@@ -34,7 +34,7 @@
                 @if (filled($f['q'] ?? null))<input type="hidden" name="q" value="{{ $f['q'] }}">@endif
                 <h6>{{ __('Sort by') }}</h6>
                 <select name="sort" class="form-select form-select-sm">
-                    @foreach (['newest' => __('Newest'), 'price_asc' => __('Price: low to high'), 'price_desc' => __('Price: high to low'), 'name' => __('Name A–Z')] as $k => $l)<option value="{{ $k }}" @selected(($f['sort'] ?? 'newest') === $k)>{{ $l }}</option>@endforeach
+                    @foreach (['newest' => __('Newest'), 'price_asc' => __('Price: low to high'), 'price_desc' => __('Price: high to low'), 'name' => __('Name A–Z'), 'discount' => __('Biggest discount')] as $k => $l)<option value="{{ $k }}" @selected(($f['sort'] ?? 'newest') === $k)>{{ $l }}</option>@endforeach
                 </select>
 
                 @if ($brands->isNotEmpty())
