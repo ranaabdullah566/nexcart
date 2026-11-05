@@ -8,6 +8,7 @@ use App\Support\Locales;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -31,7 +32,8 @@ class SetupController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        DB::transaction(function () use ($data) {
+        $owner = null;
+        DB::transaction(function () use ($data, &$owner) {
             (new RolesSeeder)->run();
 
             $owner = User::create([
@@ -54,6 +56,9 @@ class SetupController extends Controller
             ]);
         });
 
-        return redirect('/admin');
+        Auth::login($owner);
+        request()->session()->regenerate();
+
+        return redirect()->route('admin.dashboard');
     }
 }

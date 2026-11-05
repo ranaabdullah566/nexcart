@@ -1,0 +1,37 @@
+/* NexCart additions on top of NEXUS theme.css */
+
+/* Urdu / RTL: Naskh font for UI + headings; numbers stay in mono */
+[dir="rtl"] { --font-ui: 'Noto Naskh Arabic', 'Inter', sans-serif; --font-display: 'Noto Naskh Arabic', 'Space Grotesk', sans-serif; }
+[dir="rtl"] body { font-family: var(--font-ui); line-height: 1.8; }
+[dir="rtl"] .nx-title, [dir="rtl"] .nx-page-title { letter-spacing: 0; }
+[dir="rtl"] .nx-sidebar { border-right: 0; border-left: 1px solid var(--border); }
+[dir="rtl"] .text-end { text-align: left !important; }
+[dir="rtl"] .text-start { text-align: right !important; }
+[dir="rtl"] .me-1 { margin-right: 0 !important; margin-left: .25rem !important; }
+[dir="rtl"] .me-2 { margin-right: 0 !important; margin-left: .5rem !important; }
+[dir="rtl"] .ms-auto { margin-left: 0 !important; margin-right: auto !important; }
+[dir="rtl"] .bi-arrow-left::before { content: "\f138"; } /* bi-arrow-right glyph */
+[dir="rtl"] .bi-arrow-right::before { content: "\f12f"; }
+
+/* Language switcher chips */
+.nx-lang { display: inline-flex; gap: 4px; padding: 3px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); }
+.nx-lang a { padding: 4px 11px; border-radius: 999px; font-size: .78rem; font-weight: 600; color: var(--text-2); text-decoration: none; }
+.nx-lang a:hover { color: var(--text); }
+.nx-lang a.on { color: #fff; background: var(--grad); }
+@media (max-width: 575px) { .nx-lang a { padding: 4px 8px; font-size: .72rem; } }
+
+/* Guest (login / setup) shell */
+.nx-guest { min-height: 100vh; display: grid; place-items: start center; padding: 28px 16px 64px; position: relative; }
+.nx-guest-card { width: 100%; max-width: 760px; }
+.nx-guest-card.narrow { max-width: 440px; margin-top: 8vh; }
+.nx-guest-bar { width: 100%; max-width: 760px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.nx-type { position: relative; display: block; height: 100%; }
+.nx-type input { position: absolute; opacity: 0; }
+.nx-type .nx-type-body { display: block; height: 100%; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); cursor: pointer; transition: .2s var(--ease); }
+.nx-type input:checked + .nx-type-body { border-color: var(--acc-1); box-shadow: var(--glow); background: var(--surface-2); }
+.nx-type input:focus-visible + .nx-type-body { outline: 2px solid var(--acc-2); outline-offset: 2px; }
+
+/* Tabs / pills follow the NEXUS accent */
+.nav-pills .nav-link { color: var(--text-2); border: 1px solid var(--border); background: var(--surface); border-radius: 999px; font-weight: 600; }
+.nav-pills .nav-link:hover { color: var(--text); }
+.nav-pills .nav-link.active { color: #fff; border-color: transparent; background: var(--grad); }

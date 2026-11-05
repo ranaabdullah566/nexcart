@@ -10,8 +10,10 @@ kiya ja sake.
 |---|---|---|
 | Framework | **Laravel 13** (latest stable), PHP 8.3 | Requirement |
 | DB | **MySQL 8** | Requirement |
-| Storefront | Blade + **Livewire** + Alpine.js + **Tailwind CSS v4** | Fast, SEO friendly, no separate SPA |
-| Admin panel | **Filament** (custom theme + custom pages) | Fully customizable, tezi se build hota hai |
+| UI system | **NEXUS** (own design system: `theme.css` + `nexus.js`) on **Bootstrap 5.3**, Bootstrap Icons, jQuery | Same look across all projects; dark + light, glass UI, popups, toasts |
+| Tables / forms / charts | DataTables (BS5, responsive), Select2, Chart.js | Search/sort/pages, searchable selects, dashboards |
+| Admin panel | Blade + NEXUS (custom, permission-aware) | Full control, popups for add/edit |
+| Storefront | Blade + NEXUS tokens (+ small JS/Alpine where needed) | Fast, SEO friendly |
 | Auth / RBAC | Laravel auth + `spatie/laravel-permission` | Roles: Owner, Manager, Staff, Rider, Pharmacist |
 | Media | `spatie/laravel-medialibrary` | Image conversions, WebP |
 | Settings | DB-backed settings (`spatie/laravel-settings` style) | Admin se sab kuch change |
@@ -19,8 +21,8 @@ kiya ja sake.
 | Payments | Driver-based (Stripe, COD, Bank Transfer, local gateways) | Plug & play |
 | Tests | PHPUnit (Laravel default) | Har phase ke saath tests |
 
-> Filament ka Laravel 13 support Phase 1 me verify hoga; agar issue ho to
-> admin custom Livewire me banega (plan same rehta hai).
+> Fonts: Inter (text), Space Grotesk (headings), JetBrains Mono (numbers), Noto Naskh Arabic (Urdu).
+> Languages: English, اردو (RTL), Roman Urdu — `lang/*.json`.
 
 ## 2. Core architecture decisions
 

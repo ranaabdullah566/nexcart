@@ -1,0 +1,34 @@
+@extends('layouts.guest')
+@section('title', __('Sign in'))
+@section('card_class', 'narrow')
+
+@section('content')
+<div class="text-center mb-4">
+    <span class="nx-brand-logo mx-auto mb-3" style="width:56px;height:56px"><img src="{{ asset('assets/images/logo.svg') }}" alt="" style="width:100%;height:100%"></span>
+    <h1 class="nx-title">{{ setting('store.name') }}</h1>
+    <p class="nx-sub">{{ __('Sign in to the admin panel') }}</p>
+</div>
+
+<div class="card nx-form-card">
+    <div class="card-body p-4">
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
+            <div class="mb-3">
+                <label class="form-label fw-medium" for="email">{{ __('Email') }}</label>
+                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                       class="form-control @error('email') is-invalid @enderror">
+                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-medium" for="password">{{ __('Password') }}</label>
+                <input id="password" type="password" name="password" required autocomplete="current-password" class="form-control">
+            </div>
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" name="remember" id="remember" value="1">
+                <label class="form-check-label" for="remember">{{ __('Remember me') }}</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right me-1"></i> {{ __('Sign in') }}</button>
+        </form>
+    </div>
+</div>
+@endsection
