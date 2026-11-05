@@ -29,7 +29,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin.dashboard'));
+        return redirect()->intended($request->user()->isStaff() ? route('admin.dashboard') : route('store.account'));
     }
 
     public function destroy(Request $request): RedirectResponse

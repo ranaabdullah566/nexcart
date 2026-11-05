@@ -11,6 +11,27 @@
     <div class="col-6 col-lg-3"><x-stat-card :label="__('Languages')" icon="translate" tone="warn" :value="count($languages)" :sub="collect($languages)->pluck('label')->implode(' · ')" /></div>
 </div>
 
+@if ($canSales)
+<div class="row g-3 mb-3 stagger">
+    <div class="col-6 col-lg-3"><x-stat-card :label="__('Orders today')" icon="receipt-cutoff" :value="$sales['today']" :sub="__('Placed since midnight')" /></div>
+    <div class="col-6 col-lg-3"><x-stat-card :label="__('Revenue (30 days)')" icon="cash-coin" tone="ok" :value="money($sales['revenue30'])" :sub="__('Excluding cancelled')" /></div>
+    <div class="col-6 col-lg-3"><x-stat-card :label="__('Open orders')" icon="hourglass-split" tone="warn" :value="$sales['open']" :sub="__('Need attention')" /></div>
+    <div class="col-6 col-lg-3"><x-stat-card :label="__('Average order')" icon="graph-up-arrow" tone="vio" :value="money($sales['avg'])" :sub="__('Last 30 days')" /></div>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-lg-8"><div class="card h-100"><div class="card-body"><h5 class="mb-3">{{ __('Revenue, last 14 days') }}</h5><div style="height:260px"><canvas id="revChart" role="img" aria-label="{{ __('Revenue, last 14 days') }}"></canvas></div></div></div></div>
+    <div class="col-lg-4"><div class="card h-100"><div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2"><h5 class="mb-0">{{ __('Recent orders') }}</h5><a href="{{ route('admin.orders.index') }}" class="small">{{ __('All orders') }}</a></div>
+        @forelse ($recentOrders as $o)
+            <a href="{{ route('admin.orders.show', $o) }}" class="d-flex justify-content-between align-items-center py-2 border-bottom text-decoration-none" style="border-color:var(--border) !important;color:var(--text)">
+                <span><b class="figure">{{ $o->number }}</b><span class="d-block small text-muted">{{ $o->name }}</span></span>
+                <span class="text-end"><span class="figure d-block">{{ money($o->total) }}</span><span class="badge rounded-pill text-bg-secondary">{{ $o->statusLabel() }}</span></span>
+            </a>
+        @empty<div class="text-muted small py-3">{{ __('No orders yet.') }}</div>@endforelse
+    </div></div></div>
+</div>
+@endif
+
 @if ($lowStock->isNotEmpty())
 <div class="card mb-3"><div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-2"><h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>{{ __('Low stock') }}</h5><a href="{{ route('admin.inventory.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Open inventory') }}</a></div>
@@ -51,3 +72,22 @@
     </div>
 </div>
 @endsection
+
+@if ($canSales)
+@push('scripts')
+<script>
+    $(function () {
+        var d = @json($chart), el = document.getElementById('revChart'); if (!el || !window.Chart) return;
+        var css = function (v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }, chart;
+        function build() {
+            if (chart) chart.destroy();
+            var a1 = css('--acc-1') || '#22d3ee', a2 = css('--acc-2') || '#8b5cf6', grid = css('--border') || 'rgba(148,163,184,.2)', txt = css('--text-2') || '#9fb0c8';
+            var g = el.getContext('2d').createLinearGradient(0, 0, 0, 260); g.addColorStop(0, a2 + 'aa'); g.addColorStop(1, a2 + '05');
+            chart = new Chart(el, { type: 'line', data: { labels: d.labels, datasets: [{ label: @json(__('Revenue')), data: d.revenue, borderColor: a1, backgroundColor: g, fill: true, tension: .35, pointRadius: 3, pointBackgroundColor: a1, borderWidth: 2 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: txt } }, y: { beginAtZero: true, grid: { color: grid }, ticks: { color: txt } } } } });
+        }
+        build(); window.addEventListener('nx-theme', function () { setTimeout(build, 50); });
+    });
+</script>
+@endpush
+@endif

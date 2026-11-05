@@ -23,6 +23,7 @@ class RolesSeeder extends Seeder
         'inventory' => ['view', 'adjust'],
         'catalog_settings' => ['manage'],   // attributes, modifiers
         'storefront' => ['manage'],         // home page builder
+        'sales_settings' => ['manage'],     // coupons, shipping
     ];
 
     public function run(): void

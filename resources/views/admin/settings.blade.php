@@ -16,6 +16,7 @@
     <ul class="nav nav-pills mb-3 gap-2" role="tablist">
         <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-store" type="button"><i class="bi bi-shop me-1"></i> {{ __('Store') }}</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-look" type="button"><i class="bi bi-palette-fill me-1"></i> {{ __('Appearance') }}</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pay" type="button"><i class="bi bi-wallet2 me-1"></i> {{ __('Payments') }}</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-modules" type="button"><i class="bi bi-puzzle-fill me-1"></i> {{ __('Modules') }}</button></li>
     </ul>
 
@@ -89,6 +90,23 @@
                         <div class="form-text">{{ __('Visitors can still switch with the sun/moon button.') }}</div>
                     </div>
                 </div>
+            </div></div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-pay">
+            <div class="card mb-3"><div class="card-body">
+                <h5 class="mb-1">{{ __('Payment methods') }}</h5>
+                <p class="text-muted small mb-3">{{ __('Choose how customers can pay at checkout.') }}</p>
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" role="switch" name="payments[cod]" value="1" id="payCod" @checked(old('payments.cod', setting('payments.cod', true)))><label class="form-check-label" for="payCod"><b>{{ __('Cash on delivery') }}</b> <span class="text-muted">— {{ __('pay when the order arrives or is picked up') }}</span></label></div>
+
+                <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" role="switch" name="payments[bank]" value="1" id="payBank" @checked(old('payments.bank', setting('payments.bank', false)))><label class="form-check-label" for="payBank"><b>{{ __('Bank transfer') }}</b></label></div>
+                <textarea name="payments[bank_instructions]" rows="3" class="form-control mb-3 @error('payments.bank_instructions') is-invalid @enderror" placeholder="{{ __('Bank name, account title, IBAN …') }}">{{ old('payments.bank_instructions', setting('payments.bank_instructions')) }}</textarea>
+                @error('payments.bank_instructions')<div class="text-danger small mb-3">{{ $message }}</div>@enderror
+
+                <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" role="switch" name="payments[stripe]" value="1" id="payStripe" @checked(old('payments.stripe', setting('payments.stripe', false)))><label class="form-check-label" for="payStripe"><b>{{ __('Card payments (Stripe)') }}</b></label></div>
+                <input type="password" name="payments[stripe_secret]" autocomplete="off" class="form-control figure @error('payments.stripe_secret') is-invalid @enderror" placeholder="{{ $hasStripeKey ? '•••••••• '.__('saved — leave blank to keep') : 'sk_live_…' }}">
+                @error('payments.stripe_secret')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                <div class="form-text">{{ __('Your Stripe secret key is stored encrypted and never shown again.') }}</div>
             </div></div>
         </div>
 

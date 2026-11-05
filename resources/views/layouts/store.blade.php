@@ -67,6 +67,7 @@
                     </ul>
                 </div>
                 <button type="button" class="sf-icon-btn" data-theme-toggle aria-label="{{ __('Toggle light/dark mode') }}"><i class="bi bi-sun-fill"></i></button>
+                <a href="{{ auth()->check() ? route('store.account') : route('login') }}" class="sf-icon-btn d-none d-sm-grid" aria-label="{{ __('Account') }}"><i class="bi bi-person"></i></a>
                 <a href="{{ route('store.wishlist') }}" class="sf-icon-btn d-none d-sm-grid" aria-label="{{ __('Wishlist') }}"><i class="bi bi-heart"></i><span class="sf-badge" data-wish-count @if (! $wishCount) hidden @endif>{{ $wishCount }}</span></a>
                 <a href="{{ route('store.cart') }}" class="sf-icon-btn" data-open-cart aria-label="{{ __('Cart') }}"><i class="bi bi-bag"></i><span class="sf-badge" data-cart-count @if (! $cartData['count']) hidden @endif>{{ $cartData['count'] }}</span></a>
             </div>
@@ -88,6 +89,7 @@
                 <a href="{{ route('store.shop') }}">{{ __('All products') }}</a>
                 @foreach ($navCats->take(4) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach
                 <a href="{{ route('store.wishlist') }}">{{ __('Wishlist') }}</a>
+                <a href="{{ route('store.track') }}">{{ __('Track an order') }}</a>
             </div>
             <div class="col-6 col-lg-4">
                 <h6>{{ __('Contact') }}</h6>

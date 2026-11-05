@@ -79,7 +79,7 @@ kiya ja sake.
 - Homepage section builder, collection pages, filters/search (instant), product page
 - Cart drawer, wishlist, quick view, SEO, responsive/PWA
 
-### Phase 4 — Cart, Checkout & Orders
+### Phase 4 — Cart, Checkout & Orders ✅
 - Cart engine, coupons/discounts, tax, shipping zones & rates
 - Shopify-style one-page checkout
 - Payment drivers (COD + 1-2 gateways), order lifecycle, invoices/PDF

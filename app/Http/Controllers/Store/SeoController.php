@@ -21,7 +21,7 @@ class SeoController extends Controller
 
     public function robots(): Response
     {
-        $txt = "User-agent: *\nDisallow: /admin\nDisallow: /cart\nDisallow: /setup\nDisallow: /login\nSitemap: ".url('/sitemap.xml')."\n";
+        $txt = "User-agent: *\nDisallow: /admin\nDisallow: /cart\nDisallow: /checkout\nDisallow: /account\nDisallow: /order\nDisallow: /track\nDisallow: /setup\nDisallow: /login\nSitemap: ".url('/sitemap.xml')."\n";
 
         return response($txt, 200, ['Content-Type' => 'text/plain']);
     }

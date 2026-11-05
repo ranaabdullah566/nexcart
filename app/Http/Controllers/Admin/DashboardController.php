@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Support\BusinessProfile;
@@ -18,7 +19,21 @@ class DashboardController extends Controller
             collect(BusinessProfile::all())->pluck('modules')->flatten()->unique()
         )->unique()->filter(fn ($m) => BusinessProfile::hasModule($m))->values();
 
+        $canSales = auth()->user()->can('orders.view');
+        $live = fn () => Order::whereNotIn('status', ['cancelled', 'refunded']);
+        $days = collect(range(13, 0))->map(fn ($i) => now()->subDays($i)->startOfDay());
+        $byDay = $canSales ? $live()->where('placed_at', '>=', $days->first())->get(['placed_at', 'total'])->groupBy(fn ($o) => $o->placed_at->format('Y-m-d')) : collect();
+
         return view('admin.dashboard', [
+            'canSales' => $canSales,
+            'sales' => $canSales ? [
+                'today' => $live()->whereDate('placed_at', today())->count(),
+                'revenue30' => (float) $live()->where('placed_at', '>=', now()->subDays(30))->sum('total'),
+                'open' => Order::whereNotIn('status', ['completed', 'cancelled', 'refunded'])->count(),
+                'avg' => (float) ($live()->where('placed_at', '>=', now()->subDays(30))->avg('total') ?? 0),
+            ] : null,
+            'chart' => ['labels' => $days->map->format('d M')->all(), 'revenue' => $days->map(fn ($d) => round((float) $byDay->get($d->format('Y-m-d'), collect())->sum('total'), 2))->all(), 'orders' => $days->map(fn ($d) => $byDay->get($d->format('Y-m-d'), collect())->count())->all()],
+            'recentOrders' => $canSales ? Order::latest('id')->limit(6)->get() : collect(),
             'profile' => $profile,
             'staffCount' => User::whereHas('roles')->count(),
             'modules' => $modules,

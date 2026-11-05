@@ -15,6 +15,12 @@
         'Overview' => [
             ['admin.dashboard', 'admin.dashboard', 'grid-1x2-fill', 'Dashboard', null, null],
         ],
+        'Sales' => [
+            ['admin.orders.index', 'admin.orders.*', 'receipt-cutoff', 'Orders', 'orders.view', null],
+            ['admin.customers.index', 'admin.customers.*', 'people-fill', 'Customers', 'customers.view', null],
+            ['admin.coupons.index', 'admin.coupons.*', 'ticket-perforated-fill', 'Coupons', 'sales_settings.manage', null],
+            ['admin.shipping.index', 'admin.shipping.*', 'truck', 'Shipping', 'sales_settings.manage', null],
+        ],
         'Catalog' => [
             ['admin.products.index', 'admin.products.*', 'box-seam-fill', 'Products', 'products.view', null],
             ['admin.categories.index', 'admin.categories.*', 'diagram-3-fill', 'Categories', 'categories.view', null],

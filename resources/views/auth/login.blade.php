@@ -6,7 +6,7 @@
 <div class="text-center mb-4">
     <span class="nx-brand-logo mx-auto mb-3" style="width:56px;height:56px"><img src="{{ asset('assets/images/logo.svg') }}" alt="" style="width:100%;height:100%"></span>
     <h1 class="nx-title">{{ setting('store.name') }}</h1>
-    <p class="nx-sub">{{ __('Sign in to the admin panel') }}</p>
+    <p class="nx-sub">{{ __('Sign in to your account') }}</p>
 </div>
 
 <div class="card nx-form-card">
@@ -29,6 +29,7 @@
             </div>
             <button type="submit" class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right me-1"></i> {{ __('Sign in') }}</button>
         </form>
+        <div class="text-center mt-3 small">{{ __('New here?') }} <a href="{{ route('register') }}">{{ __('Create an account') }}</a> · <a href="{{ route('store.home') }}">{{ __('Back to store') }}</a></div>
     </div>
 </div>
 @endsection

@@ -3,15 +3,20 @@
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HomeSectionController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ModifierGroupController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCsvController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\Store;
@@ -25,6 +30,10 @@ Route::get('/lang/{locale}', LocaleController::class)->name('locale');
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:10,1');
+});
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'show'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:10,1');
 });
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 
@@ -43,6 +52,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff'])->group(fun
     Route::post('products/import', [ProductCsvController::class, 'import'])->name('products.import');
     Route::delete('products/{product}/images/{media}', [ProductController::class, 'destroyImage'])->name('products.images.destroy');
     Route::resource('products', ProductController::class)->except('show');
+
+    // Sales
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('orders/{order}/status', [OrderController::class, 'status'])->name('orders.status');
+    Route::post('orders/{order}/paid', [OrderController::class, 'paid'])->name('orders.paid');
+    Route::get('orders/{order}/prescriptions/{media}', [OrderController::class, 'prescription'])->name('orders.prescription');
+    Route::resource('coupons', CouponController::class)->except('show');
+    Route::resource('shipping', ShippingController::class)->except('show')->parameters(['shipping' => 'shipping']);
+    Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
 
     // Storefront
     Route::post('home-sections/{homeSection}/toggle', [HomeSectionController::class, 'toggle'])->name('home-sections.toggle');
@@ -69,6 +88,19 @@ Route::patch('/cart/{key}', [Store\CartController::class, 'update'])->name('stor
 Route::delete('/cart/{key}', [Store\CartController::class, 'destroy'])->name('store.cart.remove');
 Route::get('/wishlist', [Store\WishlistController::class, 'index'])->name('store.wishlist');
 Route::post('/wishlist/{product}', [Store\WishlistController::class, 'toggle'])->name('store.wishlist.toggle');
+Route::get('/checkout', [Store\CheckoutController::class, 'show'])->name('store.checkout');
+Route::post('/checkout/quote', [Store\CheckoutController::class, 'quote'])->name('store.checkout.quote');
+Route::post('/checkout', [Store\CheckoutController::class, 'place'])->middleware('throttle:20,1')->name('store.checkout.place');
+Route::get('/order/{number}/{token}', [Store\OrderController::class, 'show'])->name('store.order');
+Route::get('/order/{number}/{token}/invoice', [Store\OrderController::class, 'invoice'])->name('store.invoice');
+Route::post('/order/{number}/{token}/pay', [Store\OrderController::class, 'pay'])->middleware('throttle:10,1')->name('store.order.pay');
+Route::get('/order/{number}/{token}/paid', [Store\OrderController::class, 'stripeReturn'])->name('store.stripe.return');
+Route::get('/track', [Store\OrderController::class, 'trackForm'])->name('store.track');
+Route::post('/track', [Store\OrderController::class, 'trackFind'])->middleware('throttle:10,1')->name('store.track.find');
+Route::middleware('auth')->group(function () {
+    Route::get('/account', [Store\AccountController::class, 'index'])->name('store.account');
+    Route::put('/account', [Store\AccountController::class, 'update'])->name('store.account.update');
+});
 Route::get('/sitemap.xml', [Store\SeoController::class, 'sitemap'])->name('store.sitemap');
 Route::get('/robots.txt', [Store\SeoController::class, 'robots']);
 Route::get('/manifest.webmanifest', [Store\SeoController::class, 'manifest'])->name('store.manifest');

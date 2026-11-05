@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\Payments\StripeCheckout;
 use App\Support\BusinessProfile;
 use App\Support\Locales;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class SettingsController extends Controller
@@ -19,6 +21,7 @@ class SettingsController extends Controller
         return view('admin.settings', [
             'modules' => $this->moduleOptions(),
             'locales' => Locales::all(),
+            'hasStripeKey' => (new StripeCheckout)->secret() !== null,
         ]);
     }
 
@@ -41,7 +44,18 @@ class SettingsController extends Controller
             'theme.primary' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'theme.accent' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'theme.mode' => ['required', Rule::in(['dark', 'light', 'auto'])],
+            'payments.bank_instructions' => ['nullable', 'string', 'max:1000'],
+            'payments.stripe_secret' => ['nullable', 'string', 'max:200', 'regex:/^(sk|rk)_(test|live)_[A-Za-z0-9]+$/'],
         ]);
+
+        $bankOn = $request->boolean('payments.bank');
+        $stripeOn = $request->boolean('payments.stripe');
+        if ($bankOn && blank($data['payments']['bank_instructions'] ?? null)) {
+            throw ValidationException::withMessages(['payments.bank_instructions' => __('Add your bank details so customers know where to pay.')]);
+        }
+        if ($stripeOn && blank($data['payments']['stripe_secret'] ?? null) && ! (new StripeCheckout)->secret()) {
+            throw ValidationException::withMessages(['payments.stripe_secret' => __('Enter your Stripe secret key to turn on card payments.')]);
+        }
 
         $data['store']['currency'] = strtoupper($data['store']['currency']);
         $data['store']['tax_rate'] = (float) ($data['store']['tax_rate'] ?? 0);
@@ -59,7 +73,15 @@ class SettingsController extends Controller
             $flat["modules.{$module}"] = $request->boolean("modules.{$module}");
         }
 
-        setting()->setMany($flat);
+        setting()->setMany($flat + [
+            'payments.cod' => $request->boolean('payments.cod'),
+            'payments.bank' => $bankOn,
+            'payments.bank_instructions' => $data['payments']['bank_instructions'] ?? null,
+            'payments.stripe' => $stripeOn,
+        ]);
+        if (filled($data['payments']['stripe_secret'] ?? null)) {
+            StripeCheckout::storeSecret($data['payments']['stripe_secret']);   // blank keeps the saved key
+        }
 
         return redirect()->route('admin.settings.edit')->with('success', __('Settings saved'));
     }
