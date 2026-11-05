@@ -71,6 +71,35 @@
 .sf #couponInput { border-radius: 12px; } .sf #couponBtn { border-radius: 12px; font-weight: 800; }
 @media (max-width: 575.98px) { .mk-progress li:not(:last-child)::after { width: 16px; } .sf .ck-sec { padding: 1rem; } }
 
+/* ---------- shared cards, order / account / track ---------- */
+.mk-box { border: 1px solid var(--border); border-radius: 20px; background: var(--surface); padding: 1.25rem 1.3rem; margin-bottom: 1rem; }
+.mk-box-title { display: flex; align-items: center; gap: .6rem; font-size: 1.02rem; font-weight: 800; margin: 0 0 1rem; } .mk-box-title i { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--surface-2); color: var(--acc-1); font-size: .95rem; }
+.mk-eyebrow { display: block; text-transform: uppercase; letter-spacing: .12em; font-size: .72rem; color: var(--acc-1); font-weight: 800; }
+.mk-page-head h1.figure, .mk-h { font-size: clamp(1.4rem, 3vw, 2rem); margin: 0; }
+.mk-status { display: inline-flex; align-items: center; padding: .25rem .75rem; border-radius: 99px; font-size: .78rem; font-weight: 800; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-2); }
+.mk-status-ok { color: #16a34a; border-color: rgba(22,163,74,.45); background: rgba(22,163,74,.1); } .mk-status-bad { color: #dc2626; border-color: rgba(220,38,38,.45); background: rgba(220,38,38,.08); } .mk-status-now { color: var(--acc-1); border-color: color-mix(in srgb, var(--acc-1) 45%, transparent); background: color-mix(in srgb, var(--acc-1) 10%, transparent); }
+.mk-success { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; padding: 1.4rem 1.5rem; margin: .4rem 0 1.4rem; border-radius: 22px; border: 1px solid rgba(22,163,74,.45); background: linear-gradient(120deg, rgba(22,163,74,.14), rgba(22,163,74,.03)); }
+.mk-success > div { flex: 1 1 280px; } .mk-success h1 { font-size: clamp(1.3rem, 3vw, 1.9rem); margin: .15rem 0 .3rem; } .mk-success p { margin: 0; color: var(--text-2); }
+.mk-success-ic { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: #16a34a; color: #fff; font-size: 1.9rem; flex: none; box-shadow: 0 0 0 8px rgba(22,163,74,.18); }
+.mk-track .mk-success-ic { background: var(--grad); box-shadow: 0 0 0 8px color-mix(in srgb, var(--acc-1) 18%, transparent); margin-bottom: 1rem; }
+.sf .ck-track { margin: .4rem 0 .2rem; } .sf .ck-track::before { height: 4px; top: 14px; } .sf .ck-track li b { font-size: .78rem; font-weight: 700; } .sf .ck-track li.done b { color: var(--text); }
+.sf .ck-track li span { width: 34px; height: 34px; }
+.mk-track { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 460px); gap: 2.5rem; align-items: center; max-width: 1000px; margin: 1.5rem auto 3rem; }
+.mk-track-intro h1 { font-size: clamp(1.5rem, 3.4vw, 2.3rem); margin-bottom: .6rem; } .mk-track-intro p { color: var(--text-2); font-size: 1.02rem; }
+.mk-track-form { padding: 1.5rem; box-shadow: 0 20px 50px -28px rgba(0,0,0,.6); margin: 0; }
+.mk-acct-head { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin: .5rem 0 1.1rem; } .mk-acct-head h1 { font-size: clamp(1.3rem, 3vw, 1.9rem); margin: 0; }
+.mk-avatar.lg { width: 64px; height: 64px; font-size: 1.6rem; box-shadow: 0 0 0 5px color-mix(in srgb, var(--acc-1) 18%, transparent); }
+.mk-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .8rem; margin-bottom: 1.4rem; }
+.mk-stats > div { display: flex; flex-direction: column; gap: .15rem; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); position: relative; }
+.mk-stats i { position: absolute; top: .9rem; inset-inline-end: 1rem; color: var(--acc-1); font-size: 1.3rem; opacity: .8; } .mk-stats b { font-size: 1.4rem; } .mk-stats span { color: var(--text-3); font-size: .82rem; font-weight: 700; }
+.mk-acct { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+.mk-order-card { display: grid; grid-template-columns: 46px 1fr auto auto; gap: .9rem; align-items: center; padding: .9rem 1rem; margin-bottom: .6rem; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); text-decoration: none; transition: .2s var(--ease); }
+.mk-order-card:hover { border-color: var(--acc-1); box-shadow: var(--glow); transform: translateY(-2px); color: var(--text); }
+.mk-order-ic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--surface-2); color: var(--acc-1); font-size: 1.2rem; } .mk-go { color: var(--text-3); }
+.mk-pw { margin-top: 1rem; border: 1px dashed var(--border-strong, var(--border)); border-radius: 14px; padding: 0 1rem; } .mk-pw summary { display: flex; align-items: center; gap: .5rem; padding: .8rem 0; cursor: pointer; font-weight: 800; font-size: .9rem; list-style: none; } .mk-pw summary::-webkit-details-marker { display: none; } .mk-pw summary i:last-child { margin-inline-start: auto; transition: .2s; } .mk-pw[open] summary i:last-child { transform: rotate(180deg); } .mk-pw .row { padding-bottom: 1rem; }
+@media (max-width: 991.98px) { .mk-track, .mk-acct { grid-template-columns: 1fr; gap: 1.2rem; } }
+@media (max-width: 575.98px) { .mk-order-card { grid-template-columns: 40px 1fr auto; } .mk-order-card .mk-go { display: none; } .mk-success-ic { width: 52px; height: 52px; font-size: 1.5rem; } }
+
 /* ---------- cart ---------- */
 .mk-cart { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 1.5rem; align-items: start; }
 .mk-cart-lines { display: grid; gap: .8rem; }

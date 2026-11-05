@@ -1288,5 +1288,13 @@
     "Checkout steps": "Checkout ke marahil",
     "Details & payment": "Tafseelat aur adaigi",
     "Done": "Mukammal",
-    "Edit cart": "Cart mein tarmeem"
+    "Edit cart": "Cart mein tarmeem",
+    "Change email or password": "Email ya password tabdeel karein",
+    "Hello, :name": "Assalam-o-alaikum, :name",
+    "In progress": "Jari",
+    "Only you can see your order — we check your email.": "Aap ka order sirf aap dekh sakte hain — hum aap ki email jaanchte hain.",
+    "Or open all your orders in My account": "Ya apne tamam orders “Mera account” mein kholein",
+    "See every step from packing to delivery.": "Packing se delivery tak har marhala dekhein.",
+    "The order number is in your confirmation email.": "Order number aap ki tasdeeqi email mein hai.",
+    "Total spent": "Kul kharch"
 }

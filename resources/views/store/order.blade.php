@@ -8,18 +8,25 @@
     $cancelled = in_array($order->status, ['cancelled', 'refunded'], true);
     $idx = $order->timelineIndex();
 @endphp
-<div class="sf-container py-4" style="max-width:980px">
+<div class="sf-container py-3" style="max-width:1040px">
+    <nav class="sf-crumbs mk-crumbs" aria-label="Breadcrumb"><a href="{{ route('store.home') }}">{{ __('Home') }}</a><span>›</span>@auth<a href="{{ route('store.account') }}">{{ __('My account') }}</a><span>›</span>@else<a href="{{ route('store.track') }}">{{ __('Track an order') }}</a><span>›</span>@endauth<span class="figure">{{ $order->number }}</span></nav>
+
     @if (session('placed'))
-        <div class="sf-banner mb-4" style="min-height:0"><div>
-            <span class="sf-eyebrow">{{ __('Order placed') }}</span>
-            <h1 class="h2 mt-2">{{ __('Thank you, :name!', ['name' => explode(' ', $order->name)[0]]) }}</h1>
-            <p class="text-muted mb-0">{{ __('Your order :number is in. We sent a confirmation to :email.', ['number' => $order->number, 'email' => $order->email]) }}</p>
-        </div></div>
+        <div class="mk-success">
+            <span class="mk-success-ic"><i class="bi bi-check-lg"></i></span>
+            <div>
+                <b class="mk-eyebrow">{{ __('Order placed') }}</b>
+                <h1>{{ __('Thank you, :name!', ['name' => explode(' ', $order->name)[0]]) }}</h1>
+                <p>{{ __('Your order :number is in. We sent a confirmation to :email.', ['number' => $order->number, 'email' => $order->email]) }}</p>
+            </div>
+            <a href="{{ route('store.shop') }}" class="btn btn-primary">{{ __('Continue shopping') }}</a>
+        </div>
     @endif
 
-    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-        <div><div class="sf-eyebrow">{{ __('Order') }}</div><h1 class="h2 mb-0 figure">{{ $order->number }}</h1><div class="text-muted small">{{ local_time($order->placed_at, 'd M Y, H:i') }}</div></div>
-        <div class="d-flex gap-2 flex-wrap">
+    <div class="mk-page-head">
+        <div><div class="mk-eyebrow">{{ __('Order') }}</div>@if (! session('placed'))<h1 class="figure">{{ $order->number }}</h1>@else<h2 class="figure mk-h">{{ $order->number }}</h2>@endif<div class="text-muted small">{{ local_time($order->placed_at, 'd M Y, H:i') }}</div></div>
+        <div class="d-flex gap-2 flex-wrap align-items-center">
+            <span class="mk-status mk-status-{{ $cancelled ? 'bad' : ($order->status === 'completed' ? 'ok' : 'now') }}">{{ $order->statusLabel() }}</span>
             <form method="POST" action="{{ route('store.order.reorder', [$order->number, $order->public_token]) }}">@csrf<button class="sf-btn-ghost"><i class="bi bi-arrow-repeat"></i> {{ __('Order again') }}</button></form>
             <a href="{{ route('store.invoice', [$order->number, $order->public_token]) }}" target="_blank" class="sf-btn-ghost"><i class="bi bi-printer"></i> {{ __('Invoice') }}</a></div>
     </div>
@@ -42,7 +49,7 @@
                 @endif</div></div>
     @endif
 
-    <div class="sf-summary mb-4">
+    <div class="mk-box mb-4">
         @if ($cancelled)
             <div class="d-flex align-items-center gap-3"><i class="bi bi-x-octagon-fill fs-2 text-danger"></i><div><b>{{ $order->statusLabel() }}</b><div class="text-muted small">{{ __('This order is no longer active.') }}</div></div></div>
         @else
@@ -56,8 +63,8 @@
 
     <div class="row g-4">
         <div class="col-lg-7">
-            <div class="sf-summary">
-                <h2 class="h5 mb-3">{{ __('Items') }}</h2>
+            <div class="mk-box">
+                <h2 class="mk-box-title"><i class="bi bi-bag-check"></i> {{ __('Items') }}</h2>
                 @php($reviewed = $order->status === 'completed' && \App\Support\BusinessProfile::hasModule('reviews') ? \App\Models\Review::where('order_id', $order->id)->pluck('rating', 'product_id') : collect())
                 @foreach ($order->items as $i)
                     <div class="py-2 border-bottom" style="border-color:var(--border) !important">
@@ -93,16 +100,16 @@
             </div>
         </div>
         <div class="col-lg-5">
-            <div class="sf-summary mb-3">
-                <h2 class="h6 text-uppercase text-muted">{{ $order->is_pickup ? __('Pickup') : __('Delivery') }}</h2>
+            <div class="mk-box mb-3">
+                <h2 class="mk-box-title"><i class="bi bi-{{ $order->is_pickup ? 'shop' : 'truck' }}"></i> {{ $order->is_pickup ? __('Pickup') : __('Delivery') }}</h2>
                 <div class="fw-semibold">{{ $order->name }}</div>
                 <div class="text-muted">{{ $order->phone }}<br>{{ $order->email }}</div>
                 @unless ($order->is_pickup)<div class="mt-2">{{ $order->address_line }}@if ($order->area), {{ $order->area }}@endif<br>{{ $order->city }} {{ $order->postal_code }}</div>@endunless
                 <div class="mt-2 small text-muted">{{ $order->shipping_method }}</div>
                 @if ($order->notes)<div class="mt-2 small"><b>{{ __('Notes') }}:</b> {{ $order->notes }}</div>@endif
             </div>
-            <div class="sf-summary">
-                <h2 class="h6 text-uppercase text-muted">{{ __('Payment') }}</h2>
+            <div class="mk-box">
+                <h2 class="mk-box-title"><i class="bi bi-credit-card"></i> {{ __('Payment') }}</h2>
                 <div class="d-flex justify-content-between align-items-center"><b>{{ ['cod' => __('Cash on delivery'), 'bank' => __('Bank transfer'), 'stripe' => __('Card (Stripe)')][$order->payment_method] ?? $order->payment_method }}</b>
                     <span class="badge rounded-pill text-bg-{{ ['paid' => 'success', 'unpaid' => 'warning', 'failed' => 'danger', 'refunded' => 'secondary'][$order->payment_status] }}">{{ __(ucfirst($order->payment_status)) }}</span></div>
                 @if ($bank && $order->payment_status === 'unpaid')<div class="mt-3 small" style="white-space:pre-line;border-top:1px dashed var(--border);padding-top:.75rem">{{ $bank }}<div class="mt-2 text-muted">{{ __('Use :number as the payment reference.', ['number' => $order->number]) }}</div></div>@endif
