@@ -15,7 +15,10 @@ class MenuItem extends Model
 
     use HasTranslations, SoftDeletes;
 
-    public const LOCATIONS = ['header', 'footer'];
+    public const LOCATIONS = ['header', 'topbar', 'footer_shop', 'footer_help', 'footer_company', 'footer'];
+
+    /** Friendly names; each location replaces the built-in links of that spot as soon as it holds one active link. */
+    public const LABELS = ['header' => 'Menu bar', 'topbar' => 'Top bar (right side)', 'footer_shop' => 'Footer column 1', 'footer_help' => 'Footer column 2', 'footer_company' => 'Footer column 3', 'footer' => 'Footer legal links'];
 
     protected $fillable = ['location', 'label', 'type', 'url', 'page_id', 'category_id', 'sort_order', 'is_active'];
 

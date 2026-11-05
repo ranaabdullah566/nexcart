@@ -41,17 +41,30 @@
     $recommended = $tree->flatMap(fn ($c) => $c->children->isNotEmpty() ? $c->children->take(2) : collect([$c]))->take(6);
     $ann = announcement();
     $loc = app()->getLocale();
+    $topLinks = \App\Models\MenuItem::resolved('topbar');
+    $colShop = \App\Models\MenuItem::resolved('footer_shop');
+    $colHelp = \App\Models\MenuItem::resolved('footer_help');
+    $colCompany = \App\Models\MenuItem::resolved('footer_company');
+    $cookieOn = sf('cookie.enabled');
 @endphp
+@if (sf('topbar.enabled'))
 <div class="mk-topbar" id="sfAnnounce"><div class="sf-container">
     @if ($ann)@if ($ann['url'])<a href="{{ $ann['url'] }}">{{ $ann['text'] }}</a>@else<span>{{ $ann['text'] }}</span>@endif
+    @elseif (filled(sft('topbar.text')))<span>{{ sft('topbar.text') }}</span>
     @elseif (setting('store.tagline'))<span dir="auto">{{ setting('store.tagline') }}</span>@else<span>{{ __('Welcome to :store', ['store' => $storeName]) }}</span>@endif
-    <span class="mk-top-links d-none d-md-flex">
-        <a href="{{ route('store.track') }}">{{ __('Track an order') }}</a>
-        @if (setting('store.phone'))<a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('store.phone')) }}" dir="ltr"><i class="bi bi-telephone"></i> {{ setting('store.phone') }}</a>@endif
-    </span>
+    @if (sf('topbar.show_links'))
+        <span class="mk-top-links d-none d-md-flex">
+            @forelse ($topLinks as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
+            @empty
+                <a href="{{ route('store.track') }}">{{ sft('header.track_label') }}</a>
+                @if (setting('store.phone'))<a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('store.phone')) }}" dir="ltr"><i class="bi bi-telephone"></i> {{ setting('store.phone') }}</a>@endif
+            @endforelse
+        </span>
+    @endif
 </div></div>
+@endif
 
-<header class="mk-header sf-header">
+<header class="mk-header sf-header @unless (sf('header.sticky')) mk-static @endunless">
     <div class="sf-container mk-header-row">
         <button class="mk-menu-btn" type="button" data-mobile-open aria-controls="mkDrawer" aria-expanded="false" aria-label="{{ __('Open menu') }}"><i class="bi bi-list"></i></button>
         <a href="{{ route('store.home') }}" class="sf-brand mk-brand" aria-label="{{ $storeName }}">
@@ -60,10 +73,11 @@
         </a>
         <form class="mk-search sf-search" id="mkSearch" action="{{ route('store.shop') }}" role="search" autocomplete="off">
             <i class="bi bi-search"></i>
-            <input id="sfSearch" type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('Search products, categories…') }}" aria-label="{{ __('Search products…') }}">
-            <button type="submit" aria-label="{{ __('Search') }}">{{ __('Search') }}</button>
+            <input id="sfSearch" type="search" name="q" value="{{ request('q') }}" placeholder="{{ sft('header.search_placeholder') }}" aria-label="{{ __('Search products…') }}">
+            <button type="submit" aria-label="{{ __('Search') }}">{{ sft('header.search_button') }}</button>
             <div class="sf-suggest" id="sfSuggest" role="listbox"></div>
         </form>
+        @if (sf('header.show_lang'))
         <div class="dropdown mk-lang">
             <button class="mk-ic" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ __('Language') }}"><i class="bi bi-globe2"></i><span class="d-none d-xl-inline">{{ strtoupper(explode('_', $loc)[0]) }}@if (str_contains($loc, '_')) · {{ str_replace('_', '-', explode('_', $loc)[1]) }}@endif</span></button>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -72,13 +86,14 @@
                 @endforeach
             </ul>
         </div>
+        @endif
         <div class="mk-icons">
-            <a class="mk-ic d-none d-md-flex" href="{{ route('store.shop') }}"><i class="bi bi-shop"></i><span>{{ __('Shop') }}</span></a>
-            <a class="mk-ic d-none d-md-flex" href="{{ route('store.wishlist') }}" aria-label="{{ __('Wishlist') }}"><i class="bi bi-heart"></i><span>{{ __('Saved') }}</span><b class="mk-count" data-wish-count @if (! $wishCount) hidden @endif>{{ $wishCount }}</b></a>
-            <a class="mk-ic d-none d-md-flex" href="{{ route('store.compare') }}" aria-label="{{ __('Compare') }}"><i class="bi bi-arrow-left-right"></i><span>{{ __('Compare') }}</span><b class="mk-count mk-count-blue" data-compare-count @if (! $compareCount) hidden @endif>{{ $compareCount }}</b></a>
+            @if (sf('header.show_shop'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.shop') }}"><i class="bi bi-shop"></i><span>{{ __('Shop') }}</span></a>@endif
+            @if (sf('header.show_saved'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.wishlist') }}" aria-label="{{ __('Wishlist') }}"><i class="bi bi-heart"></i><span>{{ __('Saved') }}</span><b class="mk-count" data-wish-count @if (! $wishCount) hidden @endif>{{ $wishCount }}</b></a>@endif
+            @if (sf('header.show_compare'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.compare') }}" aria-label="{{ __('Compare') }}"><i class="bi bi-arrow-left-right"></i><span>{{ __('Compare') }}</span><b class="mk-count mk-count-blue" data-compare-count @if (! $compareCount) hidden @endif>{{ $compareCount }}</b></a>@endif
             <a class="mk-ic" href="{{ route('store.cart') }}" data-open-cart aria-label="{{ __('Cart') }}"><i class="bi bi-bag"></i><span class="d-none d-md-inline">{{ __('Basket') }}</span><b class="mk-count" data-cart-count @if (! $cartData['count']) hidden @endif>{{ $cartData['count'] }}</b></a>
             <button class="mk-ic mk-search-toggle" type="button" aria-controls="mkSearch" aria-expanded="false" aria-label="{{ __('Search') }}"><i class="bi bi-search"></i></button>
-            <button type="button" class="mk-ic" data-theme-toggle aria-label="{{ __('Toggle light/dark mode') }}"><i class="bi bi-sun-fill"></i></button>
+            @if (sf('header.show_theme'))<button type="button" class="mk-ic" data-theme-toggle aria-label="{{ __('Toggle light/dark mode') }}"><i class="bi bi-sun-fill"></i></button>@endif
             @auth
                 <div class="dropdown mk-acct">
                     <button class="mk-ic" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle"></i><span class="d-none d-md-inline">{{ \Illuminate\Support\Str::limit(auth()->user()->name, 12) }}</span></button>
@@ -97,16 +112,17 @@
 
 <nav class="mk-cats" aria-label="{{ __('Store navigation') }}">
     <div class="sf-container mk-cats-row">
+        @if (sf('header.show_mega'))
         <div class="mk-mega" data-mega>
-            <button class="mk-mega-btn" type="button" aria-expanded="false" aria-controls="mkMega"><i class="bi bi-list"></i> {{ __('All categories') }} <i class="bi bi-chevron-down mk-caret"></i></button>
+            <button class="mk-mega-btn" type="button" aria-expanded="false" aria-controls="mkMega"><i class="bi bi-list"></i> {{ sft('header.mega_label') }} <i class="bi bi-chevron-down mk-caret"></i></button>
             <div class="mk-mega-panel" id="mkMega">
                 @if ($tree->isEmpty())
                     <div class="p-4 text-muted">{{ __('No categories yet.') }}</div>
                 @else
-                    <div class="mk-mega-rec">
-                        <div class="mk-mega-title"><div><b>{{ __('Popular right now') }}</b><small>{{ __('A quick way into what shoppers look for most.') }}</small></div><a href="{{ route('store.shop') }}">{{ __('Browse everything') }} →</a></div>
+                    @if (sf('header.mega_recommended'))<div class="mk-mega-rec">
+                        <div class="mk-mega-title"><div><b>{{ sft('header.mega_rec_title') }}</b><small>{{ sft('header.mega_rec_sub') }}</small></div><a href="{{ route('store.shop') }}">{{ __('Browse everything') }} →</a></div>
                         <div class="mk-rec-grid">@foreach ($recommended as $c)<a href="{{ route('store.category', $c->slug) }}"><span class="mk-mark"><i class="bi bi-grid-1x2"></i></span><b>{{ $c->trans('name') }}</b></a>@endforeach</div>
-                    </div>
+                    </div>@endif
                     <div class="mk-mega-browser">
                         <div class="mk-mega-main" role="tablist">
                             @foreach ($tree as $c)<button type="button" role="tab" data-mega-target="mg-{{ $c->id }}" class="{{ $loop->first ? 'is-active' : '' }}"><span class="mk-mark sm"><i class="bi bi-grid-1x2"></i></span><b>{{ $c->trans('name') }}</b><i class="bi bi-chevron-right"></i></button>@endforeach
@@ -127,10 +143,11 @@
             </div>
         </div>
         <span class="mk-cats-sep" aria-hidden="true"></span>
-        <a href="{{ route('store.shop', ['sort' => 'discount']) }}" class="hot"><i class="bi bi-lightning-charge-fill"></i> {{ __('Deals') }}</a>
-        <a href="{{ route('store.shop') }}" @class(['on' => request()->routeIs('store.shop')])>{{ __('Shop') }}</a>
+        @endif
+        @if (sf('header.show_deals'))<a href="{{ route('store.shop', ['sort' => 'discount']) }}" class="hot"><i class="bi bi-lightning-charge-fill"></i> {{ sft('header.deals_label') }}</a>@endif
+        @if (sf('header.show_shop_link'))<a href="{{ route('store.shop') }}" @class(['on' => request()->routeIs('store.shop')])>{{ __('Shop') }}</a>@endif
         @foreach ($headerMenu as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach
-        <a href="{{ route('store.track') }}" class="mk-push">{{ __('Track an order') }}</a>
+        @if (sf('header.show_track'))<a href="{{ route('store.track') }}" class="mk-push">{{ sft('header.track_label') }}</a>@endif
     </div>
 </nav>
 
@@ -145,10 +162,10 @@
                 <nav class="mk-drawer-links">
                     <a href="{{ route('store.home') }}"><i class="bi bi-house-door"></i>{{ __('Home') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop') }}"><i class="bi bi-shop"></i>{{ __('Shop') }}<i class="bi bi-chevron-right"></i></a>
-                    <a href="{{ route('store.shop', ['sort' => 'discount']) }}"><i class="bi bi-lightning-charge"></i>{{ __('Deals') }}<i class="bi bi-chevron-right"></i></a>
+                    <a href="{{ route('store.shop', ['sort' => 'discount']) }}"><i class="bi bi-lightning-charge"></i>{{ sft('header.deals_label') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.wishlist') }}"><i class="bi bi-heart"></i>{{ __('Wishlist') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.compare') }}"><i class="bi bi-arrow-left-right"></i>{{ __('Compare') }}<i class="bi bi-chevron-right"></i></a>
-                    <a href="{{ route('store.track') }}"><i class="bi bi-truck"></i>{{ __('Track an order') }}<i class="bi bi-chevron-right"></i></a>
+                    <a href="{{ route('store.track') }}"><i class="bi bi-truck"></i>{{ sft('header.track_label') }}<i class="bi bi-chevron-right"></i></a>
                     @foreach ($headerMenu as $m)<a href="{{ $m['href'] }}"><i class="bi bi-link-45deg"></i>{{ $m['label'] }}<i class="bi bi-chevron-right"></i></a>@endforeach
                 </nav>
                 <div class="mk-drawer-lang"><small>{{ __('Language') }}</small><div>@foreach (\App\Support\Locales::enabled() as $code => $meta)<a href="{{ route('locale', $code) }}" class="{{ $loc === $code ? 'on' : '' }}">{{ $meta['label'] }}</a>@endforeach</div></div>
@@ -172,31 +189,40 @@
         <div class="mk-fgrid">
             <div class="mk-fbrand">
                 <a href="{{ route('store.home') }}" class="sf-brand mb-3"><span class="sf-brand-logo"><img src="{{ brand_logo() }}" alt=""></span><span class="sf-brand-name">{{ $storeName }}</span></a>
-                @if (setting('store.tagline'))<p dir="auto">{{ setting('store.tagline') }}</p>@endif
-                @if ($socials)<div class="mk-socials" aria-label="{{ __('Follow us') }}">@foreach ($socials as $so)<a href="{{ $so['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $so['label'] }}"><i class="bi bi-{{ $so['icon'] }}"></i></a>@endforeach</div>@endif
+                @php $about = sft('footer.about') ?: setting('store.tagline'); @endphp
+                @if ($about)<p dir="auto">{{ $about }}</p>@endif
+                @if ($socials && sf('footer.show_socials'))<div class="mk-socials" aria-label="{{ __('Follow us') }}">@foreach ($socials as $so)<a href="{{ $so['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $so['label'] }}"><i class="bi bi-{{ $so['icon'] }}"></i></a>@endforeach</div>@endif
             </div>
-            <div class="mk-fcol"><h6>{{ __('Shop') }}</h6>
-                <a href="{{ route('store.shop') }}">{{ __('All products') }}</a>
-                <a href="{{ route('store.shop', ['sort' => 'discount']) }}">{{ __('Deals') }}</a>
-                @foreach ($tree->take(4) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach
+            <div class="mk-fcol"><h6>{{ sft('footer.shop_title') }}</h6>
+                @forelse ($colShop as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
+                @empty
+                    <a href="{{ route('store.shop') }}">{{ __('All products') }}</a>
+                    <a href="{{ route('store.shop', ['sort' => 'discount']) }}">{{ sft('header.deals_label') }}</a>
+                    @foreach ($tree->take(4) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach
+                @endforelse
             </div>
-            <div class="mk-fcol"><h6>{{ __('Help') }}</h6>
-                <a href="{{ route('store.track') }}">{{ __('Track an order') }}</a>
-                <a href="{{ route('store.wishlist') }}">{{ __('Wishlist') }}</a>
-                <a href="{{ route('store.compare') }}">{{ __('Compare') }}</a>
-                <a href="{{ auth()->check() ? route('store.account') : route('login') }}">{{ __('My account') }}</a>
+            <div class="mk-fcol"><h6>{{ sft('footer.help_title') }}</h6>
+                @forelse ($colHelp as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
+                @empty
+                    <a href="{{ route('store.track') }}">{{ sft('header.track_label') }}</a>
+                    <a href="{{ route('store.wishlist') }}">{{ __('Wishlist') }}</a>
+                    <a href="{{ route('store.compare') }}">{{ __('Compare') }}</a>
+                    <a href="{{ auth()->check() ? route('store.account') : route('login') }}">{{ __('My account') }}</a>
+                @endforelse
             </div>
-            <div class="mk-fcol"><h6>{{ __('Company') }}</h6>
-                @forelse ($footerMenu as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@empty<a href="{{ route('store.home') }}">{{ $storeName }}</a>@endforelse
-                @if (setting('store.email'))<a href="mailto:{{ setting('store.email') }}" dir="ltr"><i class="bi bi-envelope me-1"></i>{{ setting('store.email') }}</a>@endif
-                @if (setting('store.phone'))<a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('store.phone')) }}" dir="ltr"><i class="bi bi-telephone me-1"></i>{{ setting('store.phone') }}</a>@endif
+            <div class="mk-fcol"><h6>{{ sft('footer.company_title') }}</h6>
+                @forelse ($colCompany as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@empty<a href="{{ route('store.home') }}">{{ $storeName }}</a>@endforelse
+                @if (sf('footer.show_contact'))
+                    @if (setting('store.email'))<a href="mailto:{{ setting('store.email') }}" dir="ltr"><i class="bi bi-envelope me-1"></i>{{ setting('store.email') }}</a>@endif
+                    @if (setting('store.phone'))<a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('store.phone')) }}" dir="ltr"><i class="bi bi-telephone me-1"></i>{{ setting('store.phone') }}</a>@endif
+                @endif
             </div>
         </div>
         <div class="mk-fbot">
-            <span>© {{ date('Y') }} {{ $storeName }}. {{ __('All rights reserved.') }}</span>
+            <span>{{ sft('footer.copyright') ?: '© '.date('Y').' '.$storeName.'. '.__('All rights reserved.') }}</span>
             <nav class="mk-legal" aria-label="{{ __('Legal') }}">
-                @foreach ($footerMenu->take(4) as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach
-                <button type="button" data-cookie-settings>{{ __('Cookie settings') }}</button>
+                @if (sf('footer.show_legal'))@foreach ($footerMenu->take(6) as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach @endif
+                @if ($cookieOn)<button type="button" data-cookie-settings>{{ __('Cookie settings') }}</button>@endif
                 @if (\App\Support\License::showBranding())<span>{{ __('Powered by NexCart') }}</span>@endif
             </nav>
         </div>
@@ -204,14 +230,16 @@
 </footer>
 
 {{-- cookie choices --}}
+@if ($cookieOn)
 <section class="mk-cookie" id="mkCookie" hidden aria-label="{{ __('Cookie choices') }}">
     <div class="mk-cookie-mark" aria-hidden="true"><i class="bi bi-shield-check"></i></div>
-    <div><b>{{ __('Your privacy, your choice') }}</b><p>{{ __('We use essential cookies to keep the store secure and working. With your permission, optional cookies help us improve it.') }}</p></div>
-    <div class="mk-cookie-actions"><button type="button" class="sf-btn-ghost" data-cookie-choice="essential">{{ __('Essential only') }}</button><button type="button" class="btn btn-primary" data-cookie-choice="all">{{ __('Accept all') }}</button></div>
+    <div><b>{{ sft('cookie.title') }}</b><p>{{ sft('cookie.body') }}</p></div>
+    <div class="mk-cookie-actions"><button type="button" class="sf-btn-ghost" data-cookie-choice="essential">{{ sft('cookie.essential_label') }}</button><button type="button" class="btn btn-primary" data-cookie-choice="all">{{ sft('cookie.accept_label') }}</button></div>
 </section>
+@endif
 
-@if (isset($socials['whatsapp']))<a class="mk-wa" href="{{ $socials['whatsapp']['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>@endif
-<button class="mk-top" id="mkTop" type="button" aria-label="{{ __('Back to top') }}" hidden><i class="bi bi-arrow-up"></i></button>
+@if (isset($socials['whatsapp']) && sf('float.whatsapp'))<a class="mk-wa" href="{{ $socials['whatsapp']['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>@endif
+@if (sf('float.top'))<button class="mk-top" id="mkTop" type="button" aria-label="{{ __('Back to top') }}" hidden><i class="bi bi-arrow-up"></i></button>@endif
 
 {{-- mobile bottom bar --}}
 <nav class="sf-bottom mk-bottom" aria-label="Quick">

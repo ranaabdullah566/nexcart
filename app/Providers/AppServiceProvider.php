@@ -22,6 +22,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // owner-edited interface words win over the built-in translations (one JSON per language, loaded last)
+        $loader = $this->app['translator']->getLoader();
+        if (method_exists($loader, 'addJsonPath')) {
+            $loader->addJsonPath(\App\Support\UiText::dir());
+        }
+
         // Store Urdu text as real characters (not \u0627…) so JSON columns stay readable and searchable with LIKE.
         // server logs: owner only, no exceptions (not even in the local environment)
         LogViewer::auth(fn ($request) => (bool) $request->user()?->can('system.manage'));

@@ -44,6 +44,8 @@
         ],
         'Storefront' => [
             ['admin.home-sections.index', 'admin.home-sections.*', 'layout-text-window-reverse', 'Home page', 'storefront.manage', null],
+            ['admin.storefront.edit', 'admin.storefront.*', 'sliders', 'Storefront options', 'storefront.manage', null],
+            ['admin.texts.index', 'admin.texts.*', 'fonts', 'Interface text', 'storefront.manage', null],
             ['admin.theme.edit', 'admin.theme.*', 'palette-fill', 'Theme', 'storefront.manage', null],
             ['admin.pages.index', 'admin.pages.*', 'file-earmark-text-fill', 'Pages', 'storefront.manage', null],
             ['admin.menu-items.index', 'admin.menu-items.*', 'list-nested', 'Menus', 'storefront.manage', null],

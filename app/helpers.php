@@ -79,3 +79,19 @@ if (! function_exists('csp_nonce')) {
         return app()->bound('csp.nonce') ? app('csp.nonce') : tap(base64_encode(random_bytes(16)), fn ($n) => app()->instance('csp.nonce', $n));
     }
 }
+
+if (! function_exists('sf')) {
+    /** Storefront option set in Admin → Storefront (bool / int / select values). */
+    function sf(string $key): mixed
+    {
+        return \App\Support\Sf::get($key);
+    }
+}
+
+if (! function_exists('sft')) {
+    /** Storefront text in the visitor's language. */
+    function sft(string $key): string
+    {
+        return \App\Support\Sf::text($key);
+    }
+}

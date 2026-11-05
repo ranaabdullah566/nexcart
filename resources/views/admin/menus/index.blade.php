@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 @section('title', __('Menus'))
 @section('content')
-<x-page-header :title="__('Menus')" :eyebrow="__('Storefront')" :sub="__('Extra links in the header and footer. Home and Shop are always there.')" />
+<x-page-header :title="__('Menus')" :eyebrow="__('Storefront')" :sub="__('Links for the menu bar, top bar and footer columns. A spot with no links shows its built-in ones.')" />
 <div class="row g-3">
-@foreach (['header' => __('Header'), 'footer' => __('Footer')] as $loc => $label)
+@foreach (\App\Models\MenuItem::LABELS as $loc => $label)
     <div class="col-lg-6"><div class="card h-100"><div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="mb-0">{{ $label }}</h5><a href="{{ route('admin.menu-items.create', ['location' => $loc]) }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>{{ __('Add link') }}</a></div>
+        <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="mb-0">{{ __($label) }}</h5><a href="{{ route('admin.menu-items.create', ['location' => $loc]) }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>{{ __('Add link') }}</a></div>
         @forelse ($items[$loc] ?? [] as $m)
             <div class="d-flex align-items-center gap-2 py-2 border-bottom" style="border-color:var(--border) !important;{{ $m->is_active ? '' : 'opacity:.55' }}">
                 <div class="flex-grow-1 min-w-0"><div class="fw-semibold text-truncate">{{ $m->label }}</div><div class="small text-muted text-truncate">{{ $m->href() ?? __('Link is not available') }}</div></div>
