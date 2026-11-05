@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->alias(['staff' => EnsureStaff::class, 'staff.session' => SecureStaffSession::class]);
+        $middleware->alias(['staff' => EnsureStaff::class, 'staff.session' => SecureStaffSession::class, 'honeypot' => \App\Http\Middleware\Honeypot::class]);
         $middleware->redirectUsersTo('/admin');
         $middleware->prepend(ProbeGuard::class);
         $middleware->web(append: [NotifyFlash::class, SetLocale::class, EnsureInstalled::class, SecurityHeaders::class]);

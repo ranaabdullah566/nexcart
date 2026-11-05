@@ -71,7 +71,7 @@
                                 <div class="small mt-1"><span class="sf-stars">@include('store._stars', ['value' => $reviewed[$i->product_id]])</span> <span class="text-muted">{{ __('Thanks for your review!') }}</span></div>
                             @else
                                 <details class="mt-1"><summary class="small" style="cursor:pointer;color:var(--acc-1)"><i class="bi bi-star me-1"></i>{{ __('Rate this product') }}</summary>
-                                    <form method="POST" action="{{ route('store.order.review', [$order->number, $order->public_token, $i->id]) }}" class="mt-2 d-grid gap-2" style="max-width:420px">@csrf
+                                    <form method="POST" action="{{ route('store.order.review', [$order->number, $order->public_token, $i->id]) }}" class="mt-2 d-grid gap-2" style="max-width:420px">@csrf<x-honeypot />
                                         <div class="sf-pills" role="radiogroup" aria-label="{{ __('Rating') }}">@foreach ([5, 4, 3, 2, 1] as $n)<label class="sf-pill"><input type="radio" name="rating" value="{{ $n }}" required><span>{{ $n }} ★</span></label>@endforeach</div>
                                         <input name="name" value="{{ explode(' ', $order->name)[0] }}" maxlength="80" required class="form-control form-control-sm" placeholder="{{ __('Your name') }}">
                                         <input name="title" maxlength="120" class="form-control form-control-sm" placeholder="{{ __('Title (optional)') }}">

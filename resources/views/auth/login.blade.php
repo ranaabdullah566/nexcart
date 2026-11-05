@@ -23,6 +23,7 @@
                 <label class="form-label fw-medium" for="password">{{ __('Password') }}</label>
                 <input id="password" type="password" name="password" required autocomplete="current-password" class="form-control">
             </div>
+            <x-honeypot />
             <x-captcha />
             <div class="form-check mb-4">
                 <input class="form-check-input" type="checkbox" name="remember" id="remember" value="1">

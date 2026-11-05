@@ -51,13 +51,13 @@ Route::get('/lang/{locale}', LocaleController::class)->name('locale');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
-    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:10,1');
+    Route::post('/login', [LoginController::class, 'store'])->middleware(['throttle:10,1', 'honeypot']);
 });
 Route::middleware('guest')->group(function () {
     Route::get('/auth/google', [GoogleController::class, 'redirect'])->middleware('throttle:20,1')->name('auth.google');
     Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->middleware('throttle:20,1');
     Route::get('/register', [RegisterController::class, 'show'])->name('register');
-    Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:10,1');
+    Route::post('/register', [RegisterController::class, 'store'])->middleware(['throttle:10,1', 'honeypot']);
 });
 Route::middleware('guest')->group(function () {
     Route::get('/login/two-factor', [LoginController::class, 'challenge'])->name('login.2fa');
@@ -177,7 +177,7 @@ Route::get('/wishlist', [Store\WishlistController::class, 'index'])->name('store
 Route::post('/wishlist/{product}', [Store\WishlistController::class, 'toggle'])->middleware('throttle:60,1')->name('store.wishlist.toggle');
 Route::get('/checkout', [Store\CheckoutController::class, 'show'])->name('store.checkout');
 Route::post('/checkout/quote', [Store\CheckoutController::class, 'quote'])->middleware('throttle:60,1')->name('store.checkout.quote');
-Route::post('/checkout', [Store\CheckoutController::class, 'place'])->middleware('throttle:20,1')->name('store.checkout.place');
+Route::post('/checkout', [Store\CheckoutController::class, 'place'])->middleware(['throttle:20,1', 'honeypot'])->name('store.checkout.place');
 Route::post('/checkout/capture', [Store\CheckoutController::class, 'capture'])->middleware('throttle:30,1')->name('store.checkout.capture');
 Route::get('/cart/recover/{token}', [Store\CheckoutController::class, 'recover'])->name('store.cart.recover');
 Route::get('/cart/recover/{token}/stop', [Store\CheckoutController::class, 'stopReminders'])->name('store.cart.recover.stop');
@@ -188,13 +188,13 @@ Route::post('/order/{number}/{token}/reorder', [Store\OrderController::class, 'r
 Route::post('/order/{number}/{token}/prescription', [Store\OrderController::class, 'prescription'])->middleware('throttle:10,1')->name('store.order.prescription');
 Route::get('/order/{number}/{token}/paid', [Store\OrderController::class, 'stripeReturn'])->name('store.stripe.return');
 Route::get('/track', [Store\OrderController::class, 'trackForm'])->name('store.track');
-Route::post('/track', [Store\OrderController::class, 'trackFind'])->middleware('throttle:10,1')->name('store.track.find');
+Route::post('/track', [Store\OrderController::class, 'trackFind'])->middleware(['throttle:10,1', 'honeypot'])->name('store.track.find');
 Route::middleware('auth')->group(function () {
     Route::get('/account', [Store\AccountController::class, 'index'])->name('store.account');
     Route::put('/account', [Store\AccountController::class, 'update'])->name('store.account.update');
 });
 Route::get('/page/{slug}', [Store\PageController::class, 'show'])->name('store.page');
-Route::post('/order/{number}/{token}/review/{item}', [Store\ReviewController::class, 'store'])->middleware('throttle:10,1')->name('store.order.review');
+Route::post('/order/{number}/{token}/review/{item}', [Store\ReviewController::class, 'store'])->middleware(['throttle:10,1', 'honeypot'])->name('store.order.review');
 Route::get('/sitemap.xml', [Store\SeoController::class, 'sitemap'])->name('store.sitemap');
 Route::get('/robots.txt', [Store\SeoController::class, 'robots']);
 Route::get('/manifest.webmanifest', [Store\SeoController::class, 'manifest'])->name('store.manifest');

@@ -23,6 +23,13 @@ class SecurityHeaders
         $h->set('Cross-Origin-Opener-Policy', 'same-origin');
         $h->set('X-Permitted-Cross-Domain-Policies', 'none');
         $h->remove('X-Powered-By');
+        if ($request->is('admin*', 'account*', 'checkout*', 'login*', 'register', 'order/*', 'track*') && ! $response instanceof \Symfony\Component\HttpFoundation\BinaryFileResponse) {
+            $h->set('Cache-Control', 'no-store, private');   // never let a shared computer's back button show someone's account
+            $h->set('Pragma', 'no-cache');
+        }
+        if ($request->is('admin*', 'login*', 'register', 'account*', 'checkout*', 'order/*', 'track*', 'cart*')) {
+            $h->set('X-Robots-Tag', 'noindex, nofollow');
+        }
         if ($request->isSecure()) {
             $h->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }

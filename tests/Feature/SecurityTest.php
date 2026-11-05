@@ -123,4 +123,41 @@ class SecurityTest extends TestCase
         $this->assertStringContainsString('nonce="'.$m[1].'"', $r->getContent());
         $this->assertSame('same-origin', $r->headers->get('Cross-Origin-Opener-Policy'));
     }
+
+    public function test_honeypot_blocks_bots_and_lets_real_form_through(): void
+    {
+        $u = User::factory()->create(['password' => 'Str0ng-pass-99']);
+        $h = ['X-Enforce-Honeypot' => '1'];
+        $creds = ['email' => $u->email, 'password' => 'Str0ng-pass-99'];
+
+        $this->withHeaders($h)->post('/login', $creds)->assertSessionHas('error');                                   // no timestamp: never rendered
+        $fresh = \Illuminate\Support\Facades\Crypt::encryptString((string) time());
+        $this->withHeaders($h)->post('/login', $creds + ['nx_ts' => $fresh])->assertSessionHas('error');             // too fast
+        $old = \Illuminate\Support\Facades\Crypt::encryptString((string) (time() - 10));
+        $this->withHeaders($h)->post('/login', $creds + ['nx_ts' => $old, 'nx_website' => 'http://spam'])->assertSessionHas('error');   // trap filled
+        $this->assertGuest();
+        $this->withHeaders($h)->post('/login', $creds + ['nx_ts' => $old])->assertRedirect();
+        $this->assertAuthenticated();
+        $this->get('/login')->assertDontSee('nx_ts');   // (logged in -> redirected; real render checked below)
+    }
+
+    public function test_forms_render_the_honeypot_and_account_changes_need_current_password(): void
+    {
+        auth()->logout();
+        $this->get('/register')->assertSee('name="nx_ts"', false)->assertSee('nx_website', false);
+        $u = User::factory()->create(['password' => 'Str0ng-pass-99', 'email' => 'me@x.test']);
+        $base = ['name' => 'Me', 'email' => 'me@x.test'];
+        $this->actingAs($u)->put('/account', $base + ['password' => 'Another-pass-77', 'password_confirmation' => 'Another-pass-77'])->assertSessionHasErrors('current_password');
+        $this->put('/account', ['email' => 'new@x.test'] + $base)->assertSessionHasErrors('current_password');
+        $this->put('/account', ['email' => 'new@x.test', 'current_password' => 'Str0ng-pass-99'] + $base)->assertSessionHasNoErrors();
+        $this->assertSame('new@x.test', $u->fresh()->email);
+        $this->put('/account', ['name' => 'Renamed', 'email' => 'new@x.test'])->assertSessionHasNoErrors();   // harmless edits need nothing
+    }
+
+    public function test_sensitive_pages_are_not_cacheable_or_indexable(): void
+    {
+        $r = $this->actingAs($this->owner())->get('/admin/security');
+        $this->assertStringContainsString('no-store', $r->headers->get('Cache-Control'));
+        $this->assertStringContainsString('noindex', $r->headers->get('X-Robots-Tag'));
+    }
 }

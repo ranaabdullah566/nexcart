@@ -9,6 +9,7 @@
         @csrf
         <div class="mb-3"><label class="form-label">{{ __('Order number') }}</label><input name="number" value="{{ old('number') }}" required class="form-control figure @error('number') is-invalid @enderror" placeholder="BUR-100001">@error('number')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
         <div class="mb-3"><label class="form-label">{{ __('Email') }}</label><input type="email" name="email" value="{{ old('email') }}" required class="form-control"></div>
+        <x-honeypot />
         <x-captcha />
         <button class="btn btn-primary w-100">{{ __('Find my order') }}</button>
     </form>

@@ -27,7 +27,14 @@ class AccountController extends Controller
             'address_line' => ['nullable', 'string', 'max:255'], 'city' => ['nullable', 'string', 'max:120'],
             'area' => ['nullable', 'string', 'max:120'], 'postal_code' => ['nullable', 'string', 'max:20'],
             'password' => ['nullable', 'string', 'confirmed', StrongPassword::rule()],
+            'current_password' => ['nullable', 'string', 'max:200'],
         ]);
+
+        // changing the email or password is how an account gets taken over — it needs the current password
+        $sensitive = filled($data['password'] ?? null) || strcasecmp($data['email'], $user->email) !== 0;
+        if ($sensitive && ! \Illuminate\Support\Facades\Hash::check((string) ($data['current_password'] ?? ''), $user->password)) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['current_password' => __('Enter your current password to change your email or password.')]);
+        }
 
         $user->fill([
             'name' => $data['name'], 'email' => $data['email'], 'phone' => $data['phone'] ?? null,

@@ -33,6 +33,7 @@
                     <div class="col-md-5"><label class="form-label">{{ __('City') }}</label><input name="city" value="{{ old('city', $a['city'] ?? '') }}" class="form-control"></div>
                     <div class="col-md-4"><label class="form-label">{{ __('Area') }}</label><input name="area" value="{{ old('area', $a['area'] ?? '') }}" class="form-control"></div>
                     <div class="col-md-3"><label class="form-label">{{ __('Postal code') }}</label><input name="postal_code" value="{{ old('postal_code', $a['postal_code'] ?? '') }}" class="form-control"></div>
+                    <div class="col-md-12"><label class="form-label">{{ __('Current password') }}</label><input type="password" name="current_password" autocomplete="current-password" class="form-control @error('current_password') is-invalid @enderror"><div class="form-text">{{ __('Needed only to change your email or password.') }}</div>@error('current_password')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                     <div class="col-md-6"><label class="form-label">{{ __('New password') }}</label><input type="password" name="password" autocomplete="new-password" class="form-control"><div class="form-text">{{ __('Leave blank to keep the current password.') }}</div></div>
                     <div class="col-md-6"><label class="form-label">{{ __('Confirm password') }}</label><input type="password" name="password_confirmation" autocomplete="new-password" class="form-control"></div>
                 </div>
