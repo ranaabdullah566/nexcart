@@ -20,6 +20,8 @@ class RolesSeeder extends Seeder
         'reports' => ['view'],
         'prescriptions' => ['view', 'verify'],
         'deliveries' => ['view', 'update'],
+        'inventory' => ['view', 'adjust'],
+        'catalog_settings' => ['manage'],   // attributes, modifiers
     ];
 
     public function run(): void
@@ -39,9 +41,9 @@ class RolesSeeder extends Seeder
                 $all,
                 fn ($p) => ! str_starts_with($p, 'settings.') && $p !== 'staff.delete',
             )),
-            'staff' => ['products.view', 'categories.view', 'orders.view', 'orders.update', 'customers.view'],
+            'staff' => ['products.view', 'categories.view', 'inventory.view', 'orders.view', 'orders.update', 'customers.view'],
             'rider' => ['orders.view', 'deliveries.view', 'deliveries.update'],
-            'pharmacist' => ['products.view', 'orders.view', 'prescriptions.view', 'prescriptions.verify'],
+            'pharmacist' => ['products.view', 'inventory.view', 'inventory.adjust', 'orders.view', 'prescriptions.view', 'prescriptions.verify'],
         ];
 
         foreach ($matrix as $role => $permissions) {

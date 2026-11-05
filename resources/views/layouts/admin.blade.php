@@ -13,11 +13,19 @@
     // [group => [[route, active-pattern, icon, label, permission]]]  — later phases append here.
     $navGroups = [
         'Overview' => [
-            ['admin.dashboard', 'admin.dashboard', 'grid-1x2-fill', 'Dashboard', null],
+            ['admin.dashboard', 'admin.dashboard', 'grid-1x2-fill', 'Dashboard', null, null],
+        ],
+        'Catalog' => [
+            ['admin.products.index', 'admin.products.*', 'box-seam-fill', 'Products', 'products.view', null],
+            ['admin.categories.index', 'admin.categories.*', 'diagram-3-fill', 'Categories', 'categories.view', null],
+            ['admin.brands.index', 'admin.brands.*', 'award-fill', 'Brands', 'products.view', null],
+            ['admin.inventory.index', 'admin.inventory.*', 'clipboard2-data-fill', 'Inventory', 'inventory.view', null],
+            ['admin.modifier-groups.index', 'admin.modifier-groups.*', 'plus-slash-minus', 'Add-ons', 'catalog_settings.manage', 'modifiers'],
+            ['admin.attributes.index', 'admin.attributes.*', 'sliders2', 'Product fields', 'catalog_settings.manage', null],
         ],
         'Admin' => [
-            ['admin.staff.index', 'admin.staff.*', 'person-badge-fill', 'Staff', 'staff.view'],
-            ['admin.settings.edit', 'admin.settings.*', 'gear-fill', 'Store settings', 'settings.view'],
+            ['admin.staff.index', 'admin.staff.*', 'person-badge-fill', 'Staff', 'staff.view', null],
+            ['admin.settings.edit', 'admin.settings.*', 'gear-fill', 'Store settings', 'settings.view', null],
         ],
     ];
 @endphp
@@ -34,7 +42,7 @@
 
         <nav class="nx-nav">
             @foreach ($navGroups as $groupLabel => $items)
-                @php $visible = array_values(array_filter($items, fn ($i) => $i[4] === null || $user->can($i[4]))); @endphp
+                @php $visible = array_values(array_filter($items, fn ($i) => ($i[4] === null || $user->can($i[4])) && ($i[5] === null || \App\Support\BusinessProfile::hasModule($i[5])))); @endphp
                 @if ($visible)
                     <div class="nx-nav-label">{{ __($groupLabel) }}</div>
                     @foreach ($visible as [$route, $pattern, $icon, $label])

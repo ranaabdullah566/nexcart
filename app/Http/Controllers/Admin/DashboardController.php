@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\User;
 use App\Support\BusinessProfile;
 use App\Support\Locales;
@@ -22,6 +23,10 @@ class DashboardController extends Controller
             'staffCount' => User::whereHas('roles')->count(),
             'modules' => $modules,
             'languages' => Locales::enabled(),
+            'lowStock' => auth()->user()->can('inventory.view')
+                ? Product::with('variants')->where('track_stock', true)->get()->filter->isLowStock()->sortBy(fn ($p) => $p->totalStock())->take(6)->values()
+                : collect(),
+            'productCount' => Product::count(),
         ]);
     }
 }

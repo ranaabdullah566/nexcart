@@ -93,11 +93,6 @@ class StaffController extends Controller
         return redirect()->route('admin.staff.index')->with('success', __('Staff member deleted'));
     }
 
-    private function authorizeTo(string $permission): void
-    {
-        abort_unless(auth()->user()->can($permission), 403);
-    }
-
     /** Only an owner may grant the owner role, or change an owner's role. */
     private function guardOwnerRole(Request $request, string $role, ?User $target = null): void
     {

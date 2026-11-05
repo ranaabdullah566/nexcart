@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\CatalogAttribute;
+
 class BusinessProfile
 {
     public static function all(): array
@@ -37,6 +39,13 @@ class BusinessProfile
         $settings->set('business.terms', $profile['terms']);
         $settings->set('business.checkout_steps', $profile['checkout_steps']);
         $settings->setMany($profile['settings']);
+
+        foreach ($profile['attributes'] ?? [] as $i => $def) {
+            CatalogAttribute::firstOrCreate(['key' => $def['key']], [
+                'label' => $def['label'], 'type' => $def['type'], 'options' => $def['options'] ?? null,
+                'business_types' => [$type], 'is_required' => $def['required'] ?? false, 'sort_order' => $i,
+            ]);
+        }
 
         $all = collect(static::all())->pluck('modules')->flatten()->unique();
         foreach ($all as $module) {

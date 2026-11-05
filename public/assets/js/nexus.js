@@ -308,9 +308,9 @@
     $(function () { window.nxInitTables(document); });
 
     /* ---------- Popup system ---------- */
-    var RES = /\/admin\/(staff|categories|products|brands|customers|coupons|pages|menus)\/(create|\d+|\d+\/edit)$/;
+    var RES = /\/admin\/(staff|categories|brands|attributes|modifier-groups|customers|coupons|pages|menus)\/(create|\d+|\d+\/edit)$/;
     var VIEW_ONLY = /\/admin\/orders\/\d+$/; // order detail opens as a popup
-    var SUB = /\/admin\/orders\/\d+\/(refund|fulfil)$/;
+    var SUB = /\/admin\/(inventory\/adjust|orders\/\d+\/(refund|fulfil))$/;
 
     function isPopupUrl(href) {
         var u;

@@ -55,19 +55,19 @@ kiya ja sake.
 
 ## 4. Phases
 
-### Phase 0 — Foundation *(is session me)*
+### Phase 0 — Foundation ✅
 - Laravel 13 project, MySQL config, env, git, `PLAN.md`
 - Base packages, coding standards (Pint), PHPUnit, CI-ready structure
 - Folder architecture (`app/Domain/*` ya modules)
 
-### Phase 1 — Core platform & Admin shell
+### Phase 1 — Core platform & Admin shell ✅
 - Filament install, custom futuristic admin theme
 - Auth, roles & permissions, staff management
 - Settings system (store info, logo, currency, tax, timezone)
 - Setup wizard + Business Profile presets
 - Activity log, media library
 
-### Phase 2 — Catalog
+### Phase 2 — Catalog ✅
 - Categories (nested), brands, tags
 - Products: simple/variable, variants, SKU, price/compare price, images
 - Dynamic attributes & attribute sets, modifiers/add-ons
