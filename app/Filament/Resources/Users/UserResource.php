@@ -26,11 +26,7 @@ class UserResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Staff';
 
-    protected static ?string $navigationLabel = 'Staff';
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
-
-    protected static string|\UnitEnum|null $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 20;
 
@@ -38,6 +34,16 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->whereHas('roles');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Staff');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Settings');
     }
 
     public static function canViewAny(): bool

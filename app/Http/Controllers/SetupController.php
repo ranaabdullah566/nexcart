@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Support\BusinessProfile;
+use App\Support\Locales;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,6 +48,8 @@ class SetupController extends Controller
                 'store.currency' => strtoupper($data['currency']),
                 'store.currency_symbol' => $data['currency_symbol'],
                 'store.timezone' => $data['timezone'],
+                'store.default_locale' => app()->getLocale(),
+                'store.locales' => array_keys(Locales::all()),
                 'system.installed' => true,
             ]);
         });

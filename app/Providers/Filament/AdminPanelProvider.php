@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\SetLocale;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -38,13 +39,27 @@ class AdminPanelProvider extends PanelProvider
                 'info' => Color::hex((string) setting('theme.accent', '#22d3ee')),
             ])
             ->font('Space Grotesk')
-            ->defaultThemeMode(ThemeMode::Dark)
+            ->defaultThemeMode(match (setting('theme.mode', 'dark')) {
+                'light' => ThemeMode::Light,
+                'auto' => ThemeMode::System,
+                default => ThemeMode::Dark,
+            })
             ->sidebarCollapsibleOnDesktop()
             ->maxContentWidth(Width::Full)
-            ->navigationGroups(['Catalog', 'Sales', 'Customers', 'Settings'])
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
-                fn () => Blade::render('<link rel="stylesheet" href="{{ asset(\'css/admin-futuristic.css\') }}?v=1">'),
+                fn () => Blade::render(<<<'BLADE'
+                    <link rel="preconnect" href="https://fonts.googleapis.com">
+                    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+                    <link rel="stylesheet" href="{{ asset('css/admin-futuristic.css') }}?v=2">
+                    @if (\App\Support\Locales::dir() === 'rtl')
+                        <style>body,.fi-body{font-family:{!! config('nexcart.locales.'.app()->getLocale().'.font') !!},sans-serif !important}</style>
+                    @endif
+                    BLADE),
+            )
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_AFTER,
+                fn () => view('filament.language-switcher'),
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -60,6 +75,7 @@ class AdminPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
+                SetLocale::class,
                 AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 PreventRequestForgery::class,

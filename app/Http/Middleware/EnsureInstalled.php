@@ -13,7 +13,7 @@ class EnsureInstalled
     {
         $installed = setting()->isInstalled();
 
-        if (! $installed && ! $request->is('setup', 'up')) {
+        if (! $installed && ! $request->is('setup', 'up', 'lang/*')) {
             return redirect()->route('setup');
         }
 

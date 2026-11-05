@@ -4,7 +4,6 @@ namespace App\Support;
 
 use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
 
 /**
  * DB-backed settings with dot keys: "store.name", "theme.primary".
@@ -14,17 +13,25 @@ class Settings
 {
     private const CACHE_KEY = 'nexcart.settings';
 
+    private ?array $resolved = null;
+
     public function all(): array
     {
-        return Cache::rememberForever(self::CACHE_KEY, function () {
-            if (! Schema::hasTable('settings')) {
-                return [];
-            }
+        if ($this->resolved !== null) {
+            return $this->resolved;
+        }
 
-            return Setting::query()->get()
-                ->mapWithKeys(fn (Setting $s) => ["{$s->group}.{$s->key}" => $s->value])
-                ->all();
-        });
+        try {
+            return $this->resolved = Cache::rememberForever(self::CACHE_KEY, function () {
+                return Setting::query()->get()
+                    ->mapWithKeys(fn (Setting $s) => ["{$s->group}.{$s->key}" => $s->value])
+                    ->all();
+            });
+        } catch (\Throwable) {
+            // Database/cache not ready (fresh clone, composer install, migrations pending):
+            // fall back to config defaults instead of crashing artisan/composer.
+            return [];
+        }
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -63,6 +70,7 @@ class Settings
 
     public function flush(): void
     {
+        $this->resolved = null;
         Cache::forget(self::CACHE_KEY);
     }
 

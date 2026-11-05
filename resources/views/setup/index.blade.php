@@ -1,13 +1,25 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ \App\Support\Locales::dir() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Set up your store</title>
+    <title>{{ __('Set up your store') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>try{var t=localStorage.getItem('nx-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme='dark'}</script>
     <style>
         :root { --bg:#07070d; --card:rgb(255 255 255 / .04); --line:rgb(255 255 255 / .09); --fg:#eef0ff; --muted:#9aa0c3; --p:#7c3aed; --a:#22d3ee; }
+        :root[data-theme="light"] { --bg:#f5f6fb; --card:rgb(255 255 255 / .85); --line:rgb(15 15 40 / .12); --fg:#17163a; --muted:#5d6188; }
+        :root[data-theme="light"] body { background: radial-gradient(60rem 40rem at 10% -10%, rgb(124 58 237 / .16), transparent 60%), radial-gradient(50rem 35rem at 100% 0, rgb(34 211 238 / .16), transparent 60%), var(--bg); }
+        :root[data-theme="light"] input, :root[data-theme="light"] select { background:#fff; }
+        :root[data-theme="light"] h1 { background:linear-gradient(90deg,#1e1b4b,#6d28d9 60%,#0891b2); -webkit-background-clip:text; background-clip:text; }
+        :root[data-theme="light"] legend { color:#0e7490; }
+        [dir="rtl"] body { font-family:'Noto Naskh Arabic',system-ui,sans-serif; }
+        [dir="rtl"] h1 { letter-spacing:0; }
+        .bar { max-width:760px; margin:0 auto 18px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+        .langs { display:flex; gap:6px; flex-wrap:wrap; }
+        .langs a, .tgl { padding:6px 12px; border-radius:999px; border:1px solid var(--line); color:var(--muted); text-decoration:none; font-size:.82rem; font-weight:600; background:var(--card); cursor:pointer; font-family:inherit; }
+        .langs a.on { color:#fff; border-color:transparent; background:linear-gradient(135deg,var(--p),#4c1d95); }
         * { box-sizing: border-box; }
         body { margin:0; min-height:100vh; font-family:'Space Grotesk',system-ui,sans-serif; color:var(--fg); padding:32px 16px 64px;
             background: radial-gradient(60rem 40rem at 10% -10%, rgb(124 58 237 / .3), transparent 60%), radial-gradient(50rem 35rem at 100% 0, rgb(34 211 238 / .18), transparent 60%), var(--bg); }
@@ -34,20 +46,28 @@
     </style>
 </head>
 <body>
+<div class="bar">
+    <nav class="langs" aria-label="Language">
+        @foreach (\App\Support\Locales::all() as $code => $meta)
+            <a href="{{ route('locale', $code) }}" lang="{{ str_replace('_', '-', $code) }}" @class(['on' => app()->getLocale() === $code])>{{ $meta['label'] }}</a>
+        @endforeach
+    </nav>
+    <button type="button" class="tgl" id="nx-theme" aria-label="{{ __('Toggle light/dark mode') }}">◐ {{ __('Light / Dark') }}</button>
+</div>
 <main class="wrap">
-    <h1>Let’s set up your store</h1>
-    <p class="lead">Pick your business type — modules, checkout and theme are preconfigured. You can change everything later from the admin panel.</p>
+    <h1>{{ __('Let’s set up your store') }}</h1>
+    <p class="lead">{{ __('Pick your business type — modules, checkout and theme are preconfigured. You can change everything later from the admin panel.') }}</p>
 
     <form method="POST" action="{{ route('setup.store') }}">
         @csrf
 
         <fieldset>
-            <legend>1 · Business type</legend>
+            <legend>{{ __('1 · Business type') }}</legend>
             <div class="types">
                 @foreach ($profiles as $key => $profile)
                     <label class="type">
                         <input type="radio" name="business_type" value="{{ $key }}" @checked(old('business_type', 'general') === $key)>
-                        <span><b>{{ $profile['label'] }}</b><small>{{ $profile['description'] }}</small></span>
+                        <span><b>{{ __($profile['label']) }}</b><small>{{ __($profile['description']) }}</small></span>
                     </label>
                 @endforeach
             </div>
@@ -55,27 +75,30 @@
         </fieldset>
 
         <fieldset>
-            <legend>2 · Store</legend>
+            <legend>{{ __('2 · Store') }}</legend>
             <div class="grid">
-                <label class="f">Store name<input name="store_name" value="{{ old('store_name') }}" required>@error('store_name')<div class="err">{{ $message }}</div>@enderror</label>
-                <label class="f">Timezone<input name="timezone" value="{{ old('timezone', 'Asia/Karachi') }}" required>@error('timezone')<div class="err">{{ $message }}</div>@enderror</label>
-                <label class="f">Currency code<input name="currency" value="{{ old('currency', 'PKR') }}" maxlength="3" required>@error('currency')<div class="err">{{ $message }}</div>@enderror</label>
-                <label class="f">Currency symbol<input name="currency_symbol" value="{{ old('currency_symbol', 'Rs') }}" maxlength="5" required>@error('currency_symbol')<div class="err">{{ $message }}</div>@enderror</label>
+                <label class="f">{{ __('Store name') }}<input name="store_name" value="{{ old('store_name') }}" required>@error('store_name')<div class="err">{{ $message }}</div>@enderror</label>
+                <label class="f">{{ __('Timezone') }}<input name="timezone" value="{{ old('timezone', 'Asia/Karachi') }}" required>@error('timezone')<div class="err">{{ $message }}</div>@enderror</label>
+                <label class="f">{{ __('Currency code') }}<input name="currency" value="{{ old('currency', 'PKR') }}" maxlength="3" required>@error('currency')<div class="err">{{ $message }}</div>@enderror</label>
+                <label class="f">{{ __('Currency symbol') }}<input name="currency_symbol" value="{{ old('currency_symbol', 'Rs') }}" maxlength="5" required>@error('currency_symbol')<div class="err">{{ $message }}</div>@enderror</label>
             </div>
         </fieldset>
 
         <fieldset>
-            <legend>3 · Owner account</legend>
+            <legend>{{ __('3 · Owner account') }}</legend>
             <div class="grid">
-                <label class="f">Your name<input name="name" value="{{ old('name') }}" required>@error('name')<div class="err">{{ $message }}</div>@enderror</label>
-                <label class="f">Email<input type="email" name="email" value="{{ old('email') }}" required>@error('email')<div class="err">{{ $message }}</div>@enderror</label>
-                <label class="f">Password<input type="password" name="password" minlength="8" required>@error('password')<div class="err">{{ $message }}</div>@enderror</label>
-                <label class="f">Confirm password<input type="password" name="password_confirmation" minlength="8" required></label>
+                <label class="f">{{ __('Your name') }}<input name="name" value="{{ old('name') }}" required>@error('name')<div class="err">{{ $message }}</div>@enderror</label>
+                <label class="f">{{ __('Email') }}<input type="email" name="email" value="{{ old('email') }}" required>@error('email')<div class="err">{{ $message }}</div>@enderror</label>
+                <label class="f">{{ __('Password') }}<input type="password" name="password" minlength="8" required>@error('password')<div class="err">{{ $message }}</div>@enderror</label>
+                <label class="f">{{ __('Confirm password') }}<input type="password" name="password_confirmation" minlength="8" required></label>
             </div>
         </fieldset>
 
-        <button type="submit">Launch my store →</button>
+        <button type="submit">{{ __('Launch my store') }} →</button>
     </form>
 </main>
+<script>
+document.getElementById('nx-theme').addEventListener('click',function(){var r=document.documentElement,n=r.dataset.theme==='light'?'dark':'light';r.dataset.theme=n;try{localStorage.setItem('nx-theme',n)}catch(e){}});
+</script>
 </body>
 </html>

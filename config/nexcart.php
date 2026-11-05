@@ -18,6 +18,15 @@ return [
         'theme.mode' => 'dark',
         'business.type' => 'general',
         'system.installed' => false,
+        'store.default_locale' => 'en',
+        'store.locales' => ['en', 'ur', 'ur_Latn'],
+    ],
+
+    // Supported languages. Key = Laravel locale (lang/{key}.json). 'dir' drives RTL layout.
+    'locales' => [
+        'en' => ['label' => 'English', 'dir' => 'ltr', 'font' => "'Space Grotesk'"],
+        'ur' => ['label' => 'اردو', 'dir' => 'rtl', 'font' => "'Noto Naskh Arabic'"],
+        'ur_Latn' => ['label' => 'Roman Urdu', 'dir' => 'ltr', 'font' => "'Space Grotesk'"],
     ],
 
     // Roles seeded on install. Permissions are granted in RolesSeeder.
