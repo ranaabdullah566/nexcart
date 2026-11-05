@@ -11,6 +11,7 @@
         <a href="{{ route('admin.reports.export', request()->query()) }}" class="btn btn-outline-secondary" data-no-modal><i class="bi bi-download me-1"></i> {{ __('Export orders (CSV)') }}</a>
     </x-slot:actions>
 </x-page-header>
+@include('admin.reports._nav', ['active' => 'overview'])
 
 <form method="GET" class="d-flex gap-2 flex-wrap align-items-end mb-4" data-no-ajax>
     <div class="btn-group" role="group">@foreach (['7' => __('7 days'), '30' => __('30 days'), '90' => __('90 days'), 'custom' => __('Custom')] as $k => $l)<a class="btn btn-outline-secondary {{ $key === $k ? 'active' : '' }}" href="{{ route('admin.reports.index', $k === 'custom' ? ['range' => 'custom', 'from' => local_time($from, 'Y-m-d'), 'to' => local_time($to, 'Y-m-d')] : ['range' => $k]) }}" data-no-modal>{{ $l }}</a>@endforeach</div>

@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCsvController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\ReportHubController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SecurityController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -134,6 +135,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     // Growth
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
+    Route::get('reports/{type}', [ReportHubController::class, 'show'])->name('reports.show');
     Route::resource('reviews', ReviewController::class)->only(['index', 'edit', 'update', 'destroy']);
 
     // Storefront
