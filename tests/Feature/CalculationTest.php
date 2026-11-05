@@ -144,4 +144,21 @@ class CalculationTest extends TestCase
         $this->assertNotSame($a->number, $b->number);
         $this->assertSame($b->id, $a->id + 1);
     }
+
+    public function test_dashboard_days_follow_the_store_timezone(): void
+    {
+        setting()->set('store.timezone', 'Asia/Karachi');   // UTC+5
+        $owner = tap(User::factory()->create(), fn ($u) => $u->assignRole('owner'));
+        $nowKhi = now('Asia/Karachi');
+        // 01:00 Karachi today = 20:00 UTC yesterday: it is still "today" for the shop
+        $placed = $nowKhi->copy()->startOfDay()->addHour();
+        if ($placed->gt($nowKhi)) {
+            $this->markTestSkipped('Runs only after 01:00 store time.');
+        }
+        Order::forceCreate(['number' => 'T-1', 'public_token' => 'x', 'status' => 'pending', 'payment_status' => 'unpaid', 'payment_method' => 'cod', 'name' => 'A', 'email' => 'a@x', 'phone' => '1', 'shipping_method' => 's', 'subtotal' => 10, 'discount' => 0, 'shipping_cost' => 0, 'tax' => 0, 'total' => 10, 'tax_rate' => 0, 'currency' => 'PKR', 'placed_at' => $placed->copy()->utc()]);
+        $r = $this->actingAs($owner)->get('/admin');
+        $r->assertOk();
+        $this->assertSame(1, $r->viewData('sales')['today']);
+        $this->assertSame(10.0, (float) end($r->viewData('chart')['revenue']));
+    }
 }

@@ -26,3 +26,16 @@ expensive and noisy. Keep PHP, Laravel and this app updated (see UPGRADE.md).
 - Turn on **Require two-factor** in Admin → Security, and keep the owner's recovery codes offline.
 - Keep the `.env`, `storage/` and `vendor/` folders outside the web root (point the domain at `public/`).
 - Back up regularly (Admin → Backups) and keep a copy off the server.
+
+## Added later
+| Layer | What it does |
+|---|---|
+| Google reCAPTCHA v2 | Owner enters keys in Admin → Security. Protects sign-in, sign-up, checkout and order tracking; fails closed if Google is unreachable. |
+| Sign in with Google | Customers only. Staff accounts can never be entered through Google. Secrets are stored encrypted. |
+| Honeypot + timing | Hidden trap field and signed timestamp on public forms stop simple bots. |
+| Account takeover guard | Changing email or password needs the current password. |
+| Cache / index control | Account, checkout, order and admin pages are `no-store` and `noindex`. |
+| Roles & permissions | Build custom roles; every action (including report types, Recycle Bin restore/erase, activity log) has its own permission. Owner is always full. |
+| Activity log | Every create / update / delete / restore on key records with old → new values, filterable, CSV export. |
+
+Not included: password-reset by email (use Admin → Staff to set a new password for staff; customers can contact the shop).

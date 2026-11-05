@@ -21,13 +21,16 @@ class DashboardController extends Controller
 
         $canSales = auth()->user()->can('orders.view');
         $live = fn () => Order::whereNotIn('status', ['cancelled', 'refunded']);
-        $days = collect(range(13, 0))->map(fn ($i) => now()->subDays($i)->startOfDay());
-        $byDay = $canSales ? $live()->where('placed_at', '>=', $days->first())->get(['placed_at', 'total'])->groupBy(fn ($o) => $o->placed_at->format('Y-m-d')) : collect();
+        // "today" and each chart bar are days on the STORE's clock, not UTC
+        $tz = setting('store.timezone', config('app.timezone'));
+        $days = collect(range(13, 0))->map(fn ($i) => now($tz)->subDays($i)->startOfDay());
+        $startOfToday = now($tz)->startOfDay()->utc();
+        $byDay = $canSales ? $live()->where('placed_at', '>=', $days->first()->copy()->utc())->get(['placed_at', 'total'])->groupBy(fn ($o) => $o->placed_at->copy()->timezone($tz)->format('Y-m-d')) : collect();
 
         return view('admin.dashboard', [
             'canSales' => $canSales,
             'sales' => $canSales ? [
-                'today' => $live()->whereDate('placed_at', today())->count(),
+                'today' => $live()->where('placed_at', '>=', $startOfToday)->count(),
                 'revenue30' => (float) $live()->where('placed_at', '>=', now()->subDays(30))->sum('total'),
                 'open' => Order::whereNotIn('status', ['completed', 'cancelled', 'refunded'])->count(),
                 'avg' => (float) ($live()->where('placed_at', '>=', now()->subDays(30))->avg('total') ?? 0),
