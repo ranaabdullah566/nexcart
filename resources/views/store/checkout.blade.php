@@ -99,6 +99,7 @@
                 </section>
 
                 <input type="hidden" name="coupon" id="couponField" value="{{ old('coupon', session('coupon')) }}">
+                <x-captcha />
                 <button type="submit" class="btn btn-primary btn-lg w-100 py-3" id="placeBtn" @disabled(empty($gateways))><i class="bi bi-lock-fill me-1"></i> {{ __('Place order') }} · <span data-total>{{ money($q['total']) }}</span></button>
                 <p class="text-center text-muted small mt-2">{{ __('By placing your order you agree to be contacted about its delivery.') }}</p>
             </div>

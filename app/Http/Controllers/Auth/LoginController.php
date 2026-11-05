@@ -25,10 +25,11 @@ class LoginController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $credentials = $request->validate([
+        $credentials = collect($request->validate([
             'email' => ['required', 'email', 'max:190'],
             'password' => ['required', 'string', 'max:200'],
-        ]);
+            'g-recaptcha-response' => \App\Rules\Recaptcha::rules(),
+        ]))->except('g-recaptcha-response')->all();
 
         // lockout per account+IP, so one attacker cannot lock the real owner out from elsewhere
         $key = 'login:'.strtolower($credentials['email']).'|'.$request->ip();

@@ -36,7 +36,7 @@ class OrderController extends Controller
 
     public function trackFind(Request $request): RedirectResponse
     {
-        $data = $request->validate(['number' => ['required', 'string', 'max:30'], 'email' => ['required', 'email']]);
+        $data = $request->validate(['number' => ['required', 'string', 'max:30'], 'email' => ['required', 'email'], 'g-recaptcha-response' => \App\Rules\Recaptcha::rules()]);
 
         $order = Order::where('number', strtoupper(trim($data['number'])))->first();
         if (! $order || strcasecmp($order->email, $data['email']) !== 0) {

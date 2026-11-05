@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Admin\TrashController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\InstallController;
@@ -53,6 +54,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:10,1');
 });
 Route::middleware('guest')->group(function () {
+    Route::get('/auth/google', [GoogleController::class, 'redirect'])->middleware('throttle:20,1')->name('auth.google');
+    Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->middleware('throttle:20,1');
     Route::get('/register', [RegisterController::class, 'show'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:10,1');
 });
@@ -108,6 +111,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::post('security/two-factor/recovery', [SecurityController::class, 'recovery'])->name('security.2fa.recovery');
     Route::delete('security/two-factor', [SecurityController::class, 'disable'])->name('security.2fa.disable');
     Route::put('security/password', [SecurityController::class, 'password'])->name('security.password');
+    Route::post('security/integrations', [SecurityController::class, 'integrations'])->name('security.integrations');
     Route::post('security/policy', [SecurityController::class, 'policy'])->name('security.policy');
     Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
     Route::get('activity/export', [ActivityController::class, 'export'])->name('activity.export');

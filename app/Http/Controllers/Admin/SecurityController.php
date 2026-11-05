@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Rules\StrongPassword;
 use App\Support\Audit;
+use App\Support\Integrations;
 use App\Support\Totp;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -98,6 +99,24 @@ class SecurityController extends Controller
         setting()->set('security.idle_minutes', $data['idle_minutes']);
         setting()->set('security.require_2fa', $request->boolean('require_2fa'));
         Audit::log('security.policy_changed', ['idle_minutes' => $data['idle_minutes'], 'require_2fa' => $request->boolean('require_2fa')]);
+
+        return back()->with('success', __('Saved'));
+    }
+
+    public function integrations(Request $request): RedirectResponse
+    {
+        $this->authorizeTo('system.manage');
+        $data = $request->validate([
+            'recaptcha_site' => ['nullable', 'string', 'max:120'], 'recaptcha_secret' => ['nullable', 'string', 'max:120'],
+            'google_client_id' => ['nullable', 'string', 'max:200'], 'google_client_secret' => ['nullable', 'string', 'max:200'],
+        ]);
+        setting()->set('integrations.recaptcha_enabled', $request->boolean('recaptcha_enabled'));
+        setting()->set('integrations.recaptcha_site', trim((string) ($data['recaptcha_site'] ?? '')));
+        Integrations::setSecret('recaptcha_secret', $data['recaptcha_secret'] ?? null);
+        setting()->set('integrations.google_enabled', $request->boolean('google_enabled'));
+        setting()->set('integrations.google_client_id', trim((string) ($data['google_client_id'] ?? '')));
+        Integrations::setSecret('google_client_secret', $data['google_client_secret'] ?? null);
+        Audit::log('security.integrations_changed', ['recaptcha' => $request->boolean('recaptcha_enabled'), 'google' => $request->boolean('google_enabled')]);
 
         return back()->with('success', __('Saved'));
     }

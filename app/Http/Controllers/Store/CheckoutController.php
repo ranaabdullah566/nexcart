@@ -73,6 +73,7 @@ class CheckoutController extends Controller
     public function place(Request $request): RedirectResponse
     {
         $data = $request->validate([
+            'g-recaptcha-response' => \App\Rules\Recaptcha::rules(),
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190'],
             'phone' => ['required', 'string', 'max:40', 'regex:/^[0-9+\-()\s]{6,}$/'],

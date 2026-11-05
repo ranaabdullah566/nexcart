@@ -26,9 +26,10 @@ class RegisterController extends Controller
             'email' => ['required', 'email', 'max:190', new UniqueActive('users', 'email', null, true)],
             'phone' => ['nullable', 'string', 'max:40', 'regex:/^[0-9+\-()\s]{6,}$/'],
             'password' => ['required', 'string', 'confirmed', StrongPassword::rule()],
+            'g-recaptcha-response' => \App\Rules\Recaptcha::rules(),
         ]);
 
-        $user = User::create($data);
+        $user = User::create(\Illuminate\Support\Arr::except($data, 'g-recaptcha-response'));
         Auth::login($user);
         $request->session()->regenerate();
 

@@ -23,11 +23,16 @@
                 <label class="form-label fw-medium" for="password">{{ __('Password') }}</label>
                 <input id="password" type="password" name="password" required autocomplete="current-password" class="form-control">
             </div>
+            <x-captcha />
             <div class="form-check mb-4">
                 <input class="form-check-input" type="checkbox" name="remember" id="remember" value="1">
                 <label class="form-check-label" for="remember">{{ __('Remember me') }}</label>
             </div>
             <button type="submit" class="btn btn-primary w-100"><i class="bi bi-box-arrow-in-right me-1"></i> {{ __('Sign in') }}</button>
+            @if (\App\Support\Integrations::google())
+                <div class="text-center text-muted small my-3">{{ __('or') }}</div>
+                <a href="{{ route('auth.google') }}" class="btn btn-outline-secondary w-100"><i class="bi bi-google me-2"></i> {{ __('Continue with Google') }}</a>
+            @endif
         </form>
         <div class="text-center mt-3 small">{{ __('New here?') }} <a href="{{ route('register') }}">{{ __('Create an account') }}</a> · <a href="{{ route('store.home') }}">{{ __('Back to store') }}</a></div>
     </div>

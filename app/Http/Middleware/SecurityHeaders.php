@@ -29,18 +29,19 @@ class SecurityHeaders
 
         // The log viewer package ships its own inline scripts; it is owner-only and has its own protections.
         if (! $request->is('admin/log-viewer*') && ! $response instanceof BinaryFileResponse) {
+            $captcha = \App\Support\Integrations::recaptcha() ? ' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/' : '';
             $h->set('Content-Security-Policy', implode('; ', [
                 "default-src 'self'",
-                "script-src 'self' 'nonce-{$nonce}'",
+                "script-src 'self' 'nonce-{$nonce}'{$captcha}",
                 "style-src 'self' 'unsafe-inline'",
                 "img-src 'self' data: blob: https:",
                 "font-src 'self' data:",
                 "connect-src 'self'",
-                "frame-src 'self'",
+                "frame-src 'self'".($captcha ? ' https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/' : ''),
                 "frame-ancestors 'self'",
                 "object-src 'none'",
                 "base-uri 'self'",
-                "form-action 'self' https://checkout.stripe.com",
+                "form-action 'self' https://checkout.stripe.com https://accounts.google.com",
             ]));
         }
 

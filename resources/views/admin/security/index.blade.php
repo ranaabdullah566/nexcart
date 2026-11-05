@@ -71,5 +71,24 @@
     </div></div>
 </div>
 @endif
+
+@if ($canPolicy)
+<div class="col-12">
+    <div class="card"><div class="card-body">
+        <h2 class="h6 mb-1"><i class="bi bi-plug-fill me-1"></i> {{ __('Bot protection & Google sign-in') }}</h2>
+        <p class="small text-muted mb-3">{{ __('Keys come from Google (reCAPTCHA v2 “I’m not a robot” checkbox, and a Google Cloud OAuth client). Leave a secret blank to keep the saved one.') }}</p>
+        <form method="POST" action="{{ route('admin.security.integrations') }}" data-no-ajax class="row g-3">@csrf
+            <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="recaptcha_enabled" id="rc" value="1" @checked(setting('integrations.recaptcha_enabled'))><label class="form-check-label" for="rc">{{ __('Google reCAPTCHA on sign-in, sign-up, checkout and order tracking') }}</label></div></div>
+            <div class="col-md-6"><label class="form-label small">{{ __('reCAPTCHA site key') }}</label><input name="recaptcha_site" value="{{ setting('integrations.recaptcha_site') }}" class="form-control font-monospace" autocomplete="off"></div>
+            <div class="col-md-6"><label class="form-label small">{{ __('reCAPTCHA secret key') }} @if (\App\Support\Integrations::secret('recaptcha_secret'))<span class="badge text-bg-success">{{ __('saved') }}</span>@endif</label><input type="password" name="recaptcha_secret" class="form-control font-monospace" autocomplete="new-password" placeholder="••••••••"></div>
+            <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="google_enabled" id="gl" value="1" @checked(setting('integrations.google_enabled'))><label class="form-check-label" for="gl">{{ __('Let customers sign in with Google') }}</label></div></div>
+            <div class="col-md-6"><label class="form-label small">{{ __('Google client ID') }}</label><input name="google_client_id" value="{{ setting('integrations.google_client_id') }}" class="form-control font-monospace" autocomplete="off"></div>
+            <div class="col-md-6"><label class="form-label small">{{ __('Google client secret') }} @if (\App\Support\Integrations::secret('google_client_secret'))<span class="badge text-bg-success">{{ __('saved') }}</span>@endif</label><input type="password" name="google_client_secret" class="form-control font-monospace" autocomplete="new-password" placeholder="••••••••"></div>
+            <div class="col-12 small text-muted">{{ __('Authorised redirect URI to add in Google Cloud:') }} <code class="user-select-all">{{ url('/auth/google/callback') }}</code></div>
+            <div class="col-12"><button class="btn btn-primary">{{ __('Save') }}</button></div>
+        </form>
+    </div></div>
+</div>
+@endif
 </div>
 @endsection
