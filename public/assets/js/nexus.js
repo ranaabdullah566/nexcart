@@ -308,7 +308,7 @@
     $(function () { window.nxInitTables(document); });
 
     /* ---------- Popup system ---------- */
-    var RES = /\/admin\/(staff|categories|brands|attributes|modifier-groups|home-sections|coupons|shipping|pages|menus)\/(create|\d+|\d+\/edit)$/;
+    var RES = /\/admin\/(staff|categories|brands|attributes|modifier-groups|home-sections|coupons|shipping|prescriptions|delivery-slots|pages|menus)\/(create|\d+|\d+\/edit)$/;
     var VIEW_ONLY = /\/admin\/orders\/\d+$/; // order detail opens as a popup
     var SUB = /\/admin\/(inventory\/adjust|orders\/\d+\/(refund|fulfil))$/;
 

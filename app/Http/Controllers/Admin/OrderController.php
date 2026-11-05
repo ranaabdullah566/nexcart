@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
 use App\Services\OrderService;
+use App\Support\BusinessProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -42,7 +44,10 @@ class OrderController extends Controller
     {
         $this->authorizeTo('orders.view');
 
-        return view('admin.orders.show', ['order' => $order->load(['items', 'events.user', 'user'])]);
+        return view('admin.orders.show', [
+            'order' => $order->load(['items', 'events.user', 'user', 'rider']),
+            'riders' => BusinessProfile::hasModule('riders') ? User::role('rider')->orderBy('name')->get() : collect(),
+        ]);
     }
 
     public function status(Request $request, Order $order): RedirectResponse
@@ -56,6 +61,17 @@ class OrderController extends Controller
         $this->orders->transition($order, $data['status'], $request->user(), $data['note'] ?? null);
 
         return redirect()->route('admin.orders.index')->with('success', __('Order :number updated', ['number' => $order->number]));
+    }
+
+    public function rider(Request $request, Order $order): RedirectResponse
+    {
+        $this->authorizeTo('orders.update');
+        abort_unless(BusinessProfile::hasModule('riders'), 404);
+
+        $data = $request->validate(['rider_id' => ['nullable', 'integer', 'exists:users,id']]);
+        $this->orders->assignRider($order, $data['rider_id'] ? User::findOrFail($data['rider_id']) : null, $request->user());
+
+        return redirect()->route('admin.orders.index')->with('success', __('Rider updated'));
     }
 
     public function paid(Request $request, Order $order): RedirectResponse

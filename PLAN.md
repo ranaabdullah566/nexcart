@@ -85,7 +85,7 @@ kiya ja sake.
 - Payment drivers (COD + 1-2 gateways), order lifecycle, invoices/PDF
 - Customer accounts, order tracking, addresses
 
-### Phase 5 — Business-specific modules
+### Phase 5 — Business-specific modules ✅
 - Fastfood: modifiers, kitchen display, delivery zones, rider assignment, ETA
 - Pharmacy/Medical: prescription upload & verification, Rx-only products, expiry
 - Common: delivery slots, pickup, reorder

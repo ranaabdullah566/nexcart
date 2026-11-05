@@ -14,7 +14,7 @@
             <h2 class="h5 mb-3">{{ __('My orders') }}</h2>
             @forelse ($orders as $o)
                 <a href="{{ $o->trackUrl() }}" class="sf-summary d-flex justify-content-between align-items-center gap-3 mb-2 text-decoration-none" style="color:var(--text)">
-                    <div><b class="figure">{{ $o->number }}</b><div class="small text-muted">{{ $o->placed_at?->format('d M Y') }} · {{ trans_choice(':n item|:n items', $o->items()->sum('qty'), ['n' => $o->items()->sum('qty')]) }}</div></div>
+                    <div><b class="figure">{{ $o->number }}</b><div class="small text-muted">{{ local_time($o->placed_at, 'd M Y') }} · {{ trans_choice(':n item|:n items', $o->items()->sum('qty'), ['n' => $o->items()->sum('qty')]) }}</div></div>
                     <div class="text-end"><div class="figure fw-bold">{{ money($o->total) }}</div><span class="badge rounded-pill text-bg-secondary">{{ $o->statusLabel() }}</span></div>
                 </a>
             @empty

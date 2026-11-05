@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Support\BusinessProfile;
 use App\Support\Locales;
+use App\Support\StarterData;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class SetupController extends Controller
             $owner->assignRole('owner');
 
             BusinessProfile::apply($data['business_type']);
+            StarterData::seed($data['business_type']);
 
             setting()->setMany([
                 'store.name' => $data['store_name'],

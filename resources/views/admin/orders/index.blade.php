@@ -27,7 +27,7 @@
                 <td class="figure fw-bold text-nowrap" data-order="{{ $o->total }}">{{ money($o->total) }}</td>
                 <td><span class="badge rounded-pill text-bg-{{ ['paid' => 'success', 'unpaid' => 'warning', 'failed' => 'danger', 'refunded' => 'secondary'][$o->payment_status] }}">{{ __(ucfirst($o->payment_status)) }}</span> <span class="small text-muted">{{ ['cod' => 'COD', 'bank' => __('Bank'), 'stripe' => __('Card')][$o->payment_method] ?? $o->payment_method }}</span></td>
                 <td><span class="badge rounded-pill text-bg-{{ ['pending' => 'warning', 'confirmed' => 'info', 'preparing' => 'info', 'out_for_delivery' => 'primary', 'ready' => 'primary', 'completed' => 'success', 'cancelled' => 'danger', 'refunded' => 'secondary'][$o->status] }}">{{ $o->statusLabel() }}</span></td>
-                <td class="small text-muted text-nowrap" data-order="{{ $o->placed_at?->timestamp }}">{{ $o->placed_at?->format('d M, H:i') }}</td>
+                <td class="small text-muted text-nowrap" data-order="{{ $o->placed_at?->timestamp }}">{{ local_time($o->placed_at, 'd M, H:i') }}</td>
                 <td class="text-end"><x-row-actions :show="route('admin.orders.show', $o)" /></td>
             </tr>
         @endforeach

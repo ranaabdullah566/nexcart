@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\Settings;
+use Illuminate\Support\Carbon;
 
 if (! function_exists('setting')) {
     function setting(?string $key = null, mixed $default = null): mixed
@@ -16,5 +17,13 @@ if (! function_exists('money')) {
     function money(float|int|string|null $amount): string
     {
         return setting('store.currency_symbol', 'Rs').' '.number_format((float) $amount, 2);
+    }
+}
+
+if (! function_exists('local_time')) {
+    /** Format a stored (UTC) timestamp in the store's own timezone. */
+    function local_time(?Carbon $date, string $format = 'd M Y, H:i'): string
+    {
+        return $date ? $date->copy()->timezone(setting('store.timezone', config('app.timezone')))->format($format) : '';
     }
 }

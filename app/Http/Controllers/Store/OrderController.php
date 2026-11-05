@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Product;
+use App\Services\CartService;
 use App\Services\OrderService;
 use App\Services\Payments\BankTransfer;
 use App\Services\Payments\StripeCheckout;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -41,6 +44,51 @@ class OrderController extends Controller
         }
 
         return redirect($order->trackUrl());
+    }
+
+    /** Put the same items back in the cart (current prices and stock apply). */
+    public function reorder(string $number, string $token, CartService $cart): RedirectResponse
+    {
+        $order = $this->find($number, $token)->load('items');
+        $added = 0;
+        $skipped = [];
+
+        foreach ($order->items as $item) {
+            $product = $item->product_id ? Product::active()->find($item->product_id) : null;
+            if (! $product) {
+                $skipped[] = $item->name;
+
+                continue;
+            }
+            try {
+                $cart->add($product, $item->variant_id, collect($item->options ?? [])->pluck('id')->filter()->all(), $item->qty);
+                $added++;
+            } catch (ValidationException) {
+                $skipped[] = $item->name;
+            }
+        }
+
+        $flash = $added ? ['success' => __(':n items added to your cart.', ['n' => $added])] : [];
+        if ($skipped) {
+            $flash['error'] = __('No longer available: :items', ['items' => implode(', ', $skipped)]);
+        }
+
+        return redirect()->route('store.cart')->with($flash);
+    }
+
+    /** A rejected prescription can be replaced; the order then returns to the pharmacist's queue. */
+    public function prescription(Request $request, string $number, string $token, OrderService $orders): RedirectResponse
+    {
+        $order = $this->find($number, $token);
+        abort_unless($order->requires_prescription && $order->prescription_status === 'rejected' && $order->isOpen(), 404);
+
+        $request->validate(['prescription' => ['required', 'array', 'min:1', 'max:5'], 'prescription.*' => ['file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120']]);
+        foreach ($request->file('prescription') as $file) {
+            $order->addMedia($file)->toMediaCollection('prescriptions');
+        }
+        $orders->resubmitPrescription($order);
+
+        return redirect($order->trackUrl())->with('success', __('Thanks! A pharmacist will review your new prescription.'));
     }
 
     /** Re-open the card payment page for an unpaid Stripe order. */

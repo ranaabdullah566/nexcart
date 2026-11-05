@@ -1,7 +1,7 @@
 @php
     $editing = isset($zone);
     $zone = $zone ?? null;
-    $rows = old('rates', $editing ? $zone->rates->map(fn ($r) => ['id' => $r->id, 'name' => $r->name, 'price' => $r->price, 'free_over' => $r->free_over, 'min_subtotal' => $r->min_subtotal, 'eta' => $r->eta, 'is_pickup' => $r->is_pickup])->all() : [['name' => 'Standard delivery', 'price' => 0]]);
+    $rows = old('rates', $editing ? $zone->rates->map(fn ($r) => ['id' => $r->id, 'name' => $r->name, 'price' => $r->price, 'free_over' => $r->free_over, 'min_subtotal' => $r->min_subtotal, 'eta' => $r->eta, 'eta_minutes' => $r->eta_minutes, 'is_pickup' => $r->is_pickup])->all() : [['name' => 'Standard delivery', 'price' => 0]]);
 @endphp
 <form method="POST" action="{{ $editing ? route('admin.shipping.update', $zone) : route('admin.shipping.store') }}">
     @csrf @if ($editing) @method('PUT') @endif
@@ -23,7 +23,8 @@
                     <div class="col-6 col-md-2"><label class="form-label small mb-1">{{ __('Price') }}</label><input type="number" step="0.01" min="0" name="rates[{{ $i }}][price]" value="{{ $r['price'] ?? 0 }}" class="form-control form-control-sm figure"></div>
                     <div class="col-6 col-md-3"><label class="form-label small mb-1">{{ __('Free over') }}</label><input type="number" step="0.01" min="0" name="rates[{{ $i }}][free_over]" value="{{ $r['free_over'] ?? '' }}" class="form-control form-control-sm figure"></div>
                     <div class="col-6 col-md-3"><label class="form-label small mb-1">{{ __('Minimum order') }}</label><input type="number" step="0.01" min="0" name="rates[{{ $i }}][min_subtotal]" value="{{ $r['min_subtotal'] ?? '' }}" class="form-control form-control-sm figure"></div>
-                    <div class="col-6 col-md-5"><label class="form-label small mb-1">{{ __('Delivery time') }}</label><input name="rates[{{ $i }}][eta]" value="{{ $r['eta'] ?? '' }}" class="form-control form-control-sm" placeholder="30–45 min"></div>
+                    <div class="col-6 col-md-3"><label class="form-label small mb-1">{{ __('Delivery time') }}</label><input name="rates[{{ $i }}][eta]" value="{{ $r['eta'] ?? '' }}" class="form-control form-control-sm" placeholder="30–45 min"></div>
+                    <div class="col-6 col-md-2"><label class="form-label small mb-1" title="{{ __('Used for the estimated arrival time') }}">{{ __('ETA (min)') }}</label><input type="number" min="1" name="rates[{{ $i }}][eta_minutes]" value="{{ $r['eta_minutes'] ?? '' }}" class="form-control form-control-sm figure" placeholder="40"></div>
                     <div class="col-8 col-md-5"><div class="form-check form-switch"><input type="hidden" name="rates[{{ $i }}][is_pickup]" value="0"><input type="checkbox" role="switch" class="form-check-input" name="rates[{{ $i }}][is_pickup]" value="1" id="pk{{ $i }}" @checked($r['is_pickup'] ?? false)><label class="form-check-label small" for="pk{{ $i }}">{{ __('Store pickup (no address needed)') }}</label></div></div>
                     <div class="col-4 col-md-2 text-end"><button type="button" class="nx-icon-btn rate-del" title="{{ __('Remove') }}"><i class="bi bi-trash3"></i></button></div>
                 </div>
@@ -49,7 +50,8 @@
                 '<div class="col-6 col-md-2"><label class="form-label small mb-1">' + @json(__('Price')) + '</label><input type="number" step="0.01" min="0" name="rates[' + i + '][price]" value="0" class="form-control form-control-sm figure"></div>' +
                 '<div class="col-6 col-md-3"><label class="form-label small mb-1">' + @json(__('Free over')) + '</label><input type="number" step="0.01" min="0" name="rates[' + i + '][free_over]" class="form-control form-control-sm figure"></div>' +
                 '<div class="col-6 col-md-3"><label class="form-label small mb-1">' + @json(__('Minimum order')) + '</label><input type="number" step="0.01" min="0" name="rates[' + i + '][min_subtotal]" class="form-control form-control-sm figure"></div>' +
-                '<div class="col-6 col-md-5"><label class="form-label small mb-1">' + @json(__('Delivery time')) + '</label><input name="rates[' + i + '][eta]" class="form-control form-control-sm"></div>' +
+                '<div class="col-6 col-md-3"><label class="form-label small mb-1">' + @json(__('Delivery time')) + '</label><input name="rates[' + i + '][eta]" class="form-control form-control-sm"></div>' +
+                '<div class="col-6 col-md-2"><label class="form-label small mb-1">' + @json(__('ETA (min)')) + '</label><input type="number" min="1" name="rates[' + i + '][eta_minutes]" class="form-control form-control-sm figure"></div>' +
                 '<div class="col-8 col-md-5"><div class="form-check form-switch"><input type="hidden" name="rates[' + i + '][is_pickup]" value="0"><input type="checkbox" role="switch" class="form-check-input" name="rates[' + i + '][is_pickup]" value="1" id="pk' + i + '"><label class="form-check-label small" for="pk' + i + '">' + @json(__('Store pickup (no address needed)')) + '</label></div></div>' +
                 '<div class="col-4 col-md-2 text-end"><button type="button" class="nx-icon-btn rate-del"><i class="bi bi-trash3"></i></button></div></div>';
             box.appendChild(d);

@@ -17,9 +17,13 @@
         ],
         'Sales' => [
             ['admin.orders.index', 'admin.orders.*', 'receipt-cutoff', 'Orders', 'orders.view', null],
+            ['admin.kitchen.index', 'admin.kitchen.*', 'fire', 'Kitchen', 'orders.view', 'kitchen_display'],
+            ['admin.deliveries.index', 'admin.deliveries.*', 'bicycle', 'Deliveries', 'deliveries.view', 'riders'],
+            ['admin.prescriptions.index', 'admin.prescriptions.*', 'prescription2', 'Prescriptions', 'prescriptions.view', 'prescriptions'],
             ['admin.customers.index', 'admin.customers.*', 'people-fill', 'Customers', 'customers.view', null],
             ['admin.coupons.index', 'admin.coupons.*', 'ticket-perforated-fill', 'Coupons', 'sales_settings.manage', null],
             ['admin.shipping.index', 'admin.shipping.*', 'truck', 'Shipping', 'sales_settings.manage', null],
+            ['admin.delivery-slots.index', 'admin.delivery-slots.*', 'calendar2-week', 'Delivery slots', 'sales_settings.manage', 'delivery_slots'],
         ],
         'Catalog' => [
             ['admin.products.index', 'admin.products.*', 'box-seam-fill', 'Products', 'products.view', null],

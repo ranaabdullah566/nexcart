@@ -3,7 +3,7 @@
 
 @section('content')
 @php($next = $order->nextStatuses())
-<x-page-header :back="route('admin.orders.index')" :title="$order->number" :eyebrow="__('Order')" :sub="$order->placed_at?->format('d M Y, H:i').' · '.($order->is_pickup ? __('Pickup') : __('Delivery'))">
+<x-page-header :back="route('admin.orders.index')" :title="$order->number" :eyebrow="__('Order')" :sub="local_time($order->placed_at, 'd M Y, H:i').' · '.($order->is_pickup ? __('Pickup') : __('Delivery'))">
     <x-slot:actions>
         <a href="{{ route('store.invoice', [$order->number, $order->public_token]) }}" target="_blank" class="btn btn-outline-secondary" data-no-modal><i class="bi bi-printer me-1"></i> {{ __('Invoice') }}</a>
     </x-slot:actions>
@@ -13,6 +13,9 @@
     <span class="badge rounded-pill text-bg-secondary fs-6 px-3 py-2">{{ $order->statusLabel() }}</span>
     <span class="badge rounded-pill text-bg-{{ ['paid' => 'success', 'unpaid' => 'warning', 'failed' => 'danger', 'refunded' => 'secondary'][$order->payment_status] }} fs-6 px-3 py-2">{{ __(ucfirst($order->payment_status)) }} · {{ ['cod' => __('Cash on delivery'), 'bank' => __('Bank transfer'), 'stripe' => __('Card (Stripe)')][$order->payment_method] ?? $order->payment_method }}</span>
 </div>
+
+@if ($order->slot_label)<div class="sf-alert mb-3 d-flex gap-2 align-items-center"><i class="bi bi-calendar-check fs-5"></i><b>{{ $order->is_pickup ? __('Pickup time') : __('Delivery time') }}: {{ $order->slot_date->format('D, d M') }} · {{ $order->slot_label }}</b></div>@endif
+@if ($order->eta_at && $order->isOpen())<div class="mb-3 small text-muted"><i class="bi bi-stopwatch me-1"></i>{{ __('Estimated arrival') }}: <b class="figure">{{ $order->eta_at->timezone(setting('store.timezone'))->format('h:i A') }}</b></div>@endif
 
 <div class="row g-3">
     <div class="col-lg-7">
@@ -38,7 +41,7 @@
         <div class="card"><div class="card-body">
             <h6 class="text-uppercase text-muted small">{{ __('History') }}</h6>
             @foreach ($order->events->reverse() as $e)
-                <div class="d-flex gap-2 py-1 small"><span class="text-muted figure text-nowrap">{{ $e->created_at->format('d M H:i') }}</span>
+                <div class="d-flex gap-2 py-1 small"><span class="text-muted figure text-nowrap">{{ local_time($e->created_at, 'd M H:i') }}</span>
                     <span><b>{{ $e->type === 'placed' ? __('Order placed') : ($e->type === 'payment' ? __('Payment').': '.__(ucfirst((string) $e->status)) : __(str_replace('_', ' ', ucfirst((string) $e->status)))) }}</b>
                         @if ($e->note) — {{ $e->note }}@endif @if ($e->user)<span class="text-muted">({{ $e->user->name }})</span>@endif</span></div>
             @endforeach
@@ -56,6 +59,19 @@
                     <button class="btn btn-primary w-100"><i class="bi bi-check2 me-1"></i> {{ __('Update') }}</button>
                 </form>
             </div></div>
+        @endif
+
+        @if ($riders->isNotEmpty() && ! $order->is_pickup && $order->isOpen() && auth()->user()->can('orders.update'))
+            <div class="card mb-3"><div class="card-body">
+                <h6 class="text-uppercase text-muted small"><i class="bi bi-bicycle me-1"></i>{{ __('Rider') }}</h6>
+                <form method="POST" action="{{ route('admin.orders.rider', $order) }}" class="d-flex gap-2">
+                    @csrf
+                    <select name="rider_id" class="form-select"><option value="">— {{ __('Unassigned') }} —</option>@foreach ($riders as $r)<option value="{{ $r->id }}" @selected($order->rider_id === $r->id)>{{ $r->name }}</option>@endforeach</select>
+                    <button class="btn btn-outline-secondary">{{ __('Assign') }}</button>
+                </form>
+            </div></div>
+        @elseif ($order->rider)
+            <div class="card mb-3"><div class="card-body"><h6 class="text-uppercase text-muted small">{{ __('Rider') }}</h6><b>{{ $order->rider->name }}</b></div></div>
         @endif
 
         @if ($order->payment_status === 'unpaid' && $order->isOpen() && auth()->user()->can('orders.update'))
@@ -79,7 +95,10 @@
 
         @if ($order->requires_prescription)
             <div class="card"><div class="card-body">
-                <h6 class="text-uppercase text-muted small"><i class="bi bi-prescription2 me-1"></i>{{ __('Prescription') }}</h6>
+                <h6 class="text-uppercase text-muted small"><i class="bi bi-prescription2 me-1"></i>{{ __('Prescription') }}
+                    <span class="badge rounded-pill text-bg-{{ ['approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning'][$order->prescription_status] ?? 'secondary' }} ms-1">{{ __(ucfirst((string) $order->prescription_status)) }}</span></h6>
+                @if ($order->prescription_note)<div class="small mb-2">{{ $order->prescription_note }}</div>@endif
+                @if (\App\Support\BusinessProfile::hasModule('prescriptions') && auth()->user()->can('prescriptions.view'))<a href="{{ route('admin.prescriptions.show', $order) }}" class="btn btn-sm btn-outline-secondary mb-2"><i class="bi bi-clipboard2-check me-1"></i>{{ __('Review') }}</a>@endif
                 @forelse ($order->getMedia('prescriptions') as $m)
                     <a href="{{ route('admin.orders.prescription', [$order, $m->id]) }}" target="_blank" class="d-block" data-no-modal><i class="bi bi-file-earmark-medical me-1"></i>{{ $m->file_name }}</a>
                 @empty<span class="text-muted">{{ __('No file') }}</span>@endforelse

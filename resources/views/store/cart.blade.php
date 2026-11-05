@@ -5,6 +5,8 @@
 @section('content')
 <div class="sf-container py-4" id="sfCartPage">
     <h1 class="h2 mb-4">{{ __('Your cart') }}</h1>
+    @if (session('success'))<div class="sf-alert mb-3" style="border-color:var(--ok)"><i class="bi bi-check-circle-fill text-success fs-5"></i>{{ session('success') }}</div>@endif
+    @if (session('error'))<div class="sf-alert mb-3" role="alert"><i class="bi bi-exclamation-triangle-fill fs-5"></i>{{ session('error') }}</div>@endif
     @if (empty($cart['lines']))
         <div class="sf-empty"><i class="bi bi-bag"></i><h2 class="h5">{{ __('Your cart is empty') }}</h2><a href="{{ route('store.shop') }}" class="btn btn-primary mt-3">{{ __('Start shopping') }}</a></div>
     @else

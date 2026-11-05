@@ -69,6 +69,7 @@ class ShippingController extends Controller
             'rates.*.free_over' => ['nullable', 'numeric', 'min:0'],
             'rates.*.min_subtotal' => ['nullable', 'numeric', 'min:0'],
             'rates.*.eta' => ['nullable', 'string', 'max:60'],
+            'rates.*.eta_minutes' => ['nullable', 'integer', 'min:1', 'max:20160'],
         ]);
 
         $cities = collect(preg_split('/[\r\n,]+/', (string) ($data['cities'] ?? '')))->map(fn ($c) => trim($c))->filter()->unique(fn ($c) => mb_strtolower($c))->values()->all();
@@ -83,7 +84,7 @@ class ShippingController extends Controller
                 $pickup = (bool) data_get($request->input('rates'), "$i.is_pickup", false);
                 $rate->fill([
                     'name' => $row['name'], 'price' => $pickup ? 0 : ($row['price'] ?? 0), 'free_over' => $pickup ? null : ($row['free_over'] ?? null),
-                    'min_subtotal' => $row['min_subtotal'] ?? null, 'eta' => $row['eta'] ?? null, 'is_pickup' => $pickup, 'is_active' => true, 'sort_order' => $i,
+                    'min_subtotal' => $row['min_subtotal'] ?? null, 'eta' => $row['eta'] ?? null, 'eta_minutes' => $row['eta_minutes'] ?? null, 'is_pickup' => $pickup, 'is_active' => true, 'sort_order' => $i,
                 ])->save();
                 $keep[] = $rate->id;
             }

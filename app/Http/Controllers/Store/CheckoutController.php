@@ -9,6 +9,7 @@ use App\Models\ShippingZone;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\Payments\PaymentManager;
+use App\Services\SlotService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ class CheckoutController extends Controller
             'cities' => ShippingZone::where('is_active', true)->pluck('cities')->flatten()->filter()->unique()->values(),
             'gateways' => $this->payments->enabled(),
             'needsRx' => $this->checkout->needsPrescription(),
+            'slotDays' => app(SlotService::class)->enabled() ? app(SlotService::class)->days() : [],
             'user' => $user,
         ]);
     }
@@ -78,6 +80,8 @@ class CheckoutController extends Controller
             'shipping_rate_id' => ['required', 'integer'],
             'payment_method' => ['required', 'string', 'max:24'],
             'coupon' => ['nullable', 'string', 'max:40'],
+            'slot_date' => ['nullable', 'date_format:Y-m-d'],
+            'delivery_slot_id' => ['nullable', 'integer'],
             'prescription' => ['nullable', 'array', 'max:5'],
             'prescription.*' => ['file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
         ]);

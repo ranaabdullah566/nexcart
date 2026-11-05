@@ -6,7 +6,7 @@
     $page = 'order';
     $steps = $order->timelineSteps();
     $cancelled = in_array($order->status, ['cancelled', 'refunded'], true);
-    $idx = array_search($order->status, $steps, true);
+    $idx = $order->timelineIndex();
 @endphp
 <div class="sf-container py-4" style="max-width:980px">
     @if (session('placed'))
@@ -20,9 +20,29 @@
     @if (session('error'))<div class="sf-alert mb-3" role="alert"><i class="bi bi-exclamation-triangle-fill fs-5"></i>{{ session('error') }}</div>@endif
 
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-        <div><div class="sf-eyebrow">{{ __('Order') }}</div><h1 class="h2 mb-0 figure">{{ $order->number }}</h1><div class="text-muted small">{{ $order->placed_at?->format('d M Y, H:i') }}</div></div>
-        <div class="d-flex gap-2 flex-wrap"><a href="{{ route('store.invoice', [$order->number, $order->public_token]) }}" target="_blank" class="sf-btn-ghost"><i class="bi bi-printer"></i> {{ __('Invoice') }}</a></div>
+        <div><div class="sf-eyebrow">{{ __('Order') }}</div><h1 class="h2 mb-0 figure">{{ $order->number }}</h1><div class="text-muted small">{{ local_time($order->placed_at, 'd M Y, H:i') }}</div></div>
+        <div class="d-flex gap-2 flex-wrap">
+            <form method="POST" action="{{ route('store.order.reorder', [$order->number, $order->public_token]) }}">@csrf<button class="sf-btn-ghost"><i class="bi bi-arrow-repeat"></i> {{ __('Order again') }}</button></form>
+            <a href="{{ route('store.invoice', [$order->number, $order->public_token]) }}" target="_blank" class="sf-btn-ghost"><i class="bi bi-printer"></i> {{ __('Invoice') }}</a></div>
     </div>
+
+    @if ($order->isOpen() && $order->eta_at && $order->eta_at->isFuture())
+        <div class="sf-alert mb-3" style="border-color:var(--acc-1)"><i class="bi bi-stopwatch fs-4" style="color:var(--acc-1)"></i><div><b>{{ __('Estimated arrival') }}: <span class="figure">{{ $order->eta_at->timezone(setting('store.timezone'))->format('h:i A') }}</span></b><div class="small text-muted">{{ __('About :n minutes from now', ['n' => max(1, (int) now()->diffInMinutes($order->eta_at))]) }}</div></div></div>
+    @endif
+    @if ($order->slot_label)
+        <div class="sf-alert mb-3" style="border-color:var(--acc-2)"><i class="bi bi-calendar-check fs-4" style="color:var(--acc-2)"></i><div><b>{{ $order->is_pickup ? __('Pickup time') : __('Delivery time') }}: {{ $order->slot_date->translatedFormat('D, d M') }} · {{ $order->slot_label }}</b></div></div>
+    @endif
+    @if ($order->requires_prescription && $order->isOpen())
+        @php($rxs = $order->prescription_status)
+        <div class="sf-alert mb-3" style="border-color:var({{ $rxs === 'approved' ? '--ok' : ($rxs === 'rejected' ? '--bad' : '--warn') }})"><i class="bi bi-prescription2 fs-4"></i>
+            <div class="flex-grow-1"><b>{{ $rxs === 'approved' ? __('Prescription approved') : ($rxs === 'rejected' ? __('Prescription needs attention') : __('Prescription is being verified')) }}</b>
+                @if ($rxs === 'rejected')<div class="small">{{ $order->prescription_note }}</div>
+                    <form method="POST" action="{{ route('store.order.prescription', [$order->number, $order->public_token]) }}" enctype="multipart/form-data" class="d-flex gap-2 flex-wrap mt-2">@csrf
+                        <input type="file" name="prescription[]" multiple required accept="image/jpeg,image/png,image/webp,application/pdf" class="form-control form-control-sm" style="max-width:320px">
+                        <button class="btn btn-primary btn-sm">{{ __('Upload a new prescription') }}</button></form>
+                    @error('prescription.*')<div class="text-danger small">{{ $message }}</div>@enderror @error('prescription')<div class="text-danger small">{{ $message }}</div>@enderror
+                @endif</div></div>
+    @endif
 
     <div class="sf-summary mb-4">
         @if ($cancelled)
@@ -73,7 +93,7 @@
                 @if ($order->payment_method === 'stripe' && $order->payment_status === 'unpaid' && $order->isOpen())
                     <form method="POST" action="{{ route('store.order.pay', [$order->number, $order->public_token]) }}" class="mt-3">@csrf<button class="btn btn-primary w-100"><i class="bi bi-credit-card me-1"></i> {{ __('Pay now') }}</button></form>
                 @endif
-                @if ($order->requires_prescription)<div class="mt-3 small"><i class="bi bi-prescription2 me-1"></i>{{ __('Prescription received — a pharmacist will verify it before dispatch.') }}</div>@endif
+                
             </div>
         </div>
     </div>

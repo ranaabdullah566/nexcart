@@ -23,6 +23,11 @@ class OrderService
             throw ValidationException::withMessages(['status' => __('This order cannot move from :from to :to.', ['from' => $order->statusLabel(), 'to' => __(str_replace('_', ' ', ucfirst($to)))])]);
         }
 
+        // medicines that need a prescription are never prepared or dispatched before a pharmacist approves it
+        if ($order->awaitsPrescription() && in_array($to, ['preparing', 'ready', 'out_for_delivery', 'completed'], true)) {
+            throw ValidationException::withMessages(['status' => __('Verify the prescription before preparing this order.')]);
+        }
+
         DB::transaction(function () use ($order, $to, $by, $note) {
             $order->status = $to;
 
@@ -46,6 +51,42 @@ class OrderService
 
             $this->log($order, 'status', $to, $note, $by);
         });
+    }
+
+    public function assignRider(Order $order, ?User $rider, ?User $by = null): void
+    {
+        if ($rider && ! $rider->hasRole('rider')) {
+            throw ValidationException::withMessages(['rider_id' => __('That person is not a rider.')]);
+        }
+        if ($order->is_pickup || ! $order->isOpen()) {
+            throw ValidationException::withMessages(['rider_id' => __('This order cannot be assigned to a rider.')]);
+        }
+
+        $order->update(['rider_id' => $rider?->id, 'rider_assigned_at' => $rider ? now() : null]);
+        $this->log($order, 'rider', null, $rider ? __('Assigned to :name', ['name' => $rider->name]) : __('Rider removed'), $by);
+    }
+
+    public function reviewPrescription(Order $order, string $decision, ?string $note, User $by): void
+    {
+        if (! $order->requires_prescription || ! in_array($decision, ['approved', 'rejected'], true)) {
+            throw ValidationException::withMessages(['decision' => __('This order has no prescription to review.')]);
+        }
+        if ($decision === 'rejected' && blank($note)) {
+            throw ValidationException::withMessages(['note' => __('Tell the customer why the prescription was rejected.')]);
+        }
+
+        $order->update([
+            'prescription_status' => $decision, 'prescription_note' => $note,
+            'prescription_reviewed_by' => $by->id, 'prescription_reviewed_at' => now(),
+        ]);
+        $this->log($order, 'prescription', $decision, $note, $by);
+    }
+
+    /** Customer sends a new file after a rejection: goes back to the pharmacist's queue. */
+    public function resubmitPrescription(Order $order): void
+    {
+        $order->update(['prescription_status' => 'pending', 'prescription_note' => null, 'prescription_reviewed_by' => null, 'prescription_reviewed_at' => null]);
+        $this->log($order, 'prescription', 'pending', __('New prescription uploaded'));
     }
 
     public function markPaid(Order $order, ?string $reference = null, ?User $by = null): void

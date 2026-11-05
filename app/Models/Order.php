@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\BusinessProfile;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -25,6 +26,7 @@ class Order extends Model implements HasMedia
             'is_pickup' => 'boolean', 'tax_inclusive' => 'boolean', 'requires_prescription' => 'boolean',
             'subtotal' => 'decimal:2', 'discount' => 'decimal:2', 'shipping_cost' => 'decimal:2', 'tax' => 'decimal:2', 'total' => 'decimal:2', 'tax_rate' => 'decimal:2',
             'placed_at' => 'datetime', 'paid_at' => 'datetime', 'completed_at' => 'datetime', 'cancelled_at' => 'datetime',
+            'eta_at' => 'datetime', 'rider_assigned_at' => 'datetime', 'prescription_reviewed_at' => 'datetime', 'slot_date' => 'date',
         ];
     }
 
@@ -49,6 +51,22 @@ class Order extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
+    public function rider(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'rider_id');
+    }
+
+    public function prescriptionReviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'prescription_reviewed_by');
+    }
+
+    /** Needs a pharmacist's approval before it may be prepared or dispatched. */
+    public function awaitsPrescription(): bool
+    {
+        return $this->requires_prescription && $this->prescription_status !== 'approved';
+    }
+
     /** NC-100001, NC-100002 … prefix comes from the store name's initials. */
     public static function nextNumber(): string
     {
@@ -64,16 +82,21 @@ class Order extends Model implements HasMedia
         return Str::random(40);
     }
 
-    /** Statuses an order may move to from where it is now. Pickup orders use "ready", deliveries use "out for delivery". */
+    /**
+     * Statuses an order may move to from where it is now.
+     * Pickup: preparing → ready → completed.  Delivery: preparing → out for delivery → completed,
+     * and with riders on, delivery goes preparing → ready (waiting for a rider) → out for delivery → completed.
+     */
     public function nextStatuses(): array
     {
-        $final = $this->is_pickup ? 'ready' : 'out_for_delivery';
+        $viaRider = ! $this->is_pickup && BusinessProfile::hasModule('riders');
 
         return match ($this->status) {
             'pending' => ['confirmed', 'cancelled'],
             'confirmed' => ['preparing', 'cancelled'],
-            'preparing' => [$final, 'cancelled'],
-            'ready', 'out_for_delivery' => ['completed', 'cancelled'],
+            'preparing' => [$this->is_pickup || $viaRider ? 'ready' : 'out_for_delivery', 'cancelled'],
+            'ready' => [$viaRider ? 'out_for_delivery' : 'completed', 'cancelled'],
+            'out_for_delivery' => ['completed', 'cancelled'],
             'completed' => ['refunded'],
             default => [],
         };
@@ -95,6 +118,14 @@ class Order extends Model implements HasMedia
         return $this->is_pickup
             ? ['pending', 'confirmed', 'preparing', 'ready', 'completed']
             : ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'completed'];
+    }
+
+    /** Position on the timeline; "ready" for a delivery means food is waiting for a rider, so it still counts as preparing. */
+    public function timelineIndex(): int|false
+    {
+        $status = (! $this->is_pickup && $this->status === 'ready') ? 'preparing' : $this->status;
+
+        return array_search($status, $this->timelineSteps(), true);
     }
 
     public function trackUrl(): string

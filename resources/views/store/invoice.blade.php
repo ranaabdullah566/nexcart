@@ -23,13 +23,13 @@
 <div class="sheet">
     <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
         <div><h1>{{ setting('store.name') }}</h1><div class="muted">{{ setting('store.email') }} @if (setting('store.phone')) · {{ setting('store.phone') }}@endif</div></div>
-        <div style="text-align:end"><div class="muted">{{ __('Invoice') }}</div><div class="num" style="font-size:20px;font-weight:700">{{ $order->number }}</div><div class="muted">{{ $order->placed_at?->format('d M Y') }}</div>
+        <div style="text-align:end"><div class="muted">{{ __('Invoice') }}</div><div class="num" style="font-size:20px;font-weight:700">{{ $order->number }}</div><div class="muted">{{ local_time($order->placed_at, 'd M Y') }}</div>
             @if ($order->payment_status === 'paid')<div class="paid" style="margin-top:6px">{{ __('Paid') }}</div>@endif</div>
     </div>
     <div class="row">
         <div><div class="muted">{{ $order->is_pickup ? __('Pickup for') : __('Bill / ship to') }}</div><b>{{ $order->name }}</b><br>{{ $order->phone }}<br>{{ $order->email }}
             @unless ($order->is_pickup)<br>{{ $order->address_line }}@if ($order->area), {{ $order->area }}@endif<br>{{ $order->city }} {{ $order->postal_code }}@endunless</div>
-        <div><div class="muted">{{ __('Payment') }}</div><b>{{ ['cod' => __('Cash on delivery'), 'bank' => __('Bank transfer'), 'stripe' => __('Card (Stripe)')][$order->payment_method] ?? $order->payment_method }}</b><br><span class="muted">{{ $order->shipping_method }}</span></div>
+        <div><div class="muted">{{ __('Payment') }}</div><b>{{ ['cod' => __('Cash on delivery'), 'bank' => __('Bank transfer'), 'stripe' => __('Card (Stripe)')][$order->payment_method] ?? $order->payment_method }}</b><br><span class="muted">{{ $order->shipping_method }}</span>@if ($order->slot_label)<br><span class="muted">{{ $order->slot_date->format('D, d M Y') }} · {{ $order->slot_label }}</span>@endif</div>
     </div>
     <table>
         <thead><tr><th>{{ __('Item') }}</th><th class="r">{{ __('Qty') }}</th><th class="r">{{ __('Price') }}</th><th class="r">{{ __('Total') }}</th></tr></thead>

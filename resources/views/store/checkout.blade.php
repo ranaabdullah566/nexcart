@@ -48,6 +48,26 @@
                     @error('shipping_rate_id')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
                 </section>
 
+                @if ($slotDays)
+                    <section class="ck-sec" id="slotSec">
+                        <h2>{{ __('Delivery time') }}</h2>
+                        <div class="sf-pills mb-3" id="slotDays" role="tablist">
+                            @foreach ($slotDays as $i => $d)
+                                <label class="sf-pill"><input type="radio" name="slot_date" value="{{ $d['date'] }}" @checked(old('slot_date', collect($slotDays)->first(fn ($x) => collect($x['slots'])->contains('open', true))['date'] ?? $slotDays[0]['date']) === $d['date'])><span>{{ $d['label'] }}</span></label>
+                            @endforeach
+                        </div>
+                        @foreach ($slotDays as $d)
+                            <div class="d-grid gap-2 slot-day" data-date="{{ $d['date'] }}" hidden>
+                                @foreach ($d['slots'] as $sl)
+                                    <label class="ck-opt" style="{{ $sl['open'] ? '' : 'opacity:.45;cursor:not-allowed' }}"><input type="radio" name="delivery_slot_id" value="{{ $sl['id'] }}" @disabled(! $sl['open']) @checked((int) old('delivery_slot_id') === $sl['id'] && old('slot_date') === $d['date'])>
+                                        <span><b>{{ $sl['label'] }}</b>@if (! $sl['open'])<small>{{ $sl['left'] === 0 ? __('Full') : __('Closed') }}</small>@elseif ($sl['left'] !== null && $sl['left'] <= 3)<small class="text-warning">{{ __(':n places left', ['n' => $sl['left']]) }}</small>@endif</span><i class="bi bi-clock"></i></label>
+                                @endforeach
+                            </div>
+                        @endforeach
+                        @error('delivery_slot_id')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
+                    </section>
+                @endif
+
                 @if ($needsRx)
                     <section class="ck-sec">
                         <h2><i class="bi bi-prescription2 me-1"></i>{{ __('Prescription') }}</h2>
@@ -115,6 +135,7 @@
 
 @push('head')
 <style>
+    .slot-day[hidden] { display: none !important; }   /* d-grid would otherwise win over the hidden attribute */
     .ck-sec { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
     .ck-sec h2 { font-size: 1.1rem; margin-bottom: 1rem; }
     .ck-opt { display: grid; grid-template-columns: auto 1fr auto; gap: .8rem; align-items: center; padding: .9rem 1rem; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); cursor: pointer; transition: .2s var(--ease); }
@@ -187,6 +208,17 @@
     document.getElementById('couponBtn').addEventListener('click', function () { couponField.value = couponInput.value.trim(); requote(); });
     couponInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); couponField.value = couponInput.value.trim(); requote(); } });
     form.addEventListener('submit', function () { var b = document.getElementById('placeBtn'); setTimeout(function () { b.disabled = true; }, 0); });
+    // delivery time: show the slots of the chosen day
+    var dayRadios = form.querySelectorAll('input[name=slot_date]');
+    function showDay() {
+        var d = (form.querySelector('input[name=slot_date]:checked') || {}).value;
+        form.querySelectorAll('.slot-day').forEach(function (el) {
+            var on = el.dataset.date === d; el.hidden = !on;
+            if (!on) el.querySelectorAll('input').forEach(function (i) { i.checked = false; });
+        });
+    }
+    dayRadios.forEach(function (r) { r.addEventListener('change', showDay); });
+    if (dayRadios.length) showDay();
     toggleAddress();
 })();
 </script>

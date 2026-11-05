@@ -24,6 +24,9 @@
         <p style="margin:20px 0 4px"><b>{{ $order->is_pickup ? __('Pickup') : __('Delivery to') }}</b></p>
         <p style="margin:0;color:#475467">{{ $order->name }} · {{ $order->phone }}<br>@unless ($order->is_pickup){{ $order->address_line }}, {{ $order->city }}@endunless</p>
 
+        @if ($order->slot_label)<p style="margin:12px 0 0;color:#475467"><b>{{ __('Time') }}:</b> {{ $order->slot_date->format('D, d M') }} · {{ $order->slot_label }}</p>@endif
+        @if ($order->eta_at && $order->eta_at->isFuture())<p style="margin:12px 0 0;color:#475467"><b>{{ __('Estimated arrival') }}:</b> {{ $order->eta_at->timezone(setting('store.timezone'))->format('h:i A') }}</p>@endif
+
         <p style="margin:20px 0 4px"><b>{{ __('Payment') }}</b></p>
         <p style="margin:0;color:#475467">{{ $order->payment_method === 'bank' ? __('Bank transfer') : ($order->payment_method === 'stripe' ? __('Card (Stripe)') : __('Cash on delivery')) }}</p>
 

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Coupon;
+use App\Models\DeliverySlot;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ShippingRate;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Services\Payments\PaymentManager;
 use App\Support\BusinessProfile;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -22,6 +24,7 @@ class CheckoutService
         private StockService $stock,
         private OrderService $orders,
         private PaymentManager $payments,
+        private SlotService $slots,
     ) {}
 
     /** Shipping rates a customer may pick for a city and subtotal (pickup rates ignore the city). */
@@ -49,6 +52,17 @@ class CheckoutService
             'rate' => $rate, 'rates' => $rates, 'coupon' => $coupon,
             'coupon_error' => filled($couponCode) ? ($coupon ? null : __('We could not find that code.')) : null,
         ];
+    }
+
+    /** Kitchen time (slowest item) plus the rate's travel time; null when the rate has no estimate. */
+    private function eta(ShippingRate $rate, $lines): ?Carbon
+    {
+        if (! $rate->eta_minutes) {
+            return null;
+        }
+        $prep = (int) $lines->map(fn ($l) => (int) ($l['product']->specs['prep_time_min'] ?? 0))->max();
+
+        return now()->addMinutes($prep + $rate->eta_minutes);
     }
 
     public function needsPrescription(): bool
@@ -100,6 +114,19 @@ class CheckoutService
                 throw ValidationException::withMessages(['address_line' => __('Please enter your delivery address.')]);
             }
 
+            $slot = null;
+            if ($this->slots->enabled()) {
+                $slot = $this->slots->check($data['slot_date'] ?? null, isset($data['delivery_slot_id']) ? (int) $data['delivery_slot_id'] : null);
+                if (is_string($slot)) {
+                    throw ValidationException::withMessages(['delivery_slot_id' => $slot]);
+                }
+                DeliverySlot::whereKey($slot->id)->lockForUpdate()->first();   // serialise bookings for the same slot
+                $slot = $this->slots->check($data['slot_date'], $slot->id);
+                if (is_string($slot)) {
+                    throw ValidationException::withMessages(['delivery_slot_id' => $slot]);
+                }
+            }
+
             $coupon = null;
             if (filled($data['coupon'] ?? null)) {
                 $coupon = Coupon::where('code', Coupon::normalize($data['coupon']))->lockForUpdate()->first();
@@ -120,14 +147,16 @@ class CheckoutService
                 'area' => $data['area'] ?? null, 'postal_code' => $data['postal_code'] ?? null, 'notes' => $data['notes'] ?? null,
                 'subtotal' => $q['subtotal'], 'discount' => $q['discount'], 'shipping_cost' => $q['shipping'], 'tax' => $q['tax'], 'total' => $q['total'],
                 'tax_rate' => $q['tax_rate'], 'tax_inclusive' => $q['tax_inclusive'], 'currency' => (string) setting('store.currency', 'PKR'),
-                'coupon_code' => $coupon?->code, 'requires_prescription' => $rx, 'placed_at' => now(),
+                'coupon_code' => $coupon?->code, 'requires_prescription' => $rx, 'prescription_status' => $rx ? 'pending' : null, 'placed_at' => now(),
+                'slot_date' => $slot ? $data['slot_date'] : null, 'delivery_slot_id' => $slot?->id, 'slot_label' => $slot?->displayLabel(),
+                'eta_at' => $this->eta($rate, $lines),
             ]);
 
             foreach ($lines as $l) {
                 OrderItem::create([
                     'order_id' => $order->id, 'product_id' => $l['product']->id, 'variant_id' => $l['variant']?->id,
                     'name' => $l['product']->name, 'variant_name' => $l['variant']?->name, 'sku' => $l['variant']?->sku ?: $l['product']->sku,
-                    'options' => $l['options']->map(fn ($o) => ['name' => $o->name, 'price' => (float) $o->price_delta])->all() ?: null,
+                    'options' => $l['options']->map(fn ($o) => ['id' => $o->id, 'name' => $o->name, 'price' => (float) $o->price_delta])->all() ?: null,
                     'unit_price' => $l['unit'], 'qty' => $l['qty'], 'total' => $l['total'],
                 ]);
                 if ($l['product']->track_stock) {

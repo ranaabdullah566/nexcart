@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ShippingRate extends Model
 {
-    protected $fillable = ['shipping_zone_id', 'name', 'price', 'free_over', 'min_subtotal', 'eta', 'is_pickup', 'is_active', 'sort_order'];
+    protected $fillable = ['shipping_zone_id', 'name', 'price', 'free_over', 'min_subtotal', 'eta', 'eta_minutes', 'is_pickup', 'is_active', 'sort_order'];
 
     protected function casts(): array
     {
