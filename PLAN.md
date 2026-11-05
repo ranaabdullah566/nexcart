@@ -17,7 +17,7 @@ kiya ja sake.
 | Settings | DB-backed settings (`spatie/laravel-settings` style) | Admin se sab kuch change |
 | Queue / Cache | Database queue → Redis (production) | Emails, invoices, stock alerts |
 | Payments | Driver-based (Stripe, COD, Bank Transfer, local gateways) | Plug & play |
-| Tests | Pest | Har phase ke saath tests |
+| Tests | PHPUnit (Laravel default) | Har phase ke saath tests |
 
 > Filament ka Laravel 13 support Phase 1 me verify hoga; agar issue ho to
 > admin custom Livewire me banega (plan same rehta hai).
@@ -55,7 +55,7 @@ kiya ja sake.
 
 ### Phase 0 — Foundation *(is session me)*
 - Laravel 13 project, MySQL config, env, git, `PLAN.md`
-- Base packages, coding standards (Pint), Pest, CI-ready structure
+- Base packages, coding standards (Pint), PHPUnit, CI-ready structure
 - Folder architecture (`app/Domain/*` ya modules)
 
 ### Phase 1 — Core platform & Admin shell

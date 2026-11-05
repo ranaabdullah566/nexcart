@@ -1,0 +1,48 @@
+/* NexCart admin — futuristic skin. Pure CSS layered over Filament, driven by Filament's own colour tokens. */
+:root { --nx-glow: color-mix(in srgb, var(--primary-500) 45%, transparent); }
+
+.dark body, .dark .fi-body {
+  background:
+    radial-gradient(60rem 40rem at 10% -10%, color-mix(in srgb, var(--primary-600) 28%, transparent), transparent 60%),
+    radial-gradient(50rem 35rem at 100% 0%, color-mix(in srgb, var(--info-500, var(--primary-400)) 20%, transparent), transparent 60%),
+    #07070d;
+  background-attachment: fixed;
+}
+
+/* Glass surfaces */
+.dark .fi-sidebar, .dark .fi-topbar > nav {
+  background: rgb(15 15 28 / .55) !important;
+  backdrop-filter: blur(18px) saturate(140%);
+  border-color: rgb(255 255 255 / .06) !important;
+}
+.dark .fi-section, .dark .fi-ta-ctn, .dark .fi-wi-stats-overview-stat, .dark .fi-fo-tabs {
+  background: rgb(255 255 255 / .035) !important;
+  backdrop-filter: blur(14px);
+  border: 1px solid rgb(255 255 255 / .08);
+  box-shadow: 0 10px 40px -12px rgb(0 0 0 / .6), inset 0 1px 0 rgb(255 255 255 / .05);
+  border-radius: 1rem;
+}
+
+/* Neon accents */
+.fi-btn.fi-color-primary, .fi-btn[class*="fi-color-primary"] {
+  background-image: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+  box-shadow: 0 0 0 1px rgb(255 255 255 / .1) inset, 0 8px 28px -6px var(--nx-glow);
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.fi-btn.fi-color-primary:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px rgb(255 255 255 / .18) inset, 0 12px 36px -6px var(--nx-glow); }
+
+.fi-sidebar-item.fi-active > a, .fi-sidebar-item-btn.fi-active {
+  box-shadow: inset 2px 0 0 var(--primary-400), 0 0 24px -8px var(--nx-glow);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--primary-500) 18%, transparent), transparent) !important;
+}
+
+.fi-header-heading {
+  background: linear-gradient(90deg, #fff, color-mix(in srgb, var(--primary-300) 80%, #fff));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  letter-spacing: -.02em;
+}
+
+/* Smooth motion */
+.fi-section, .fi-ta-ctn, .fi-wi-stats-overview-stat { transition: transform .2s ease, border-color .2s ease; }
+.fi-wi-stats-overview-stat:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--primary-400) 40%, transparent); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
