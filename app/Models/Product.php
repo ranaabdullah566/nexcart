@@ -70,6 +70,12 @@ class Product extends Model implements HasMedia
         return $this->type === 'variable';
     }
 
+    /** Everything a product card needs, loaded in one go. */
+    public function scopeCard(Builder $q): Builder
+    {
+        return $q->with(['variants', 'media'])->withCount('modifierGroups');
+    }
+
     public function scopeActive(Builder $q): Builder
     {
         return $q->where('status', 'active');

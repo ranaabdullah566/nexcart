@@ -22,6 +22,7 @@ class RolesSeeder extends Seeder
         'deliveries' => ['view', 'update'],
         'inventory' => ['view', 'adjust'],
         'catalog_settings' => ['manage'],   // attributes, modifiers
+        'storefront' => ['manage'],         // home page builder
     ];
 
     public function run(): void

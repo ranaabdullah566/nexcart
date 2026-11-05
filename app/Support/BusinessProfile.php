@@ -47,6 +47,8 @@ class BusinessProfile
             ]);
         }
 
+        HomeDefaults::seed($type);
+
         $all = collect(static::all())->pluck('modules')->flatten()->unique();
         foreach ($all as $module) {
             $settings->set("modules.{$module}", in_array($module, $profile['modules'], true));

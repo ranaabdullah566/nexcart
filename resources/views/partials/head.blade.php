@@ -27,9 +27,11 @@
 <link href="{{ asset('assets/css/fonts.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/css/bootstrap-icons.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/css/responsive.bootstrap5.min.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet">
+@empty($storefront)
+    <link href="{{ asset('assets/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/responsive.bootstrap5.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/select2.min.css') }}" rel="stylesheet">
+@endempty
 <link href="{{ asset('assets/css/theme.css') }}?v={{ @filemtime(public_path('assets/css/theme.css')) }}" rel="stylesheet">
 <link href="{{ asset('assets/css/nexcart.css') }}?v={{ @filemtime(public_path('assets/css/nexcart.css')) }}" rel="stylesheet">
 

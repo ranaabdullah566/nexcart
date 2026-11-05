@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\HomeSectionController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ModifierGroupController;
 use App\Http\Controllers\Admin\ProductController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\SetupController;
+use App\Http\Controllers\Store;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/setup', [SetupController::class, 'show'])->name('setup');
@@ -42,12 +44,31 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff'])->group(fun
     Route::delete('products/{product}/images/{media}', [ProductController::class, 'destroyImage'])->name('products.images.destroy');
     Route::resource('products', ProductController::class)->except('show');
 
+    // Storefront
+    Route::post('home-sections/{homeSection}/toggle', [HomeSectionController::class, 'toggle'])->name('home-sections.toggle');
+    Route::post('home-sections/{homeSection}/move', [HomeSectionController::class, 'move'])->name('home-sections.move');
+    Route::resource('home-sections', HomeSectionController::class)->except('show')->parameters(['home-sections' => 'homeSection']);
+
     // Inventory
     Route::get('inventory', [InventoryController::class, 'index'])->name('inventory.index');
     Route::get('inventory/adjust', [InventoryController::class, 'create'])->name('inventory.adjust');
     Route::post('inventory/adjust', [InventoryController::class, 'store'])->name('inventory.store');
 });
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Storefront
+Route::get('/', Store\HomeController::class)->name('store.home');
+Route::get('/shop', [Store\ShopController::class, 'index'])->name('store.shop');
+Route::get('/category/{category}', [Store\ShopController::class, 'index'])->name('store.category');
+Route::get('/product/{slug}', [Store\ProductController::class, 'show'])->name('store.product');
+Route::get('/product/{slug}/quick', [Store\ProductController::class, 'quick'])->name('store.quick');
+Route::get('/search/suggest', [Store\SearchController::class, 'suggest'])->name('store.suggest');
+Route::get('/cart', [Store\CartController::class, 'show'])->name('store.cart');
+Route::get('/cart.json', [Store\CartController::class, 'json'])->name('store.cart.json');
+Route::post('/cart/add', [Store\CartController::class, 'add'])->name('store.cart.add');
+Route::patch('/cart/{key}', [Store\CartController::class, 'update'])->name('store.cart.update');
+Route::delete('/cart/{key}', [Store\CartController::class, 'destroy'])->name('store.cart.remove');
+Route::get('/wishlist', [Store\WishlistController::class, 'index'])->name('store.wishlist');
+Route::post('/wishlist/{product}', [Store\WishlistController::class, 'toggle'])->name('store.wishlist.toggle');
+Route::get('/sitemap.xml', [Store\SeoController::class, 'sitemap'])->name('store.sitemap');
+Route::get('/robots.txt', [Store\SeoController::class, 'robots']);
+Route::get('/manifest.webmanifest', [Store\SeoController::class, 'manifest'])->name('store.manifest');

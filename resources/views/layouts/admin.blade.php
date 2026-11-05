@@ -23,6 +23,10 @@
             ['admin.modifier-groups.index', 'admin.modifier-groups.*', 'plus-slash-minus', 'Add-ons', 'catalog_settings.manage', 'modifiers'],
             ['admin.attributes.index', 'admin.attributes.*', 'sliders2', 'Product fields', 'catalog_settings.manage', null],
         ],
+        'Storefront' => [
+            ['admin.home-sections.index', 'admin.home-sections.*', 'layout-text-window-reverse', 'Home page', 'storefront.manage', null],
+            ['store.home', 'never', 'box-arrow-up-right', 'View store', null, null],
+        ],
         'Admin' => [
             ['admin.staff.index', 'admin.staff.*', 'person-badge-fill', 'Staff', 'staff.view', null],
             ['admin.settings.edit', 'admin.settings.*', 'gear-fill', 'Store settings', 'settings.view', null],
