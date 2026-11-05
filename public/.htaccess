@@ -5,6 +5,9 @@
 
     RewriteEngine On
 
+    # Never serve dotfiles (.env, .git …) except .well-known
+    RewriteRule "(^|/)\.(?!well-known/)" - [F,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -23,3 +26,8 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+<IfModule mod_headers.c>
+    Header always unset X-Powered-By
+</IfModule>
+ServerSignature Off

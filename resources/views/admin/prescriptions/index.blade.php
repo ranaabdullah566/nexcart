@@ -33,5 +33,5 @@
 @endsection
 
 @push('scripts')
-<script>$(function () { $('#rxTable').DataTable({ responsive: true, pageLength: 10, order: [[4, 'asc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }, { orderable: false, targets: -1 }] }); });</script>
+<script nonce="{{ csp_nonce() }}">$(function () { $('#rxTable').DataTable({ responsive: true, pageLength: 10, order: [[4, 'asc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }, { orderable: false, targets: -1 }] }); });</script>
 @endpush

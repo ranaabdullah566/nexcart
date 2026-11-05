@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Coupon extends Model
 {
+    use SoftDeletes;
+
     public const TYPES = ['percent', 'fixed', 'free_shipping'];
 
     protected $fillable = ['code', 'type', 'value', 'min_subtotal', 'max_discount', 'starts_at', 'ends_at', 'usage_limit', 'is_active'];

@@ -89,7 +89,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
     $(function () {
         var lang = { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) };
         $('#stockTable').DataTable({ responsive: true, pageLength: 10, order: [[2, 'asc']], language: lang, columnDefs: [{ responsivePriority: 1, targets: 0 }, { responsivePriority: 2, targets: -1 }, { orderable: false, targets: -1 }] });

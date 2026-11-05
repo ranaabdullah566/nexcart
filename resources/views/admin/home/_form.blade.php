@@ -84,6 +84,6 @@
 </form>
 @if ($type === 'products')
 @push('scripts')
-<script>(function () { var s = document.getElementById('prodSource'), c = document.getElementById('prodCat'); function f() { c.style.display = s.value === 'category' ? '' : 'none'; } s.addEventListener('change', f); f(); })();</script>
+<script nonce="{{ csp_nonce() }}">(function () { var s = document.getElementById('prodSource'), c = document.getElementById('prodCat'); function f() { c.style.display = s.value === 'category' ? '' : 'none'; } s.addEventListener('change', f); f(); })();</script>
 @endpush
 @endif

@@ -173,7 +173,7 @@ class OrderAdminTest extends TestCase
         $this->assertNull($z->cities);
         $this->assertSame(['Express'], $z->rates->pluck('name')->all());
         $this->delete("/admin/shipping/{$z->id}")->assertRedirect();
-        $this->assertDatabaseMissing('shipping_rates', ['id' => $keep->id]);
+        $this->assertSoftDeleted('shipping_zones', ['id' => $z->id]);
     }
 
     public function test_payment_settings_validation_and_secret_handling(): void

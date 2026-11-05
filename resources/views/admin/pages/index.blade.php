@@ -19,5 +19,5 @@
 </div></div>
 @endsection
 @push('scripts')
-<script>$(function () { $('#pgTable').DataTable({ responsive: true, pageLength: 25, order: [[0, 'asc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) }, columnDefs: [{ orderable: false, targets: -1 }] }); });</script>
+<script nonce="{{ csp_nonce() }}">$(function () { $('#pgTable').DataTable({ responsive: true, pageLength: 25, order: [[0, 'asc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) }, columnDefs: [{ orderable: false, targets: -1 }] }); });</script>
 @endpush

@@ -162,7 +162,7 @@
 @endpush
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
 (function () {
     var form = document.getElementById('ckForm'), csrf = document.querySelector('meta[name=csrf-token]').content;
     var $ = function (s) { return form.querySelector(s); }, T = {{ \Illuminate\Support\Js::from(['enterCity' => __('Enter your city to see delivery options.'), 'free' => __('Free'), 'applied' => __('Applied')]) }};

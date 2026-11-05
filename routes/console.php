@@ -11,3 +11,4 @@ Artisan::command('inspire', function () {
 Schedule::command('nexcart:send-abandoned-reminders')->hourly()->withoutOverlapping();
 Schedule::command('nexcart:heartbeat')->everyMinute();
 Schedule::command('nexcart:backup --scheduled')->dailyAt('02:30')->withoutOverlapping();
+Schedule::command('nexcart:trash:purge --scheduled')->dailyAt('03:15');

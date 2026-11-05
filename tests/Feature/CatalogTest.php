@@ -63,7 +63,8 @@ class CatalogTest extends TestCase
         $this->put("/admin/categories/{$drinks->id}", ['name' => 'Drinks', 'parent_id' => $drinks->id])->assertSessionHasErrors('parent_id');
 
         $this->delete("/admin/categories/{$drinks->id}")->assertRedirect();
-        $this->assertNull($cold->fresh()->parent_id);
+        $this->assertSoftDeleted($drinks);
+        $this->assertSame('Cold', $cold->fresh()->path);   // the child simply shows without its deleted parent
     }
 
     public function test_translations_and_urdu_slugs(): void

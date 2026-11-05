@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Rules\StrongPassword;
+use App\Rules\UniqueActive;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -34,9 +36,9 @@ class StaffController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email', 'max:190', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:190', new UniqueActive('users', 'email', null, true)],
             'role' => ['required', Rule::in(config('nexcart.roles'))],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'confirmed', StrongPassword::rule()],
         ]);
 
         $this->guardOwnerRole($request, $data['role']);
@@ -60,9 +62,9 @@ class StaffController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
-            'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')->ignore($staff->id)],
+            'email' => ['required', 'email', 'max:190', new UniqueActive('users', 'email', $staff->id, true)],
             'role' => ['required', Rule::in(config('nexcart.roles'))],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'password' => ['nullable', 'string', 'confirmed', StrongPassword::rule()],
         ]);
 
         $this->guardOwnerRole($request, $data['role'], $staff);

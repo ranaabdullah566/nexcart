@@ -65,7 +65,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
 $(function () {
     if (!window.Chart) return;
     var d = @json($chart), st = @json($statuses), sl = @json(collect($statuses)->keys()->map(fn ($s) => __(str_replace('_', ' ', ucfirst($s))))->all());

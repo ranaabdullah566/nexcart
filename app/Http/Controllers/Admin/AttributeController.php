@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CatalogAttribute;
+use App\Rules\UniqueActive;
 use App\Support\BusinessProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -63,7 +64,7 @@ class AttributeController extends Controller
     {
         $data = $request->validate([
             'label' => ['required', 'string', 'max:120'],
-            'key' => ['required', 'regex:/^[a-z][a-z0-9_]{1,63}$/', Rule::unique('catalog_attributes', 'key')->ignore($attribute->id)],
+            'key' => ['required', 'regex:/^[a-z][a-z0-9_]{1,63}$/', new UniqueActive('catalog_attributes', 'key', $attribute->id)],
             'type' => ['required', Rule::in(CatalogAttribute::TYPES)],
             'options' => ['nullable', 'string', 'max:2000'],
             'business_types' => ['nullable', 'array'],

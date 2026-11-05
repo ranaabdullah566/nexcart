@@ -27,5 +27,5 @@
 @endsection
 
 @push('scripts')
-<script>$(function () { $('#modTable').DataTable({ responsive: true, pageLength: 25, order: [[0, 'asc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search add-ons…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }, { responsivePriority: 2, targets: -1 }, { orderable: false, targets: -1 }] }); });</script>
+<script nonce="{{ csp_nonce() }}">$(function () { $('#modTable').DataTable({ responsive: true, pageLength: 25, order: [[0, 'asc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search add-ons…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }, { responsivePriority: 2, targets: -1 }, { orderable: false, targets: -1 }] }); });</script>
 @endpush

@@ -23,5 +23,5 @@
     </div>
 </form>
 @push('scripts')
-<script>(function () { var t = document.getElementById('cpType'); function f() { document.querySelectorAll('.cp-value').forEach(function (e) { e.style.display = t.value === 'free_shipping' ? 'none' : ''; }); document.querySelectorAll('.cp-cap').forEach(function (e) { e.style.display = t.value === 'percent' ? '' : 'none'; }); } t.addEventListener('change', f); f(); })();</script>
+<script nonce="{{ csp_nonce() }}">(function () { var t = document.getElementById('cpType'); function f() { document.querySelectorAll('.cp-value').forEach(function (e) { e.style.display = t.value === 'free_shipping' ? 'none' : ''; }); document.querySelectorAll('.cp-cap').forEach(function (e) { e.style.display = t.value === 'percent' ? '' : 'none'; }); } t.addEventListener('change', f); f(); })();</script>
 @endpush

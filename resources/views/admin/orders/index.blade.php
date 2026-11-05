@@ -37,5 +37,5 @@
 @endsection
 
 @push('scripts')
-<script>$(function () { $('#orderTable').DataTable({ responsive: true, pageLength: 10, order: [[5, 'desc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search orders…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }, { responsivePriority: 2, targets: -1 }, { orderable: false, targets: -1 }] }); });</script>
+<script nonce="{{ csp_nonce() }}">$(function () { $('#orderTable').DataTable({ responsive: true, pageLength: 10, order: [[5, 'desc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search orders…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }, { responsivePriority: 2, targets: -1 }, { orderable: false, targets: -1 }] }); });</script>
 @endpush

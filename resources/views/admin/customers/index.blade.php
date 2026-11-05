@@ -21,5 +21,5 @@
 @endsection
 
 @push('scripts')
-<script>$(function () { $('#custTable').DataTable({ responsive: true, pageLength: 10, order: [[2, 'desc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search customers…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }] }); });</script>
+<script nonce="{{ csp_nonce() }}">$(function () { $('#custTable').DataTable({ responsive: true, pageLength: 10, order: [[2, 'desc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search customers…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }] }); });</script>
 @endpush

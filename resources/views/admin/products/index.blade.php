@@ -61,5 +61,5 @@
 @endsection
 
 @push('scripts')
-<script>$(function () { $('#prodTable').DataTable({ responsive: true, pageLength: 10, lengthMenu: [10, 25, 50, 100], order: [], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search products…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }, { responsivePriority: 2, targets: -1 }, { orderable: false, targets: -1 }] }); });</script>
+<script nonce="{{ csp_nonce() }}">$(function () { $('#prodTable').DataTable({ responsive: true, pageLength: 10, lengthMenu: [10, 25, 50, 100], order: [], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search products…')) }, columnDefs: [{ responsivePriority: 1, targets: 0 }, { responsivePriority: 2, targets: -1 }, { orderable: false, targets: -1 }] }); });</script>
 @endpush

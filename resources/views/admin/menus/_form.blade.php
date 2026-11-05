@@ -17,5 +17,5 @@
     </div>
 </form>
 @push('scripts')
-<script>(function () { var t = document.getElementById('miType'); function f() { ['url', 'page', 'category'].forEach(function (k) { document.querySelectorAll('.mi-' + k).forEach(function (e) { e.style.display = t.value === k ? '' : 'none'; }); }); } t.addEventListener('change', f); f(); })();</script>
+<script nonce="{{ csp_nonce() }}">(function () { var t = document.getElementById('miType'); function f() { ['url', 'page', 'category'].forEach(function (k) { document.querySelectorAll('.mi-' + k).forEach(function (e) { e.style.display = t.value === k ? '' : 'none'; }); }); } t.addEventListener('change', f); f(); })();</script>
 @endpush

@@ -40,5 +40,5 @@
 @endsection
 
 @push('scripts')
-<script>(function () { var d = document.getElementById('drv'); function f() { document.querySelectorAll('.my-only').forEach(function (e) { e.style.display = d.value === 'mysql' ? '' : 'none'; }); document.querySelectorAll('.sq-only').forEach(function (e) { e.style.display = d.value === 'sqlite' ? '' : 'none'; }); } d.addEventListener('change', f); f(); })();</script>
+<script nonce="{{ csp_nonce() }}">(function () { var d = document.getElementById('drv'); function f() { document.querySelectorAll('.my-only').forEach(function (e) { e.style.display = d.value === 'mysql' ? '' : 'none'; }); document.querySelectorAll('.sq-only').forEach(function (e) { e.style.display = d.value === 'sqlite' ? '' : 'none'; }); } d.addEventListener('change', f); f(); })();</script>
 @endpush

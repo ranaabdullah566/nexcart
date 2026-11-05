@@ -5,11 +5,12 @@ namespace App\Models;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
 class MenuItem extends Model
 {
-    use HasTranslations;
+    use HasTranslations, SoftDeletes;
 
     public const LOCATIONS = ['header', 'footer'];
 

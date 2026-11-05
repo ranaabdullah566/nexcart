@@ -42,7 +42,7 @@
     </div>
 </form>
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
     (function () {
         var box = document.getElementById('optRows'), next = box.children.length + 100;
         document.getElementById('optAdd').addEventListener('click', function () {

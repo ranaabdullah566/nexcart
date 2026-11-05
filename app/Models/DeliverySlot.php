@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 class DeliverySlot extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = ['label', 'starts_at', 'ends_at', 'capacity', 'is_active', 'sort_order'];
 
     protected function casts(): array

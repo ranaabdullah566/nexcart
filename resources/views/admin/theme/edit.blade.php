@@ -66,7 +66,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
 (function () {
     var frame = document.getElementById('preview'), form = document.getElementById('themeForm');
     var fonts = { space: "'Space Grotesk'", inter: "'Inter'" };

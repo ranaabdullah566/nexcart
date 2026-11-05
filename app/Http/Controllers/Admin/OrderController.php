@@ -92,6 +92,6 @@ class OrderController extends Controller
         $file = $order->getMedia('prescriptions')->firstWhere('id', $media);
         abort_unless($file, 404);
 
-        return response()->file($file->getPath(), ['Content-Type' => $file->mime_type, 'Content-Disposition' => 'inline; filename="'.addslashes($file->file_name).'"', 'X-Content-Type-Options' => 'nosniff']);
+        return response()->file($file->getPath(), ['Content-Type' => $file->mime_type, 'Content-Disposition' => 'inline; filename="'.addslashes($file->file_name).'"', 'X-Content-Type-Options' => 'nosniff', 'Cache-Control' => 'private, no-store']);
     }
 }

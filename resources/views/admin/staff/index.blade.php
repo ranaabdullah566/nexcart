@@ -43,7 +43,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
     $(function () {
         $('#staffTable').DataTable({
             responsive: true, pageLength: 10, lengthMenu: [5, 10, 25, 50], order: [[0, 'asc']],

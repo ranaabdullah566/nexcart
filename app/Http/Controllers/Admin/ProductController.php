@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\ModifierGroup;
 use App\Models\Product;
 use App\Models\StockMovement;
+use App\Rules\UniqueActive;
 use App\Support\BusinessProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -100,7 +101,7 @@ class ProductController extends Controller
 
         $rules = [
             'name' => ['required', 'string', 'max:190'],
-            'sku' => ['nullable', 'string', 'max:64', Rule::unique('products', 'sku')->ignore($product->id)],
+            'sku' => ['nullable', 'string', 'max:64', new UniqueActive('products', 'sku', $product->id)],
             'category_id' => ['nullable', 'exists:categories,id'],
             'brand_id' => ['nullable', 'exists:brands,id'],
             'type' => ['required', Rule::in(['simple', 'variable'])],

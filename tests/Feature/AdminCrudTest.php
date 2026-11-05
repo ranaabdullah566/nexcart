@@ -67,7 +67,8 @@ class AdminCrudTest extends TestCase
         $this->assertFalse($sara->fresh()->hasRole('manager'));
 
         $this->delete("/admin/staff/{$sara->id}")->assertRedirect('/admin/staff');
-        $this->assertModelMissing($sara);
+        $this->assertSoftDeleted($sara);   // moved to the Recycle Bin, not erased
+        $this->assertNull(User::find($sara->id));
     }
 
     public function test_cannot_delete_self_or_last_owner_and_manager_cannot_make_owners(): void

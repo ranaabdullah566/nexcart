@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Rules\StrongPassword;
 use App\Services\DemoData;
 use App\Support\BusinessProfile;
 use App\Support\Installer;
@@ -32,7 +33,7 @@ class SetupController extends Controller
             'timezone' => ['required', 'timezone'],
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'confirmed', StrongPassword::rule()],
             'sample_data' => ['nullable', 'boolean'],
         ]);
 

@@ -27,7 +27,7 @@
     <link rel="manifest" href="{{ route('store.manifest') }}">
     <link rel="apple-touch-icon" href="{{ asset('assets/images/icon-192.png') }}">
     <link href="{{ asset('assets/css/storefront.css') }}?v={{ @filemtime(public_path('assets/css/storefront.css')) }}" rel="stylesheet">
-    <script>document.documentElement.classList.add('sf-js')</script>
+    <script nonce="{{ csp_nonce() }}">document.documentElement.classList.add('sf-js')</script>
     @stack('head')
 </head>
 <body class="sf" data-page="{{ $page ?? '' }}">
@@ -152,7 +152,7 @@
             'seeAll' => __('See all results'), 'noResults' => __('No products found'),
         ];
 @endphp
-<script>
+<script nonce="{{ csp_nonce() }}">
     window.SF = {
         cart: @json($cartData),
         routes: { cart: @json(route('store.cart.json')), add: @json(route('store.cart.add')), cartBase: @json(url('/cart')), wishBase: @json(url('/wishlist')), suggest: @json(route('store.suggest')) },

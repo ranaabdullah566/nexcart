@@ -71,3 +71,11 @@ if (! function_exists('email_text')) {
         return strtr($text, collect($replace)->mapWithKeys(fn ($v, $k) => [':'.ltrim($k, ':') => $v])->all());
     }
 }
+
+if (! function_exists('csp_nonce')) {
+    /** Per-request nonce that lets our own inline <script> tags run under the Content-Security-Policy. */
+    function csp_nonce(): string
+    {
+        return app()->bound('csp.nonce') ? app('csp.nonce') : tap(base64_encode(random_bytes(16)), fn ($n) => app()->instance('csp.nonce', $n));
+    }
+}

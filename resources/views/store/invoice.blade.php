@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-<div class="noprint" style="text-align:center"><button class="btn" onclick="window.print()">{{ __('Print / Save as PDF') }}</button></div>
+<div class="noprint" style="text-align:center"><button class="btn" id="printBtn">{{ __('Print / Save as PDF') }}</button></div>
 <div class="sheet">
     <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap">
         <div><h1>{{ setting('store.name') }}</h1><div class="muted">{{ setting('store.email') }} @if (setting('store.phone')) · {{ setting('store.phone') }}@endif</div></div>
@@ -51,5 +51,6 @@
     </table>
     <p class="muted" style="margin-top:32px;text-align:center">{{ __('Thank you for shopping with :store.', ['store' => setting('store.name')]) }}</p>
 </div>
+<script nonce="{{ csp_nonce() }}">document.getElementById("printBtn").addEventListener("click",function(){window.print()});</script>
 </body>
 </html>

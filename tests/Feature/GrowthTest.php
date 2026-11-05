@@ -173,7 +173,7 @@ class GrowthTest extends TestCase
         $this->get('/admin/menu-items')->assertOk()->assertSee('Footwear');
 
         $page->delete();
-        $this->assertNull(MenuItem::firstWhere('label', 'Reach us'));   // cascade
+        $this->assertNull(MenuItem::firstWhere('label', 'Reach us')->href());   // the link stays but points nowhere, so it is hidden
     }
 
     // ================= e-mails =================

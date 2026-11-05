@@ -32,5 +32,5 @@
 @endsection
 
 @push('scripts')
-<script>$(function () { $('#slotTable').DataTable({ responsive: true, pageLength: 25, order: [[1, 'asc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) }, columnDefs: [{ orderable: false, targets: -1 }] }); });</script>
+<script nonce="{{ csp_nonce() }}">$(function () { $('#slotTable').DataTable({ responsive: true, pageLength: 25, order: [[1, 'asc']], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) }, columnDefs: [{ orderable: false, targets: -1 }] }); });</script>
 @endpush

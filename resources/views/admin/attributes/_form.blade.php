@@ -46,7 +46,7 @@
     </div>
 </form>
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
     (function () {
         var t = document.getElementById('attrType'), o = document.getElementById('attrOptions');
         function sync() { o.style.display = t.value === 'select' ? '' : 'none'; }

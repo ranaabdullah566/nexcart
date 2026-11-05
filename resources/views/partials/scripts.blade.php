@@ -1,13 +1,13 @@
 <i id="nxPageEnd" hidden></i>
-<script defer src="{{ asset('assets/js/jquery.min.js') }}"></script>
-<script defer src="{{ asset('assets/js/jquery.dataTables.min.js') }}"></script>
-<script defer src="{{ asset('assets/js/dataTables.bootstrap5.min.js') }}"></script>
-<script defer src="{{ asset('assets/js/dataTables.responsive.min.js') }}"></script>
-<script defer src="{{ asset('assets/js/responsive.bootstrap5.min.js') }}"></script>
-<script defer src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
-<script defer src="{{ asset('assets/js/select2.min.js') }}"></script>
-<script defer src="{{ asset('assets/js/chart.umd.min.js') }}"></script>
-<script defer src="{{ asset('assets/js/nexus.js') }}?v={{ @filemtime(public_path('assets/js/nexus.js')) }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/jquery.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/jquery.dataTables.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/dataTables.bootstrap5.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/dataTables.responsive.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/responsive.bootstrap5.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/select2.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/chart.umd.min.js') }}"></script>
+<script defer nonce="{{ csp_nonce() }}" src="{{ asset('assets/js/nexus.js') }}?v={{ @filemtime(public_path('assets/js/nexus.js')) }}"></script>
 <i id="nxPageScripts" hidden></i>
 @php
     // Libraries are deferred, so a page's inline scripts wait for DOMContentLoaded.

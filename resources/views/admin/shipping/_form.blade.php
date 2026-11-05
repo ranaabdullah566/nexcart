@@ -39,7 +39,7 @@
     </div>
 </form>
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
     (function () {
         var box = document.getElementById('rateRows'), next = box.children.length + 100;
         document.getElementById('rateAdd').addEventListener('click', function () {

@@ -6,13 +6,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="csp-nonce" content="{{ csp_nonce() }}">
 <meta name="theme-color" content="#070b16">
 <meta name="nx-tz" content="{{ setting('store.timezone', config('app.timezone')) }}">
 <meta name="nx-fmt" content="d M Y|12">
 <link rel="icon" href="{{ brand_favicon() }}">
 
 {{-- Apply the saved theme before first paint (no flash). "auto" follows the device. --}}
-<script>
+<script nonce="{{ csp_nonce() }}">
     (function () {
         try {
             var t = localStorage.getItem('nx-theme') || @json($__default);

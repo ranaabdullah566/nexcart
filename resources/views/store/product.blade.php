@@ -82,7 +82,7 @@
 @endsection
 
 @push('jsonld')
-<script type="application/ld+json">
+<script type="application/ld+json" nonce="{{ csp_nonce() }}">
 {!! json_encode(array_filter([
     '@context' => 'https://schema.org', '@type' => 'Product',
     'name' => $product->name, 'sku' => $product->sku, 'description' => strip_tags((string) ($product->short_description ?: $product->description)),

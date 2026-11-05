@@ -75,7 +75,7 @@
 
 @if ($canSales)
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
     $(function () {
         var d = @json($chart), el = document.getElementById('revChart'); if (!el || !window.Chart) return;
         var css = function (v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }, chart;

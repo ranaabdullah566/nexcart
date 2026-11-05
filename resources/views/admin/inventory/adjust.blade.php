@@ -62,7 +62,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
     (function () {
         var dir = document.getElementById('adjDir'), box = document.querySelector('.batch-box');
         if (!box) return;

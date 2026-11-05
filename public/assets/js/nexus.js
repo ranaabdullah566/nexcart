@@ -308,7 +308,7 @@
     $(function () { window.nxInitTables(document); });
 
     /* ---------- Popup system ---------- */
-    var RES = /\/admin\/(staff|categories|brands|attributes|modifier-groups|home-sections|coupons|shipping|prescriptions|delivery-slots|pages|menu-items|reviews)\/(create|\d+|\d+\/edit)$/;
+    var RES = /\/admin\/(products|staff|categories|brands|attributes|modifier-groups|home-sections|coupons|shipping|prescriptions|delivery-slots|pages|menu-items|reviews)\/(create|\d+|\d+\/edit)$/;
     var VIEW_ONLY = /\/admin\/orders\/\d+$/; // order detail opens as a popup
     var SUB = /\/admin\/(inventory\/adjust|orders\/\d+\/(refund|fulfil))$/;
 
@@ -340,7 +340,7 @@
     }
 
     function sizeFor(url) {
-        var big = /\/admin\/orders\//.test(url);
+        var big = /\/admin\/(orders|products)\//.test(url);
         dlg.className = 'modal-dialog modal-dialog-centered modal-dialog-scrollable ' + (big ? 'modal-xl modal-fullscreen-lg-down' : 'modal-lg modal-fullscreen-md-down');
     }
 

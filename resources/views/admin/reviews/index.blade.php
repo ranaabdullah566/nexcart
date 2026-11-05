@@ -26,5 +26,5 @@
 </div></div>
 @endsection
 @push('scripts')
-<script>$(function () { $('#rvTable').DataTable({ responsive: true, pageLength: 10, order: [], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) }, columnDefs: [{ orderable: false, targets: -1 }] }); });</script>
+<script nonce="{{ csp_nonce() }}">$(function () { $('#rvTable').DataTable({ responsive: true, pageLength: 10, order: [], language: { search: "_INPUT_", searchPlaceholder: @json(__('Search…')) }, columnDefs: [{ orderable: false, targets: -1 }] }); });</script>
 @endpush

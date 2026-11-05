@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\BrandController;
@@ -23,11 +24,13 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCsvController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\SecurityController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\ThemeController;
+use App\Http\Controllers\Admin\TrashController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\InstallController;
@@ -51,9 +54,13 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'show'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:10,1');
 });
+Route::middleware('guest')->group(function () {
+    Route::get('/login/two-factor', [LoginController::class, 'challenge'])->name('login.2fa');
+    Route::post('/login/two-factor', [LoginController::class, 'verify'])->middleware('throttle:10,1');
+});
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.session'])->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
     Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
@@ -89,6 +96,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff'])->group(fun
     Route::resource('coupons', CouponController::class)->except('show');
     Route::resource('shipping', ShippingController::class)->except('show')->parameters(['shipping' => 'shipping']);
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+
+    // Account security (2FA, password) — every staff member
+    Route::get('security', [SecurityController::class, 'index'])->name('security.index');
+    Route::post('security/two-factor', [SecurityController::class, 'enable'])->name('security.2fa.enable');
+    Route::post('security/two-factor/confirm', [SecurityController::class, 'confirm'])->name('security.2fa.confirm');
+    Route::post('security/two-factor/recovery', [SecurityController::class, 'recovery'])->name('security.2fa.recovery');
+    Route::delete('security/two-factor', [SecurityController::class, 'disable'])->name('security.2fa.disable');
+    Route::put('security/password', [SecurityController::class, 'password'])->name('security.password');
+    Route::post('security/policy', [SecurityController::class, 'policy'])->name('security.policy');
+    Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
+
+    // Recycle Bin
+    Route::get('trash', [TrashController::class, 'index'])->name('trash.index');
+    Route::post('trash/settings', [TrashController::class, 'settings'])->name('trash.settings');
+    Route::delete('trash/{type}', [TrashController::class, 'empty'])->name('trash.empty');
+    Route::post('trash/{type}/{id}/restore', [TrashController::class, 'restore'])->whereNumber('id')->name('trash.restore');
+    Route::delete('trash/{type}/{id}', [TrashController::class, 'destroy'])->whereNumber('id')->name('trash.destroy');
 
     // System (owner only)
     Route::get('system', [SystemController::class, 'index'])->name('system.index');
@@ -133,16 +157,16 @@ Route::get('/shop', [Store\ShopController::class, 'index'])->name('store.shop');
 Route::get('/category/{category}', [Store\ShopController::class, 'index'])->name('store.category');
 Route::get('/product/{slug}', [Store\ProductController::class, 'show'])->name('store.product');
 Route::get('/product/{slug}/quick', [Store\ProductController::class, 'quick'])->name('store.quick');
-Route::get('/search/suggest', [Store\SearchController::class, 'suggest'])->name('store.suggest');
+Route::get('/search/suggest', [Store\SearchController::class, 'suggest'])->middleware('throttle:60,1')->name('store.suggest');
 Route::get('/cart', [Store\CartController::class, 'show'])->name('store.cart');
 Route::get('/cart.json', [Store\CartController::class, 'json'])->name('store.cart.json');
-Route::post('/cart/add', [Store\CartController::class, 'add'])->name('store.cart.add');
+Route::post('/cart/add', [Store\CartController::class, 'add'])->middleware('throttle:60,1')->name('store.cart.add');
 Route::patch('/cart/{key}', [Store\CartController::class, 'update'])->name('store.cart.update');
 Route::delete('/cart/{key}', [Store\CartController::class, 'destroy'])->name('store.cart.remove');
 Route::get('/wishlist', [Store\WishlistController::class, 'index'])->name('store.wishlist');
-Route::post('/wishlist/{product}', [Store\WishlistController::class, 'toggle'])->name('store.wishlist.toggle');
+Route::post('/wishlist/{product}', [Store\WishlistController::class, 'toggle'])->middleware('throttle:60,1')->name('store.wishlist.toggle');
 Route::get('/checkout', [Store\CheckoutController::class, 'show'])->name('store.checkout');
-Route::post('/checkout/quote', [Store\CheckoutController::class, 'quote'])->name('store.checkout.quote');
+Route::post('/checkout/quote', [Store\CheckoutController::class, 'quote'])->middleware('throttle:60,1')->name('store.checkout.quote');
 Route::post('/checkout', [Store\CheckoutController::class, 'place'])->middleware('throttle:20,1')->name('store.checkout.place');
 Route::post('/checkout/capture', [Store\CheckoutController::class, 'capture'])->middleware('throttle:30,1')->name('store.checkout.capture');
 Route::get('/cart/recover/{token}', [Store\CheckoutController::class, 'recover'])->name('store.cart.recover');

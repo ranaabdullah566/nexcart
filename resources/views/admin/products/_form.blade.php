@@ -10,7 +10,7 @@
     $pickedGroups = collect(old('modifier_groups', $editing ? $product->modifierGroups->pluck('id')->all() : []))->map(fn ($i) => (int) $i)->all();
 @endphp
 
-<form method="POST" action="{{ $editing ? route('admin.products.update', $product) : route('admin.products.store') }}" enctype="multipart/form-data" data-no-ajax>
+<form method="POST" action="{{ $editing ? route('admin.products.update', $product) : route('admin.products.store') }}" enctype="multipart/form-data">
     @csrf @if ($editing) @method('PUT') @endif
 
     <ul class="nav nav-pills mb-3 gap-2 flex-wrap" role="tablist">
@@ -195,7 +195,7 @@
 @endif
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
     (function () {
         var type = document.getElementById('pType'), rows = document.getElementById('varRows'), next = rows.children.length + 100;
         function sync() {

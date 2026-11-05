@@ -31,7 +31,7 @@
 @endpush
 
 @push('scripts')
-<script>
+<script nonce="{{ csp_nonce() }}">
 (function () {
     var root = document.getElementById('kds'), sound = false, last = +root.querySelector('[data-new]').dataset.new, ctx;
     function beep() {

@@ -16,7 +16,7 @@
         @yield('content')
     </div>
 </div>
-<script>
+<script nonce="{{ csp_nonce() }}">
     (function () {
         var root = document.documentElement, icon = document.getElementById('nxThemeIcon');
         function paint() { icon.className = 'bi ' + (root.getAttribute('data-theme') === 'dark' ? 'bi-sun-fill' : 'bi-moon-stars-fill'); }

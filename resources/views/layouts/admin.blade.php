@@ -51,6 +51,10 @@
             ['store.home', 'never', 'box-arrow-up-right', 'View store', null, null],
         ],
         'System' => [
+            ['admin.security.index', 'admin.security.*', 'shield-check', 'Security', null, null],
+            ['admin.trash.index', 'admin.trash.*', 'recycle', 'Recycle Bin', null, null],
+            ['log-viewer.index', 'log-viewer.*', 'journal-code', 'Server logs', 'system.manage', null],
+            ['admin.activity.index', 'admin.activity.*', 'shield-lock-fill', 'Activity log', 'system.manage', null],
             ['admin.system.index', 'admin.system.*', 'heart-pulse-fill', 'System health', 'system.manage', null],
             ['admin.backups.index', 'admin.backups.*', 'cloud-arrow-down-fill', 'Backups', 'system.manage', null],
             ['admin.license.show', 'admin.license.*', 'patch-check-fill', 'License', 'system.manage', null],
@@ -163,7 +167,7 @@
     </div>
 </div>
 
-<script>
+<script nonce="{{ csp_nonce() }}">
     (function () {
         var root = document.documentElement, icon = document.getElementById('nxThemeIcon');
         function paint() { icon.className = 'bi ' + (root.getAttribute('data-theme') === 'dark' ? 'bi-sun-fill' : 'bi-moon-stars-fill'); }

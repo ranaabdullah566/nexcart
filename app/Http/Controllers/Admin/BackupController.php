@@ -49,7 +49,7 @@ class BackupController extends Controller
         $this->authorizeTo('system.manage');
 
         try {
-            return response()->download($this->backups->path($name));
+            return response()->download($this->backups->path($name), null, ['X-Content-Type-Options' => 'nosniff', 'Content-Security-Policy' => "sandbox; default-src 'none'", 'Cache-Control' => 'no-store']);
         } catch (\Throwable) {
             abort(404);
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use App\Rules\UniqueActive;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -61,7 +62,7 @@ class CouponController extends Controller
         $request->merge(['code' => Coupon::normalize((string) $request->input('code'))]);
 
         $data = $request->validate([
-            'code' => ['required', 'regex:/^[A-Z0-9_-]{3,40}$/', Rule::unique('coupons', 'code')->ignore($coupon->id)],
+            'code' => ['required', 'regex:/^[A-Z0-9_-]{3,40}$/', new UniqueActive('coupons', 'code', $coupon->id)],
             'type' => ['required', Rule::in(Coupon::TYPES)],
             'value' => [Rule::requiredIf(fn () => $request->input('type') !== 'free_shipping'), 'nullable', 'numeric', 'min:0', 'max:99999999',
                 Rule::when($request->input('type') === 'percent', ['max:100'])],
