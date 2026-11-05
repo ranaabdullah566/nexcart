@@ -2,15 +2,18 @@
 
 namespace App\Services;
 
+use App\Mail\OrderStatusChanged;
 use App\Models\Order;
 use App\Models\OrderEvent;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class OrderService
 {
-    public function __construct(private StockService $stock) {}
+    public function __construct(private StockService $stock, private Loyalty $loyalty) {}
 
     public function log(Order $order, string $type, ?string $status = null, ?string $note = null, ?User $by = null): void
     {
@@ -50,7 +53,29 @@ class OrderService
             $order->save();
 
             $this->log($order, 'status', $to, $note, $by);
+
+            match ($to) {
+                'completed' => $this->loyalty->earn($order),
+                'cancelled' => $this->loyalty->restore($order),
+                'refunded' => $this->loyalty->reverse($order),
+                default => null,
+            };
         });
+
+        $this->notifyCustomer($order, $to, $note);
+    }
+
+    /** Tell the customer about the milestones that matter to them (can be switched off in Email templates). */
+    private function notifyCustomer(Order $order, string $to, ?string $note): void
+    {
+        if (! setting('emails.status_updates', true) || ! in_array($to, ['confirmed', 'ready', 'out_for_delivery', 'completed', 'cancelled'], true)) {
+            return;
+        }
+        try {
+            Mail::to($order->email)->locale($order->locale ?: app()->getLocale())->send(new OrderStatusChanged($order->fresh(), $note));
+        } catch (\Throwable $e) {
+            Log::warning('Status e-mail failed for '.$order->number.': '.$e->getMessage());
+        }
     }
 
     public function assignRider(Order $order, ?User $rider, ?User $by = null): void

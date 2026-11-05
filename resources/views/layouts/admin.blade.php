@@ -10,6 +10,11 @@
     $user = auth()->user();
     $initials = collect(explode(' ', $user->name))->map(fn ($n) => mb_strtoupper(mb_substr($n, 0, 1)))->take(2)->implode('');
     $storeName = setting('store.name', config('app.name'));
+    // little counters on menu items that need attention
+    $badges = [];
+    if ($user->can('orders.view')) { $badges['admin.orders.index'] = \App\Models\Order::where('status', 'pending')->count(); }
+    if ($user->can('prescriptions.view') && \App\Support\BusinessProfile::hasModule('prescriptions')) { $badges['admin.prescriptions.index'] = \App\Models\Order::where('requires_prescription', true)->where('prescription_status', 'pending')->count(); }
+    if ($user->can('reviews.manage') && \App\Support\BusinessProfile::hasModule('reviews')) { $badges['admin.reviews.index'] = \App\Models\Review::where('status', 'pending')->count(); }
     // [group => [[route, active-pattern, icon, label, permission]]]  — later phases append here.
     $navGroups = [
         'Overview' => [
@@ -33,8 +38,16 @@
             ['admin.modifier-groups.index', 'admin.modifier-groups.*', 'plus-slash-minus', 'Add-ons', 'catalog_settings.manage', 'modifiers'],
             ['admin.attributes.index', 'admin.attributes.*', 'sliders2', 'Product fields', 'catalog_settings.manage', null],
         ],
+        'Growth' => [
+            ['admin.reports.index', 'admin.reports.*', 'bar-chart-line-fill', 'Reports', 'reports.view', null],
+            ['admin.reviews.index', 'admin.reviews.*', 'chat-heart-fill', 'Reviews', 'reviews.manage', 'reviews'],
+        ],
         'Storefront' => [
             ['admin.home-sections.index', 'admin.home-sections.*', 'layout-text-window-reverse', 'Home page', 'storefront.manage', null],
+            ['admin.theme.edit', 'admin.theme.*', 'palette-fill', 'Theme', 'storefront.manage', null],
+            ['admin.pages.index', 'admin.pages.*', 'file-earmark-text-fill', 'Pages', 'storefront.manage', null],
+            ['admin.menu-items.index', 'admin.menu-items.*', 'list-nested', 'Menus', 'storefront.manage', null],
+            ['admin.emails.edit', 'admin.emails.*', 'envelope-paper-fill', 'Email templates', 'storefront.manage', null],
             ['store.home', 'never', 'box-arrow-up-right', 'View store', null, null],
         ],
         'Admin' => [
@@ -47,7 +60,7 @@
 <div class="nx-shell">
     <aside class="nx-sidebar" id="nxSidebar">
         <a href="{{ route('admin.dashboard') }}" class="nx-brand">
-            <span class="nx-brand-logo"><img src="{{ asset('assets/images/logo.svg') }}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:inherit"></span>
+            <span class="nx-brand-logo"><img src="{{ brand_logo() }}" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:inherit"></span>
             <span class="min-w-0">
                 <span class="nx-brand-name d-block text-truncate">{{ $storeName }}</span>
                 <span class="nx-brand-sub d-block">{{ __(\App\Support\BusinessProfile::current()['label']) }}</span>
@@ -61,7 +74,7 @@
                     <div class="nx-nav-label">{{ __($groupLabel) }}</div>
                     @foreach ($visible as [$route, $pattern, $icon, $label])
                         <a href="{{ route($route) }}" title="{{ __($label) }}" class="nx-link {{ request()->routeIs($pattern) ? 'active' : '' }}">
-                            <i class="bi bi-{{ $icon }}"></i><span class="nx-link-text">{{ __($label) }}</span>
+                            <i class="bi bi-{{ $icon }}"></i><span class="nx-link-text">{{ __($label) }}</span>@if (! empty($badges[$route]))<span class="nx-nav-badge">{{ $badges[$route] > 99 ? '99+' : $badges[$route] }}</span>@endif
                         </a>
                     @endforeach
                 @endif

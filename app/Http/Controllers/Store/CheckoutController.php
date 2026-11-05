@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
 use App\Mail\OrderPlaced;
+use App\Models\AbandonedCheckout;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\ShippingZone;
 use App\Services\CartService;
 use App\Services\CheckoutService;
@@ -15,6 +17,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class CheckoutController extends Controller
@@ -33,7 +37,7 @@ class CheckoutController extends Controller
 
         $first = $this->checkout->quote($city, null, session('coupon'));
         $rateId = (int) old('shipping_rate_id', $first['rates']->first()?->id);
-        $q = $this->checkout->quote($city, $rateId ?: null, session('coupon'));
+        $q = $this->checkout->quote($city, $rateId ?: null, session('coupon'), $user, (bool) old('use_points'));
         $lines = $this->cart->toArray();
 
         return view('store.checkout', [
@@ -51,10 +55,10 @@ class CheckoutController extends Controller
     /** Live order summary + delivery options while the customer types. */
     public function quote(Request $request): JsonResponse
     {
-        $data = $request->validate(['city' => ['nullable', 'string', 'max:120'], 'rate_id' => ['nullable', 'integer'], 'coupon' => ['nullable', 'string', 'max:40']]);
+        $data = $request->validate(['city' => ['nullable', 'string', 'max:120'], 'rate_id' => ['nullable', 'integer'], 'coupon' => ['nullable', 'string', 'max:40'], 'use_points' => ['nullable', 'boolean']]);
 
         $coupon = $data['coupon'] ?? null;
-        $q = $this->checkout->quote($data['city'] ?? null, $data['rate_id'] ?? null, $coupon);
+        $q = $this->checkout->quote($data['city'] ?? null, $data['rate_id'] ?? null, $coupon, $request->user(), (bool) ($data['use_points'] ?? false));
 
         // remember a coupon that works so a page reload keeps it; forget one that does not
         if (filled($coupon) && $q['coupon'] && ! $q['coupon_problem']) {
@@ -80,6 +84,7 @@ class CheckoutController extends Controller
             'shipping_rate_id' => ['required', 'integer'],
             'payment_method' => ['required', 'string', 'max:24'],
             'coupon' => ['nullable', 'string', 'max:40'],
+            'use_points' => ['nullable', 'boolean'],
             'slot_date' => ['nullable', 'date_format:Y-m-d'],
             'delivery_slot_id' => ['nullable', 'integer'],
             'prescription' => ['nullable', 'array', 'max:5'],
@@ -105,6 +110,59 @@ class CheckoutController extends Controller
         return redirect($order->trackUrl())->with('placed', true);
     }
 
+    /** Remember the cart of someone who typed their e-mail, so we can remind them if they never finish. */
+    public function capture(Request $request, CartService $cart): JsonResponse
+    {
+        $data = $request->validate(['email' => ['required', 'email', 'max:190']]);
+        $lines = $cart->lines();
+        if (! setting('growth.abandoned', true) || $lines->isEmpty()) {
+            return response()->json(['ok' => false]);
+        }
+
+        $email = strtolower($data['email']);
+        if (AbandonedCheckout::where('email', $email)->where('opted_out', true)->exists()) {
+            return response()->json(['ok' => false]);
+        }
+
+        $row = AbandonedCheckout::firstOrNew(['email' => $email, 'recovered_at' => null]);
+        $row->forceFill([
+            'token' => $row->token ?: Str::random(40),
+            'items' => $lines->map(fn ($l) => ['product_id' => $l['product']->id, 'variant_id' => $l['variant']?->id, 'options' => $l['options']->pluck('id')->all(), 'qty' => $l['qty']])->all(),
+            'total' => $lines->sum('total'), 'items_count' => (int) $lines->sum('qty'), 'locale' => app()->getLocale(), 'last_seen_at' => now(),
+        ] + ($row->exists ? [] : ['reminded_at' => null]))->save();
+
+        return response()->json(['ok' => true]);
+    }
+
+    /** Link from the reminder e-mail: put the items back and go straight to checkout. */
+    public function recover(string $token, CartService $cart): RedirectResponse
+    {
+        $row = AbandonedCheckout::where('token', $token)->firstOrFail();
+        $added = 0;
+        foreach ((array) $row->items as $i) {
+            $product = Product::active()->find($i['product_id'] ?? 0);
+            if (! $product) {
+                continue;
+            }
+            try {
+                $cart->add($product, $i['variant_id'] ?? null, $i['options'] ?? [], (int) $i['qty']);
+                $added++;
+            } catch (ValidationException) {
+                // sold out or no longer valid: skip it, the rest still comes back
+            }
+        }
+
+        return $added ? redirect()->route('store.checkout')->with('notice', __('Welcome back! Your cart is ready.')) : redirect()->route('store.shop')->with('notice', __('Those items are no longer available.'));
+    }
+
+    public function stopReminders(string $token): RedirectResponse
+    {
+        AbandonedCheckout::where('token', $token)->firstOrFail()->update(['opted_out' => true]);
+        AbandonedCheckout::where('email', AbandonedCheckout::where('token', $token)->value('email'))->update(['opted_out' => true]);
+
+        return redirect()->route('store.home')->with('notice', __('Done — we will not send you cart reminders.'));
+    }
+
     private function present(array $q): array
     {
         $rates = $q['rates']->map(fn ($r) => [
@@ -115,6 +173,8 @@ class CheckoutController extends Controller
         return [
             'subtotal' => money($q['subtotal']),
             'discount' => $q['discount'] > 0 ? '−'.money($q['discount']) : null,
+            'points_discount' => $q['points_discount'] > 0 ? '−'.money($q['points_discount']) : null,
+            'points_used' => $q['points_used'],
             'shipping' => $q['rate'] ? ($q['shipping'] > 0 ? money($q['shipping']) : __('Free')) : null,
             'tax' => $q['tax'] > 0 ? money($q['tax']) : null,
             'tax_inclusive' => $q['tax_inclusive'],
@@ -123,6 +183,7 @@ class CheckoutController extends Controller
             'coupon_error' => $q['coupon_problem'] ?? $q['coupon_error'],
             'rates' => $rates,
             'rate_id' => $q['rate']?->id,
+            'loyalty' => $q['loyalty'] ? $q['loyalty'] + ['will_use' => $q['points_used']] : null,
         ];
     }
 

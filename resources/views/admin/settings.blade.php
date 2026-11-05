@@ -16,6 +16,7 @@
     <ul class="nav nav-pills mb-3 gap-2" role="tablist">
         <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-store" type="button"><i class="bi bi-shop me-1"></i> {{ __('Store') }}</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-look" type="button"><i class="bi bi-palette-fill me-1"></i> {{ __('Appearance') }}</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-growth" type="button"><i class="bi bi-rocket-takeoff me-1"></i> {{ __('Growth') }}</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pay" type="button"><i class="bi bi-wallet2 me-1"></i> {{ __('Payments') }}</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-modules" type="button"><i class="bi bi-puzzle-fill me-1"></i> {{ __('Modules') }}</button></li>
     </ul>
@@ -78,7 +79,8 @@
 
         <div class="tab-pane fade" id="tab-look">
             <div class="card mb-3"><div class="card-body">
-                <h5 class="mb-3">{{ __('Theme') }}</h5>
+                <h5 class="mb-1">{{ __('Theme') }}</h5>
+                <p class="small mb-3"><a href="{{ route('admin.theme.edit') }}"><i class="bi bi-palette-fill me-1"></i>{{ __('Open the live theme editor') }}</a> {{ __('to see changes as you make them, and to add your logo.') }}</p>
                 <div class="row g-3">
                     <div class="col-md-3"><label class="form-label">{{ __('Primary colour') }}</label><input type="color" name="theme[primary]" value="{{ $v('theme.primary') }}" class="form-control form-control-color w-100"></div>
                     <div class="col-md-3"><label class="form-label">{{ __('Accent colour') }}</label><input type="color" name="theme[accent]" value="{{ $v('theme.accent') }}" class="form-control form-control-color w-100"></div>
@@ -90,6 +92,30 @@
                         <div class="form-text">{{ __('Visitors can still switch with the sun/moon button.') }}</div>
                     </div>
                 </div>
+            </div></div>
+        </div>
+
+        <div class="tab-pane fade" id="tab-growth">
+            <div class="card mb-3"><div class="card-body">
+                <h5 class="mb-1"><i class="bi bi-stars me-1"></i>{{ __('Loyalty points') }}</h5>
+                <p class="text-muted small mb-3">{{ __('Customers with an account earn points on completed orders and can spend them at checkout.') }}</p>
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" role="switch" name="growth[loyalty]" value="1" id="gLoy" @checked(old('growth.loyalty', setting('growth.loyalty', false)))><label class="form-check-label" for="gLoy">{{ __('Turn on loyalty points') }}</label></div>
+                <div class="row g-3">
+                    <div class="col-md-4"><label class="form-label">{{ __('Spend this much to earn 1 point') }}</label><input type="number" step="0.01" min="1" name="growth[earn_per]" value="{{ old('growth.earn_per', setting('growth.earn_per', 100)) }}" class="form-control figure"></div>
+                    <div class="col-md-4"><label class="form-label">{{ __('1 point is worth') }}</label><input type="number" step="0.01" min="0.01" name="growth[point_value]" value="{{ old('growth.point_value', setting('growth.point_value', 1)) }}" class="form-control figure"></div>
+                    <div class="col-md-4"><label class="form-label">{{ __('Minimum points to redeem') }}</label><input type="number" min="1" name="growth[min_redeem]" value="{{ old('growth.min_redeem', setting('growth.min_redeem', 50)) }}" class="form-control figure"></div>
+                </div>
+            </div></div>
+            <div class="card mb-3"><div class="card-body">
+                <h5 class="mb-3"><i class="bi bi-cart-x me-1"></i>{{ __('Cart reminders') }}</h5>
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" role="switch" name="growth[abandoned]" value="1" id="gAb" @checked(old('growth.abandoned', setting('growth.abandoned', true)))><label class="form-check-label" for="gAb">{{ __('E-mail customers who typed their e-mail at checkout but did not finish') }}</label></div>
+                <div style="max-width:260px"><label class="form-label">{{ __('Send after (hours)') }}</label><input type="number" min="1" max="72" name="growth[abandoned_hours]" value="{{ old('growth.abandoned_hours', setting('growth.abandoned_hours', 2)) }}" class="form-control figure"></div>
+                <div class="form-text">{{ __('Needs the scheduler to be running (php artisan schedule:run every minute).') }}</div>
+            </div></div>
+            <div class="card mb-3"><div class="card-body">
+                <h5 class="mb-3"><i class="bi bi-chat-heart me-1"></i>{{ __('Reviews & contact') }}</h5>
+                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" role="switch" name="growth[reviews_auto]" value="1" id="gRv" @checked(old('growth.reviews_auto', setting('growth.reviews_auto', false)))><label class="form-check-label" for="gRv">{{ __('Publish reviews without approval') }}</label></div>
+                <div style="max-width:260px"><label class="form-label">{{ __('Country calling code') }}</label><input name="store[phone_code]" value="{{ old('store.phone_code', setting('store.phone_code', '92')) }}" class="form-control figure" maxlength="4"><div class="form-text">{{ __('Used for the WhatsApp button on orders (0300… becomes +92 300…).') }}</div></div>
             </div></div>
         </div>
 

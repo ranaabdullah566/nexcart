@@ -9,9 +9,9 @@ use App\Models\ShippingRate;
 class PricingService
 {
     /**
-     * @return array{subtotal: float, discount: float, shipping: float, tax: float, total: float, tax_rate: float, tax_inclusive: bool, coupon_problem: ?string}
+     * @return array{subtotal: float, discount: float, points_discount: float, shipping: float, tax: float, total: float, tax_rate: float, tax_inclusive: bool, coupon_problem: ?string}
      */
-    public function quote(float $subtotal, ?Coupon $coupon = null, ?ShippingRate $rate = null): array
+    public function quote(float $subtotal, ?Coupon $coupon = null, ?ShippingRate $rate = null, float $pointsDiscount = 0.0): array
     {
         $subtotal = round($subtotal, 2);
         $problem = $coupon?->problem($subtotal);
@@ -25,14 +25,15 @@ class PricingService
 
         $taxRate = max(0.0, (float) setting('store.tax_rate', 0));
         $inclusive = (bool) setting('store.tax_inclusive', false);
-        $taxable = max(0.0, $subtotal - $discount);
+        $pointsDiscount = round(min($pointsDiscount, max(0.0, $subtotal - $discount)), 2);
+        $taxable = max(0.0, $subtotal - $discount - $pointsDiscount);
 
         $tax = $inclusive ? $taxable - $taxable / (1 + $taxRate / 100) : $taxable * $taxRate / 100;
         $tax = round($tax, 2);
         $total = round($taxable + $shipping + ($inclusive ? 0 : $tax), 2);
 
         return [
-            'subtotal' => $subtotal, 'discount' => $discount, 'shipping' => round($shipping, 2), 'tax' => $tax, 'total' => $total,
+            'subtotal' => $subtotal, 'discount' => $discount, 'points_discount' => $pointsDiscount, 'shipping' => round($shipping, 2), 'tax' => $tax, 'total' => $total,
             'tax_rate' => $taxRate, 'tax_inclusive' => $inclusive, 'coupon_problem' => $problem,
         ];
     }

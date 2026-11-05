@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="text-center mb-4">
-    <a href="{{ route('store.home') }}"><span class="nx-brand-logo mx-auto mb-3" style="width:56px;height:56px"><img src="{{ asset('assets/images/logo.svg') }}" alt="" style="width:100%;height:100%"></span></a>
+    <a href="{{ route('store.home') }}"><span class="nx-brand-logo mx-auto mb-3" style="width:56px;height:56px"><img src="{{ brand_logo() }}" alt="" style="width:100%;height:100%"></span></a>
     <h1 class="nx-title">{{ __('Create your account') }}</h1>
     <p class="nx-sub">{{ setting('store.name') }}</p>
 </div>

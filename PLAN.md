@@ -90,7 +90,7 @@ kiya ja sake.
 - Pharmacy/Medical: prescription upload & verification, Rx-only products, expiry
 - Common: delivery slots, pickup, reorder
 
-### Phase 6 — Admin customization & growth
+### Phase 6 — Admin customization & growth ✅ (multi-currency and SMS/WhatsApp APIs deferred)
 - Theme editor (live preview), page builder, menus, banners, email templates
 - Reports & analytics dashboard, notifications (email/SMS/WhatsApp)
 - Reviews, loyalty/wallet, abandoned cart, multi-language & currency

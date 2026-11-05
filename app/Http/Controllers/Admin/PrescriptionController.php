@@ -53,7 +53,7 @@ class PrescriptionController extends Controller
         $this->orders->reviewPrescription($order, $data['decision'], $data['note'] ?? null, $request->user());
 
         try {
-            Mail::to($order->email)->send(new PrescriptionReviewed($order->fresh()));
+            Mail::to($order->email)->locale($order->locale ?: app()->getLocale())->send(new PrescriptionReviewed($order->fresh()));
         } catch (\Throwable $e) {
             Log::warning('Prescription e-mail failed for '.$order->number.': '.$e->getMessage());
         }

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="text-center mb-4">
-    <span class="nx-brand-logo mx-auto mb-3" style="width:56px;height:56px"><img src="{{ asset('assets/images/logo.svg') }}" alt="" style="width:100%;height:100%"></span>
+    <span class="nx-brand-logo mx-auto mb-3" style="width:56px;height:56px"><img src="{{ brand_logo() }}" alt="" style="width:100%;height:100%"></span>
     <h1 class="nx-title">{{ setting('store.name') }}</h1>
     <p class="nx-sub">{{ __('Sign in to your account') }}</p>
 </div>

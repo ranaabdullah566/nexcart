@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AbandonedCheckout;
 use App\Models\Coupon;
 use App\Models\DeliverySlot;
 use App\Models\Order;
@@ -25,6 +26,7 @@ class CheckoutService
         private OrderService $orders,
         private PaymentManager $payments,
         private SlotService $slots,
+        private Loyalty $loyalty,
     ) {}
 
     /** Shipping rates a customer may pick for a city and subtotal (pickup rates ignore the city). */
@@ -41,16 +43,25 @@ class CheckoutService
     }
 
     /** Totals for the order summary, without creating anything. */
-    public function quote(?string $city, ?int $rateId, ?string $couponCode): array
+    public function quote(?string $city, ?int $rateId, ?string $couponCode, ?User $user = null, bool $usePoints = false): array
     {
         $subtotal = $this->cart->subtotal();
         $rates = $this->ratesFor($city, $subtotal);
         $rate = $rateId ? $rates->firstWhere('id', $rateId) : null;
         $coupon = filled($couponCode) ? Coupon::findByCode($couponCode) : null;
 
-        return $this->pricing->quote($subtotal, $coupon, $rate) + [
+        $q = $this->pricing->quote($subtotal, $coupon, $rate);
+        $points = ['points' => 0, 'discount' => 0.0];
+        if ($user && $usePoints) {
+            $points = $this->loyalty->redeemable($user, $subtotal - $q['discount']);
+            $q = $this->pricing->quote($subtotal, $coupon, $rate, $points['discount']);
+        }
+
+        return $q + [
             'rate' => $rate, 'rates' => $rates, 'coupon' => $coupon,
             'coupon_error' => filled($couponCode) ? ($coupon ? null : __('We could not find that code.')) : null,
+            'points_used' => $points['points'],
+            'loyalty' => $user && $this->loyalty->enabled() ? ['balance' => $this->loyalty->balance($user), 'min' => $this->loyalty->minRedeem(), 'value' => $this->loyalty->pointValue()] : null,
         ];
     }
 
@@ -136,7 +147,11 @@ class CheckoutService
                 }
             }
 
-            $q = $this->pricing->quote($subtotal, $coupon, $rate);
+            $points = ['points' => 0, 'discount' => 0.0];
+            if ($user && ! empty($data['use_points'])) {
+                $points = $this->loyalty->redeemable($user, $subtotal - ($coupon ? $coupon->discountFor($subtotal) : 0.0));
+            }
+            $q = $this->pricing->quote($subtotal, $coupon, $rate, $points['discount']);
 
             $order = Order::create([
                 'number' => Order::nextNumber(), 'public_token' => Order::newToken(), 'user_id' => $user?->id,
@@ -145,7 +160,7 @@ class CheckoutService
                 'name' => $data['name'], 'email' => $data['email'], 'phone' => $data['phone'],
                 'address_line' => $rate->is_pickup ? null : $data['address_line'], 'city' => $data['city'] ?? null,
                 'area' => $data['area'] ?? null, 'postal_code' => $data['postal_code'] ?? null, 'notes' => $data['notes'] ?? null,
-                'subtotal' => $q['subtotal'], 'discount' => $q['discount'], 'shipping_cost' => $q['shipping'], 'tax' => $q['tax'], 'total' => $q['total'],
+                'subtotal' => $q['subtotal'], 'discount' => $q['discount'], 'points_redeemed' => $points['points'], 'points_discount' => $q['points_discount'], 'locale' => app()->getLocale(), 'shipping_cost' => $q['shipping'], 'tax' => $q['tax'], 'total' => $q['total'],
                 'tax_rate' => $q['tax_rate'], 'tax_inclusive' => $q['tax_inclusive'], 'currency' => (string) setting('store.currency', 'PKR'),
                 'coupon_code' => $coupon?->code, 'requires_prescription' => $rx, 'prescription_status' => $rx ? 'pending' : null, 'placed_at' => now(),
                 'slot_date' => $slot ? $data['slot_date'] : null, 'delivery_slot_id' => $slot?->id, 'slot_label' => $slot?->displayLabel(),
@@ -169,6 +184,12 @@ class CheckoutService
             }
 
             $coupon?->increment('used_count');
+
+            if ($user && $points['points'] > 0) {
+                $this->loyalty->record($user, -$points['points'], 'redeem', $order, __('Order :number', ['number' => $order->number]));
+            }
+            // a reminder e-mail for this cart is no longer needed
+            AbandonedCheckout::where('email', strtolower($data['email']))->whereNull('recovered_at')->update(['recovered_at' => now()]);
 
             foreach ($prescriptions as $file) {
                 $order->addMedia($file)->toMediaCollection('prescriptions');

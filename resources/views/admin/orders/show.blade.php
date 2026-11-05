@@ -32,6 +32,7 @@
             <div class="mt-3 small">
                 <div class="d-flex justify-content-between"><span class="text-muted">{{ __('Subtotal') }}</span><span class="figure">{{ money($order->subtotal) }}</span></div>
                 @if ($order->discount > 0)<div class="d-flex justify-content-between"><span class="text-muted">{{ __('Discount') }} {{ $order->coupon_code ? '('.$order->coupon_code.')' : '' }}</span><span class="figure text-success">−{{ money($order->discount) }}</span></div>@endif
+                @if ($order->points_discount > 0)<div class="d-flex justify-content-between"><span class="text-muted">{{ __('Points used') }} ({{ $order->points_redeemed }})</span><span class="figure text-success">−{{ money($order->points_discount) }}</span></div>@endif
                 <div class="d-flex justify-content-between"><span class="text-muted">{{ $order->shipping_method }}</span><span class="figure">{{ money($order->shipping_cost) }}</span></div>
                 @if ($order->tax > 0)<div class="d-flex justify-content-between"><span class="text-muted">{{ __('Tax') }} @if ($order->tax_inclusive)({{ __('included') }})@endif</span><span class="figure">{{ money($order->tax) }}</span></div>@endif
                 <div class="d-flex justify-content-between fs-5 mt-2"><b>{{ __('Total') }}</b><b class="figure">{{ money($order->total) }}</b></div>
@@ -89,6 +90,9 @@
             <h6 class="text-uppercase text-muted small">{{ __('Customer') }}</h6>
             <div class="fw-semibold">{{ $order->name }} @if ($order->user)<span class="badge text-bg-secondary">{{ __('Account') }}</span>@endif</div>
             <div class="text-muted">{{ $order->phone }}<br>{{ $order->email }}</div>
+            @php($digits = preg_replace('/\D/', '', $order->phone))
+            @php($wa = str_starts_with((string) $order->phone, '+') ? $digits : (str_starts_with($digits, '0') ? setting('store.phone_code', '92').substr($digits, 1) : $digits))
+            <a href="https://wa.me/{{ $wa }}?text={{ rawurlencode(__('Hi :name, this is :store about your order :number.', ['name' => $order->name, 'store' => setting('store.name'), 'number' => $order->number])) }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-success mt-2" data-no-modal><i class="bi bi-whatsapp me-1"></i>{{ __('Message on WhatsApp') }}</a>
             @unless ($order->is_pickup)<div class="mt-2">{{ $order->address_line }}@if ($order->area), {{ $order->area }}@endif<br>{{ $order->city }} {{ $order->postal_code }}</div>@endunless
             @if ($order->notes)<div class="mt-2 small"><b>{{ __('Notes') }}:</b> {{ $order->notes }}</div>@endif
         </div></div>

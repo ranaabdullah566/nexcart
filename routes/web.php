@@ -8,17 +8,23 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\DeliverySlotController;
+use App\Http\Controllers\Admin\EmailTemplateController;
 use App\Http\Controllers\Admin\HomeSectionController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\KitchenController;
+use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\ModifierGroupController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\PrescriptionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCsvController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\LocaleController;
@@ -78,7 +84,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff'])->group(fun
     Route::resource('shipping', ShippingController::class)->except('show')->parameters(['shipping' => 'shipping']);
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
 
+    // Growth
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
+    Route::resource('reviews', ReviewController::class)->only(['index', 'edit', 'update', 'destroy']);
+
     // Storefront
+    Route::get('theme', [ThemeController::class, 'edit'])->name('theme.edit');
+    Route::put('theme', [ThemeController::class, 'update'])->name('theme.update');
+    Route::get('emails', [EmailTemplateController::class, 'edit'])->name('emails.edit');
+    Route::put('emails', [EmailTemplateController::class, 'update'])->name('emails.update');
+    Route::resource('pages', AdminPageController::class)->except('show');
+    Route::post('menu-items/{menuItem}/move', [MenuItemController::class, 'move'])->name('menu-items.move');
+    Route::post('menu-items/{menuItem}/toggle', [MenuItemController::class, 'toggle'])->name('menu-items.toggle');
+    Route::resource('menu-items', MenuItemController::class)->except('show')->parameters(['menu-items' => 'menuItem']);
     Route::post('home-sections/{homeSection}/toggle', [HomeSectionController::class, 'toggle'])->name('home-sections.toggle');
     Route::post('home-sections/{homeSection}/move', [HomeSectionController::class, 'move'])->name('home-sections.move');
     Route::resource('home-sections', HomeSectionController::class)->except('show')->parameters(['home-sections' => 'homeSection']);
@@ -106,6 +125,9 @@ Route::post('/wishlist/{product}', [Store\WishlistController::class, 'toggle'])-
 Route::get('/checkout', [Store\CheckoutController::class, 'show'])->name('store.checkout');
 Route::post('/checkout/quote', [Store\CheckoutController::class, 'quote'])->name('store.checkout.quote');
 Route::post('/checkout', [Store\CheckoutController::class, 'place'])->middleware('throttle:20,1')->name('store.checkout.place');
+Route::post('/checkout/capture', [Store\CheckoutController::class, 'capture'])->middleware('throttle:30,1')->name('store.checkout.capture');
+Route::get('/cart/recover/{token}', [Store\CheckoutController::class, 'recover'])->name('store.cart.recover');
+Route::get('/cart/recover/{token}/stop', [Store\CheckoutController::class, 'stopReminders'])->name('store.cart.recover.stop');
 Route::get('/order/{number}/{token}', [Store\OrderController::class, 'show'])->name('store.order');
 Route::get('/order/{number}/{token}/invoice', [Store\OrderController::class, 'invoice'])->name('store.invoice');
 Route::post('/order/{number}/{token}/pay', [Store\OrderController::class, 'pay'])->middleware('throttle:10,1')->name('store.order.pay');
@@ -118,6 +140,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/account', [Store\AccountController::class, 'index'])->name('store.account');
     Route::put('/account', [Store\AccountController::class, 'update'])->name('store.account.update');
 });
+Route::get('/page/{slug}', [Store\PageController::class, 'show'])->name('store.page');
+Route::post('/order/{number}/{token}/review/{item}', [Store\ReviewController::class, 'store'])->middleware('throttle:10,1')->name('store.order.review');
 Route::get('/sitemap.xml', [Store\SeoController::class, 'sitemap'])->name('store.sitemap');
 Route::get('/robots.txt', [Store\SeoController::class, 'robots']);
 Route::get('/manifest.webmanifest', [Store\SeoController::class, 'manifest'])->name('store.manifest');

@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#070b16">
 <meta name="nx-tz" content="{{ setting('store.timezone', config('app.timezone')) }}">
 <meta name="nx-fmt" content="d M Y|12">
-<link rel="icon" type="image/svg+xml" href="{{ asset('assets/images/favicon.svg') }}">
+<link rel="icon" href="{{ brand_favicon() }}">
 
 {{-- Apply the saved theme before first paint (no flash). "auto" follows the device. --}}
 <script>
@@ -38,4 +38,11 @@
 {{-- Brand colours chosen in Store settings → Appearance --}}
 @if (preg_match('/^#[0-9a-f]{6}$/i', $__a1) && preg_match('/^#[0-9a-f]{6}$/i', $__a2))
     <style>html:root[data-theme] { --acc-1: {{ $__a1 }}; --acc-2: {{ $__a2 }}; }</style>
+@endif
+@php
+    $__radius = in_array(setting('theme.radius'), ['0.25rem', '0.5rem', '1rem', '1.5rem'], true) ? setting('theme.radius') : null;
+    $__font = setting('theme.font') === 'inter' ? "'Inter'" : null;
+@endphp
+@if ($__radius || $__font)
+    <style>html:root[data-theme] { @if ($__radius) --radius: {{ $__radius }}; @endif @if ($__font) --font-display: {!! $__font !!}, ui-sans-serif, sans-serif; @endif }</style>
 @endif

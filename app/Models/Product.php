@@ -45,6 +45,16 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Brand::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->where('status', 'approved');
+    }
+
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class)->orderBy('sort_order')->orderBy('id');
@@ -73,7 +83,7 @@ class Product extends Model implements HasMedia
     /** Everything a product card needs, loaded in one go. */
     public function scopeCard(Builder $q): Builder
     {
-        return $q->with(['variants', 'media'])->withCount('modifierGroups');
+        return $q->with(['variants', 'media'])->withCount(['modifierGroups', 'approvedReviews'])->withAvg('approvedReviews', 'rating');
     }
 
     public function scopeActive(Builder $q): Builder

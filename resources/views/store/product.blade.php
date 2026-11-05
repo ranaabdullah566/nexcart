@@ -35,6 +35,7 @@
                     @if ($product->sku)<span class="sf-chip figure">SKU {{ $product->sku }}</span>@endif
                 </div>
                 <h1>{{ $product->trans('name') }}</h1>
+                @if ($rating['count'])<a href="#reviews" class="d-inline-flex align-items-center gap-2 text-decoration-none mb-2" style="color:var(--text-2)"><span class="sf-stars" aria-hidden="true">@include('store._stars', ['value' => $rating['avg']])</span><b class="figure">{{ $rating['avg'] }}</b><small>({{ trans_choice(':n review|:n reviews', $rating['count'], ['n' => $rating['count']]) }})</small></a>@endif
                 @if ($product->trans('short_description'))<p class="text-muted fs-5">{{ $product->trans('short_description') }}</p>@endif
                 @include('store._buy')
             </div>
@@ -56,6 +57,21 @@
         </div>
     </div>
 
+    @if (\App\Support\BusinessProfile::hasModule('reviews') && $rating['count'])
+        <section class="sf-section" id="reviews" style="padding-block:2rem 0">
+            <h3 class="h5 mb-1">{{ __('Customer reviews') }}</h3>
+            <div class="d-flex align-items-center gap-2 mb-3"><span class="sf-stars fs-5" aria-hidden="true">@include('store._stars', ['value' => $rating['avg']])</span><b class="figure">{{ $rating['avg'] }}</b><span class="text-muted">{{ trans_choice(':n review|:n reviews', $rating['count'], ['n' => $rating['count']]) }}</span></div>
+            @foreach ($reviews as $r)
+                <article class="sf-review">
+                    <div class="d-flex justify-content-between gap-2 flex-wrap"><span class="sf-stars" aria-label="{{ $r->rating }}/5">@include('store._stars', ['value' => $r->rating])</span><small class="text-muted">{{ $r->name }} · {{ local_time($r->created_at, 'd M Y') }} · <i class="bi bi-patch-check-fill" style="color:var(--acc-1)"></i> {{ __('Verified buyer') }}</small></div>
+                    @if ($r->title)<div class="fw-semibold mt-1">{{ $r->title }}</div>@endif
+                    @if ($r->body)<p class="mb-0 mt-1" style="color:var(--text-2)">{{ $r->body }}</p>@endif
+                    @if ($r->reply)<div class="sf-reply"><b>{{ __('Reply from :store', ['store' => setting('store.name')]) }}</b><div>{{ $r->reply }}</div></div>@endif
+                </article>
+            @endforeach
+        </section>
+    @endif
+
     @if ($related->isNotEmpty())
         <section class="sf-section">
             <div class="sf-section-head"><div><span class="sf-eyebrow">{{ __('You may also like') }}</span><h2>{{ __('Related products') }}</h2></div></div>
@@ -72,6 +88,7 @@
     'name' => $product->name, 'sku' => $product->sku, 'description' => strip_tags((string) ($product->short_description ?: $product->description)),
     'image' => $product->getMedia('images')->map->getUrl()->all() ?: null,
     'brand' => $product->brand ? ['@type' => 'Brand', 'name' => $product->brand->name] : null,
+    'aggregateRating' => $rating['count'] ? ['@type' => 'AggregateRating', 'ratingValue' => (string) $rating['avg'], 'reviewCount' => (string) $rating['count']] : null,
     'offers' => ['@type' => 'Offer', 'url' => url()->current(), 'priceCurrency' => setting('store.currency'), 'price' => (string) $product->displayPrice(),
         'availability' => 'https://schema.org/'.($inStock ? 'InStock' : 'OutOfStock')],
 ]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}

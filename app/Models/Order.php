@@ -24,7 +24,7 @@ class Order extends Model implements HasMedia
     {
         return [
             'is_pickup' => 'boolean', 'tax_inclusive' => 'boolean', 'requires_prescription' => 'boolean',
-            'subtotal' => 'decimal:2', 'discount' => 'decimal:2', 'shipping_cost' => 'decimal:2', 'tax' => 'decimal:2', 'total' => 'decimal:2', 'tax_rate' => 'decimal:2',
+            'subtotal' => 'decimal:2', 'discount' => 'decimal:2', 'shipping_cost' => 'decimal:2', 'tax' => 'decimal:2', 'total' => 'decimal:2', 'tax_rate' => 'decimal:2', 'points_discount' => 'decimal:2',
             'placed_at' => 'datetime', 'paid_at' => 'datetime', 'completed_at' => 'datetime', 'cancelled_at' => 'datetime',
             'eta_at' => 'datetime', 'rider_assigned_at' => 'datetime', 'prescription_reviewed_at' => 'datetime', 'slot_date' => 'date',
         ];

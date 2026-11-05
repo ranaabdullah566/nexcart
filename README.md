@@ -25,6 +25,14 @@ composer install && php artisan migrate && php artisan nexcart:sync-permissions
 
 `nexcart:sync-permissions` creates new permissions and resets the built-in roles to their defaults.
 
+## Scheduled tasks
+
+Cart-reminder e-mails run from Laravel's scheduler. Add one cron entry on the server:
+
+```cron
+* * * * * cd /path/to/nexcart && php artisan schedule:run >> /dev/null 2>&1
+```
+
 ## Tests
 
 ```bash

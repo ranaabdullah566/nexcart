@@ -60,15 +60,33 @@
         <div class="col-lg-7">
             <div class="sf-summary">
                 <h2 class="h5 mb-3">{{ __('Items') }}</h2>
+                @php($reviewed = $order->status === 'completed' && \App\Support\BusinessProfile::hasModule('reviews') ? \App\Models\Review::where('order_id', $order->id)->pluck('rating', 'product_id') : collect())
                 @foreach ($order->items as $i)
-                    <div class="d-flex justify-content-between gap-3 py-2 border-bottom" style="border-color:var(--border) !important">
-                        <div><b>{{ $i->qty }} × {{ $i->name }}</b>@if ($i->variant_name) <span class="text-muted">· {{ $i->variant_name }}</span>@endif
-                            @if ($i->options)<div class="small text-muted">{{ collect($i->options)->pluck('name')->implode(', ') }}</div>@endif</div>
-                        <span class="figure">{{ money($i->total) }}</span>
+                    <div class="py-2 border-bottom" style="border-color:var(--border) !important">
+                        <div class="d-flex justify-content-between gap-3">
+                            <div><b>{{ $i->qty }} × {{ $i->name }}</b>@if ($i->variant_name) <span class="text-muted">· {{ $i->variant_name }}</span>@endif
+                                @if ($i->options)<div class="small text-muted">{{ collect($i->options)->pluck('name')->implode(', ') }}</div>@endif</div>
+                            <span class="figure">{{ money($i->total) }}</span>
+                        </div>
+                        @if ($order->status === 'completed' && $i->product_id && \App\Support\BusinessProfile::hasModule('reviews'))
+                            @if ($reviewed->has($i->product_id))
+                                <div class="small mt-1"><span class="sf-stars">@include('store._stars', ['value' => $reviewed[$i->product_id]])</span> <span class="text-muted">{{ __('Thanks for your review!') }}</span></div>
+                            @else
+                                <details class="mt-1"><summary class="small" style="cursor:pointer;color:var(--acc-1)"><i class="bi bi-star me-1"></i>{{ __('Rate this product') }}</summary>
+                                    <form method="POST" action="{{ route('store.order.review', [$order->number, $order->public_token, $i->id]) }}" class="mt-2 d-grid gap-2" style="max-width:420px">@csrf
+                                        <div class="sf-pills" role="radiogroup" aria-label="{{ __('Rating') }}">@foreach ([5, 4, 3, 2, 1] as $n)<label class="sf-pill"><input type="radio" name="rating" value="{{ $n }}" required><span>{{ $n }} ★</span></label>@endforeach</div>
+                                        <input name="name" value="{{ explode(' ', $order->name)[0] }}" maxlength="80" required class="form-control form-control-sm" placeholder="{{ __('Your name') }}">
+                                        <input name="title" maxlength="120" class="form-control form-control-sm" placeholder="{{ __('Title (optional)') }}">
+                                        <textarea name="body" rows="2" maxlength="2000" class="form-control form-control-sm" placeholder="{{ __('Tell others what you think') }}"></textarea>
+                                        <button class="btn btn-primary btn-sm align-self-start">{{ __('Send review') }}</button>
+                                    </form></details>
+                            @endif
+                        @endif
                     </div>
                 @endforeach
                 <div class="mt-3">
                     <div class="ck-row"><span>{{ __('Subtotal') }}</span><b class="figure">{{ money($order->subtotal) }}</b></div>
+                    @if ($order->points_discount > 0)<div class="ck-row"><span>{{ __('Points used') }} <small>({{ $order->points_redeemed }})</small></span><b class="figure text-success">−{{ money($order->points_discount) }}</b></div>@endif
                     @if ($order->discount > 0)<div class="ck-row"><span>{{ __('Discount') }} @if ($order->coupon_code)<small>({{ $order->coupon_code }})</small>@endif</span><b class="figure text-success">−{{ money($order->discount) }}</b></div>@endif
                     <div class="ck-row"><span>{{ $order->shipping_method }}</span><b class="figure">{{ $order->shipping_cost > 0 ? money($order->shipping_cost) : __('Free') }}</b></div>
                     @if ($order->tax > 0)<div class="ck-row"><span>{{ __('Tax') }} @if ($order->tax_inclusive)<small>({{ __('included') }})</small>@endif</span><b class="figure">{{ money($order->tax) }}</b></div>@endif

@@ -38,6 +38,11 @@ class SettingsController extends Controller
             'store.currency_symbol' => ['required', 'string', 'max:5'],
             'store.timezone' => ['required', 'timezone'],
             'store.tax_rate' => ['nullable', 'numeric', 'between:0,100'],
+            'store.phone_code' => ['nullable', 'regex:/^[0-9]{1,4}$/'],
+            'growth.earn_per' => ['nullable', 'numeric', 'min:1', 'max:1000000'],
+            'growth.point_value' => ['nullable', 'numeric', 'min:0.01', 'max:100000'],
+            'growth.min_redeem' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'growth.abandoned_hours' => ['nullable', 'integer', 'min:1', 'max:72'],
             'store.default_locale' => ['required', Rule::in(array_keys(Locales::all()))],
             'store.locales' => ['required', 'array', 'min:1'],
             'store.locales.*' => [Rule::in(array_keys(Locales::all()))],
@@ -60,6 +65,7 @@ class SettingsController extends Controller
         $data['store']['currency'] = strtoupper($data['store']['currency']);
         $data['store']['tax_rate'] = (float) ($data['store']['tax_rate'] ?? 0);
         $data['store']['tax_inclusive'] = $request->boolean('store.tax_inclusive');
+        $data['store']['phone_code'] = $data['store']['phone_code'] ?? '92';
         // the default language must always be one of the enabled languages
         $data['store']['locales'] = array_values(array_unique([...$data['store']['locales'], $data['store']['default_locale']]));
 
@@ -74,6 +80,13 @@ class SettingsController extends Controller
         }
 
         setting()->setMany($flat + [
+            'growth.loyalty' => $request->boolean('growth.loyalty'),
+            'growth.earn_per' => (float) ($data['growth']['earn_per'] ?? 100),
+            'growth.point_value' => (float) ($data['growth']['point_value'] ?? 1),
+            'growth.min_redeem' => (int) ($data['growth']['min_redeem'] ?? 50),
+            'growth.abandoned' => $request->boolean('growth.abandoned'),
+            'growth.abandoned_hours' => (int) ($data['growth']['abandoned_hours'] ?? 2),
+            'growth.reviews_auto' => $request->boolean('growth.reviews_auto'),
             'payments.cod' => $request->boolean('payments.cod'),
             'payments.bank' => $bankOn,
             'payments.bank_instructions' => $data['payments']['bank_instructions'] ?? null,

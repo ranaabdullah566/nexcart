@@ -24,6 +24,7 @@ class RolesSeeder extends Seeder
         'catalog_settings' => ['manage'],   // attributes, modifiers
         'storefront' => ['manage'],         // home page builder
         'sales_settings' => ['manage'],     // coupons, shipping
+        'reviews' => ['manage'],            // moderate product reviews
     ];
 
     public function run(): void

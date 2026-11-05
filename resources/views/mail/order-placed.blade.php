@@ -4,7 +4,7 @@
 <div style="max-width:600px;margin:0 auto;padding:24px">
     <div style="background:#fff;border-radius:16px;padding:28px;border:1px solid #e4e7ee">
         <h2 style="margin:0 0 4px">{{ $forStore ? __('New order :number', ['number' => $order->number]) : __('Thank you, :name!', ['name' => $order->name]) }}</h2>
-        <p style="color:#667085;margin:0 0 20px">{{ $forStore ? __('A customer just placed an order.') : __('We received your order :number and will keep you posted.', ['number' => $order->number]) }}</p>
+        <p style="color:#667085;margin:0 0 20px">{{ $forStore ? __('A customer just placed an order.') : email_text('order_intro', __('We received your order :number and will keep you posted.'), ['number' => $order->number, 'name' => $order->name]) }}</p>
 
         <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;font-size:14px">
             @foreach ($order->items as $i)
@@ -16,6 +16,7 @@
             @endforeach
             <tr><td align="right" style="color:#667085">{{ __('Subtotal') }}</td><td align="right">{{ money($order->subtotal) }}</td></tr>
             @if ($order->discount > 0)<tr><td align="right" style="color:#667085">{{ __('Discount') }}</td><td align="right">−{{ money($order->discount) }}</td></tr>@endif
+            @if ($order->points_discount > 0)<tr><td align="right" style="color:#667085">{{ __('Points used') }} ({{ $order->points_redeemed }})</td><td align="right">−{{ money($order->points_discount) }}</td></tr>@endif
             <tr><td align="right" style="color:#667085">{{ $order->shipping_method }}</td><td align="right">{{ money($order->shipping_cost) }}</td></tr>
             @if ($order->tax > 0)<tr><td align="right" style="color:#667085">{{ __('Tax') }}@if ($order->tax_inclusive) ({{ __('included') }})@endif</td><td align="right">{{ money($order->tax) }}</td></tr>@endif
             <tr><td align="right"><b>{{ __('Total') }}</b></td><td align="right"><b>{{ money($order->total) }}</b></td></tr>
@@ -31,6 +32,7 @@
         <p style="margin:0;color:#475467">{{ $order->payment_method === 'bank' ? __('Bank transfer') : ($order->payment_method === 'stripe' ? __('Card (Stripe)') : __('Cash on delivery')) }}</p>
 
         @unless ($forStore)
+            @if (email_text('order_footer', ''))<p style="margin:20px 0 0;color:#667085;font-size:13px">{{ email_text('order_footer', '', ['number' => $order->number, 'name' => $order->name]) }}</p>@endif
             <p style="margin:24px 0 0"><a href="{{ $order->trackUrl() }}" style="background:#0891b2;color:#fff;text-decoration:none;padding:12px 20px;border-radius:10px;display:inline-block">{{ __('Track your order') }}</a></p>
         @else
             <p style="margin:24px 0 0"><a href="{{ route('admin.orders.index') }}" style="background:#0891b2;color:#fff;text-decoration:none;padding:12px 20px;border-radius:10px;display:inline-block">{{ __('Open in admin') }}</a></p>

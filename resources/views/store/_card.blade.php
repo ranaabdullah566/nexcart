@@ -21,6 +21,7 @@
     <div class="sf-card-body">
         @if ($p->category)<div class="sf-card-cat">{{ $p->category->trans('name') }}</div>@endif
         <a href="{{ route('store.product', $p->slug) }}" class="sf-card-name">{{ $p->trans('name') }}</a>
+        @if (($p->approved_reviews_count ?? 0) > 0)<div class="small d-flex align-items-center gap-1"><span class="sf-stars" aria-hidden="true">@include('store._stars', ['value' => (float) $p->approved_reviews_avg_rating])</span><span class="text-muted figure">{{ number_format((float) $p->approved_reviews_avg_rating, 1) }} ({{ $p->approved_reviews_count }})</span></div>@endif
         <div class="sf-price">
             @if ($p->isVariable())<small>{{ __('from') }}</small>@endif
             <b>{{ money($p->displayPrice()) }}</b>

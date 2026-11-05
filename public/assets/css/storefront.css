@@ -2,7 +2,7 @@
    NexCart storefront — futuristic glass UI on top of NEXUS tokens (theme.css)
    ========================================================================== */
 
-.sf { --sf-pad: clamp(1rem, 3vw, 2rem); }
+.sf { --sf-pad: clamp(1rem, 3vw, 2rem); --sf-r: calc(var(--radius, 16px) * 1.25); }
 .sf main { min-height: 60vh; }
 .sf-container { width: 100%; max-width: 1280px; margin-inline: auto; padding-inline: var(--sf-pad); }
 
@@ -58,7 +58,7 @@
 .sf-link-arrow i { transition: transform .2s var(--ease); }
 
 /* ---------- Hero ---------- */
-.sf-hero { position: relative; overflow: hidden; border-radius: 28px; margin-top: 1.25rem; padding: clamp(2.5rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem); border: 1px solid var(--border); background: var(--surface); isolation: isolate; }
+.sf-hero { position: relative; overflow: hidden; border-radius: calc(var(--sf-r) * 1.4); margin-top: 1.25rem; padding: clamp(2.5rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem); border: 1px solid var(--border); background: var(--surface); isolation: isolate; }
 .sf-hero::before, .sf-hero::after { content: ''; position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; z-index: -1; animation: sfFloat 14s ease-in-out infinite; }
 .sf-hero::before { width: 420px; height: 420px; background: var(--acc-1); top: -140px; inset-inline-start: -80px; }
 .sf-hero::after { width: 380px; height: 380px; background: var(--acc-2); bottom: -160px; inset-inline-end: -60px; animation-delay: -7s; }
@@ -70,7 +70,7 @@
 .sf-hero .actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.75rem; }
 
 /* ---------- Category tiles ---------- */
-.sf-cat { position: relative; display: flex; flex-direction: column; justify-content: end; min-height: 150px; padding: 1.1rem; border-radius: 20px; text-decoration: none; color: var(--text); border: 1px solid var(--border); background: var(--surface); overflow: hidden; transition: .25s var(--ease); isolation: isolate; }
+.sf-cat { position: relative; display: flex; flex-direction: column; justify-content: end; min-height: 150px; padding: 1.1rem; border-radius: var(--sf-r); text-decoration: none; color: var(--text); border: 1px solid var(--border); background: var(--surface); overflow: hidden; transition: .25s var(--ease); isolation: isolate; }
 .sf-cat::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle at 85% 0%, color-mix(in srgb, var(--acc-2) 35%, transparent), transparent 60%); opacity: .6; transition: .25s var(--ease); }
 .sf-cat:hover { transform: translateY(-4px); border-color: var(--acc-1); box-shadow: var(--glow); color: var(--text); }
 .sf-cat:hover::before { opacity: 1; }
@@ -79,7 +79,7 @@
 .sf-cat small { color: var(--text-2); }
 
 /* ---------- Product card ---------- */
-.sf-card { position: relative; height: 100%; display: flex; flex-direction: column; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); overflow: hidden; transition: .25s var(--ease); }
+.sf-card { position: relative; height: 100%; display: flex; flex-direction: column; border-radius: var(--sf-r); border: 1px solid var(--border); background: var(--surface); overflow: hidden; transition: .25s var(--ease); }
 .sf-card:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--acc-1) 55%, var(--border)); box-shadow: var(--glow); }
 .sf-card-media { position: relative; aspect-ratio: 1; background: linear-gradient(135deg, color-mix(in srgb, var(--acc-1) 14%, var(--surface-2)), color-mix(in srgb, var(--acc-2) 16%, var(--surface-2))); display: block; overflow: hidden; }
 .sf-card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease); }
@@ -113,10 +113,10 @@
 .sf-add:disabled { opacity: .55; cursor: not-allowed; }
 
 /* ---------- Banner / features / text ---------- */
-.sf-banner { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); min-height: 240px; display: flex; align-items: center; padding: clamp(1.5rem, 4vw, 3rem); background: linear-gradient(120deg, color-mix(in srgb, var(--acc-2) 30%, var(--surface)), color-mix(in srgb, var(--acc-1) 22%, var(--surface))); isolation: isolate; }
+.sf-banner { position: relative; border-radius: calc(var(--sf-r) * 1.2); overflow: hidden; border: 1px solid var(--border); min-height: 240px; display: flex; align-items: center; padding: clamp(1.5rem, 4vw, 3rem); background: linear-gradient(120deg, color-mix(in srgb, var(--acc-2) 30%, var(--surface)), color-mix(in srgb, var(--acc-1) 22%, var(--surface))); isolation: isolate; }
 .sf-banner-img { position: absolute; inset: 0; z-index: -1; background-size: cover; background-position: center; opacity: .5; }
 .sf-banner h2 { font-size: clamp(1.5rem, 4vw, 2.4rem); max-width: 20ch; }
-.sf-feature { display: flex; gap: .9rem; align-items: flex-start; padding: 1.1rem; border-radius: 18px; border: 1px solid var(--border); background: var(--surface); height: 100%; }
+.sf-feature { display: flex; gap: .9rem; align-items: flex-start; padding: 1.1rem; border-radius: var(--sf-r); border: 1px solid var(--border); background: var(--surface); height: 100%; }
 .sf-feature i { font-size: 1.5rem; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--grad); color: #fff; flex: none; }
 .sf-feature b { display: block; font-family: var(--font-display); }
 .sf-feature span { color: var(--text-2); font-size: .9rem; }
@@ -125,7 +125,7 @@
 /* ---------- Shop ---------- */
 .sf-crumbs { display: flex; flex-wrap: wrap; gap: .4rem; font-size: .85rem; color: var(--text-3); padding-block: 1.1rem .4rem; }
 .sf-crumbs a { color: var(--text-2); text-decoration: none; } .sf-crumbs a:hover { color: var(--acc-1); }
-.sf-filter { border: 1px solid var(--border); background: var(--surface); border-radius: 20px; padding: 1.1rem; }
+.sf-filter { border: 1px solid var(--border); background: var(--surface); border-radius: var(--sf-r); padding: 1.1rem; }
 .sf-filter h6 { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); margin: 1rem 0 .6rem; }
 .sf-filter h6:first-child { margin-top: 0; }
 [dir="rtl"] .sf-filter h6 { letter-spacing: 0; }
@@ -138,7 +138,7 @@
 .pagination .active .page-link { background: var(--grad); border-color: transparent; color: #fff; }
 
 /* ---------- Product page ---------- */
-.sf-gallery-main { aspect-ratio: 1; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); background: linear-gradient(135deg, color-mix(in srgb, var(--acc-1) 14%, var(--surface-2)), color-mix(in srgb, var(--acc-2) 16%, var(--surface-2))); display: grid; place-items: center; position: relative; }
+.sf-gallery-main { aspect-ratio: 1; border-radius: calc(var(--sf-r) * 1.2); overflow: hidden; border: 1px solid var(--border); background: linear-gradient(135deg, color-mix(in srgb, var(--acc-1) 14%, var(--surface-2)), color-mix(in srgb, var(--acc-2) 16%, var(--surface-2))); display: grid; place-items: center; position: relative; }
 .sf-gallery-main img { width: 100%; height: 100%; object-fit: cover; }
 .sf-gallery-main .ph { font-size: 5rem; color: color-mix(in srgb, var(--text) 30%, transparent); }
 .sf-thumbs { display: flex; gap: .6rem; margin-top: .75rem; flex-wrap: wrap; }
@@ -182,7 +182,7 @@
 .sf-mini-qty { display: inline-flex; align-items: center; margin-top: .4rem; border: 1px solid var(--border-strong); border-radius: 10px; }
 .sf-mini-qty button { width: 28px; height: 28px; border: 0; background: transparent; color: var(--text); cursor: pointer; }
 .sf-mini-qty span { min-width: 26px; text-align: center; font-family: var(--font-mono); font-size: .85rem; }
-.sf-summary { border: 1px solid var(--border); background: var(--surface); border-radius: 20px; padding: 1.25rem; }
+.sf-summary { border: 1px solid var(--border); background: var(--surface); border-radius: var(--sf-r); padding: 1.25rem; }
 
 /* ---------- Footer ---------- */
 .sf-footer { margin-top: 4rem; border-top: 1px solid var(--border); background: color-mix(in srgb, var(--bg-2) 70%, transparent); padding-block: 2.5rem 5.5rem; }
@@ -192,15 +192,15 @@
 .sf-footer a:hover { color: var(--acc-1); }
 
 /* mobile bottom bar */
-.sf-bottom { position: fixed; inset-inline: .75rem; bottom: .75rem; z-index: 1040; display: none; justify-content: space-around; padding: .45rem; border-radius: 20px; border: 1px solid var(--border-strong); background: color-mix(in srgb, var(--surface-solid) 85%, transparent); backdrop-filter: blur(18px); box-shadow: var(--shadow); }
+.sf-bottom { position: fixed; inset-inline: .75rem; bottom: .75rem; z-index: 1040; display: none; justify-content: space-around; padding: .45rem; border-radius: var(--sf-r); border: 1px solid var(--border-strong); background: color-mix(in srgb, var(--surface-solid) 85%, transparent); backdrop-filter: blur(18px); box-shadow: var(--shadow); }
 .sf-bottom a, .sf-bottom button { position: relative; display: grid; justify-items: center; gap: 1px; padding: .3rem .9rem; border: 0; background: none; color: var(--text-2); text-decoration: none; font-size: .68rem; font-weight: 600; border-radius: 14px; cursor: pointer; }
 .sf-bottom i { font-size: 1.25rem; }
 .sf-bottom .on { color: var(--acc-1); }
 @media (max-width: 767px) { .sf-bottom { display: flex; } }
 
 /* quick view */
-.sf-quick .modal-content { background: var(--surface-solid); border: 1px solid var(--border-strong); border-radius: 24px; color: var(--text); }
-.sf-skeleton { height: 360px; border-radius: 20px; background: linear-gradient(100deg, var(--surface) 30%, var(--surface-2) 50%, var(--surface) 70%); background-size: 200% 100%; animation: sfShimmer 1.2s linear infinite; }
+.sf-quick .modal-content { background: var(--surface-solid); border: 1px solid var(--border-strong); border-radius: calc(var(--sf-r) * 1.2); color: var(--text); }
+.sf-skeleton { height: 360px; border-radius: var(--sf-r); background: linear-gradient(100deg, var(--surface) 30%, var(--surface-2) 50%, var(--surface) 70%); background-size: 200% 100%; animation: sfShimmer 1.2s linear infinite; }
 
 /* reveal on scroll */
 .sf-js .sf-reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
@@ -218,3 +218,12 @@
 
 /* contact lines keep their natural left-to-right order inside RTL pages */
 [dir="rtl"] .sf-footer a[dir="ltr"] { text-align: right !important; }
+
+/* announcement bar */
+.sf-announce { background: var(--grad); color: #fff; text-align: center; font-size: .85rem; font-weight: 600; padding: .45rem 1rem; }
+.sf-announce a { color: #fff; text-decoration: none; } .sf-announce a:hover { text-decoration: underline; }
+/* reviews */
+.sf-stars { color: #fbbf24; letter-spacing: 1px; white-space: nowrap; } .sf-stars .off { color: var(--border-strong); }
+.sf-review { padding: 1rem 0; border-bottom: 1px solid var(--border); } .sf-review:last-child { border-bottom: 0; }
+.sf-reply { margin-top: .6rem; padding: .7rem .9rem; border-radius: 12px; background: var(--surface-2); border-inline-start: 3px solid var(--acc-1); font-size: .92rem; }
+#reviews, [id] { scroll-margin-top: 96px; }

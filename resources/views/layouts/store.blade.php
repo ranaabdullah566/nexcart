@@ -11,6 +11,8 @@
         $wishCount = count(app(\App\Services\Wishlist::class)->ids());
         $cartData = app(\App\Services\CartService::class)->toArray();
         $terms = (array) setting('business.terms', []);
+        $headerMenu = \App\Models\MenuItem::resolved('header');
+        $footerMenu = \App\Models\MenuItem::resolved('footer');
     @endphp
     <title>{{ $pageTitle ? $pageTitle.' · ' : '' }}{{ $storeName }}</title>
     <meta name="description" content="{{ \Illuminate\Support\Str::limit(strip_tags($metaDesc), 160) }}">
@@ -31,16 +33,20 @@
 <body class="sf" data-page="{{ $page ?? '' }}">
 <a href="#main" class="visually-hidden-focusable position-absolute p-2" style="z-index:2000">{{ __('Skip to content') }}</a>
 
+@if ($ann = announcement())
+    <div class="sf-announce" id="sfAnnounce">@if ($ann['url'])<a href="{{ $ann['url'] }}">{{ $ann['text'] }}</a>@else<span>{{ $ann['text'] }}</span>@endif</div>
+@endif
 <header class="sf-header">
     <div class="sf-container">
         <div class="sf-header-row">
             <a href="{{ route('store.home') }}" class="sf-brand" aria-label="{{ $storeName }}">
-                <span class="sf-brand-logo"><img src="{{ asset('assets/images/logo.svg') }}" alt=""></span>
+                <span class="sf-brand-logo"><img src="{{ brand_logo() }}" alt=""></span>
                 <span class="sf-brand-name">{{ $storeName }}</span>
             </a>
             <nav class="sf-nav" aria-label="Main">
                 <a href="{{ route('store.home') }}" @class(['active' => request()->routeIs('store.home')])>{{ __('Home') }}</a>
                 <a href="{{ route('store.shop') }}" @class(['active' => request()->routeIs('store.shop')])>{{ __('Shop') }}</a>
+                @foreach ($headerMenu as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach
                 @if ($navCats->isNotEmpty())
                     <div class="dropdown">
                         <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="padding:.4rem .8rem">{{ __('Categories') }}</a>
@@ -75,13 +81,14 @@
     </div>
 </header>
 
+@if (session('notice'))<div class="sf-container pt-3"><div class="sf-alert" style="border-color:var(--acc-1)"><i class="bi bi-info-circle-fill fs-5" style="color:var(--acc-1)"></i>{{ session('notice') }}</div></div>@endif
 <main id="main">@yield('content')</main>
 
 <footer class="sf-footer">
     <div class="sf-container">
         <div class="row g-4">
             <div class="col-lg-5">
-                <a href="{{ route('store.home') }}" class="sf-brand mb-3"><span class="sf-brand-logo"><img src="{{ asset('assets/images/logo.svg') }}" alt=""></span><span class="sf-brand-name">{{ $storeName }}</span></a>
+                <a href="{{ route('store.home') }}" class="sf-brand mb-3"><span class="sf-brand-logo"><img src="{{ brand_logo() }}" alt=""></span><span class="sf-brand-name">{{ $storeName }}</span></a>
                 @if (setting('store.tagline'))<p class="text-muted" dir="auto">{{ setting('store.tagline') }}</p>@endif
             </div>
             <div class="col-6 col-lg-3">
@@ -90,6 +97,7 @@
                 @foreach ($navCats->take(4) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach
                 <a href="{{ route('store.wishlist') }}">{{ __('Wishlist') }}</a>
                 <a href="{{ route('store.track') }}">{{ __('Track an order') }}</a>
+                @foreach ($footerMenu as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach
             </div>
             <div class="col-6 col-lg-4">
                 <h6>{{ __('Contact') }}</h6>

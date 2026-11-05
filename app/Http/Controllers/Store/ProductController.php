@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Store;
 use App\Http\Controllers\Controller;
 use App\Models\CatalogAttribute;
 use App\Models\Product;
+use App\Support\BusinessProfile;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -44,6 +45,8 @@ class ProductController extends Controller
             'product' => $product,
             'specs' => $specs,
             'inStock' => ! $product->track_stock || $product->totalStock() > 0,
+            'reviews' => BusinessProfile::hasModule('reviews') ? $product->approvedReviews()->latest('id')->limit(10)->get() : collect(),
+            'rating' => BusinessProfile::hasModule('reviews') ? ['avg' => round((float) $product->approvedReviews()->avg('rating'), 1), 'count' => $product->approvedReviews()->count()] : ['avg' => 0, 'count' => 0],
         ];
     }
 }
