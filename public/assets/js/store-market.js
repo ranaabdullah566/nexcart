@@ -134,6 +134,32 @@
             }).catch(function () { toast('Error', true); });
     });
 
+    /* ---- cart page: free-delivery progress follows quantity changes ---- */
+    if (window.SF) {
+        window.SF.cartPageHook = function (c) {
+            var box = one('[data-free-ship]');
+            if (!box) return;
+            var need = parseFloat(box.dataset.freeShip), have = c.subtotal_raw || 0, left = Math.max(0, need - have);
+            box.classList.toggle('done', left <= 0);
+            var bar = one('.bar > i', box); if (bar) bar.style.width = Math.min(100, have / need * 100) + '%';
+            var msg = one('[data-free-msg]', box);
+            if (msg) msg.textContent = left <= 0 ? box.dataset.doneText : box.dataset.moreText.replace(':amount', window.SF.money(left));
+        };
+    }
+
+    /* ---- shop: grid / list view, remembered ---- */
+    var viewBox = one('[data-view-toggle]'), listWrap = one('[data-product-list]');
+    if (viewBox && listWrap) {
+        var VK = 'nx-shop-view', cur;
+        var applyView = function (v) {
+            listWrap.classList.toggle('mk-list', v === 'list');
+            all('button', viewBox).forEach(function (b) { b.classList.toggle('on', b.dataset.view === v); b.setAttribute('aria-pressed', b.dataset.view === v ? 'true' : 'false'); });
+        };
+        try { cur = localStorage.getItem(VK) || 'grid'; } catch (e) { cur = 'grid'; }
+        applyView(cur);
+        all('button', viewBox).forEach(function (b) { b.addEventListener('click', function () { applyView(b.dataset.view); try { localStorage.setItem(VK, b.dataset.view); } catch (e) {} }); });
+    }
+
     /* ---- cookie choices ---- */
     var ck = one('#mkCookie'), KEY = 'nx-cookie-choice';
     function saved() { try { return localStorage.getItem(KEY); } catch (e) { return 'essential'; } }

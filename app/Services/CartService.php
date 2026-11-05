@@ -115,6 +115,7 @@ class CartService
         return [
             'count' => (int) $lines->sum('qty'),
             'subtotal' => money($lines->sum('total')),
+            'subtotal_raw' => round((float) $lines->sum('total'), 2),
             'lines' => $lines->map(fn ($l) => [
                 'key' => $l['key'],
                 'name' => $l['product']->trans('name'),

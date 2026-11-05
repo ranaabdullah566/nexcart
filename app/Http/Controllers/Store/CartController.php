@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ShippingRate;
 use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,11 @@ class CartController extends Controller
 
     public function show(): View
     {
-        return view('store.cart', ['cart' => $this->cart->toArray()]);
+        // lowest "free delivery over" amount any delivery rate offers, so the page can show how close the shopper is
+        $free = ShippingRate::where('is_active', true)->where('is_pickup', false)->whereNotNull('free_over')
+            ->whereHas('zone', fn ($q) => $q->where('is_active', true))->min('free_over');
+
+        return view('store.cart', ['cart' => $this->cart->toArray(), 'freeOver' => $free !== null ? (float) $free : null]);
     }
 
     public function json(): JsonResponse

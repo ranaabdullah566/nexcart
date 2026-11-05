@@ -152,6 +152,7 @@
             $('.q', r).textContent = l.qty; $('.lt', r).textContent = l.total;
         });
         $$('[data-page-subtotal]').forEach(function (e) { e.textContent = c.subtotal; });
+        if (SF.cartPageHook) SF.cartPageHook(c);
     }
 
     /* ---------- product buy box (page + quick view) ---------- */
