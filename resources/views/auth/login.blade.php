@@ -18,7 +18,7 @@
                     @error('email')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
                 <div class="mb-3">
-                    <label class="form-label" for="password">{{ __('Password') }}</label>
+                    <div class="d-flex justify-content-between align-items-baseline"><label class="form-label" for="password">{{ __('Password') }}</label><a href="{{ route('password.request') }}" class="small fw-bold">{{ __('Forgot password?') }}</a></div>
                     <div class="mk-field"><i class="bi bi-lock"></i><input id="password" type="password" name="password" required autocomplete="current-password" maxlength="200" class="form-control form-control-lg @error('password') is-invalid @enderror"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div>
                     @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>

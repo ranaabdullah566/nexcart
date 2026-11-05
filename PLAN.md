@@ -111,6 +111,6 @@ kiya ja sake.
 
 ## 5. Ideas not built yet
 - Vendors / marketplace mode (sellers, commissions, payouts) — only if you want to run a multi-seller marketplace
-- Newsletter sign-up, password reset by e-mail, SMS / WhatsApp order notifications
+- Newsletter sign-up, SMS / WhatsApp order notifications
 - Editable order statuses and invoice design, admin screen for the admin’s own labels in other languages
 - Multi-currency, multi-tenant SaaS (see docs/SELLING.md)

@@ -8,7 +8,7 @@ Work through this before taking real orders. **System health** in the admin chec
 | ☐ | HTTPS on the real domain, `APP_URL=https://…` | Card payments, logins and cookies must be encrypted. With an https `APP_URL` the session cookie is marked secure by itself. Behind a proxy set `TRUSTED_PROXIES=*`. |
 | ☐ | `TRUSTED_HOSTS=shop.example.com` (comma-separated) | Rejects requests that arrive with a forged Host header. |
 | ☐ | Document root is `public/` | Keeps `.env`, `storage/` and source code unreachable from the web. `public/.htaccess` also refuses dotfiles. |
-| ☐ | Real e-mail: `MAIL_MAILER=smtp` + credentials | With `log` customers never receive order e-mails. Send yourself a test order. |
+| ☐ | Real e-mail: `MAIL_MAILER=smtp` + credentials | With `log` customers never receive order e-mails or password-reset links. Send yourself a test order and try “Forgot password?” once. |
 | ☐ | Scheduler cron | Cart reminders, nightly backups, Recycle Bin and alert clean-up. System health shows “Scheduler: Running”. |
 | ☐ | Automatic backups **and** an off-server copy | Backups land in `storage/app/backups`. Copy them elsewhere (S3, another server, your laptop). |
 | ☐ | `php artisan storage:link` | Product images and the logo are served from `public/storage`. |
@@ -30,4 +30,4 @@ Work through this before taking real orders. **System health** in the admin chec
 - **No queue worker is needed.** E-mails are sent while the request runs; a failed e-mail never blocks an order.
 - **Performance:** in production `php artisan nexcart:update` caches config, routes and views. OPcache is on in the Docker image.
 - **Monitoring:** `GET /up` returns 200 when the app boots — point an uptime monitor at it.
-- **Password reset by e-mail is not included.** Reset a staff password in Admin → Staff; a customer can ask the shop (Admin → Customers → Edit sets a new one).
+- **“Forgot password?” works by e-mail**, so real e-mail (`MAIL_MAILER=smtp`) matters for sign-in too. Until it is set up you can still set a new password for staff in Admin → Staff and for customers in Admin → Customers → Edit. The link is built from `APP_URL`, so keep that exactly your public address.

@@ -1330,5 +1330,21 @@
     "Your server is ready": "Aap ka server tayyar hai",
     "Something needs your attention": "Kisi cheez par tawajjoh darkar hai",
     ":ok of :n checks passed": ":n mein se :ok jaanch kamyab",
-    "Show all checks": "Tamam jaanch dikhayen"
+    "Show all checks": "Tamam jaanch dikhayen",
+    "Choose a new password": "Naya password muntakhib karein",
+    "Enter the e-mail you signed up with and we will send you a link to choose a new one.": "Wo email darj karein jis se aap ne sign up kiya tha, hum naya password chunne ka link bhejenge.",
+    "Forgot password": "Password bhool gaye",
+    "Forgot password?": "Password bhool gaye?",
+    "Forgot your password?": "Password bhool gaye?",
+    "Need a new link?": "Naya link chahiye?",
+    "Pick something only you know. You will be signed out on every device.": "Aisa password chunein jo sirf aap jante hon. Aap har device se sign out ho jayenge.",
+    "Send reset link": "Reset link bhejein",
+    "If that e-mail belongs to an account, we have sent a link to choose a new password. It works for :m minutes.": "Agar yeh email kisi account ki hai to hum ne naya password chunne ka link bhej diya hai. Yeh :m minute tak kaar-amad hai.",
+    "This reset link is invalid or has expired. Please ask for a new one.": "Yeh reset link durust nahin ya khatam ho chuka hai. Barah-e-karam naya link mangwayen.",
+    "Your password was changed. Sign in with the new one.": "Aap ka password tabdeel ho gaya. Naye password se sign in karein.",
+    "Reset your password": "Apna password reset karein",
+    "we received a request to choose a new password for your :store account.": "Humein aap ke :store account ka naya password chunne ki darkhwast mili hai.",
+    "This link works once and expires in :m minutes.": "Yeh link ek bar kaam karta hai aur :m minute mein khatam ho jata hai.",
+    "If you did not ask for this, you can ignore this e-mail — your password stays the same.": "Agar aap ne yeh darkhwast nahin ki to is email ko nazar andaz kar dein — aap ka password wohi rahega.",
+    "Button not working? Copy this address into your browser:": "Button kaam nahin kar raha? Yeh pata apne browser mein copy karein:"
 }

@@ -1330,5 +1330,21 @@
     "Your server is ready": "آپ کا سرور تیار ہے",
     "Something needs your attention": "کسی چیز پر توجہ درکار ہے",
     ":ok of :n checks passed": ":n میں سے :ok جانچ کامیاب",
-    "Show all checks": "تمام جانچ دکھائیں"
+    "Show all checks": "تمام جانچ دکھائیں",
+    "Choose a new password": "نیا پاس ورڈ منتخب کریں",
+    "Enter the e-mail you signed up with and we will send you a link to choose a new one.": "وہ ای میل درج کریں جس سے آپ نے سائن اپ کیا تھا، ہم نیا پاس ورڈ چننے کا لنک بھیجیں گے۔",
+    "Forgot password": "پاس ورڈ بھول گئے",
+    "Forgot password?": "پاس ورڈ بھول گئے؟",
+    "Forgot your password?": "پاس ورڈ بھول گئے؟",
+    "Need a new link?": "نیا لنک چاہیے؟",
+    "Pick something only you know. You will be signed out on every device.": "ایسا پاس ورڈ چنیں جو صرف آپ جانتے ہوں۔ آپ ہر ڈیوائس سے سائن آؤٹ ہو جائیں گے۔",
+    "Send reset link": "ری سیٹ لنک بھیجیں",
+    "If that e-mail belongs to an account, we have sent a link to choose a new password. It works for :m minutes.": "اگر یہ ای میل کسی اکاؤنٹ کی ہے تو ہم نے نیا پاس ورڈ چننے کا لنک بھیج دیا ہے۔ یہ :m منٹ تک کارآمد ہے۔",
+    "This reset link is invalid or has expired. Please ask for a new one.": "یہ ری سیٹ لنک درست نہیں یا ختم ہو چکا ہے۔ براہ کرم نیا لنک منگوائیں۔",
+    "Your password was changed. Sign in with the new one.": "آپ کا پاس ورڈ تبدیل ہو گیا۔ نئے پاس ورڈ سے سائن اِن کریں۔",
+    "Reset your password": "اپنا پاس ورڈ ری سیٹ کریں",
+    "we received a request to choose a new password for your :store account.": "ہمیں آپ کے :store اکاؤنٹ کا نیا پاس ورڈ چننے کی درخواست ملی ہے۔",
+    "This link works once and expires in :m minutes.": "یہ لنک ایک بار کام کرتا ہے اور :m منٹ میں ختم ہو جاتا ہے۔",
+    "If you did not ask for this, you can ignore this e-mail — your password stays the same.": "اگر آپ نے یہ درخواست نہیں کی تو اس ای میل کو نظر انداز کر دیں — آپ کا پاس ورڈ وہی رہے گا۔",
+    "Button not working? Copy this address into your browser:": "بٹن کام نہیں کر رہا؟ یہ پتہ اپنے براؤزر میں کاپی کریں:"
 }

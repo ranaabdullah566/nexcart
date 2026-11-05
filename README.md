@@ -26,7 +26,7 @@ See [docs/CUSTOMIZING.md](docs/CUSTOMIZING.md).
 delivery slots (pharmacy); pickup, reorder, loyalty points, abandoned-cart reminders.
 
 **Security** — login lockout, two-factor (authenticator app), password policy, idle sign-out,
-Content-Security-Policy, scanner blocking, reCAPTCHA, Google sign-in for customers, audit trail.
+Content-Security-Policy, scanner blocking, reCAPTCHA, Google sign-in for customers, password reset by e-mail, audit trail.
 See [docs/SECURITY.md](docs/SECURITY.md). No site can be promised unhackable — keep everything updated.
 
 ## Documentation

@@ -26,6 +26,7 @@ A new marketplace-style storefront, a storefront you can customize from the admi
 - `php artisan db:seed --class=DemoRecordsSeeder` adds 100 products, customers and orders for trying things out.
 
 ### Security
+- **Forgot password by e-mail** for customers and staff: one-time link, 60 minutes, no hint whether an address exists, signs out every device, never skips two-factor.
 - Sign-in lockout, two-factor (authenticator app + recovery codes, optional for the whole team), password policy, idle sign-out, nonce-based Content-Security-Policy, scanner blocking, honeypot, more headers and rate limits, `no-store` on private pages, current-password check for account changes. Optional Google reCAPTCHA and Google sign-in for customers. See [docs/SECURITY.md](docs/SECURITY.md).
 
 ### Fixes

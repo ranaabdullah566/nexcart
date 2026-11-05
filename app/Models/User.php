@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\Audited;
+use App\Mail\ResetPasswordMail;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Concerns\Audited;
 use App\Support\Totp;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password', 'phone', 'default_address'])]
@@ -29,6 +32,16 @@ class User extends Authenticatable
     public function isStaff(): bool
     {
         return $this->roles()->exists();
+    }
+
+    /** Called by the password broker: send the branded e-mail (a failed e-mail never breaks the page). */
+    public function sendPasswordResetNotification($token): void
+    {
+        try {
+            Mail::to($this->email)->send(new ResetPasswordMail($this, (string) $token));
+        } catch (\Throwable $e) {
+            Log::warning('Password reset e-mail failed: '.$e->getMessage());
+        }
     }
 
     /** A TOTP code, or one single-use recovery code. */

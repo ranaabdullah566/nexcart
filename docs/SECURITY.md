@@ -10,6 +10,7 @@ expensive and noisy. Keep PHP, Laravel and this app updated (see [UPGRADE.md](UP
 | Two-factor (TOTP) | Authenticator-app codes + 10 single-use recovery codes. Owners can **require** it for all staff (Admin → Security). |
 | Password policy | 10+ characters with letters and numbers on every password form. |
 | Account-takeover guard | Changing an email or password needs the current password; Google sign-in can never open a staff account. |
+| Forgot password | “Forgot password?” on the sign-in page e-mails a one-time link (valid 60 minutes, at most 3 links per address per hour). The page says the same thing whether or not the address exists, deleted accounts cannot reset, a reset signs the account out everywhere and clears any sign-in lock, and a staff member with two-factor still needs their code afterwards. |
 | Idle sign-out | Staff sessions end after inactivity (default 120 min, configurable). |
 | Content-Security-Policy | Nonce-based: only our own scripts run; injected scripts are blocked. Also `frame-ancestors`, `object-src 'none'`, `form-action`. |
 | Headers | nosniff, X-Frame-Options, HSTS (on HTTPS), cross-origin opener policy, referrer / permissions policy, no `X-Powered-By`. Account, checkout, order and admin pages are `no-store` and `noindex`. |
@@ -42,4 +43,4 @@ paste the site key and the secret, tick the switch.
 - Back up regularly (Admin → Backups) and keep a copy off the server.
 - If you add inline scripts to a view, give them `nonce="{{ csp_nonce() }}"` or the Content-Security-Policy will block them.
 
-Not included: password reset by e-mail (reset a staff password in Admin → Staff, a customer’s in Admin → Customers → Edit).
+Password reset needs working e-mail (`MAIL_MAILER=smtp`). If e-mail is not set up yet, reset a staff password in Admin → Staff and a customer’s in Admin → Customers → Edit.
