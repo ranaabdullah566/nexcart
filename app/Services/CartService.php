@@ -86,7 +86,7 @@ class CartService
             }
 
             $chosen = collect($line['options'])->map(fn ($id) => $options->get($id))->filter();
-            $unit = (float) ($variant?->price ?? $product->price) + (float) $chosen->sum('price_delta');
+            $unit = max(0.0, round((float) ($variant?->price ?? $product->price) + (float) $chosen->sum('price_delta'), 2));   // a big negative add-on can never make a line free or negative
             $available = $product->track_stock ? ($variant?->stock_qty ?? $product->stock_qty) : null;
 
             return [

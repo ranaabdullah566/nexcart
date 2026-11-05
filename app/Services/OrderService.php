@@ -46,6 +46,10 @@ class OrderService
             if ($to === 'cancelled') {
                 $order->cancelled_at = now();
                 $this->restock($order, $by);
+                // a cancelled order no longer uses up its coupon
+                if ($order->coupon_code) {
+                    \App\Models\Coupon::where('code', $order->coupon_code)->where('used_count', '>', 0)->decrement('used_count');
+                }
             }
             if ($to === 'refunded') {
                 $order->payment_status = 'refunded';

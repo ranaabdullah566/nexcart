@@ -12,6 +12,7 @@ use App\Models\ShippingZone;
 use App\Models\User;
 use App\Services\Payments\PaymentManager;
 use App\Support\BusinessProfile;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -154,7 +155,7 @@ class CheckoutService
             $q = $this->pricing->quote($subtotal, $coupon, $rate, $points['discount']);
 
             $order = Order::create([
-                'number' => Order::nextNumber(), 'public_token' => Order::newToken(), 'user_id' => $user?->id,
+                'number' => 'TMP-'.Str::random(12), 'public_token' => Order::newToken(), 'user_id' => $user?->id,
                 'status' => 'pending', 'payment_status' => 'unpaid', 'payment_method' => $gateway->key(),
                 'shipping_method' => $rate->name, 'is_pickup' => $rate->is_pickup,
                 'name' => $data['name'], 'email' => $data['email'], 'phone' => $data['phone'],
@@ -166,6 +167,8 @@ class CheckoutService
                 'slot_date' => $slot ? $data['slot_date'] : null, 'delivery_slot_id' => $slot?->id, 'slot_label' => $slot?->displayLabel(),
                 'eta_at' => $this->eta($rate, $lines),
             ]);
+
+            $order->update(['number' => Order::numberFor($order->id)]);
 
             foreach ($lines as $l) {
                 OrderItem::create([

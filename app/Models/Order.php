@@ -80,6 +80,14 @@ class Order extends Model implements HasMedia
         return $prefix.'-'.$next;
     }
 
+    /** The final, collision-free number: derived from the row's own id, so two simultaneous checkouts can never share one. */
+    public static function numberFor(int $id): string
+    {
+        $prefix = substr(strtoupper(preg_replace('/[^A-Za-z]/', '', Str::ascii((string) setting('store.name', 'NexCart')))) ?: 'NC', 0, 3);
+
+        return $prefix.'-'.($id + 100000);
+    }
+
     public static function newToken(): string
     {
         return Str::random(40);
