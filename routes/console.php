@@ -9,3 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('nexcart:send-abandoned-reminders')->hourly()->withoutOverlapping();
+Schedule::command('nexcart:heartbeat')->everyMinute();
+Schedule::command('nexcart:backup --scheduled')->dailyAt('02:30')->withoutOverlapping();

@@ -95,7 +95,7 @@ kiya ja sake.
 - Reports & analytics dashboard, notifications (email/SMS/WhatsApp)
 - Reviews, loyalty/wallet, abandoned cart, multi-language & currency
 
-### Phase 7 — Productization (sell karne ke liye)
+### Phase 7 — Productization (sell karne ke liye) ✅ (multi-tenant SaaS deferred — see docs/SELLING.md)
 - Installer, license keys, demo data per business type
 - Docs, update mechanism, backups, Docker deploy
 - Optional: multi-tenant SaaS mode, subscriptions

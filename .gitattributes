@@ -9,3 +9,11 @@
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+
+/tests export-ignore
+/phpunit.xml export-ignore
+/PLAN.md export-ignore
+/AGENTS.md export-ignore
+/CLAUDE.md export-ignore
+/clients export-ignore
+/dist export-ignore

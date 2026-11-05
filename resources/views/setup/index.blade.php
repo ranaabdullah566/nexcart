@@ -46,6 +46,8 @@
         </div>
     </div></div>
 
+    <div class="form-check form-switch mb-4"><input class="form-check-input" type="checkbox" role="switch" name="sample_data" value="1" id="sampleData" @checked(old('sample_data'))><label class="form-check-label" for="sampleData"><b>{{ __('Add sample products') }}</b> <span class="text-muted">— {{ __('a ready-made catalogue to look around with. You can remove it any time.') }}</span></label></div>
+
     <button type="submit" class="btn btn-primary btn-lg w-100"><i class="bi bi-rocket-takeoff me-1"></i> {{ __('Launch my store') }}</button>
 </form>
 @endsection

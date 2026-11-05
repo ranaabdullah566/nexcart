@@ -106,7 +106,7 @@
             </div>
         </div>
         <hr class="my-4">
-        <div class="small text-muted">© {{ date('Y') }} {{ $storeName }}</div>
+        <div class="small text-muted d-flex justify-content-between flex-wrap gap-2"><span>© {{ date('Y') }} {{ $storeName }}</span>@if (\App\Support\License::showBranding())<span>{{ __('Powered by NexCart') }}</span>@endif</div>
     </div>
 </footer>
 

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\DemoData;
 use App\Support\BusinessProfile;
+use App\Support\Installer;
 use App\Support\Locales;
 use App\Support\StarterData;
 use Database\Seeders\RolesSeeder;
@@ -31,6 +33,7 @@ class SetupController extends Controller
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'sample_data' => ['nullable', 'boolean'],
         ]);
 
         $owner = null;
@@ -56,7 +59,13 @@ class SetupController extends Controller
                 'store.locales' => array_keys(Locales::all()),
                 'system.installed' => true,
             ]);
+
+            if (! empty($data['sample_data'])) {
+                app(DemoData::class)->load($data['business_type']);
+            }
         });
+
+        Installer::lock();
 
         Auth::login($owner);
         request()->session()->regenerate();

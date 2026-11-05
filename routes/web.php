@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AttributeController;
+use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CouponController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Admin\EmailTemplateController;
 use App\Http\Controllers\Admin\HomeSectionController;
 use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\KitchenController;
+use App\Http\Controllers\Admin\LicenseController;
 use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\ModifierGroupController;
 use App\Http\Controllers\Admin\OrderController;
@@ -24,14 +26,18 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ShippingController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\ThemeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\InstallController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\Store;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/install', [InstallController::class, 'show'])->name('install');
+Route::post('/install', [InstallController::class, 'store'])->middleware('throttle:10,1')->name('install.store');
 Route::get('/setup', [SetupController::class, 'show'])->name('setup');
 Route::post('/setup', [SetupController::class, 'store'])->name('setup.store');
 
@@ -83,6 +89,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff'])->group(fun
     Route::resource('coupons', CouponController::class)->except('show');
     Route::resource('shipping', ShippingController::class)->except('show')->parameters(['shipping' => 'shipping']);
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+
+    // System (owner only)
+    Route::get('system', [SystemController::class, 'index'])->name('system.index');
+    Route::post('system/demo', [SystemController::class, 'loadDemo'])->name('system.demo.load');
+    Route::delete('system/demo', [SystemController::class, 'removeDemo'])->name('system.demo.remove');
+    Route::get('backups', [BackupController::class, 'index'])->name('backups.index');
+    Route::post('backups', [BackupController::class, 'store'])->name('backups.store');
+    Route::post('backups/settings', [BackupController::class, 'settings'])->name('backups.settings');
+    Route::get('backups/{name}', [BackupController::class, 'download'])->name('backups.download');
+    Route::delete('backups/{name}', [BackupController::class, 'destroy'])->name('backups.destroy');
+    Route::get('license', [LicenseController::class, 'show'])->name('license.show');
+    Route::post('license', [LicenseController::class, 'activate'])->name('license.activate');
+    Route::delete('license', [LicenseController::class, 'remove'])->name('license.remove');
 
     // Growth
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');

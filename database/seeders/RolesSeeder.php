@@ -25,6 +25,7 @@ class RolesSeeder extends Seeder
         'storefront' => ['manage'],         // home page builder
         'sales_settings' => ['manage'],     // coupons, shipping
         'reviews' => ['manage'],            // moderate product reviews
+        'system' => ['manage'],             // health, backups, license — owner only
     ];
 
     public function run(): void
@@ -42,7 +43,7 @@ class RolesSeeder extends Seeder
             'owner' => $all,
             'manager' => array_values(array_filter(
                 $all,
-                fn ($p) => ! str_starts_with($p, 'settings.') && $p !== 'staff.delete',
+                fn ($p) => ! str_starts_with($p, 'settings.') && ! str_starts_with($p, 'system.') && $p !== 'staff.delete',
             )),
             'staff' => ['products.view', 'categories.view', 'inventory.view', 'orders.view', 'orders.update', 'customers.view'],
             'rider' => ['orders.view', 'deliveries.view', 'deliveries.update'],

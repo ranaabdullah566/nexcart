@@ -1,6 +1,17 @@
 <?php
 
 return [
+    'version' => trim((string) @file_get_contents(base_path('VERSION'))) ?: '0.0.0',
+
+    // Where "is there a newer version?" looks. Expected JSON: {"version": "1.2.0", "notes": "…", "url": "https://…"}
+    'update_url' => env('NEXCART_UPDATE_URL'),
+
+    // Where the installer writes the environment file (tests point this somewhere harmless).
+    'env_path' => env('NEXCART_ENV_PATH'),
+
+    // The file whose presence means "installed — the web installer must never run again".
+    'lock_file' => env('NEXCART_LOCK_FILE'),
+
     // Fallback values when a setting has not been saved yet.
     'defaults' => [
         'store.name' => 'NexCart',

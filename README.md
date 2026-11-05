@@ -4,6 +4,17 @@ Fully dynamic, white-label e-commerce platform (Laravel 13 + MySQL) for many bus
 fast food, pharmacy, medical store, general online store. UI: **NEXUS** design system on Bootstrap 5.3,
 dark/light themes, English / اردو (RTL) / Roman Urdu. See [PLAN.md](PLAN.md) for the roadmap.
 
+## Documentation
+
+| Guide | For |
+|-------|-----|
+| [docs/INSTALL.md](docs/INSTALL.md) | Web installer, Docker, command line |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Going-live checklist |
+| [docs/UPGRADE.md](docs/UPGRADE.md) | Updating and rolling back |
+| [docs/LICENSING.md](docs/LICENSING.md) | Issuing license keys (vendor) |
+| [docs/SELLING.md](docs/SELLING.md) | One deployment per client, handing over a store |
+| [docs/ADMIN-GUIDE.md](docs/ADMIN-GUIDE.md) | Owner’s quick guide |
+
 ## Run locally
 
 ```bash
@@ -15,7 +26,7 @@ php artisan storage:link
 php artisan serve
 ```
 
-Open `/setup` once to pick the business type and create the owner account.
+Open the site once: `/install` (database) and `/setup` (business type, owner account). Production: see [docs/INSTALL.md](docs/INSTALL.md).
 
 ## After pulling updates
 

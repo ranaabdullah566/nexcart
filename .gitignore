@@ -32,3 +32,10 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# stray local SQLite databases
+/nexcart
+*.sqlite
+/storage/app/backups
+/clients
+/dist

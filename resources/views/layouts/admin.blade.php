@@ -50,6 +50,11 @@
             ['admin.emails.edit', 'admin.emails.*', 'envelope-paper-fill', 'Email templates', 'storefront.manage', null],
             ['store.home', 'never', 'box-arrow-up-right', 'View store', null, null],
         ],
+        'System' => [
+            ['admin.system.index', 'admin.system.*', 'heart-pulse-fill', 'System health', 'system.manage', null],
+            ['admin.backups.index', 'admin.backups.*', 'cloud-arrow-down-fill', 'Backups', 'system.manage', null],
+            ['admin.license.show', 'admin.license.*', 'patch-check-fill', 'License', 'system.manage', null],
+        ],
         'Admin' => [
             ['admin.staff.index', 'admin.staff.*', 'person-badge-fill', 'Staff', 'staff.view', null],
             ['admin.settings.edit', 'admin.settings.*', 'gear-fill', 'Store settings', 'settings.view', null],
@@ -132,6 +137,9 @@
         </div>
 
         <main class="nx-content">
+            @if (\App\Support\License::needsAttention() && $user->can('system.manage') && ! request()->routeIs('admin.license.*'))
+                <div class="alert alert-warning d-flex align-items-center gap-2 py-2"><i class="bi bi-patch-exclamation-fill"></i><span>{{ __('This copy of NexCart is not licensed.') }} {{ \App\Support\License::status()['reason'] }}</span><a href="{{ route('admin.license.show') }}" class="ms-auto btn btn-sm btn-outline-secondary">{{ __('Enter license key') }}</a></div>
+            @endif
             @yield('content')
         </main>
 
