@@ -124,7 +124,7 @@
                 $$('[data-wish="' + wish.dataset.wish + '"]').forEach(function (b) { b.classList.toggle('on', r.added); b.setAttribute('aria-pressed', r.added); });
                 $$('[data-wish-count]').forEach(function (b) { b.textContent = r.count; b.hidden = !r.count; });
                 toast(r.added ? T.wishAdded : T.wishRemoved);
-                if (!r.added && document.body.dataset.page === 'wishlist') { var c = wish.closest('[data-wish-item]'); if (c) c.remove(); }
+                if (!r.added && document.body.dataset.page === 'wishlist') { var c = wish.closest('[data-wish-item]'); if (c) { var col = c.closest('.col'); (col || c).remove(); } if (!document.querySelector('[data-wish-item]')) location.reload(); }
             }).catch(function (err) { toast(err.message, 'bad'); });
             return;
         }

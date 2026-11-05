@@ -14,7 +14,12 @@ class WishlistController extends Controller
 
     public function index(): View
     {
-        return view('store.wishlist', ['products' => $this->wishlist->products()]);
+        $products = $this->wishlist->products();
+        $suggested = $products->isEmpty()
+            ? Product::active()->card()->with('category')->orderByDesc('is_featured')->latest('id')->limit(4)->get()
+            : collect();
+
+        return view('store.wishlist', ['products' => $products, 'suggested' => $suggested]);
     }
 
     public function toggle(int $product): JsonResponse
