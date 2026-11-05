@@ -1317,5 +1317,18 @@
     "Tap the heart on any product to keep it here for later.": "کسی بھی مصنوعات پر دل کا نشان دبائیں تاکہ وہ بعد کے لیے یہاں محفوظ رہے۔",
     "Updated :date": "اپڈیٹ :date",
     "We are happy to answer your questions.": "ہمیں آپ کے سوالات کے جواب دے کر خوشی ہوگی۔",
-    "You may like": "آپ کو پسند آ سکتا ہے"
+    "You may like": "آپ کو پسند آ سکتا ہے",
+    "Let’s get NexCart running": "آئیے NexCart چلائیں",
+    "Owner account": "مالک کا اکاؤنٹ",
+    "Progress": "پیش رفت",
+    "Server check": "سرور کی جانچ",
+    "Step :n": "مرحلہ :n",
+    "Step :n of :t": "مرحلہ :n از :t",
+    "Server & database": "سرور اور ڈیٹا بیس",
+    "Store & owner": "اسٹور اور مالک",
+    "Launch": "آغاز",
+    "Your server is ready": "آپ کا سرور تیار ہے",
+    "Something needs your attention": "کسی چیز پر توجہ درکار ہے",
+    ":ok of :n checks passed": ":n میں سے :ok جانچ کامیاب",
+    "Show all checks": "تمام جانچ دکھائیں"
 }

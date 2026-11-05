@@ -1317,5 +1317,18 @@
     "Tap the heart on any product to keep it here for later.": "Kisi bhi product par dil ka nishan dabayen taake wo baad ke liye yahan mehfooz rahe.",
     "Updated :date": "Update :date",
     "We are happy to answer your questions.": "Humein aap ke sawalat ke jawab de kar khushi hogi.",
-    "You may like": "Aap ko pasand aa sakta hai"
+    "You may like": "Aap ko pasand aa sakta hai",
+    "Let’s get NexCart running": "Aayein NexCart chalayen",
+    "Owner account": "Malik ka account",
+    "Progress": "Pesh raft",
+    "Server check": "Server ki jaanch",
+    "Step :n": "Marhala :n",
+    "Step :n of :t": "Marhala :n az :t",
+    "Server & database": "Server aur database",
+    "Store & owner": "Store aur malik",
+    "Launch": "Aaghaz",
+    "Your server is ready": "Aap ka server tayyar hai",
+    "Something needs your attention": "Kisi cheez par tawajjoh darkar hai",
+    ":ok of :n checks passed": ":n mein se :ok jaanch kamyab",
+    "Show all checks": "Tamam jaanch dikhayen"
 }

@@ -29,7 +29,7 @@ class SetupWizardTest extends TestCase
     public function test_visitors_are_redirected_to_setup_until_installed(): void
     {
         $this->get('/')->assertRedirect(route('setup'));
-        $this->get('/setup')->assertOk()->assertSee('Pharmacy');
+        $this->get('/setup')->assertOk()->assertSee('Pharmacy')->assertSee('mk-wz', false)->assertSee('data-strength', false);
     }
 
     public function test_setup_creates_owner_applies_profile_and_locks_wizard(): void
