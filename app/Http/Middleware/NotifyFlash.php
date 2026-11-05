@@ -23,6 +23,9 @@ class NotifyFlash
                 if ($s->has($key) && is_string($msg = $s->get($key)) && $msg !== '') {
                     notify()->{$method}()->message($msg)->send();
                     $list[] = ['type' => $method, 'message' => $msg];
+                    if (($u = $request->user()) && $request->is('admin*') && $u->isStaff()) {
+                        \App\Models\Alert::create(['user_id' => $u->id, 'type' => $method, 'source' => 'notify', 'message' => mb_substr($msg, 0, 500), 'read_at' => now()]);   // already seen as a toast
+                    }
                 }
             }
             if (count($list) > 0) {

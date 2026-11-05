@@ -34,6 +34,7 @@ class StockService
             throw ValidationException::withMessages(['variant_id' => __('Variant does not belong to this product.')]);
         }
 
+        $wasLow = $product->isLowStock();
         DB::transaction(function () use ($product, $change, $reason, $variant, $batch, $note, $userId) {
             $target = $variant
                 ? ProductVariant::whereKey($variant->id)->lockForUpdate()->first()
@@ -55,6 +56,14 @@ class StockService
                 $this->log($product, $variant, null, $change, $target->stock_qty, $reason, $note, $userId);
             }
         });
+
+        // tell the team once, when an item crosses into low stock
+        if ($change < 0 && ! $wasLow) {
+            $fresh = $product->fresh(['variants']);
+            if ($fresh && $fresh->isLowStock()) {
+                \App\Models\Alert::broadcast('inventory.view', __('Low stock: :name (:n left)', ['name' => $fresh->name, 'n' => $fresh->totalStock()]), route('admin.inventory.index'), 'warning', 'stock');
+            }
+        }
     }
 
     private function receiveIntoBatch(Product $product, ?ProductVariant $variant, int $qty, array $batch, string $reason, ?string $note, ?int $userId, $target): void

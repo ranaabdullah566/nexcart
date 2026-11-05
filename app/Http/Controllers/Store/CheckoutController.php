@@ -190,6 +190,7 @@ class CheckoutController extends Controller
 
     private function notify(Order $order): void
     {
+        \App\Models\Alert::broadcast('orders.view', __('New order :n — :total', ['n' => $order->number, 'total' => money($order->total)]), route('admin.orders.show', $order), 'info', 'order');
         try {
             Mail::to($order->email)->send(new OrderPlaced($order));
             if (filled(setting('store.email'))) {

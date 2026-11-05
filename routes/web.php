@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityController;
+use App\Http\Controllers\Admin\AlertController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\BrandController;
@@ -100,7 +101,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::resource('delivery-slots', DeliverySlotController::class)->except('show')->parameters(['delivery-slots' => 'deliverySlot']);
     Route::resource('coupons', CouponController::class)->except('show');
     Route::resource('shipping', ShippingController::class)->except('show')->parameters(['shipping' => 'shipping']);
-    Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::resource('customers', CustomerController::class)->except('show');
 
     Route::resource('roles', RoleController::class)->except('show');
 
@@ -113,6 +114,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::put('security/password', [SecurityController::class, 'password'])->name('security.password');
     Route::post('security/integrations', [SecurityController::class, 'integrations'])->name('security.integrations');
     Route::post('security/policy', [SecurityController::class, 'policy'])->name('security.policy');
+    Route::get('alerts', [AlertController::class, 'index'])->name('alerts.index');
+    Route::post('alerts/read-all', [AlertController::class, 'readAll'])->name('alerts.read-all');
+    Route::delete('alerts', [AlertController::class, 'clear'])->name('alerts.clear');
+    Route::post('alerts/{alert}/read', [AlertController::class, 'read'])->whereNumber('alert')->name('alerts.read');
+    Route::delete('alerts/{alert}', [AlertController::class, 'destroy'])->whereNumber('alert')->name('alerts.destroy');
     Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
     Route::get('activity/export', [ActivityController::class, 'export'])->name('activity.export');
 

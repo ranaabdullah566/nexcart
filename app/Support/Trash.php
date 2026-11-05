@@ -39,7 +39,8 @@ class Trash
             'pages' => ['label' => 'Pages', 'icon' => 'file-earmark-text-fill', 'model' => Page::class, 'name' => fn ($m) => $m->title, 'permission' => 'storefront.manage'],
             'menu-items' => ['label' => 'Menu links', 'icon' => 'list-nested', 'model' => MenuItem::class, 'name' => fn ($m) => $m->label, 'permission' => 'storefront.manage'],
             'reviews' => ['label' => 'Reviews', 'icon' => 'chat-heart-fill', 'model' => Review::class, 'name' => fn ($m) => ($m->product?->name ?? '—').' · '.$m->rating.'★ '.$m->name, 'permission' => 'reviews.manage'],
-            'staff' => ['label' => 'Staff', 'icon' => 'person-badge-fill', 'model' => User::class, 'name' => fn ($m) => $m->name.' ('.$m->email.')', 'permission' => 'staff.delete'],
+            'customers' => ['label' => 'Customers', 'icon' => 'person-heart', 'model' => User::class, 'scope' => 'customers', 'name' => fn ($m) => $m->name.' ('.$m->email.')', 'permission' => 'customers.delete'],
+            'staff' => ['label' => 'Staff', 'icon' => 'person-badge-fill', 'model' => User::class, 'scope' => 'staff', 'name' => fn ($m) => $m->name.' ('.$m->email.')', 'permission' => 'staff.delete'],
         ];
     }
 
@@ -51,9 +52,16 @@ class Trash
 
     public static function query(string $type)
     {
-        $model = static::types()[$type]['model'];
+        $t = static::types()[$type];
+        $q = $t['model']::onlyTrashed();
+        // customers and staff share the users table: a deleted account is staff if it still holds a role
+        if (($t['scope'] ?? null) === 'staff') {
+            $q->whereHas('roles');
+        } elseif (($t['scope'] ?? null) === 'customers') {
+            $q->doesntHave('roles');
+        }
 
-        return $model::onlyTrashed();
+        return $q;
     }
 
     /** Delete for good everything that has been in the bin longer than N days. @return int records erased */

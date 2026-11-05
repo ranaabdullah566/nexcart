@@ -115,6 +115,11 @@
                 <h1 class="nx-page-title">@yield('title', __('Dashboard'))</h1>
             </div>
             <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('store.home') }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1 nx-visit" title="{{ __('Visit site') }}"><i class="bi bi-box-arrow-up-right"></i><span class="d-none d-sm-inline">{{ __('Visit site') }}</span></a>
+                @can('alerts.view')
+                    @php $nxUnread = \App\Models\Alert::where('user_id', auth()->id())->whereNull('read_at')->count(); @endphp
+                    <a href="{{ route('admin.alerts.index') }}" class="nx-icon-btn position-relative" title="{{ __('Alerts') }}" aria-label="{{ __('Alerts') }}"><i class="bi bi-bell{{ $nxUnread ? '-fill' : '' }}"></i>@if ($nxUnread)<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.6rem">{{ $nxUnread > 99 ? '99+' : $nxUnread }}</span>@endif</a>
+                @endcan
                 <span class="nx-clock d-none d-md-inline-flex"><span class="dot"></span><span id="nxClock">&nbsp;</span></span>
                 @include('partials.lang-switcher')
                 <button type="button" class="nx-icon-btn" id="nxThemeBtn" tabindex="-1" title="{{ __('Toggle light/dark mode') }}" aria-label="{{ __('Toggle light/dark mode') }}">

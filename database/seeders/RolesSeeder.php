@@ -14,7 +14,7 @@ class RolesSeeder extends Seeder
         'products' => ['view', 'create', 'update', 'delete'],
         'categories' => ['view', 'create', 'update', 'delete'],
         'orders' => ['view', 'update', 'refund', 'delete'],
-        'customers' => ['view', 'update', 'delete'],
+        'customers' => ['view', 'create', 'update', 'delete', 'export'],
         'staff' => ['view', 'create', 'update', 'delete'],
         'settings' => ['view', 'update'],
         'reports' => ['view', 'export', 'sales', 'products', 'customers', 'inventory', 'finance', 'operations', 'marketing'],
@@ -28,6 +28,7 @@ class RolesSeeder extends Seeder
         'system' => ['manage'],             // health, backups, license — owner only
         'activity' => ['view'],             // audit / activity log
         'trash' => ['restore', 'erase'],    // Recycle Bin
+        'alerts' => ['view'],               // alerts inbox
         'roles' => ['manage'],              // create roles, edit permissions
     ];
 
@@ -48,9 +49,9 @@ class RolesSeeder extends Seeder
                 $all,
                 fn ($p) => ! str_starts_with($p, 'settings.') && ! str_starts_with($p, 'system.') && ! str_starts_with($p, 'roles.') && $p !== 'staff.delete',
             )),
-            'staff' => ['products.view', 'categories.view', 'inventory.view', 'orders.view', 'orders.update', 'customers.view'],
-            'rider' => ['orders.view', 'deliveries.view', 'deliveries.update'],
-            'pharmacist' => ['products.view', 'inventory.view', 'inventory.adjust', 'orders.view', 'prescriptions.view', 'prescriptions.verify'],
+            'staff' => ['alerts.view', 'products.view', 'categories.view', 'inventory.view', 'orders.view', 'orders.update', 'customers.view'],
+            'rider' => ['alerts.view', 'orders.view', 'deliveries.view', 'deliveries.update'],
+            'pharmacist' => ['alerts.view', 'products.view', 'inventory.view', 'inventory.adjust', 'orders.view', 'prescriptions.view', 'prescriptions.verify'],
         ];
 
         foreach ($matrix as $role => $permissions) {
