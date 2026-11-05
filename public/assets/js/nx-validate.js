@@ -56,7 +56,7 @@
     function anchor(el) {
         var s2 = el.nextElementSibling && el.nextElementSibling.classList.contains('select2-container') ? el.nextElementSibling : null;
         var node = s2 || el;
-        var grp = node.closest('.input-group'); if (grp) node = grp;
+        var grp = node.closest('.input-group, .mk-field'); if (grp) node = grp;
         if (el.type === 'radio' || el.type === 'checkbox') node = el.closest('.form-check,.ck-opt,label') || el;
         return node;
     }

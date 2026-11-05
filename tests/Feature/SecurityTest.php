@@ -168,4 +168,11 @@ class SecurityTest extends TestCase
         $r->assertOk()->assertSee('name="nx-errors"', false)->assertSee('nx-validate.js', false)->assertSee('name="nx-vmsg"', false);
         $this->assertStringContainsString('The name field is required.', html_entity_decode($r->getContent()));
     }
+
+    public function test_sign_in_and_sign_up_use_the_store_layout_and_keep_their_protections(): void
+    {
+        $this->get('/login')->assertOk()->assertSee('mk-auth', false)->assertSee('mk-header', false)->assertSee('name="nx_ts"', false)->assertSee('data-pw-toggle', false);
+        $this->get('/register')->assertOk()->assertSee('id="pwRules"', false)->assertSee('minlength="10"', false)->assertSee('name="nx_website"', false);
+        $this->get('/login/two-factor')->assertRedirect('/login');
+    }
 }

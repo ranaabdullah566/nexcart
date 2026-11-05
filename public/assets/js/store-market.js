@@ -160,6 +160,32 @@
         all('button', viewBox).forEach(function (b) { b.addEventListener('click', function () { applyView(b.dataset.view); try { localStorage.setItem(VK, b.dataset.view); } catch (e) {} }); });
     }
 
+    /* ---- sign-in / sign-up: show-hide password + live password rules ---- */
+    all('[data-pw-toggle]').forEach(function (b) {
+        b.addEventListener('click', function () {
+            var input = one('input', b.parentNode);
+            if (!input) return;
+            var show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            b.setAttribute('aria-pressed', show ? 'true' : 'false');
+            var ic = one('i', b); if (ic) ic.className = 'bi bi-' + (show ? 'eye-slash' : 'eye');
+        });
+    });
+    all('[data-strength]').forEach(function (input) {
+        var list = one(input.dataset.strength);
+        if (!list) return;
+        function check() {
+            var v = input.value;
+            var ok = { len: v.length >= 10, letter: /[A-Za-z]/.test(v), digit: /\d/.test(v) };
+            all('[data-rule]', list).forEach(function (li) {
+                var good = ok[li.dataset.rule];
+                li.classList.toggle('ok', good);
+                var ic = one('i', li); if (ic) ic.className = 'bi bi-' + (good ? 'check-circle-fill' : 'circle');
+            });
+        }
+        input.addEventListener('input', check); check();
+    });
+
     /* ---- cookie choices ---- */
     var ck = one('#mkCookie'), KEY = 'nx-cookie-choice';
     function saved() { try { return localStorage.getItem(KEY); } catch (e) { return 'essential'; } }
