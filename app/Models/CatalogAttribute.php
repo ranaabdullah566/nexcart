@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class CatalogAttribute extends Model
 {
     use Audited;
-
     use HasTranslations, SoftDeletes;
 
     public const TYPES = ['text', 'number', 'select', 'boolean'];
@@ -22,12 +21,10 @@ class CatalogAttribute extends Model
         return ['options' => 'array', 'business_types' => 'array', 'is_required' => 'boolean', 'is_filterable' => 'boolean'];
     }
 
-    /** Attributes that apply to the current business (null business_types = all). */
+    /** Kept for compatibility: every field applies to the pharmacy. */
     public function scopeForBusiness($query, ?string $type = null)
     {
-        $type ??= (string) setting('business.type', 'general');
-
-        return $query->where(fn ($q) => $q->whereNull('business_types')->orWhereJsonContains('business_types', $type));
+        return $query;
     }
 
     public function labelText(): string

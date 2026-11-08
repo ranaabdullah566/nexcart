@@ -33,12 +33,11 @@ class CartController extends Controller
         $data = $request->validate([
             'product_id' => ['required', 'integer'],
             'variant_id' => ['nullable', 'integer'],
-            'options' => ['nullable', 'array', 'max:30'], 'options.*' => ['integer'],
             'qty' => ['required', 'integer', 'min:1', 'max:99'],
         ]);
 
         $product = Product::active()->findOrFail($data['product_id']);
-        $this->cart->add($product, $data['variant_id'] ?? null, $data['options'] ?? [], $data['qty']);
+        $this->cart->add($product, $data['variant_id'] ?? null, $data['qty']);
 
         return response()->json($this->cart->toArray());
     }

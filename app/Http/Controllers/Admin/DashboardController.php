@@ -15,9 +15,7 @@ class DashboardController extends Controller
     public function __invoke(): View
     {
         $profile = BusinessProfile::current();
-        $modules = collect($profile['modules'])->merge(
-            collect(BusinessProfile::all())->pluck('modules')->flatten()->unique()
-        )->unique()->filter(fn ($m) => BusinessProfile::hasModule($m))->values();
+        $modules = collect($profile['modules'])->unique()->filter(fn ($m) => BusinessProfile::hasModule($m))->values();
 
         $canSales = auth()->user()->can('orders.view');
         $live = fn () => Order::whereNotIn('status', ['cancelled', 'refunded']);

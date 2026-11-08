@@ -8,7 +8,6 @@ use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -66,11 +65,6 @@ class Product extends Model implements HasMedia
         return $this->hasMany(ProductVariant::class)->orderBy('sort_order')->orderBy('id');
     }
 
-    public function modifierGroups(): BelongsToMany
-    {
-        return $this->belongsToMany(ModifierGroup::class);
-    }
-
     public function batches(): HasMany
     {
         return $this->hasMany(ProductBatch::class);
@@ -89,7 +83,7 @@ class Product extends Model implements HasMedia
     /** Everything a product card needs, loaded in one go. */
     public function scopeCard(Builder $q): Builder
     {
-        return $q->with(['variants', 'media'])->withCount(['modifierGroups', 'approvedReviews'])->withAvg('approvedReviews', 'rating');
+        return $q->with(['variants', 'media'])->withCount('approvedReviews')->withAvg('approvedReviews', 'rating');
     }
 
     public function scopeActive(Builder $q): Builder

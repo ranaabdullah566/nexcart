@@ -24,7 +24,7 @@ class StorefrontDynamicTest extends TestCase
         parent::setUp();
         (new RolesSeeder)->run();
         setting()->set('system.installed', true);
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
         $this->owner = tap(User::factory()->create(), fn ($u) => $u->assignRole('owner'));
     }
 
@@ -45,10 +45,10 @@ class StorefrontDynamicTest extends TestCase
     public function test_switches_hide_header_footer_and_card_parts(): void
     {
         $this->product(['name' => 'Gizmo', 'compare_price' => 200, 'category_id' => Category::create(['name' => 'Tools'])->id]);
-        $this->get('/')->assertSee('mk-topbar', false)->assertSee('mk-mega', false)->assertSee('data-compare-toggle', false)->assertSee('mk-top', false);
+        $this->get('/')->assertSee('mk-topbar', false)->assertSee('mk-mega', false)->assertSee('data-quick', false)->assertSee('mk-top', false);
         $this->opts(['header_show_mega' => '0']);   // everything unticked except what we send => all other bools off
         $r = $this->get('/');
-        $r->assertDontSee('mk-topbar', false)->assertDontSee('data-mega', false)->assertDontSee('data-compare-toggle', false)->assertDontSee('mk-cookie', false)->assertDontSee('id="mkTop"', false);
+        $r->assertDontSee('mk-topbar', false)->assertDontSee('data-mega', false)->assertDontSee('data-quick', false)->assertDontSee('mk-cookie', false)->assertDontSee('id="mkTop"', false);
     }
 
     public function test_texts_and_footer_columns_follow_the_admin(): void
@@ -110,6 +110,6 @@ class StorefrontDynamicTest extends TestCase
     {
         $this->product(['name' => 'Gizmo']);
         $this->opts(['cards_ratio' => '4 / 3', 'cards_fit' => 'cover', 'cards_cols' => '5', 'cards_per_page' => '4', 'cards_show_wish' => '1', 'cards_add_label' => ['en' => 'Grab it']]);
-        $this->get('/shop')->assertSee('--mk-ratio:4 / 3', false)->assertSee('--mk-fit:cover', false)->assertSee('row-cols-xl-4', false)->assertSee('Grab it')->assertDontSee('data-compare-toggle', false);
+        $this->get('/shop')->assertSee('--mk-ratio:4 / 3', false)->assertSee('--mk-fit:cover', false)->assertSee('row-cols-xl-4', false)->assertSee('Grab it')->assertDontSee('data-quick', false);
     }
 }

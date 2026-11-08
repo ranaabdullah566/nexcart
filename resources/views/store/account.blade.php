@@ -5,7 +5,6 @@
 @section('content')
 @php
     $live = $orders->reject(fn ($o) => in_array($o->status, ['cancelled', 'refunded'], true));
-    $points = app(\App\Services\Loyalty::class)->enabled() ? app(\App\Services\Loyalty::class)->balance($user) : null;
     $a = $user->default_address ?? [];
     $tone = fn ($o) => in_array($o->status, ['cancelled', 'refunded'], true) ? 'bad' : ($o->status === 'completed' ? 'ok' : 'now');
 @endphp
@@ -22,7 +21,6 @@
         <div><i class="bi bi-receipt"></i><b class="figure">{{ $orders->count() }}</b><span>{{ __('Orders') }}</span></div>
         <div><i class="bi bi-cash-coin"></i><b class="figure">{{ money($live->sum('total')) }}</b><span>{{ __('Total spent') }}</span></div>
         <div><i class="bi bi-hourglass-split"></i><b class="figure">{{ $orders->filter(fn ($o) => $o->isOpen())->count() }}</b><span>{{ __('In progress') }}</span></div>
-        @if ($points !== null)<div><i class="bi bi-stars"></i><b class="figure">{{ number_format($points) }}</b><span>{{ __('Points') }}</span></div>@endif
     </div>
 
     @if ($errors->any())<div class="sf-alert mb-3" role="alert"><i class="bi bi-exclamation-triangle-fill fs-5"></i><div>@foreach ($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div></div>@endif

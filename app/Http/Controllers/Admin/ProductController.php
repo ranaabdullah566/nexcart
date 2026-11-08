@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
-use App\Models\ModifierGroup;
 use App\Models\Product;
 use App\Models\StockMovement;
 use App\Rules\UniqueActive;
@@ -54,7 +53,7 @@ class ProductController extends Controller
     {
         $this->authorizeTo('products.update');
 
-        return view('admin.products.edit', $this->formData($product->load(['variants', 'modifierGroups', 'media'])));
+        return view('admin.products.edit', $this->formData($product->load(['variants', 'media'])));
     }
 
     public function update(Request $request, Product $product): RedirectResponse
@@ -88,7 +87,6 @@ class ProductController extends Controller
             'categories' => Category::with('parent.parent')->orderBy('name')->get()->sortBy(fn ($c) => $c->path)->values(),
             'brands' => Brand::orderBy('name')->get(),
             'attributes' => CatalogAttribute::forBusiness()->orderBy('sort_order')->orderBy('label')->get(),
-            'modifierGroups' => BusinessProfile::hasModule('modifiers') ? ModifierGroup::where('is_active', true)->orderBy('name')->get() : collect(),
             'showRx' => BusinessProfile::hasModule('prescriptions'),
             'terms' => (array) setting('business.terms', []),
         ];
@@ -115,8 +113,6 @@ class ProductController extends Controller
             'low_stock_threshold' => ['nullable', 'integer', 'min:0', 'max:9999999'],
             'tr' => ['nullable', 'array'],
             'meta_title' => ['nullable', 'string', 'max:120'], 'meta_description' => ['nullable', 'string', 'max:300'],
-            'modifier_groups' => ['nullable', 'array'],
-            'modifier_groups.*' => ['exists:modifier_groups,id'],
             'variants' => ['required_if:type,variable', 'nullable', 'array', 'max:100'],
             'variants.*.id' => ['nullable', 'integer'],
             'variants.*.name' => ['required', 'string', 'max:120'],
@@ -186,8 +182,6 @@ class ProductController extends Controller
             } else {
                 $product->variants()->delete();
             }
-
-            $product->modifierGroups()->sync(BusinessProfile::hasModule('modifiers') ? ($data['modifier_groups'] ?? []) : []);
 
             foreach ($request->file('images', []) as $file) {
                 $product->addMedia($file)->toMediaCollection('images');

@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AbandonedCheckout;
-use App\Models\Brand;
-use App\Models\Category;
 use App\Models\Coupon;
-use App\Models\LoyaltyEntry;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -227,7 +224,7 @@ class ReportHubController extends Controller
         $live = $this->live($from, $to);
         $all = $this->orders($from, $to)->get();
         $gross = (float) $live->sum('subtotal');
-        $discount = (float) $live->sum('discount') + (float) $live->sum('points_discount');
+        $discount = (float) $live->sum('discount');
         $refunded = (float) $all->where('status', 'refunded')->sum('total');
         $byDay = $live->groupBy(fn ($o) => $this->local($o->placed_at, $tz)->format('Y-m-d'));
 
@@ -242,7 +239,7 @@ class ReportHubController extends Controller
             ],
             'tables' => [
                 $this->table('daily', 'Daily ledger', ['Date', 'Items', 'Discounts', 'Shipping', 'Tax', 'Total'], ['text', 'money', 'money', 'money', 'money', 'money'],
-                    $byDay->sortKeysDesc()->map(fn ($g, $d) => [$d, (float) $g->sum('subtotal'), (float) $g->sum('discount') + (float) $g->sum('points_discount'), (float) $g->sum('shipping_cost'), (float) $g->sum('tax'), (float) $g->sum('total')])->values()->all()),
+                    $byDay->sortKeysDesc()->map(fn ($g, $d) => [$d, (float) $g->sum('subtotal'), (float) $g->sum('discount'), (float) $g->sum('shipping_cost'), (float) $g->sum('tax'), (float) $g->sum('total')])->values()->all()),
                 $this->table('taxrate', 'Tax by rate', ['Rate %', 'Orders', 'Taxable base', 'Tax'], ['text', 'int', 'money', 'money'],
                     $live->groupBy(fn ($o) => (string) (float) $o->tax_rate)->map(fn ($g, $r) => [$r, $g->count(), (float) $g->sum('total') - (float) $g->sum('tax'), (float) $g->sum('tax')])->values()->all()),
                 $this->table('paystatus', 'Payment status', ['Status', 'Orders', 'Amount'], ['text', 'int', 'money'],
@@ -285,7 +282,6 @@ class ReportHubController extends Controller
         $live = $this->live($from, $to);
         $ab = AbandonedCheckout::whereBetween('created_at', [$from, $to])->get();
         $reviews = Review::whereBetween('created_at', [$from, $to])->get();
-        $ledger = LoyaltyEntry::whereBetween('created_at', [$from, $to])->get();
 
         return [
             'kpis' => [
@@ -304,8 +300,6 @@ class ReportHubController extends Controller
                     Coupon::orderBy('code')->get()->map(fn ($c) => [$c->code, $c->used_count, $c->usage_limit ?: '∞', $c->is_active ? __('Yes') : __('No')])->all()),
                 $this->table('abandoned', 'Abandoned checkouts', ['Email', 'Items', 'Value', 'Reminded', 'Recovered'], ['text', 'int', 'money', 'text', 'text'],
                     $ab->sortByDesc('id')->take(100)->map(fn ($a) => [$a->email, $a->items_count, (float) $a->total, $a->reminded_at ? 'yes' : 'no', $a->recovered_at ? 'yes' : 'no'])->values()->all()),
-                $this->table('loyalty', 'Loyalty points', ['Type', 'Entries', 'Points'], ['text', 'int', 'int'],
-                    $ledger->groupBy(fn ($e) => $e->points >= 0 ? 'earned' : 'redeemed')->map(fn ($g, $t) => [$t, $g->count(), (int) $g->sum('points')])->values()->all()),
                 $this->table('reviews', 'Review status', ['Status', 'Reviews', 'Average rating'], ['text', 'int', 'dec'],
                     $reviews->groupBy('status')->map(fn ($g, $s) => [$s, $g->count(), round($g->avg('rating'), 2)])->values()->all()),
             ],

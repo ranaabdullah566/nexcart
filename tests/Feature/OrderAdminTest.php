@@ -27,7 +27,8 @@ class OrderAdminTest extends TestCase
         parent::setUp();
         (new RolesSeeder)->run();
         setting()->set('system.installed', true);
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.riders', false);   // direct dispatch flow, no rider hand-off
         Mail::fake();
         $this->owner = tap(User::factory()->create(), fn ($u) => $u->assignRole('owner'));
     }

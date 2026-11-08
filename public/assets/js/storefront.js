@@ -61,7 +61,7 @@
             return;
         }
         body.innerHTML = cart.lines.map(function (l) {
-            var opts = [l.variant].concat(l.options).filter(Boolean).join(' · ');
+            var opts = l.variant || '';
             return '<div class="sf-line" data-key="' + esc(l.key) + '">' +
                 (l.image ? '<img src="' + esc(l.image) + '" alt="">' : '<span class="ph"><i class="bi bi-box-seam"></i></span>') +
                 '<div class="min-w-0"><a href="' + esc(l.url) + '">' + esc(l.name) + '</a>' +
@@ -116,19 +116,6 @@
         }
         if (e.target.closest('[data-open-cart]')) { e.preventDefault(); refreshCart().then(openDrawer); return; }
 
-        // wishlist
-        var wish = e.target.closest('[data-wish]');
-        if (wish) {
-            e.preventDefault();
-            http('POST', SF.routes.wishBase + '/' + wish.dataset.wish).then(function (r) {
-                $$('[data-wish="' + wish.dataset.wish + '"]').forEach(function (b) { b.classList.toggle('on', r.added); b.setAttribute('aria-pressed', r.added); });
-                $$('[data-wish-count]').forEach(function (b) { b.textContent = r.count; b.hidden = !r.count; });
-                toast(r.added ? T.wishAdded : T.wishRemoved);
-                if (!r.added && document.body.dataset.page === 'wishlist') { var c = wish.closest('[data-wish-item]'); if (c) { var col = c.closest('.col'); (col || c).remove(); } if (!document.querySelector('[data-wish-item]')) location.reload(); }
-            }).catch(function (err) { toast(err.message, 'bad'); });
-            return;
-        }
-
         // quick view
         var qv = e.target.closest('[data-quick]');
         if (qv) {
@@ -168,8 +155,7 @@
                 var v = null, vid = ($('[name=variant_id]:checked', form) || {}).value;
                 if (vid) v = variants.filter(function (x) { return String(x.id) === vid; })[0];
                 var unit = v ? v.price : base, cmp = v ? v.compare : compare, avail = v ? v.stock : stock;
-                var extra = $$('[data-delta]:checked', form).reduce(function (s, i) { return s + (+i.dataset.delta); }, 0);
-                return { v: v, unit: unit + extra, raw: unit, cmp: cmp, avail: avail, extra: extra };
+                return { v: v, unit: unit, raw: unit, cmp: cmp, avail: avail };
             }
             function paint() {
                 var s = state(), q = Math.max(1, +qtyEl.value || 1);
@@ -181,13 +167,6 @@
                 if (stockEl) stockEl.textContent = track && s.avail > 0 && s.avail <= 5 ? T.lowStock.replace(':n', s.avail) : '';
                 if (track && s.avail > 0) qtyEl.max = Math.min(99, s.avail);
             }
-            // add-on checkbox groups: never more than the group's maximum
-            form.addEventListener('change', function (e) {
-                var g = e.target.closest('[data-group]');
-                if (!g || e.target.type !== 'checkbox') return;
-                var max = +g.dataset.max, boxes = $$('input[type=checkbox]', g), n = boxes.filter(function (b) { return b.checked; }).length;
-                boxes.forEach(function (b) { if (!b.checked) b.disabled = n >= max; });
-            });
             form.addEventListener('change', paint);
             form.addEventListener('click', function (e) {
                 var b = e.target.closest('[data-q]'); if (!b) return;
@@ -196,7 +175,7 @@
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
                 var s = state();
-                var payload = { product_id: +form.dataset.product, qty: +qtyEl.value || 1, options: $$('[data-delta]:checked', form).map(function (i) { return +i.value; }) };
+                var payload = { product_id: +form.dataset.product, qty: +qtyEl.value || 1 };
                 if (form.dataset.variable === '1') {
                     if (!s.v) { toast(T.chooseOption, 'bad'); return; }
                     payload.variant_id = s.v.id;

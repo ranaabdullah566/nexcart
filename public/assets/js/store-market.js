@@ -1,4 +1,4 @@
-/* NexCart storefront shell: mega menu, mobile drawer, hero carousel, tabs, rails, compare, cookie bar, back-to-top, share */
+/* NexCart storefront shell: mega menu, mobile drawer, hero carousel, tabs, rails, cookie bar, back-to-top, share */
 (function () {
     'use strict';
     function one(s, r) { return (r || document).querySelector(s); }
@@ -116,23 +116,6 @@
         var goBtn = one('[data-sticky-go]', bar);
         if (goBtn) goBtn.addEventListener('click', function () { buy.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
     }
-
-    /* ---- compare (cards, product page, compare page) ---- */
-    document.addEventListener('click', function (e) {
-        var b = e.target.closest('[data-compare-toggle]');
-        if (!b) return;
-        e.preventDefault();
-        var id = b.dataset.compareToggle;
-        fetch((window.SF.routes.compare || '/compare') + '/' + id, { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': csrf } })
-            .then(function (r) { return r.json(); })
-            .then(function (r) {
-                if (r.full) { toast((t2().compareFull || 'You can compare up to :n products.').replace(':n', r.max), true); return; }
-                all('[data-compare-toggle="' + id + '"]').forEach(function (x) { x.classList.toggle('on', r.added); x.setAttribute('aria-pressed', r.added ? 'true' : 'false'); });
-                all('[data-compare-count]').forEach(function (c) { c.textContent = r.count; c.hidden = !r.count; });
-                toast(r.added ? (t2().compareAdded || 'Added to compare') : (t2().compareRemoved || 'Removed from compare'));
-                if (b.hasAttribute('data-compare-remove')) location.reload();
-            }).catch(function () { toast('Error', true); });
-    });
 
     /* ---- cart page: free-delivery progress follows quantity changes ---- */
     if (window.SF) {

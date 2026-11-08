@@ -9,7 +9,6 @@ use App\Models\Coupon;
 use App\Models\DeliverySlot;
 use App\Models\HomeSection;
 use App\Models\MenuItem;
-use App\Models\ModifierGroup;
 use App\Models\Page;
 use App\Models\Product;
 use App\Models\Review;
@@ -31,7 +30,6 @@ class Trash
             'categories' => ['label' => 'Categories', 'icon' => 'diagram-3-fill', 'model' => Category::class, 'name' => fn ($m) => $m->name, 'permission' => 'categories.delete'],
             'brands' => ['label' => 'Brands', 'icon' => 'award-fill', 'model' => Brand::class, 'name' => fn ($m) => $m->name, 'permission' => 'products.delete'],
             'attributes' => ['label' => 'Product fields', 'icon' => 'sliders2', 'model' => CatalogAttribute::class, 'name' => fn ($m) => $m->label, 'permission' => 'catalog_settings.manage'],
-            'modifier-groups' => ['label' => 'Add-ons', 'icon' => 'plus-slash-minus', 'model' => ModifierGroup::class, 'name' => fn ($m) => $m->name, 'permission' => 'catalog_settings.manage'],
             'coupons' => ['label' => 'Coupons', 'icon' => 'ticket-perforated-fill', 'model' => Coupon::class, 'name' => fn ($m) => $m->code, 'permission' => 'sales_settings.manage'],
             'shipping' => ['label' => 'Shipping zones', 'icon' => 'truck', 'model' => ShippingZone::class, 'name' => fn ($m) => $m->name, 'permission' => 'sales_settings.manage'],
             'delivery-slots' => ['label' => 'Delivery slots', 'icon' => 'calendar2-week', 'model' => DeliverySlot::class, 'name' => fn ($m) => $m->label.' · '.$m->range(), 'permission' => 'sales_settings.manage'],

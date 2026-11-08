@@ -7,7 +7,6 @@
         'id' => $x->id, 'name' => $x->name, 'sku' => $x->sku, 'price' => $x->price, 'compare_price' => $x->compare_price,
         'stock_qty' => $x->stock_qty, 'is_active' => $x->is_active,
     ])->all() : []);
-    $pickedGroups = collect(old('modifier_groups', $editing ? $product->modifierGroups->pluck('id')->all() : []))->map(fn ($i) => (int) $i)->all();
 @endphp
 
 <form method="POST" action="{{ $editing ? route('admin.products.update', $product) : route('admin.products.store') }}" enctype="multipart/form-data">
@@ -18,7 +17,6 @@
         <li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-price"><i class="bi bi-cash-coin me-1"></i> {{ __('Pricing & stock') }}</button></li>
         <li class="nav-item" id="tabVariantsLi"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-variants"><i class="bi bi-layers-fill me-1"></i> {{ __('Variants') }}</button></li>
         @if ($attributes->isNotEmpty())<li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-specs"><i class="bi bi-sliders2 me-1"></i> {{ __('Details') }}</button></li>@endif
-        @if ($modifierGroups->isNotEmpty())<li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-mods"><i class="bi bi-plus-slash-minus me-1"></i> {{ __('Add-ons') }}</button></li>@endif
         <li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-images"><i class="bi bi-images me-1"></i> {{ __('Images') }}</button></li>
         <li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-seo"><i class="bi bi-search me-1"></i> SEO</button></li>
         <li class="nav-item"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-tr"><i class="bi bi-translate me-1"></i> {{ __('Translations') }}</button></li>
@@ -147,16 +145,7 @@
         @endif
 
         {{-- ADD-ONS --}}
-        @if ($modifierGroups->isNotEmpty())
-        <div class="tab-pane fade" id="pt-mods"><div class="card mb-3"><div class="card-body">
-            <p class="text-muted small">{{ __('Choose the add-on groups customers see on this item.') }}</p>
-            <div class="row g-2">
-                @foreach ($modifierGroups as $g)
-                    <div class="col-md-6"><div class="form-check"><input class="form-check-input" type="checkbox" name="modifier_groups[]" value="{{ $g->id }}" id="mg{{ $g->id }}" @checked(in_array($g->id, $pickedGroups, true))><label class="form-check-label" for="mg{{ $g->id }}"><b>{{ $g->name }}</b> <span class="text-muted small">— {{ $g->options()->pluck('name')->take(4)->implode(', ') }}</span></label></div></div>
-                @endforeach
-            </div>
-        </div></div></div>
-        @endif
+
 
         {{-- IMAGES --}}
         <div class="tab-pane fade" id="pt-images"><div class="card mb-3"><div class="card-body">

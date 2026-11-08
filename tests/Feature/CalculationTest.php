@@ -27,15 +27,15 @@ class CalculationTest extends TestCase
         parent::setUp();
         (new RolesSeeder)->run();
         setting()->set('system.installed', true);
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
         Mail::fake();
         $z = ShippingZone::create(['name' => 'All', 'cities' => null]);
         $this->std = $z->rates()->create(['name' => 'Std', 'price' => 150, 'free_over' => 2000]);
     }
 
-    private function q(float $subtotal, ?Coupon $c = null, float $points = 0.0): array
+    private function q(float $subtotal, ?Coupon $c = null): array
     {
-        return app(PricingService::class)->quote($subtotal, $c, $this->std, $points);
+        return app(PricingService::class)->quote($subtotal, $c, $this->std);
     }
 
     public function test_exclusive_tax_is_charged_after_discount_and_not_on_shipping(): void
@@ -67,7 +67,7 @@ class CalculationTest extends TestCase
         // total must always equal the parts the customer sees
         foreach ([0.01, 9.99, 19.95, 123.45, 999.99, 1234.56] as $s) {
             $q = $this->q($s);
-            $this->assertEqualsWithDelta($q['subtotal'] - $q['discount'] - $q['points_discount'] + $q['shipping'] + $q['tax'], $q['total'], 0.001, "subtotal {$s}");
+            $this->assertEqualsWithDelta($q['subtotal'] - $q['discount'] + $q['shipping'] + $q['tax'], $q['total'], 0.001, "subtotal {$s}");
         }
     }
 
@@ -75,20 +75,12 @@ class CalculationTest extends TestCase
     {
         setting()->setMany(['store.tax_rate' => 16, 'store.tax_inclusive' => false]);
         $fixed = Coupon::create(['code' => 'BIG', 'type' => 'fixed', 'value' => 99999, 'is_active' => true]);
-        $q = $this->q(500, $fixed, 400);
-        $this->assertEquals([500, 0, 0, 0, 150], [$q['discount'], $q['points_discount'], $q['tax'], $q['subtotal'] - $q['discount'], $q['total']]);
+        $q = $this->q(500, $fixed);
+        $this->assertEquals([500, 0, 0, 150], [$q['discount'], $q['tax'], $q['subtotal'] - $q['discount'], $q['total']]);
         $pct = Coupon::create(['code' => 'CAP', 'type' => 'percent', 'value' => 250, 'is_active' => true]);   // >100% is clamped
         $this->assertEquals(500, $this->q(500, $pct)['discount']);
         $capped = Coupon::create(['code' => 'C2', 'type' => 'percent', 'value' => 50, 'max_discount' => 120, 'is_active' => true]);
         $this->assertEquals(120, $this->q(1000, $capped)['discount']);
-    }
-
-    public function test_points_are_limited_to_what_is_left_after_the_coupon(): void
-    {
-        setting()->setMany(['store.tax_rate' => 0]);
-        $c = Coupon::create(['code' => 'H', 'type' => 'fixed', 'value' => 800, 'is_active' => true]);
-        $q = $this->q(1000, $c, 500);   // only 200 is left to pay for
-        $this->assertEquals([800, 200, 150], [$q['discount'], $q['points_discount'], $q['total']]);
     }
 
     public function test_free_shipping_rules(): void

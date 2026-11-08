@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Mail\OrderStatusChanged;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderEvent;
 use App\Models\User;
@@ -13,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 
 class OrderService
 {
-    public function __construct(private StockService $stock, private Loyalty $loyalty) {}
+    public function __construct(private StockService $stock) {}
 
     public function log(Order $order, string $type, ?string $status = null, ?string $note = null, ?User $by = null): void
     {
@@ -48,7 +49,7 @@ class OrderService
                 $this->restock($order, $by);
                 // a cancelled order no longer uses up its coupon
                 if ($order->coupon_code) {
-                    \App\Models\Coupon::where('code', $order->coupon_code)->where('used_count', '>', 0)->decrement('used_count');
+                    Coupon::where('code', $order->coupon_code)->where('used_count', '>', 0)->decrement('used_count');
                 }
             }
             if ($to === 'refunded') {
@@ -57,13 +58,6 @@ class OrderService
             $order->save();
 
             $this->log($order, 'status', $to, $note, $by);
-
-            match ($to) {
-                'completed' => $this->loyalty->earn($order),
-                'cancelled' => $this->loyalty->restore($order),
-                'refunded' => $this->loyalty->reverse($order),
-                default => null,
-            };
         });
 
         $this->notifyCustomer($order, $to, $note);

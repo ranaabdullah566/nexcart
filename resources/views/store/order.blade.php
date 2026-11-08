@@ -69,8 +69,7 @@
                 @foreach ($order->items as $i)
                     <div class="py-2 border-bottom" style="border-color:var(--border) !important">
                         <div class="d-flex justify-content-between gap-3">
-                            <div><b>{{ $i->qty }} × {{ $i->name }}</b>@if ($i->variant_name) <span class="text-muted">· {{ $i->variant_name }}</span>@endif
-                                @if ($i->options)<div class="small text-muted">{{ collect($i->options)->pluck('name')->implode(', ') }}</div>@endif</div>
+                            <div><b>{{ $i->qty }} × {{ $i->name }}</b>@if ($i->variant_name) <span class="text-muted">· {{ $i->variant_name }}</span>@endif</div>
                             <span class="figure">{{ money($i->total) }}</span>
                         </div>
                         @if ($order->status === 'completed' && $i->product_id && \App\Support\BusinessProfile::hasModule('reviews'))
@@ -91,7 +90,6 @@
                 @endforeach
                 <div class="mt-3">
                     <div class="ck-row"><span>{{ __('Subtotal') }}</span><b class="figure">{{ money($order->subtotal) }}</b></div>
-                    @if ($order->points_discount > 0)<div class="ck-row"><span>{{ __('Points used') }} <small>({{ $order->points_redeemed }})</small></span><b class="figure text-success">−{{ money($order->points_discount) }}</b></div>@endif
                     @if ($order->discount > 0)<div class="ck-row"><span>{{ __('Discount') }} @if ($order->coupon_code)<small>({{ $order->coupon_code }})</small>@endif</span><b class="figure text-success">−{{ money($order->discount) }}</b></div>@endif
                     <div class="ck-row"><span>{{ $order->shipping_method }}</span><b class="figure">{{ $order->shipping_cost > 0 ? money($order->shipping_cost) : __('Free') }}</b></div>
                     @if ($order->tax > 0)<div class="ck-row"><span>{{ __('Tax') }} @if ($order->tax_inclusive)<small>({{ __('included') }})</small>@endif</span><b class="figure">{{ money($order->tax) }}</b></div>@endif

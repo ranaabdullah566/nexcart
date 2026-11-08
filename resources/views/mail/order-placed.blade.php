@@ -9,14 +9,12 @@
         <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;font-size:14px">
             @foreach ($order->items as $i)
                 <tr style="border-bottom:1px solid #eef0f5">
-                    <td>{{ $i->qty }} × {{ $i->name }}@if ($i->variant_name) · {{ $i->variant_name }}@endif
-                        @if ($i->options)<div style="color:#667085;font-size:12px">{{ collect($i->options)->pluck('name')->implode(', ') }}</div>@endif</td>
+                    <td>{{ $i->qty }} × {{ $i->name }}@if ($i->variant_name) · {{ $i->variant_name }}@endif</td>
                     <td align="right">{{ money($i->total) }}</td>
                 </tr>
             @endforeach
             <tr><td align="right" style="color:#667085">{{ __('Subtotal') }}</td><td align="right">{{ money($order->subtotal) }}</td></tr>
             @if ($order->discount > 0)<tr><td align="right" style="color:#667085">{{ __('Discount') }}</td><td align="right">−{{ money($order->discount) }}</td></tr>@endif
-            @if ($order->points_discount > 0)<tr><td align="right" style="color:#667085">{{ __('Points used') }} ({{ $order->points_redeemed }})</td><td align="right">−{{ money($order->points_discount) }}</td></tr>@endif
             <tr><td align="right" style="color:#667085">{{ $order->shipping_method }}</td><td align="right">{{ money($order->shipping_cost) }}</td></tr>
             @if ($order->tax > 0)<tr><td align="right" style="color:#667085">{{ __('Tax') }}@if ($order->tax_inclusive) ({{ __('included') }})@endif</td><td align="right">{{ money($order->tax) }}</td></tr>@endif
             <tr><td align="right"><b>{{ __('Total') }}</b></td><td align="right"><b>{{ money($order->total) }}</b></td></tr>

@@ -35,8 +35,7 @@
         <thead><tr><th>{{ __('Item') }}</th><th class="r">{{ __('Qty') }}</th><th class="r">{{ __('Price') }}</th><th class="r">{{ __('Total') }}</th></tr></thead>
         <tbody>
         @foreach ($order->items as $i)
-            <tr><td><b>{{ $i->name }}</b>@if ($i->variant_name) · {{ $i->variant_name }}@endif
-                @if ($i->options)<div class="muted">{{ collect($i->options)->pluck('name')->implode(', ') }}</div>@endif @if ($i->sku)<div class="muted num">{{ $i->sku }}</div>@endif</td>
+            <tr><td><b>{{ $i->name }}</b>@if ($i->variant_name) · {{ $i->variant_name }}@endif @if ($i->sku)<div class="muted num">{{ $i->sku }}</div>@endif</td>
                 <td class="r num">{{ $i->qty }}</td><td class="r num">{{ money($i->unit_price) }}</td><td class="r num">{{ money($i->total) }}</td></tr>
         @endforeach
         </tbody>
@@ -44,7 +43,6 @@
     <table class="tot" style="width:320px;margin-inline-start:auto">
         <tr><td>{{ __('Subtotal') }}</td><td class="r num">{{ money($order->subtotal) }}</td></tr>
         @if ($order->discount > 0)<tr><td>{{ __('Discount') }} {{ $order->coupon_code ? '('.$order->coupon_code.')' : '' }}</td><td class="r num">−{{ money($order->discount) }}</td></tr>@endif
-        @if ($order->points_discount > 0)<tr><td>{{ __('Points used') }} ({{ $order->points_redeemed }})</td><td class="r num">−{{ money($order->points_discount) }}</td></tr>@endif
         <tr><td>{{ $order->shipping_method }}</td><td class="r num">{{ money($order->shipping_cost) }}</td></tr>
         @if ($order->tax > 0)<tr><td>{{ __('Tax') }} ({{ rtrim(rtrim(number_format((float) $order->tax_rate, 2), '0'), '.') }}%{{ $order->tax_inclusive ? ', '.__('included') : '' }})</td><td class="r num">{{ money($order->tax) }}</td></tr>@endif
         <tr class="grand"><td>{{ __('Total') }}</td><td class="r num">{{ money($order->total) }}</td></tr>

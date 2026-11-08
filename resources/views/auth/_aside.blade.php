@@ -6,6 +6,5 @@
     <ul>
         <li><i class="bi bi-truck"></i><div><b>{{ __('Track every order') }}</b><span>{{ __('See each step from packing to your door.') }}</span></div></li>
         <li><i class="bi bi-lightning-charge"></i><div><b>{{ __('Faster checkout') }}</b><span>{{ __('Your details are saved for next time.') }}</span></div></li>
-        <li><i class="bi bi-heart"></i><div><b>{{ __('Wishlist & compare') }}</b><span>{{ __('Keep what you like and decide later.') }}</span></div></li>
     </ul>
 </aside>

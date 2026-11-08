@@ -10,14 +10,13 @@
 
 <div class="card"><div class="card-body">
     <table id="attrTable" class="table align-middle w-100">
-        <thead><tr><th>{{ __('Label') }}</th><th>{{ __('Key') }}</th><th>{{ __('Type') }}</th><th>{{ __('Used by') }}</th><th class="text-end">{{ __('Actions') }}</th></tr></thead>
+        <thead><tr><th>{{ __('Label') }}</th><th>{{ __('Key') }}</th><th>{{ __('Type') }}</th><th class="text-end">{{ __('Actions') }}</th></tr></thead>
         <tbody>
         @foreach ($attributes as $a)
             <tr>
                 <td class="fw-semibold">{{ $a->label }} @if ($a->is_required)<span class="text-danger">*</span>@endif</td>
                 <td class="figure text-muted">{{ $a->key }}</td>
                 <td><span class="badge rounded-pill text-bg-secondary">{{ __(ucfirst($a->type)) }}</span></td>
-                <td class="small text-muted">{{ $a->business_types ? collect($a->business_types)->map(fn ($t) => __(config("business_profiles.$t.label", $t)))->implode(', ') : __('All businesses') }}</td>
                 <td class="text-end"><x-row-actions :edit="route('admin.attributes.edit', $a)" :delete="route('admin.attributes.destroy', $a)" :confirm="__('Delete this field?')" /></td>
             </tr>
         @endforeach

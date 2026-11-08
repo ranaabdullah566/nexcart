@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
-use App\Models\ModifierGroup;
 use App\Models\Product;
 use App\Models\User;
 use App\Support\BusinessProfile;
@@ -26,24 +25,22 @@ class CatalogTest extends TestCase
         parent::setUp();
         (new RolesSeeder)->run();
         setting()->set('system.installed', true);
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
         $this->owner = tap(User::factory()->create(), fn ($u) => $u->assignRole('owner'));
         $this->actingAs($this->owner);
     }
 
     public function test_all_catalog_pages_render(): void
     {
-        BusinessProfile::apply('fastfood');
+        BusinessProfile::apply('pharmacy');
         $cat = Category::create(['name' => 'Burgers']);
         $brand = Brand::create(['name' => 'Hub']);
         $attr = CatalogAttribute::first();
-        $group = ModifierGroup::create(['name' => 'Size', 'min_select' => 0, 'max_select' => 1]);
-        $group->options()->create(['name' => 'Large', 'price_delta' => 50]);
         $product = Product::create(['name' => 'Zinger', 'price' => 500, 'status' => 'active', 'category_id' => $cat->id]);
 
         foreach (['', '/products', '/products/create', "/products/{$product->id}/edit", '/categories', '/categories/create', "/categories/{$cat->id}/edit",
             '/brands', '/brands/create', "/brands/{$brand->id}/edit", '/attributes', '/attributes/create', "/attributes/{$attr->id}/edit",
-            '/modifier-groups', '/modifier-groups/create', "/modifier-groups/{$group->id}/edit", '/inventory', '/inventory/adjust'] as $path) {
+            '/inventory', '/inventory/adjust'] as $path) {
             $this->get('/admin'.$path)->assertOk();
         }
     }
@@ -144,8 +141,6 @@ class CatalogTest extends TestCase
         BusinessProfile::apply('pharmacy');
         $base = ['name' => 'Panadol', 'type' => 'simple', 'status' => 'active', 'price' => 50, 'track_stock' => 1, 'stock_qty' => 0];
 
-        // composition is required for pharmacy
-        $this->post('/admin/products', $base)->assertSessionHasErrors('specs.composition');
         $this->post('/admin/products', $base + ['specs' => ['composition' => 'Paracetamol', 'dosage_form' => 'Nonsense']])->assertSessionHasErrors('specs.dosage_form');
 
         $this->post('/admin/products', $base + ['specs' => ['composition' => 'Paracetamol 500mg', 'dosage_form' => 'Tablet'], 'requires_prescription' => 1])->assertRedirect();
@@ -154,62 +149,14 @@ class CatalogTest extends TestCase
         $this->assertTrue($p->requires_prescription);
     }
 
-    public function test_attributes_only_show_for_their_business(): void
-    {
-        BusinessProfile::apply('pharmacy');
-        $this->assertTrue(CatalogAttribute::forBusiness()->where('key', 'composition')->exists());
-
-        setting()->set('business.type', 'fastfood');
-        BusinessProfile::apply('fastfood');
-        $keys = CatalogAttribute::forBusiness()->pluck('key');
-        $this->assertTrue($keys->contains('spice_level'));
-        $this->assertFalse($keys->contains('composition'));
-    }
-
     public function test_attribute_crud_and_select_needs_options(): void
     {
         $this->post('/admin/attributes', ['label' => 'Material', 'key' => 'material', 'type' => 'select', 'options' => 'Cotton'])->assertSessionHasErrors('options');
         $this->post('/admin/attributes', ['label' => 'Bad Key', 'key' => 'Bad Key', 'type' => 'text'])->assertSessionHasErrors('key');
-        $this->post('/admin/attributes', ['label' => 'Material', 'key' => 'material', 'type' => 'select', 'options' => "Cotton\nWool\nCotton", 'business_types' => ['general']])->assertRedirect();
+        $this->post('/admin/attributes', ['label' => 'Material', 'key' => 'material', 'type' => 'select', 'options' => "Cotton\nWool\nCotton"])->assertRedirect();
 
         $a = CatalogAttribute::firstWhere('key', 'material');
         $this->assertSame(['Cotton', 'Wool'], $a->options);
-        $this->assertSame(['general'], $a->business_types);
-    }
-
-    public function test_modifier_group_options_are_synced(): void
-    {
-        BusinessProfile::apply('fastfood');
-        $this->post('/admin/modifier-groups', [
-            'name' => 'Size', 'min_select' => 1, 'max_select' => 1, 'is_active' => 1,
-            'options' => [['name' => 'Regular', 'price_delta' => 0], ['name' => 'Large', 'price_delta' => 80]],
-        ])->assertRedirect();
-        $g = ModifierGroup::first()->load('options');
-        $this->assertSame(['Regular', 'Large'], $g->options->pluck('name')->all());
-
-        $keep = $g->options[0];
-        $this->put("/admin/modifier-groups/{$g->id}", [
-            'name' => 'Size', 'min_select' => 1, 'max_select' => 1,
-            'options' => [['id' => $keep->id, 'name' => 'Medium', 'price_delta' => 20]],
-        ])->assertRedirect();
-        $g->refresh()->load('options');
-        $this->assertSame(['Medium'], $g->options->pluck('name')->all());
-
-        $this->post('/admin/modifier-groups', ['name' => 'Bad', 'min_select' => 3, 'max_select' => 1, 'options' => [['name' => 'a']]])->assertSessionHasErrors('max_select');
-    }
-
-    public function test_modifiers_attach_to_products_only_when_module_on(): void
-    {
-        BusinessProfile::apply('fastfood');
-        $g = ModifierGroup::create(['name' => 'Extras', 'min_select' => 0, 'max_select' => 3]);
-        $payload = ['name' => 'Burger', 'type' => 'simple', 'status' => 'active', 'price' => 400, 'modifier_groups' => [$g->id]];
-
-        $this->post('/admin/products', $payload);
-        $this->assertSame([$g->id], Product::firstWhere('name', 'Burger')->modifierGroups->pluck('id')->all());
-
-        setting()->set('modules.modifiers', false);
-        $this->put('/admin/products/'.Product::firstWhere('name', 'Burger')->id, $payload);
-        $this->assertCount(0, Product::firstWhere('name', 'Burger')->modifierGroups);
     }
 
     public function test_images_can_be_uploaded_and_removed(): void

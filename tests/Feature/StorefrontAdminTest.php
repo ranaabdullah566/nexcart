@@ -47,7 +47,7 @@ class StorefrontAdminTest extends TestCase
         $this->assertSame('Offers', sft('header.deals_label'));
         $this->assertSame('5', sf('cards.cols'));
         $this->assertSame(2, sf('home.hero_deals_count'));
-        $this->assertFalse(sf('header.show_compare'));   // unticked switch = off
+        $this->assertFalse(sf('header.show_shop'));   // unticked switch = off
         $this->withSession(['locale' => 'ur'])->get('/');
         app()->setLocale('ur');
         $this->assertSame('آفرز', sft('header.deals_label'));

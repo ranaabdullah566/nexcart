@@ -101,16 +101,6 @@
 
         <div class="tab-pane fade" id="tab-growth">
             <div class="card mb-3"><div class="card-body">
-                <h5 class="mb-1"><i class="bi bi-stars me-1"></i>{{ __('Loyalty points') }}</h5>
-                <p class="text-muted small mb-3">{{ __('Customers with an account earn points on completed orders and can spend them at checkout.') }}</p>
-                <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" role="switch" name="growth[loyalty]" value="1" id="gLoy" @checked(old('growth.loyalty', setting('growth.loyalty', false)))><label class="form-check-label" for="gLoy">{{ __('Turn on loyalty points') }}</label></div>
-                <div class="row g-3">
-                    <div class="col-md-4"><label class="form-label">{{ __('Spend this much to earn 1 point') }}</label><input type="number" step="0.01" min="1" name="growth[earn_per]" value="{{ old('growth.earn_per', setting('growth.earn_per', 100)) }}" class="form-control figure"></div>
-                    <div class="col-md-4"><label class="form-label">{{ __('1 point is worth') }}</label><input type="number" step="0.01" min="0.01" name="growth[point_value]" value="{{ old('growth.point_value', setting('growth.point_value', 1)) }}" class="form-control figure"></div>
-                    <div class="col-md-4"><label class="form-label">{{ __('Minimum points to redeem') }}</label><input type="number" min="1" name="growth[min_redeem]" value="{{ old('growth.min_redeem', setting('growth.min_redeem', 50)) }}" class="form-control figure"></div>
-                </div>
-            </div></div>
-            <div class="card mb-3"><div class="card-body">
                 <h5 class="mb-3"><i class="bi bi-cart-x me-1"></i>{{ __('Cart reminders') }}</h5>
                 <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" role="switch" name="growth[abandoned]" value="1" id="gAb" @checked(old('growth.abandoned', setting('growth.abandoned', true)))><label class="form-check-label" for="gAb">{{ __('E-mail customers who typed their e-mail at checkout but did not finish') }}</label></div>
                 <div style="max-width:260px"><label class="form-label">{{ __('Send after (hours)') }}</label><input type="number" min="1" max="72" name="growth[abandoned_hours]" value="{{ old('growth.abandoned_hours', setting('growth.abandoned_hours', 2)) }}" class="form-control figure"></div>

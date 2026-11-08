@@ -123,7 +123,7 @@
                     @foreach ($lines['lines'] as $l)
                         <div class="ck-line">
                             <div class="ck-thumb">@if ($l['image'])<img src="{{ $l['image'] }}" alt="">@else<i class="bi bi-box-seam"></i>@endif<span>{{ $l['qty'] }}</span></div>
-                            <div class="min-w-0"><div class="fw-semibold text-truncate">{{ $l['name'] }}</div>@php($o = collect([$l['variant']])->merge($l['options'])->filter()->implode(' · '))@if ($o)<small class="text-muted">{{ $o }}</small>@endif</div>
+                            <div class="min-w-0"><div class="fw-semibold text-truncate">{{ $l['name'] }}</div>@php($o = $l['variant'])@if ($o)<small class="text-muted">{{ $o }}</small>@endif</div>
                             <div class="figure">{{ $l['total'] }}</div>
                         </div>
                     @endforeach
@@ -134,14 +134,8 @@
                     </div>
                     <div class="small mb-2" id="couponMsg">@if ($q['coupon'] && ! $q['coupon_problem'])<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>{{ $q['coupon']->code }} · {{ $q['coupon']->label() }}</span>@endif</div>
 
-                    @if ($q['loyalty'])
-                        <label class="ck-opt mb-2" id="loyaltyBox" style="{{ $q['loyalty']['balance'] < $q['loyalty']['min'] ? 'opacity:.55' : '' }}">
-                            <input type="checkbox" name="use_points" value="1" id="usePoints" @checked(old('use_points')) @disabled($q['loyalty']['balance'] < $q['loyalty']['min'])>
-                            <span><b>{{ __('Use my points') }}</b><small>{{ __('You have :n points (worth :v)', ['n' => $q['loyalty']['balance'], 'v' => money($q['loyalty']['balance'] * $q['loyalty']['value'])]) }}@if ($q['loyalty']['balance'] < $q['loyalty']['min']) · {{ __('Minimum :n points to redeem', ['n' => $q['loyalty']['min']]) }}@endif</small></span><i class="bi bi-stars" style="color:var(--acc-1)"></i></label>
-                    @endif
                     <div class="ck-row"><span>{{ __('Subtotal') }}</span><b class="figure" data-sub>{{ money($q['subtotal']) }}</b></div>
                     <div class="ck-row" id="rowDiscount" @if ($q['discount'] <= 0) hidden @endif><span>{{ __('Discount') }}</span><b class="figure text-success" data-discount>−{{ money($q['discount']) }}</b></div>
-                    <div class="ck-row" id="rowPoints" @if (($q['points_discount'] ?? 0) <= 0) hidden @endif><span>{{ __('Points') }} <small class="text-muted" data-pointsused>@if ($q['points_used'])({{ $q['points_used'] }})@endif</small></span><b class="figure text-success" data-pointsdisc>−{{ money($q['points_discount'] ?? 0) }}</b></div>
                     <div class="ck-row"><span>{{ __('Shipping') }}</span><b class="figure" data-ship>{{ $q['rate'] ? ($q['shipping'] > 0 ? money($q['shipping']) : __('Free')) : '—' }}</b></div>
                     <div class="ck-row" id="rowTax" @if ($q['tax'] <= 0) hidden @endif><span>{{ __('Tax') }} <small class="text-muted" data-taxnote>@if ($q['tax_inclusive'])({{ __('included') }})@endif</small></span><b class="figure" data-tax>{{ money($q['tax']) }}</b></div>
                     <div class="ck-row ck-total"><span>{{ __('Total') }}</span><b class="figure" data-total>{{ money($q['total']) }}</b></div>
@@ -200,7 +194,6 @@
         $('#rowDiscount') && (document.getElementById('rowDiscount').hidden = !d.discount);
         document.querySelector('[data-discount]').textContent = d.discount || '';
         document.querySelector('[data-ship]').textContent = d.shipping || '—';
-        var rp = document.getElementById('rowPoints'); if (rp) { rp.hidden = !d.points_discount; document.querySelector('[data-pointsdisc]').textContent = d.points_discount || ''; document.querySelector('[data-pointsused]').textContent = d.points_used ? '(' + d.points_used + ')' : ''; }
         document.getElementById('rowTax').hidden = !d.tax;
         document.querySelector('[data-tax]').textContent = d.tax || '';
         document.querySelector('[data-taxnote]').textContent = d.tax_inclusive ? '(' + {{ \Illuminate\Support\Js::from(__('included')) }} + ')' : '';
@@ -223,13 +216,13 @@
         fetch({{ \Illuminate\Support\Js::from(route('store.checkout.quote')) }}, {
             method: 'POST', credentials: 'same-origin',
             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ city: city.value, rate_id: selectedRate(), coupon: couponField.value || couponInput.value || null, use_points: !!(document.getElementById('usePoints') || {}).checked })
+            body: JSON.stringify({ city: city.value, rate_id: selectedRate(), coupon: couponField.value || couponInput.value || null })
         }).then(function (r) { return r.json(); }).then(paint).catch(function () {});
     }
 
     city.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(requote, 350); });
     city.addEventListener('change', requote);
-    form.addEventListener('change', function (e) { if (e.target.name === 'shipping_rate_id') { toggleAddress(); requote(); } if (e.target.id === 'usePoints') requote(); });
+    form.addEventListener('change', function (e) { if (e.target.name === 'shipping_rate_id') { toggleAddress(); requote(); } });
     // remember the cart once a valid e-mail is typed, so a forgotten cart can be recovered
     var email = document.getElementById('ckEmail');
     email.addEventListener('change', function () {

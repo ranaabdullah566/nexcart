@@ -2,25 +2,13 @@
 @section('title', __('Set up your store'))
 @section('step', '2')
 @section('headline', __('Let’s set up your store'))
-@section('lead', __('Pick your business type — modules, checkout and theme are preconfigured. You can change everything later from the admin panel.'))
+@section('lead', __('Your online pharmacy comes preconfigured — prescriptions, batch & expiry, delivery slots and riders. You can change everything later from the admin panel.'))
 
 @section('content')
 <div class="mk-wz-head"><span class="mk-eyebrow">{{ __('Step :n of :t', ['n' => 2, 't' => 2]) }}</span><h1>{{ __('Set up your store') }}</h1></div>
 
 <form method="POST" action="{{ route('setup.store') }}">
     @csrf
-
-    <section class="mk-wz-card">
-        <h2 class="mk-box-title"><i class="bi bi-grid-1x2"></i> {{ __('Business type') }}</h2>
-        @php $icons = ['general' => 'shop', 'fastfood' => 'cup-hot', 'pharmacy' => 'capsule', 'medical_store' => 'heart-pulse']; @endphp
-        <div class="mk-choice mk-choice-2" role="radiogroup">
-            @foreach ($profiles as $key => $profile)
-                <label class="mk-type"><input type="radio" name="business_type" value="{{ $key }}" @checked(old('business_type', 'general') === $key)>
-                    <span class="mk-type-body"><i class="bi bi-{{ $icons[$key] ?? 'bag-heart' }}"></i><b>{{ __($profile['label']) }}</b><small>{{ __($profile['description']) }}</small></span></label>
-            @endforeach
-        </div>
-        @error('business_type')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
-    </section>
 
     <section class="mk-wz-card">
         <h2 class="mk-box-title"><i class="bi bi-shop-window"></i> {{ __('Store') }}</h2>

@@ -31,7 +31,7 @@ class Sf
             'topbar.show_links' => $b('topbar', 'Show the small links on the right (from Menus → Top bar, or Track an order + phone)'),
 
             'header.sticky' => $b('header', 'Keep the header at the top while scrolling'),
-            'header.show_shop' => $b('header', 'Shop icon'), 'header.show_saved' => $b('header', 'Saved (wishlist) icon'), 'header.show_compare' => $b('header', 'Compare icon'),
+            'header.show_shop' => $b('header', 'Shop icon'),
             'header.show_lang' => $b('header', 'Language switcher'), 'header.show_theme' => $b('header', 'Light / dark toggle'),
             'header.search_placeholder' => $t('header', 'Search box hint', 'Search products, categories…'), 'header.search_button' => $t('header', 'Search button text', 'Search'),
             'header.show_mega' => $b('header', 'Show the “All categories” mega menu'), 'header.mega_label' => $t('header', 'Mega menu button text', 'All categories'),
@@ -49,14 +49,14 @@ class Sf
             'cards.cols' => ['group' => 'cards', 'type' => 'select', 'label' => 'Products per row (desktop)', 'default' => '4', 'options' => ['3' => '3', '4' => '4', '5' => '5']],
             'cards.per_page' => $n('cards', 'Products per page in the shop', 12, 4, 48),
             'cards.show_category' => $b('cards', 'Show the category name'), 'cards.show_rating' => $b('cards', 'Show ratings'), 'cards.show_discount' => $b('cards', 'Show the discount badge'),
-            'cards.show_quick' => $b('cards', 'Quick view button'), 'cards.show_wish' => $b('cards', 'Save (heart) button'), 'cards.show_compare' => $b('cards', 'Compare button'),
+            'cards.show_quick' => $b('cards', 'Quick view button'),
             'cards.add_label' => $t('cards', 'Add-to-cart button text', 'Add to cart'),
 
             'product.show_trust' => $b('product', 'Show the trust lines under the photos'),
             'product.trust_items' => $lines('product', 'Trust lines', "shield-check|Secure checkout\ntruck|Delivery to your city", 'One per line: icon|text  (icons: Bootstrap Icons names, e.g. shield-check, truck, award)'),
             'product.show_listed' => $b('product', 'Show “Listed … ago”'),
             'product.show_meta' => $b('product', 'Show the details table (SKU, availability, brand…)'),
-            'product.show_share' => $b('product', 'Share button'), 'product.show_save' => $b('product', 'Save button'), 'product.show_compare' => $b('product', 'Compare button'), 'product.show_whatsapp' => $b('product', 'WhatsApp “Ask us” button'),
+            'product.show_share' => $b('product', 'Share button'), 'product.show_whatsapp' => $b('product', 'WhatsApp “Ask us” button'),
             'product.bb_trust' => $lines('product', 'Small badges under the buttons', "patch-check-fill|Genuine products\nlock-fill|Private & secure\ntruck|Fast delivery", 'One per line: icon|text. Leave empty to hide.'),
             'product.show_care' => $b('product', 'Show the “Delivery & returns” tab'), 'product.care_label' => $t('product', 'That tab’s name', 'Delivery & returns'),
             'product.care_items' => $lines('product', 'Delivery & returns text', "truck|Delivery|Shipping cost and delivery time are shown at checkout for your city.\nshield-lock|Secure payment|Your details stay private and safe.\narrow-counterclockwise|Returns|Problem with your order? Contact us and we will make it right.", 'One per line: icon|title|text'),
@@ -92,7 +92,9 @@ class Sf
         }
         $v = setting('sf.'.$key);
 
-        return $v === null ? $def['default'] : match ($def['type']) { 'bool' => (bool) $v, 'int' => (int) $v, default => $v };
+        return $v === null ? $def['default'] : match ($def['type']) {
+            'bool' => (bool) $v, 'int' => (int) $v, default => $v
+        };
     }
 
     public static function on(string $key): bool

@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\ModifierOption;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use Illuminate\Support\Collection;
@@ -16,19 +15,18 @@ class CartService
 {
     private const KEY = 'cart';
 
-    public function add(Product $product, ?int $variantId, array $optionIds, int $qty): void
+    public function add(Product $product, ?int $variantId, int $qty): void
     {
         $this->assertSellable($product);
         $variant = $this->resolveVariant($product, $variantId);
-        $optionIds = $this->resolveOptions($product, $optionIds);
 
-        $key = md5($product->id.'|'.($variant?->id ?? 0).'|'.implode(',', $optionIds));
+        $key = md5($product->id.'|'.($variant?->id ?? 0));
         $cart = session(self::KEY, []);
         $newQty = ($cart[$key]['qty'] ?? 0) + $qty;
 
         $this->assertStock($product, $variant, $newQty, $key, $cart);
 
-        $cart[$key] = ['product_id' => $product->id, 'variant_id' => $variant?->id, 'options' => $optionIds, 'qty' => $newQty];
+        $cart[$key] = ['product_id' => $product->id, 'variant_id' => $variant?->id, 'qty' => $newQty];
         session([self::KEY => $cart]);
     }
 
@@ -76,21 +74,19 @@ class CartService
         }
 
         $products = Product::active()->with(['variants', 'media'])->whereIn('id', collect($cart)->pluck('product_id'))->get()->keyBy('id');
-        $options = ModifierOption::whereIn('id', collect($cart)->pluck('options')->flatten())->get()->keyBy('id');
 
-        return collect($cart)->map(function ($line, $key) use ($products, $options) {
+        return collect($cart)->map(function ($line, $key) use ($products) {
             $product = $products->get($line['product_id']);
             $variant = $product && $line['variant_id'] ? $product->variants->firstWhere('id', $line['variant_id']) : null;
             if (! $product || ($line['variant_id'] && (! $variant || ! $variant->is_active))) {
                 return null;
             }
 
-            $chosen = collect($line['options'])->map(fn ($id) => $options->get($id))->filter();
-            $unit = max(0.0, round((float) ($variant?->price ?? $product->price) + (float) $chosen->sum('price_delta'), 2));   // a big negative add-on can never make a line free or negative
+            $unit = max(0.0, round((float) ($variant?->price ?? $product->price), 2));
             $available = $product->track_stock ? ($variant?->stock_qty ?? $product->stock_qty) : null;
 
             return [
-                'key' => $key, 'product' => $product, 'variant' => $variant, 'options' => $chosen->values(),
+                'key' => $key, 'product' => $product, 'variant' => $variant,
                 'qty' => $line['qty'], 'unit' => $unit, 'total' => round($unit * $line['qty'], 2),
                 'available' => $available, 'short' => $available !== null && $line['qty'] > $available,
             ];
@@ -120,7 +116,6 @@ class CartService
                 'key' => $l['key'],
                 'name' => $l['product']->trans('name'),
                 'variant' => $l['variant']?->name,
-                'options' => $l['options']->map(fn ($o) => $o->trans('name'))->all(),
                 'qty' => $l['qty'],
                 'unit' => money($l['unit']),
                 'total' => money($l['total']),
@@ -152,29 +147,7 @@ class CartService
         return $variant;
     }
 
-    /** Only options of this product's active groups; each group's min/max must be respected. */
-    private function resolveOptions(Product $product, array $optionIds): array
-    {
-        $optionIds = collect($optionIds)->map(fn ($i) => (int) $i)->unique()->values();
-        $groups = $product->modifierGroups()->where('is_active', true)->with(['options' => fn ($q) => $q->where('is_active', true)])->get();
-
-        $valid = [];
-        foreach ($groups as $group) {
-            $picked = $group->options->whereIn('id', $optionIds)->pluck('id')->all();
-            if (count($picked) < $group->min_select) {
-                throw ValidationException::withMessages(['options' => __('Choose at least :n for ":group".', ['n' => $group->min_select, 'group' => $group->trans('name')])]);
-            }
-            if (count($picked) > $group->max_select) {
-                throw ValidationException::withMessages(['options' => __('Choose at most :n for ":group".', ['n' => $group->max_select, 'group' => $group->trans('name')])]);
-            }
-            $valid = array_merge($valid, $picked);
-        }
-        sort($valid);
-
-        return $valid;
-    }
-
-    /** Total across lines that draw from the same stock (e.g. same product with different add-ons). */
+    /** Total across lines that draw from the same stock (e.g. the same product added twice). */
     private function assertStock(Product $product, ?ProductVariant $variant, int $qty, string $key, array $cart): void
     {
         if (! $product->track_stock) {

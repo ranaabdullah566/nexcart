@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Store;
 use App\Http\Controllers\Controller;
 use App\Mail\OrderPlaced;
 use App\Models\AbandonedCheckout;
+use App\Models\Alert;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippingZone;
+use App\Rules\Recaptcha;
 use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\Payments\PaymentManager;
@@ -37,7 +39,7 @@ class CheckoutController extends Controller
 
         $first = $this->checkout->quote($city, null, session('coupon'));
         $rateId = (int) old('shipping_rate_id', $first['rates']->first()?->id);
-        $q = $this->checkout->quote($city, $rateId ?: null, session('coupon'), $user, (bool) old('use_points'));
+        $q = $this->checkout->quote($city, $rateId ?: null, session('coupon'));
         $lines = $this->cart->toArray();
 
         return view('store.checkout', [
@@ -55,10 +57,10 @@ class CheckoutController extends Controller
     /** Live order summary + delivery options while the customer types. */
     public function quote(Request $request): JsonResponse
     {
-        $data = $request->validate(['city' => ['nullable', 'string', 'max:120'], 'rate_id' => ['nullable', 'integer'], 'coupon' => ['nullable', 'string', 'max:40'], 'use_points' => ['nullable', 'boolean']]);
+        $data = $request->validate(['city' => ['nullable', 'string', 'max:120'], 'rate_id' => ['nullable', 'integer'], 'coupon' => ['nullable', 'string', 'max:40']]);
 
         $coupon = $data['coupon'] ?? null;
-        $q = $this->checkout->quote($data['city'] ?? null, $data['rate_id'] ?? null, $coupon, $request->user(), (bool) ($data['use_points'] ?? false));
+        $q = $this->checkout->quote($data['city'] ?? null, $data['rate_id'] ?? null, $coupon);
 
         // remember a coupon that works so a page reload keeps it; forget one that does not
         if (filled($coupon) && $q['coupon'] && ! $q['coupon_problem']) {
@@ -73,7 +75,7 @@ class CheckoutController extends Controller
     public function place(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'g-recaptcha-response' => \App\Rules\Recaptcha::rules(),
+            'g-recaptcha-response' => Recaptcha::rules(),
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190'],
             'phone' => ['required', 'string', 'max:40', 'regex:/^[0-9+\-()\s]{6,}$/'],
@@ -85,7 +87,6 @@ class CheckoutController extends Controller
             'shipping_rate_id' => ['required', 'integer'],
             'payment_method' => ['required', 'string', 'max:24'],
             'coupon' => ['nullable', 'string', 'max:40'],
-            'use_points' => ['nullable', 'boolean'],
             'slot_date' => ['nullable', 'date_format:Y-m-d'],
             'delivery_slot_id' => ['nullable', 'integer'],
             'prescription' => ['nullable', 'array', 'max:5'],
@@ -128,7 +129,7 @@ class CheckoutController extends Controller
         $row = AbandonedCheckout::firstOrNew(['email' => $email, 'recovered_at' => null]);
         $row->forceFill([
             'token' => $row->token ?: Str::random(40),
-            'items' => $lines->map(fn ($l) => ['product_id' => $l['product']->id, 'variant_id' => $l['variant']?->id, 'options' => $l['options']->pluck('id')->all(), 'qty' => $l['qty']])->all(),
+            'items' => $lines->map(fn ($l) => ['product_id' => $l['product']->id, 'variant_id' => $l['variant']?->id, 'qty' => $l['qty']])->all(),
             'total' => $lines->sum('total'), 'items_count' => (int) $lines->sum('qty'), 'locale' => app()->getLocale(), 'last_seen_at' => now(),
         ] + ($row->exists ? [] : ['reminded_at' => null]))->save();
 
@@ -146,7 +147,7 @@ class CheckoutController extends Controller
                 continue;
             }
             try {
-                $cart->add($product, $i['variant_id'] ?? null, $i['options'] ?? [], (int) $i['qty']);
+                $cart->add($product, $i['variant_id'] ?? null, (int) $i['qty']);
                 $added++;
             } catch (ValidationException) {
                 // sold out or no longer valid: skip it, the rest still comes back
@@ -174,8 +175,6 @@ class CheckoutController extends Controller
         return [
             'subtotal' => money($q['subtotal']),
             'discount' => $q['discount'] > 0 ? '−'.money($q['discount']) : null,
-            'points_discount' => $q['points_discount'] > 0 ? '−'.money($q['points_discount']) : null,
-            'points_used' => $q['points_used'],
             'shipping' => $q['rate'] ? ($q['shipping'] > 0 ? money($q['shipping']) : __('Free')) : null,
             'tax' => $q['tax'] > 0 ? money($q['tax']) : null,
             'tax_inclusive' => $q['tax_inclusive'],
@@ -184,13 +183,12 @@ class CheckoutController extends Controller
             'coupon_error' => $q['coupon_problem'] ?? $q['coupon_error'],
             'rates' => $rates,
             'rate_id' => $q['rate']?->id,
-            'loyalty' => $q['loyalty'] ? $q['loyalty'] + ['will_use' => $q['points_used']] : null,
         ];
     }
 
     private function notify(Order $order): void
     {
-        \App\Models\Alert::broadcast('orders.view', __('New order :n — :total', ['n' => $order->number, 'total' => money($order->total)]), route('admin.orders.show', $order), 'info', 'order');
+        Alert::broadcast('orders.view', __('New order :n — :total', ['n' => $order->number, 'total' => money($order->total)]), route('admin.orders.show', $order), 'info', 'order');
         try {
             Mail::to($order->email)->send(new OrderPlaced($order));
             if (filled(setting('store.email'))) {

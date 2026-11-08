@@ -1,5 +1,4 @@
 @php
-    $wished = app(\App\Services\Wishlist::class)->has($product->id);
     $variants = $product->isVariable() ? $product->variants->map(fn ($v) => [
         'id' => $v->id, 'price' => (float) $v->price, 'compare' => $v->compare_price ? (float) $v->compare_price : null,
         'stock' => $product->track_stock ? $v->stock_qty : 9999,
@@ -25,23 +24,6 @@
         </div>
     @endif
 
-    @foreach ($product->modifierGroups as $g)
-        @php($single = $g->max_select === 1)
-        <div class="sf-opt-title"><span>{{ $g->trans('name') }}</span><small>@if ($g->min_select > 0){{ __('Required') }}@else{{ __('Optional') }}@endif @if (! $single)· {{ __('up to :n', ['n' => $g->max_select]) }}@endif</small></div>
-        <div class="sf-pills" data-group data-max="{{ $g->max_select }}" role="{{ $single ? 'radiogroup' : 'group' }}">
-            @if ($single && $g->min_select === 0)
-                <label class="sf-pill"><input type="radio" name="grp{{ $g->id }}" value="" checked><span>{{ __('None') }}</span></label>
-            @endif
-            @foreach ($g->options as $o)
-                <label class="sf-pill">
-                    <input type="{{ $single ? 'radio' : 'checkbox' }}" name="grp{{ $g->id }}{{ $single ? '' : '[]' }}" value="{{ $o->id }}" data-delta="{{ (float) $o->price_delta }}"
-                           @checked($single && $g->min_select > 0 && $loop->first || $o->is_default)>
-                    <span>{{ $o->trans('name') }} @if ($o->price_delta != 0)<em>{{ $o->price_delta > 0 ? '+' : '−' }}{{ money(abs($o->price_delta)) }}</em>@endif</span>
-                </label>
-            @endforeach
-        </div>
-    @endforeach
-
     @if ($product->requires_prescription)
         <div class="sf-alert mt-3"><i class="bi bi-prescription2 fs-5"></i><span>{{ __('This item needs a valid prescription. You will upload it at checkout.') }}</span></div>
     @endif
@@ -49,7 +31,6 @@
     <div class="d-flex align-items-center gap-3 flex-wrap mt-4">
         <div class="sf-qty"><button type="button" data-q="-1" aria-label="-">−</button><input type="number" name="qty" value="1" min="1" max="99" inputmode="numeric" aria-label="{{ __('Quantity') }}"><button type="button" data-q="1" aria-label="+">+</button></div>
         <button type="submit" class="btn btn-primary btn-lg flex-grow-1" data-buy-btn><i class="bi bi-bag-plus me-1"></i> <span>{{ __('Add to cart') }}</span></button>
-        <button type="button" class="sf-icon-btn @if ($wished) on @endif sf-tool" data-wish="{{ $product->id }}" style="width:48px;height:48px;border-radius:14px" aria-label="{{ __('Wishlist') }}" aria-pressed="{{ $wished ? 'true' : 'false' }}"><i class="bi bi-heart"></i></button>
     </div>
     <div class="d-flex justify-content-between mt-2 small">
         <span class="text-warning" data-stock-note></span>

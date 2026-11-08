@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Store;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
+use App\Rules\Recaptcha;
 use App\Services\CartService;
 use App\Services\OrderService;
 use App\Services\Payments\BankTransfer;
@@ -36,7 +37,7 @@ class OrderController extends Controller
 
     public function trackFind(Request $request): RedirectResponse
     {
-        $data = $request->validate(['number' => ['required', 'string', 'max:30'], 'email' => ['required', 'email'], 'g-recaptcha-response' => \App\Rules\Recaptcha::rules()]);
+        $data = $request->validate(['number' => ['required', 'string', 'max:30'], 'email' => ['required', 'email'], 'g-recaptcha-response' => Recaptcha::rules()]);
 
         $order = Order::where('number', strtoupper(trim($data['number'])))->first();
         if (! $order || strcasecmp($order->email, $data['email']) !== 0) {
@@ -61,7 +62,7 @@ class OrderController extends Controller
                 continue;
             }
             try {
-                $cart->add($product, $item->variant_id, collect($item->options ?? [])->pluck('id')->filter()->all(), $item->qty);
+                $cart->add($product, $item->variant_id, $item->qty);
                 $added++;
             } catch (ValidationException) {
                 $skipped[] = $item->name;

@@ -30,7 +30,6 @@ class SystemController extends Controller
             'update' => $update,
             'updateConfigured' => UpdateChecker::configured(),
             'demo' => app(DemoData::class)->loaded(),
-            'businessType' => (string) setting('business.type', 'general'),
             'license' => License::status(),
             'stats' => ['php' => PHP_VERSION, 'laravel' => app()->version(), 'db' => DB::connection()->getDriverName(), 'env' => app()->environment()],
         ]);
@@ -41,7 +40,7 @@ class SystemController extends Controller
         $this->authorizeTo('system.manage');
 
         try {
-            $n = $demo->load((string) setting('business.type', 'general'));
+            $n = $demo->load('pharmacy');
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }

@@ -21,7 +21,7 @@ class RolesSeeder extends Seeder
         'prescriptions' => ['view', 'verify'],
         'deliveries' => ['view', 'update'],
         'inventory' => ['view', 'adjust'],
-        'catalog_settings' => ['manage'],   // attributes, modifiers
+        'catalog_settings' => ['manage'],   // product fields
         'storefront' => ['manage'],         // home page builder
         'sales_settings' => ['manage'],     // coupons, shipping
         'reviews' => ['manage'],            // moderate product reviews

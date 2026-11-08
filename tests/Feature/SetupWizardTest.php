@@ -14,7 +14,7 @@ class SetupWizardTest extends TestCase
     private function payload(array $override = []): array
     {
         return array_merge([
-            'business_type' => 'pharmacy',
+
             'store_name' => 'Health Plus',
             'currency' => 'pkr',
             'currency_symbol' => 'Rs',
@@ -29,7 +29,7 @@ class SetupWizardTest extends TestCase
     public function test_visitors_are_redirected_to_setup_until_installed(): void
     {
         $this->get('/')->assertRedirect(route('setup'));
-        $this->get('/setup')->assertOk()->assertSee('Pharmacy')->assertSee('mk-wz', false)->assertSee('data-strength', false);
+        $this->get('/setup')->assertOk()->assertSee('pharmacy')->assertSee('mk-wz', false)->assertSee('data-strength', false);
     }
 
     public function test_setup_creates_owner_applies_profile_and_locks_wizard(): void
@@ -45,25 +45,25 @@ class SetupWizardTest extends TestCase
         $this->assertSame('PKR', setting('store.currency'));
         $this->assertSame('pharmacy', setting('business.type'));
         $this->assertTrue(BusinessProfile::hasModule('prescriptions'));
-        $this->assertFalse(BusinessProfile::hasModule('kitchen_display'));
+        $this->assertTrue(BusinessProfile::hasModule('riders'));
 
         $this->get('/setup')->assertRedirect('/');
     }
 
     public function test_setup_validates_input(): void
     {
-        $this->post('/setup', $this->payload(['business_type' => 'nope', 'password_confirmation' => 'x']))
-            ->assertSessionHasErrors(['business_type', 'password']);
+        $this->post('/setup', $this->payload(['password_confirmation' => 'x']))
+            ->assertSessionHasErrors(['password']);
 
         $this->assertFalse(setting()->isInstalled());
     }
 
     public function test_admin_overrides_win_over_profile_modules(): void
     {
-        $this->post('/setup', $this->payload(['business_type' => 'fastfood']));
-        $this->assertTrue(BusinessProfile::hasModule('kitchen_display'));
+        $this->post('/setup', $this->payload());
+        $this->assertTrue(BusinessProfile::hasModule('riders'));
 
-        setting()->set('modules.kitchen_display', false);
-        $this->assertFalse(BusinessProfile::hasModule('kitchen_display'));
+        setting()->set('modules.riders', false);
+        $this->assertFalse(BusinessProfile::hasModule('riders'));
     }
 }

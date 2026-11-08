@@ -13,12 +13,12 @@ class BusinessProfile
 
     public static function find(string $type): array
     {
-        return static::all()[$type] ?? static::all()['general'];
+        return static::all()[$type] ?? static::all()['pharmacy'];
     }
 
     public static function current(): array
     {
-        return static::find((string) setting('business.type', 'general'));
+        return static::find((string) setting('business.type', 'pharmacy'));
     }
 
     /** Is a feature module enabled? Admin overrides win over the preset. */

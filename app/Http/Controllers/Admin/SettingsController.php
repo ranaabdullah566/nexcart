@@ -42,9 +42,6 @@ class SettingsController extends Controller
             'store.facebook' => ['nullable', 'url', 'max:190'], 'store.instagram' => ['nullable', 'url', 'max:190'], 'store.tiktok' => ['nullable', 'url', 'max:190'],
             'store.x' => ['nullable', 'url', 'max:190'], 'store.youtube' => ['nullable', 'url', 'max:190'], 'store.linkedin' => ['nullable', 'url', 'max:190'],
             'store.phone_code' => ['nullable', 'regex:/^[0-9]{1,4}$/'],
-            'growth.earn_per' => ['nullable', 'numeric', 'min:1', 'max:1000000'],
-            'growth.point_value' => ['nullable', 'numeric', 'min:0.01', 'max:100000'],
-            'growth.min_redeem' => ['nullable', 'integer', 'min:1', 'max:100000'],
             'growth.abandoned_hours' => ['nullable', 'integer', 'min:1', 'max:72'],
             'store.default_locale' => ['required', Rule::in(array_keys(Locales::all()))],
             'store.locales' => ['required', 'array', 'min:1'],
@@ -83,10 +80,6 @@ class SettingsController extends Controller
         }
 
         setting()->setMany($flat + [
-            'growth.loyalty' => $request->boolean('growth.loyalty'),
-            'growth.earn_per' => (float) ($data['growth']['earn_per'] ?? 100),
-            'growth.point_value' => (float) ($data['growth']['point_value'] ?? 1),
-            'growth.min_redeem' => (int) ($data['growth']['min_redeem'] ?? 50),
             'growth.abandoned' => $request->boolean('growth.abandoned'),
             'growth.abandoned_hours' => (int) ($data['growth']['abandoned_hours'] ?? 2),
             'growth.reviews_auto' => $request->boolean('growth.reviews_auto'),

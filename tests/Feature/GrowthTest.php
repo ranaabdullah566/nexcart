@@ -8,7 +8,6 @@ use App\Mail\OrderStatusChanged;
 use App\Models\AbandonedCheckout;
 use App\Models\Category;
 use App\Models\Coupon;
-use App\Models\LoyaltyEntry;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\Page;
@@ -17,7 +16,6 @@ use App\Models\Review;
 use App\Models\ShippingZone;
 use App\Models\User;
 use App\Services\CheckoutService;
-use App\Services\Loyalty;
 use App\Services\OrderService;
 use App\Support\BusinessProfile;
 use Database\Seeders\RolesSeeder;
@@ -37,7 +35,8 @@ class GrowthTest extends TestCase
         parent::setUp();
         (new RolesSeeder)->run();
         setting()->set('system.installed', true);
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.riders', false);   // direct dispatch flow, no rider hand-off
         setting()->setMany(['store.name' => 'Shop', 'store.currency_symbol' => 'Rs', 'store.timezone' => 'Asia/Karachi']);
         Mail::fake();
         Storage::fake('public');
@@ -326,7 +325,7 @@ class GrowthTest extends TestCase
         $this->post("/order/{$order->number}/{$order->public_token}/review/{$order->items()->first()->id}", ['rating' => 5, 'name' => 'Ali']);
         $this->assertSame('approved', Review::first()->status);
 
-        BusinessProfile::apply('fastfood');   // fast food has no reviews module
+        BusinessProfile::apply('pharmacy');   // fast food has no reviews module
         setting()->set('modules.reviews', false);
         $this->actingAs($this->owner())->get('/admin/reviews')->assertNotFound();
         auth()->logout();
@@ -408,83 +407,6 @@ class GrowthTest extends TestCase
         $this->assertTrue($other->fresh()->opted_out);
     }
 
-    // ================= loyalty =================
-
-    private function loyaltyOn(): void
-    {
-        setting()->setMany(['growth.loyalty' => true, 'growth.earn_per' => 100, 'growth.point_value' => 1, 'growth.min_redeem' => 50]);
-    }
-
-    public function test_points_are_earned_on_completion_for_account_holders_only(): void
-    {
-        $this->loyaltyOn();
-        $sara = $this->user('staff');   // any account
-        $this->actingAs($sara);
-
-        $o = $this->order($sara, [], ['qty' => 3]);   // 3000 goods, 100 shipping
-        $this->assertSame(0, app(Loyalty::class)->balance($sara));
-        foreach (['confirmed', 'preparing', 'out_for_delivery', 'completed'] as $s) {
-            app(OrderService::class)->transition($o->fresh(), $s);
-        }
-        $this->assertSame(30, app(Loyalty::class)->balance($sara));   // 3000 / 100, shipping does not earn
-
-        app(OrderService::class)->transition($o->fresh(), 'refunded');
-        $this->assertSame(0, app(Loyalty::class)->balance($sara));    // refund takes the points back
-
-        $guest = $this->order(null, ['email' => 'guest@example.com'], [], 'completed');
-        $this->assertSame(0, LoyaltyEntry::where('order_id', $guest->id)->count());
-    }
-
-    public function test_points_can_be_spent_at_checkout_and_come_back_when_cancelled(): void
-    {
-        $this->loyaltyOn();
-        $user = User::factory()->create();
-        app(Loyalty::class)->record($user, 200, 'adjust');
-        $this->actingAs($user);
-
-        $p = $this->product(['price' => 1000]);
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'qty' => 1]);
-        $rate = ShippingZone::first()->rates()->first();
-
-        $this->postJson('/checkout/quote', ['rate_id' => $rate->id, 'use_points' => true])->assertJsonPath('points_discount', '−Rs 200.00')->assertJsonPath('total', 'Rs 900.00')->assertJsonPath('loyalty.balance', 200);
-        $this->postJson('/checkout/quote', ['rate_id' => $rate->id])->assertJsonPath('total', 'Rs 1,100.00');   // only when asked
-        $this->get('/checkout')->assertSee('Use my points');
-
-        $this->post('/checkout', ['name' => 'U', 'email' => $user->email, 'phone' => '0300111222', 'address_line' => 'x', 'city' => 'Karachi', 'shipping_rate_id' => $rate->id, 'payment_method' => 'cod', 'use_points' => 1])->assertRedirect();
-        $o = Order::firstOrFail();
-        $this->assertSame([200, '200.00', '900.00'], [$o->points_redeemed, $o->points_discount, $o->total]);
-        $this->assertSame(0, app(Loyalty::class)->balance($user));
-
-        app(OrderService::class)->transition($o, 'cancelled');
-        $this->assertSame(200, app(Loyalty::class)->balance($user->fresh()));   // cancelled: points restored
-        app(Loyalty::class)->restore($o->fresh());
-        $this->assertSame(200, app(Loyalty::class)->balance($user->fresh()));   // …and only once
-
-        $this->get($o->trackUrl())->assertSee('Points used');
-    }
-
-    public function test_points_rules_minimums_caps_and_switch(): void
-    {
-        $this->loyaltyOn();
-        $svc = app(Loyalty::class);
-        $user = User::factory()->create();
-
-        $svc->record($user, 40, 'adjust');
-        $this->assertSame(0, $svc->redeemable($user, 1000)['points']);                    // below the 50-point minimum
-        $svc->record($user, 5000, 'adjust');
-        $this->assertSame(['points' => 300, 'discount' => 300.0], $svc->redeemable($user, 300));   // never more than the goods cost
-
-        setting()->set('growth.point_value', 2);
-        $this->assertSame(['points' => 100, 'discount' => 200.0], $svc->redeemable($user, 200));
-
-        setting()->set('growth.loyalty', false);
-        $this->assertSame(0, $svc->redeemable($user, 1000)['points']);
-        $this->assertFalse($svc->enabled());
-        $this->actingAs($user);
-        $this->postJson('/cart/add', ['product_id' => $this->product()->id, 'qty' => 1]);
-        $this->get('/checkout')->assertDontSee('Use my points');
-    }
-
     // ================= sidebar badges & WhatsApp =================
 
     public function test_admin_shows_pending_counts_and_a_whatsapp_link(): void
@@ -509,21 +431,19 @@ class GrowthTest extends TestCase
         $base = ['store' => ['name' => 'X', 'currency' => 'PKR', 'currency_symbol' => 'Rs', 'timezone' => 'Asia/Karachi', 'default_locale' => 'en', 'locales' => ['en']], 'theme' => ['primary' => '#112233', 'accent' => '#445566', 'mode' => 'dark']];
 
         $this->put('/admin/settings', array_replace_recursive($base, ['store' => ['phone_code' => 'abc']]))->assertSessionHasErrors('store.phone_code');
-        $this->put('/admin/settings', $base + ['growth' => ['earn_per' => 0]])->assertSessionHasErrors('growth.earn_per');
         $this->put('/admin/settings', $base + ['growth' => ['abandoned_hours' => 500]])->assertSessionHasErrors('growth.abandoned_hours');
 
-        $this->put('/admin/settings', array_replace_recursive($base, ['store' => ['phone_code' => '971']]) + ['growth' => ['loyalty' => 1, 'earn_per' => 50, 'point_value' => 0.5, 'min_redeem' => 20, 'abandoned' => 1, 'abandoned_hours' => 4, 'reviews_auto' => 1]])->assertRedirect();
-        $this->assertTrue(setting('growth.loyalty'));
-        $this->assertEquals([50, 0.5, 20, 4, '971'], [setting('growth.earn_per'), setting('growth.point_value'), setting('growth.min_redeem'), setting('growth.abandoned_hours'), setting('store.phone_code')]);
+        $this->put('/admin/settings', array_replace_recursive($base, ['store' => ['phone_code' => '971']]) + ['growth' => ['abandoned' => 1, 'abandoned_hours' => 4, 'reviews_auto' => 1]])->assertRedirect();
+        $this->assertEquals([4, '971'], [setting('growth.abandoned_hours'), setting('store.phone_code')]);
         $this->assertTrue(setting('growth.reviews_auto'));
         $this->put('/admin/settings', $base)->assertRedirect();
-        $this->assertFalse(setting('growth.loyalty'));   // unchecked switches turn things off
+        $this->assertFalse(setting('growth.reviews_auto'));   // unchecked switches turn things off
     }
 
     public function test_setup_creates_starter_pages_and_footer_links(): void
     {
         setting()->set('system.installed', false);
-        $this->post('/setup', ['business_type' => 'general', 'store_name' => 'Fresh', 'currency' => 'PKR', 'currency_symbol' => 'Rs', 'timezone' => 'Asia/Karachi', 'name' => 'Owner', 'email' => 'o@example.com', 'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1'])->assertRedirect();
+        $this->post('/setup', ['store_name' => 'Fresh', 'currency' => 'PKR', 'currency_symbol' => 'Rs', 'timezone' => 'Asia/Karachi', 'name' => 'Owner', 'email' => 'o@example.com', 'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1'])->assertRedirect();
 
         $this->assertSame(['About us', 'Delivery & returns', 'Privacy policy'], Page::orderBy('id')->pluck('title')->all());
         $this->assertSame(3, MenuItem::where('location', 'footer')->count());

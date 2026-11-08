@@ -28,14 +28,6 @@
             <textarea name="options" rows="4" class="form-control @error('options') is-invalid @enderror">{{ old('options', implode("\n", $attribute->options ?? [])) }}</textarea>
             @error('options')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
-        <div class="col-12">
-            <label class="form-label fw-medium d-block">{{ __('Show for these businesses') }}</label>
-            @php($picked = old('business_types', $attribute->business_types ?? []))
-            @foreach ($profiles as $key => $profile)
-                <div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="business_types[]" value="{{ $key }}" id="bt-{{ $key }}" @checked(in_array($key, (array) $picked, true))><label class="form-check-label" for="bt-{{ $key }}">{{ __($profile['label']) }}</label></div>
-            @endforeach
-            <div class="form-text">{{ __('Leave all unticked to show it for every business.') }}</div>
-        </div>
         <div class="col-md-6"><div class="form-check form-switch"><input type="checkbox" role="switch" class="form-check-input" name="is_required" value="1" id="attrReq" @checked(old('is_required', $attribute->is_required ?? false))><label class="form-check-label" for="attrReq">{{ __('Required') }}</label></div></div>
         <div class="col-md-6"><div class="form-check form-switch"><input type="checkbox" role="switch" class="form-check-input" name="is_filterable" value="1" id="attrFil" @checked(old('is_filterable', $attribute->is_filterable ?? false))><label class="form-check-label" for="attrFil">{{ __('Use as a storefront filter') }}</label></div></div>
     </div>

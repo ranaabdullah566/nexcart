@@ -34,7 +34,7 @@
 
 <div class="card"><div class="card-body">
     <h5 class="mb-1"><i class="bi bi-box-seam me-1"></i>{{ __('Sample data') }}</h5>
-    <p class="text-muted small">{{ __('A ready-made catalogue for your business type (:type) with pictures — handy for a demo or to see how the store looks full.', ['type' => __(config('business_profiles.'.$businessType.'.label', $businessType))]) }}</p>
+    <p class="text-muted small">{{ __('A ready-made catalogue for your pharmacy with pictures — handy for a demo or to see how the store looks full.', []) }}</p>
     @if ($demo)
         <form method="POST" action="{{ route('admin.system.demo.remove') }}" data-confirm="{{ __('Remove all sample products? Your own products are not touched.') }}" data-no-ajax>@csrf @method('DELETE')<button class="btn btn-outline-danger"><i class="bi bi-trash3 me-1"></i> {{ __('Remove sample data') }}</button></form>
     @else

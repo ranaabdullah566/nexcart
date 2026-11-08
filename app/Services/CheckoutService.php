@@ -12,10 +12,10 @@ use App\Models\ShippingZone;
 use App\Models\User;
 use App\Services\Payments\PaymentManager;
 use App\Support\BusinessProfile;
-use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class CheckoutService
@@ -27,7 +27,6 @@ class CheckoutService
         private OrderService $orders,
         private PaymentManager $payments,
         private SlotService $slots,
-        private Loyalty $loyalty,
     ) {}
 
     /** Shipping rates a customer may pick for a city and subtotal (pickup rates ignore the city). */
@@ -44,7 +43,7 @@ class CheckoutService
     }
 
     /** Totals for the order summary, without creating anything. */
-    public function quote(?string $city, ?int $rateId, ?string $couponCode, ?User $user = null, bool $usePoints = false): array
+    public function quote(?string $city, ?int $rateId, ?string $couponCode): array
     {
         $subtotal = $this->cart->subtotal();
         $rates = $this->ratesFor($city, $subtotal);
@@ -52,21 +51,14 @@ class CheckoutService
         $coupon = filled($couponCode) ? Coupon::findByCode($couponCode) : null;
 
         $q = $this->pricing->quote($subtotal, $coupon, $rate);
-        $points = ['points' => 0, 'discount' => 0.0];
-        if ($user && $usePoints) {
-            $points = $this->loyalty->redeemable($user, $subtotal - $q['discount']);
-            $q = $this->pricing->quote($subtotal, $coupon, $rate, $points['discount']);
-        }
 
         return $q + [
             'rate' => $rate, 'rates' => $rates, 'coupon' => $coupon,
             'coupon_error' => filled($couponCode) ? ($coupon ? null : __('We could not find that code.')) : null,
-            'points_used' => $points['points'],
-            'loyalty' => $user && $this->loyalty->enabled() ? ['balance' => $this->loyalty->balance($user), 'min' => $this->loyalty->minRedeem(), 'value' => $this->loyalty->pointValue()] : null,
         ];
     }
 
-    /** Kitchen time (slowest item) plus the rate's travel time; null when the rate has no estimate. */
+    /** Packing time plus the rate's travel time; null when the rate has no estimate. */
     private function eta(ShippingRate $rate, $lines): ?Carbon
     {
         if (! $rate->eta_minutes) {
@@ -148,11 +140,7 @@ class CheckoutService
                 }
             }
 
-            $points = ['points' => 0, 'discount' => 0.0];
-            if ($user && ! empty($data['use_points'])) {
-                $points = $this->loyalty->redeemable($user, $subtotal - ($coupon ? $coupon->discountFor($subtotal) : 0.0));
-            }
-            $q = $this->pricing->quote($subtotal, $coupon, $rate, $points['discount']);
+            $q = $this->pricing->quote($subtotal, $coupon, $rate);
 
             $order = Order::create([
                 'number' => 'TMP-'.Str::random(12), 'public_token' => Order::newToken(), 'user_id' => $user?->id,
@@ -161,7 +149,7 @@ class CheckoutService
                 'name' => $data['name'], 'email' => $data['email'], 'phone' => $data['phone'],
                 'address_line' => $rate->is_pickup ? null : $data['address_line'], 'city' => $data['city'] ?? null,
                 'area' => $data['area'] ?? null, 'postal_code' => $data['postal_code'] ?? null, 'notes' => $data['notes'] ?? null,
-                'subtotal' => $q['subtotal'], 'discount' => $q['discount'], 'points_redeemed' => $points['points'], 'points_discount' => $q['points_discount'], 'locale' => app()->getLocale(), 'shipping_cost' => $q['shipping'], 'tax' => $q['tax'], 'total' => $q['total'],
+                'subtotal' => $q['subtotal'], 'discount' => $q['discount'], 'locale' => app()->getLocale(), 'shipping_cost' => $q['shipping'], 'tax' => $q['tax'], 'total' => $q['total'],
                 'tax_rate' => $q['tax_rate'], 'tax_inclusive' => $q['tax_inclusive'], 'currency' => (string) setting('store.currency', 'PKR'),
                 'coupon_code' => $coupon?->code, 'requires_prescription' => $rx, 'prescription_status' => $rx ? 'pending' : null, 'placed_at' => now(),
                 'slot_date' => $slot ? $data['slot_date'] : null, 'delivery_slot_id' => $slot?->id, 'slot_label' => $slot?->displayLabel(),
@@ -174,7 +162,6 @@ class CheckoutService
                 OrderItem::create([
                     'order_id' => $order->id, 'product_id' => $l['product']->id, 'variant_id' => $l['variant']?->id,
                     'name' => $l['product']->name, 'variant_name' => $l['variant']?->name, 'sku' => $l['variant']?->sku ?: $l['product']->sku,
-                    'options' => $l['options']->map(fn ($o) => ['id' => $o->id, 'name' => $o->name, 'price' => (float) $o->price_delta])->all() ?: null,
                     'unit_price' => $l['unit'], 'qty' => $l['qty'], 'total' => $l['total'],
                 ]);
                 if ($l['product']->track_stock) {
@@ -188,9 +175,6 @@ class CheckoutService
 
             $coupon?->increment('used_count');
 
-            if ($user && $points['points'] > 0) {
-                $this->loyalty->record($user, -$points['points'], 'redeem', $order, __('Order :number', ['number' => $order->number]));
-            }
             // a reminder e-mail for this cart is no longer needed
             AbandonedCheckout::where('email', strtolower($data['email']))->whereNull('recovered_at')->update(['recovered_at' => now()]);
 

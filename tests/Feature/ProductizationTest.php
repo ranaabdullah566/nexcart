@@ -39,7 +39,7 @@ class ProductizationTest extends TestCase
         parent::setUp();
         (new RolesSeeder)->run();
         setting()->set('system.installed', true);
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
         setting()->set('store.timezone', 'Asia/Karachi');
         License::reset();
 
@@ -510,12 +510,12 @@ class ProductizationTest extends TestCase
 
     // ================= demo data =================
 
-    public function test_demo_data_for_every_business_type_and_clean_removal(): void
+    public function test_demo_data_and_clean_removal(): void
     {
         Storage::fake('public');
         $demo = app(DemoData::class);
 
-        foreach (['general', 'fastfood', 'pharmacy', 'medical_store'] as $type) {
+        foreach (['pharmacy'] as $type) {
             BusinessProfile::apply($type);
             $this->assertFalse($demo->loaded());
             $n = $demo->load($type);
@@ -553,20 +553,18 @@ class ProductizationTest extends TestCase
         $this->assertTrue(Product::where('name', 'like', 'Augmentin%')->first()->isLowStock());
     }
 
-    public function test_fastfood_demo_has_add_ons_and_variants(): void
+    public function test_pharmacy_demo_has_pack_sizes_and_prescription_medicines(): void
     {
         Storage::fake('public');
-        BusinessProfile::apply('fastfood');
-        app(DemoData::class)->load('fastfood');
+        BusinessProfile::apply('pharmacy');
+        app(DemoData::class)->load();
 
-        $burger = Product::where('name', 'Zinger Burger')->firstOrFail();
-        $this->assertSame(['Extras'], $burger->modifierGroups->pluck('name')->all());
-        $this->assertSame(['Hot', 12], [$burger->specs['spice_level'], $burger->specs['prep_time_min']]);
-        $pizza = Product::where('name', 'Margherita Pizza')->firstOrFail();
-        $this->assertTrue($pizza->isVariable());
-        $this->assertCount(3, $pizza->variants);
-        $this->assertSame('650.00', (string) $pizza->price);   // "from" price follows the cheapest variant
-        $this->get('/shop')->assertOk()->assertSee('Zinger Burger');
+        $brufen = Product::where('name', 'Brufen 400mg')->firstOrFail();
+        $this->assertTrue($brufen->isVariable());
+        $this->assertCount(2, $brufen->variants);
+        $this->assertSame('70.00', (string) $brufen->price);   // "from" price follows the cheapest pack
+        $this->assertTrue(Product::where('name', 'like', 'Amoxicillin%')->firstOrFail()->requires_prescription);
+        $this->get('/shop?q=Panadol')->assertOk()->assertSee('Panadol 500mg');
     }
 
     public function test_demo_data_cannot_be_loaded_twice_and_is_owner_only(): void
@@ -589,17 +587,16 @@ class ProductizationTest extends TestCase
     public function test_demo_command_and_setup_wizard_option(): void
     {
         Storage::fake('public');
-        $this->assertSame(1, Artisan::call('nexcart:demo', ['--type' => 'bogus']));
-        $this->assertSame(0, Artisan::call('nexcart:demo', ['--type' => 'medical_store']));
-        $this->assertStringContainsString('sample product(s) added for medical_store', Artisan::output());
+        $this->assertSame(0, Artisan::call('nexcart:demo'));
+        $this->assertStringContainsString('sample medicine(s) added', Artisan::output());
         $this->assertSame(1, Artisan::call('nexcart:demo'));   // already loaded
         $this->assertSame(0, Artisan::call('nexcart:demo', ['--remove' => true]));
         $this->assertSame(0, Product::count());
 
         setting()->set('system.installed', false);
         setting()->set('demo.ids', null);
-        $this->post('/setup', ['business_type' => 'fastfood', 'store_name' => 'Hub', 'currency' => 'PKR', 'currency_symbol' => 'Rs', 'timezone' => 'Asia/Karachi', 'name' => 'Owner', 'email' => 'o@example.com', 'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1', 'sample_data' => 1])->assertRedirect();
-        $this->assertGreaterThanOrEqual(7, Product::count());
+        $this->post('/setup', ['store_name' => 'Hub', 'currency' => 'PKR', 'currency_symbol' => 'Rs', 'timezone' => 'Asia/Karachi', 'name' => 'Owner', 'email' => 'o@example.com', 'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1', 'sample_data' => 1])->assertRedirect();
+        $this->assertGreaterThanOrEqual(20, Product::count());
         $this->assertTrue(Installer::locked());   // the wizard locks the installer when it finishes
     }
 }

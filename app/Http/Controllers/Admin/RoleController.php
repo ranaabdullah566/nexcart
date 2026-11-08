@@ -20,7 +20,7 @@ class RoleController extends Controller
     public const LABELS = [
         'products' => 'Products', 'categories' => 'Categories', 'orders' => 'Orders', 'customers' => 'Customers', 'staff' => 'Staff',
         'settings' => 'Store settings', 'reports' => 'Reports', 'prescriptions' => 'Prescriptions', 'deliveries' => 'Deliveries',
-        'inventory' => 'Inventory', 'catalog_settings' => 'Product fields & add-ons', 'storefront' => 'Storefront builder & theme',
+        'inventory' => 'Inventory', 'catalog_settings' => 'Product fields', 'storefront' => 'Storefront builder & theme',
         'sales_settings' => 'Coupons, shipping & slots', 'reviews' => 'Reviews', 'system' => 'System (backups, license, logs)',
         'activity' => 'Activity log', 'trash' => 'Recycle Bin', 'roles' => 'Roles & permissions',
     ];

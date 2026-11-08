@@ -4,29 +4,14 @@ namespace App\Support;
 
 use App\Models\HomeSection;
 
-/** Starter home page for a new store, tuned to the chosen business type. */
+/** Starter home page for a new store, for the pharmacy. */
 class HomeDefaults
 {
     private const COPY = [
-        'general' => [
-            'eyebrow' => 'New season', 'title' => 'Everything you need, delivered', 'subtitle' => 'Discover our latest products at honest prices.', 'button' => 'Shop now',
-            'ur' => ['eyebrow' => 'نیا سیزن', 'title' => 'جو کچھ آپ کو چاہیے، آپ کے دروازے پر', 'subtitle' => 'ہماری تازہ ترین مصنوعات مناسب قیمت پر دیکھیں۔', 'button_label' => 'ابھی خریدیں'],
-            'ur_Latn' => ['eyebrow' => 'Naya season', 'title' => 'Jo kuch aap ko chahiye, aap ke darwaze par', 'subtitle' => 'Hamare taza tareen products munasib qeemat par dekhein.', 'button_label' => 'Abhi khareedein'],
-        ],
-        'fastfood' => [
-            'eyebrow' => 'Hot & fresh', 'title' => 'Crave it. Click it. Eat it.', 'subtitle' => 'Fresh from the kitchen to your door in minutes.', 'button' => 'Order now',
-            'ur' => ['eyebrow' => 'گرما گرم اور تازہ', 'title' => 'من چاہا، کلک کریں، کھائیں۔', 'subtitle' => 'کچن سے سیدھا آپ کے دروازے تک، چند منٹ میں۔', 'button_label' => 'ابھی آرڈر کریں'],
-            'ur_Latn' => ['eyebrow' => 'Garma garam aur taza', 'title' => 'Man chaha, click karein, khayein.', 'subtitle' => 'Kitchen se seedha aap ke darwaze tak, chand minute mein.', 'button_label' => 'Abhi order karein'],
-        ],
         'pharmacy' => [
             'eyebrow' => 'Trusted care', 'title' => 'Your pharmacy, now online', 'subtitle' => 'Genuine medicines and health products, delivered safely.', 'button' => 'Shop medicines',
             'ur' => ['eyebrow' => 'بھروسے کی دیکھ بھال', 'title' => 'آپ کی فارمیسی، اب آن لائن', 'subtitle' => 'اصل ادویات اور صحت کی مصنوعات، محفوظ ڈیلیوری کے ساتھ۔', 'button_label' => 'ادویات خریدیں'],
             'ur_Latn' => ['eyebrow' => 'Bharose ki dekh bhaal', 'title' => 'Aap ki pharmacy, ab online', 'subtitle' => 'Asal adwiya aur sehat ke products, mehfooz delivery ke saath.', 'button_label' => 'Adwiya khareedein'],
-        ],
-        'medical_store' => [
-            'eyebrow' => 'Medical supplies', 'title' => 'Quality medical equipment, ready when you need it', 'subtitle' => 'Reliable devices and supplies for home and clinic.', 'button' => 'Browse items',
-            'ur' => ['eyebrow' => 'طبی سامان', 'title' => 'معیاری طبی آلات، جب آپ کو ضرورت ہو', 'subtitle' => 'گھر اور کلینک کے لیے قابلِ اعتماد آلات اور سامان۔', 'button_label' => 'آئٹمز دیکھیں'],
-            'ur_Latn' => ['eyebrow' => 'Tibbi saman', 'title' => 'Miyari tibbi aalaat, jab aap ko zaroorat ho', 'subtitle' => 'Ghar aur clinic ke liye qabil-e-aitmaad aalaat aur saman.', 'button_label' => 'Items dekhein'],
         ],
     ];
 
@@ -41,7 +26,7 @@ class HomeDefaults
         if (HomeSection::query()->exists()) {
             return;
         }
-        $c = self::COPY[$type] ?? self::COPY['general'];
+        $c = self::COPY['pharmacy'];
 
         $make = function (string $sectionType, array $settings, array $tr = [], string $title = '') {
             $section = new HomeSection([

@@ -8,7 +8,6 @@
         $metaDesc = html_entity_decode(trim($__env->yieldContent('description')), ENT_QUOTES) ?: (setting('store.tagline') ?: $storeName);
         $ogImage = trim($__env->yieldContent('og_image')) ?: asset('assets/images/icon-512.png');
         $navCats = \App\Models\Category::where('is_active', true)->whereNull('parent_id')->orderBy('sort_order')->orderBy('name')->limit(8)->get();
-        $wishCount = count(app(\App\Services\Wishlist::class)->ids());
         $cartData = app(\App\Services\CartService::class)->toArray();
         $terms = (array) setting('business.terms', []);
         $headerMenu = \App\Models\MenuItem::resolved('header');
@@ -39,7 +38,6 @@
 @php
     $tree = \App\Support\Storefront::tree();
     $socials = \App\Support\Storefront::socials();
-    $compareCount = count(app(\App\Services\Compare::class)->ids());
     $recommended = $tree->flatMap(fn ($c) => $c->children->isNotEmpty() ? $c->children->take(2) : collect([$c]))->take(6);
     $ann = announcement();
     $loc = app()->getLocale();
@@ -91,8 +89,6 @@
         @endif
         <div class="mk-icons">
             @if (sf('header.show_shop'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.shop') }}"><i class="bi bi-shop"></i><span>{{ __('Shop') }}</span></a>@endif
-            @if (sf('header.show_saved'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.wishlist') }}" aria-label="{{ __('Wishlist') }}"><i class="bi bi-heart"></i><span>{{ __('Saved') }}</span><b class="mk-count" data-wish-count @if (! $wishCount) hidden @endif>{{ $wishCount }}</b></a>@endif
-            @if (sf('header.show_compare'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.compare') }}" aria-label="{{ __('Compare') }}"><i class="bi bi-arrow-left-right"></i><span>{{ __('Compare') }}</span><b class="mk-count mk-count-blue" data-compare-count @if (! $compareCount) hidden @endif>{{ $compareCount }}</b></a>@endif
             <a class="mk-ic" href="{{ route('store.cart') }}" data-open-cart aria-label="{{ __('Cart') }}"><i class="bi bi-bag"></i><span class="d-none d-md-inline">{{ __('Basket') }}</span><b class="mk-count" data-cart-count @if (! $cartData['count']) hidden @endif>{{ $cartData['count'] }}</b></a>
             <button class="mk-ic mk-search-toggle" type="button" aria-controls="mkSearch" aria-expanded="false" aria-label="{{ __('Search') }}"><i class="bi bi-search"></i></button>
             @if (sf('header.show_theme'))<button type="button" class="mk-ic" data-theme-toggle aria-label="{{ __('Toggle light/dark mode') }}"><i class="bi bi-sun-fill"></i></button>@endif
@@ -165,8 +161,6 @@
                     <a href="{{ route('store.home') }}"><i class="bi bi-house-door"></i>{{ __('Home') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop') }}"><i class="bi bi-shop"></i>{{ __('Shop') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop', ['sort' => 'discount']) }}"><i class="bi bi-lightning-charge"></i>{{ sft('header.deals_label') }}<i class="bi bi-chevron-right"></i></a>
-                    <a href="{{ route('store.wishlist') }}"><i class="bi bi-heart"></i>{{ __('Wishlist') }}<i class="bi bi-chevron-right"></i></a>
-                    <a href="{{ route('store.compare') }}"><i class="bi bi-arrow-left-right"></i>{{ __('Compare') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.track') }}"><i class="bi bi-truck"></i>{{ sft('header.track_label') }}<i class="bi bi-chevron-right"></i></a>
                     @foreach ($headerMenu as $m)<a href="{{ $m['href'] }}"><i class="bi bi-link-45deg"></i>{{ $m['label'] }}<i class="bi bi-chevron-right"></i></a>@endforeach
                 </nav>
@@ -207,8 +201,6 @@
                 @forelse ($colHelp as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
                 @empty
                     <a href="{{ route('store.track') }}">{{ sft('header.track_label') }}</a>
-                    <a href="{{ route('store.wishlist') }}">{{ __('Wishlist') }}</a>
-                    <a href="{{ route('store.compare') }}">{{ __('Compare') }}</a>
                     <a href="{{ auth()->check() ? route('store.account') : route('login') }}">{{ __('My account') }}</a>
                 @endforelse
             </div>
@@ -248,7 +240,6 @@
     <a href="{{ route('store.home') }}" @class(['on' => request()->routeIs('store.home')])><i class="bi bi-house-door"></i>{{ __('Home') }}</a>
     <a href="{{ route('store.shop') }}" @class(['on' => request()->routeIs('store.shop', 'store.category')])><i class="bi bi-grid"></i>{{ __('Shop') }}</a>
     <a href="{{ route('store.cart') }}" data-open-cart><i class="bi bi-bag"></i>{{ __('Basket') }}<span class="sf-badge" data-cart-count @if (! $cartData['count']) hidden @endif>{{ $cartData['count'] }}</span></a>
-    <a href="{{ route('store.compare') }}" @class(['on' => request()->routeIs('store.compare')])><i class="bi bi-arrow-left-right"></i>{{ __('Compare') }}<span class="sf-badge" data-compare-count @if (! $compareCount) hidden @endif>{{ $compareCount }}</span></a>
     <a href="{{ auth()->check() ? route('store.account') : route('login') }}" @class(['on' => request()->routeIs('store.account', 'login')])><i class="bi bi-person"></i>{{ __('Account') }}</a>
 </nav>
 
@@ -281,7 +272,7 @@
 @php
     $jsT = [
             'added' => __('Added to cart'), 'cartEmpty' => __('Your cart is empty'), 'remove' => __('Remove'), 'error' => __('Something went wrong. Please try again.'),
-            'lowStock' => __('Only :n left in stock.'), 'wishAdded' => __('Saved to wishlist'), 'wishRemoved' => __('Removed from wishlist'),
+            'lowStock' => __('Only :n left in stock.'), 
             'chooseOption' => __('Choose an option first.'), 'outOfStock' => __('Out of stock'), 'addToCart' => __('Add to cart'),
             'seeAll' => __('See all results'), 'noResults' => __('No products found'),
         ];
@@ -289,8 +280,8 @@
 <script nonce="{{ csp_nonce() }}">
     window.SF = {
         cart: @json($cartData),
-        routes: { cart: @json(route('store.cart.json')), add: @json(route('store.cart.add')), cartBase: @json(url('/cart')), wishBase: @json(url('/wishlist')), suggest: @json(route('store.suggest')), compare: @json(url('/compare')) },
-        t2: { compareFull: @json(__('You can compare up to :n products.', ['n' => \App\Services\Compare::MAX])), compareAdded: @json(__('Added to compare')), compareRemoved: @json(__('Removed from compare')), copied: @json(__('Link copied')) },
+        routes: { cart: @json(route('store.cart.json')), add: @json(route('store.cart.add')), cartBase: @json(url('/cart')), suggest: @json(route('store.suggest')) },
+        t2: { copied: @json(__('Link copied')) },
         money: function (n) { return @json(setting('store.currency_symbol')) + ' ' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); },
         t: @json($jsT),
     };

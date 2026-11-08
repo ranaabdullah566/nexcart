@@ -5,7 +5,7 @@
 @section('content')
 <div class="sf-container py-3">
     <div class="mk-auth">
-        @include('auth._aside', ['headline' => __('Create your account'), 'sub' => __('Join :store for faster checkout, order tracking and your own wishlist.', ['store' => setting('store.name')])])
+        @include('auth._aside', ['headline' => __('Create your account'), 'sub' => __('Join :store for faster checkout, order tracking and prescription history.', ['store' => setting('store.name')])])
 
         <div class="mk-box mk-auth-card">
             <h1>{{ __('Create your account') }}</h1>

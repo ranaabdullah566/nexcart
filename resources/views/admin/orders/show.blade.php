@@ -24,7 +24,6 @@
             @foreach ($order->items as $i)
                 <div class="d-flex justify-content-between gap-3 py-2 border-bottom" style="border-color:var(--border) !important">
                     <div><b>{{ $i->qty }} × {{ $i->name }}</b>@if ($i->variant_name) <span class="text-muted">· {{ $i->variant_name }}</span>@endif
-                        @if ($i->options)<div class="small text-muted">{{ collect($i->options)->map(fn ($o) => $o['name'].($o['price'] ? ' (+'.money($o['price']).')' : ''))->implode(', ') }}</div>@endif
                         @if ($i->sku)<div class="small text-muted figure">{{ $i->sku }}</div>@endif</div>
                     <span class="figure">{{ money($i->total) }}</span>
                 </div>
@@ -32,7 +31,6 @@
             <div class="mt-3 small">
                 <div class="d-flex justify-content-between"><span class="text-muted">{{ __('Subtotal') }}</span><span class="figure">{{ money($order->subtotal) }}</span></div>
                 @if ($order->discount > 0)<div class="d-flex justify-content-between"><span class="text-muted">{{ __('Discount') }} {{ $order->coupon_code ? '('.$order->coupon_code.')' : '' }}</span><span class="figure text-success">−{{ money($order->discount) }}</span></div>@endif
-                @if ($order->points_discount > 0)<div class="d-flex justify-content-between"><span class="text-muted">{{ __('Points used') }} ({{ $order->points_redeemed }})</span><span class="figure text-success">−{{ money($order->points_discount) }}</span></div>@endif
                 <div class="d-flex justify-content-between"><span class="text-muted">{{ $order->shipping_method }}</span><span class="figure">{{ money($order->shipping_cost) }}</span></div>
                 @if ($order->tax > 0)<div class="d-flex justify-content-between"><span class="text-muted">{{ __('Tax') }} @if ($order->tax_inclusive)({{ __('included') }})@endif</span><span class="figure">{{ money($order->tax) }}</span></div>@endif
                 <div class="d-flex justify-content-between fs-5 mt-2"><b>{{ __('Total') }}</b><b class="figure">{{ money($order->total) }}</b></div>

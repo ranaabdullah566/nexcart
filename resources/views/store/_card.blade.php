@@ -1,12 +1,10 @@
 @php
     $out = $p->track_stock && $p->totalStock() <= 0;
-    $needsOptions = $p->isVariable() || ($p->modifier_groups_count ?? 0) > 0;
+    $needsOptions = $p->isVariable();
     $off = (! $p->isVariable() && $p->compare_price && $p->compare_price > $p->price) ? (int) round((1 - $p->price / $p->compare_price) * 100) : null;
-    $wished = app(\App\Services\Wishlist::class)->has($p->id);
-    $compared = app(\App\Services\Compare::class)->has($p->id);
     $thumb = $p->thumbUrl();
 @endphp
-<article class="mk-card sf-card" data-wish-item>
+<article class="mk-card sf-card">
     <a href="{{ route('store.product', $p->slug) }}" class="mk-card-media" tabindex="-1" aria-hidden="true">
         @if ($thumb)<img src="{{ $thumb }}" alt="" loading="lazy">@else<span class="ph"><i class="bi bi-box-seam"></i></span>@endif
         @if ($off && sf('cards.show_discount'))<span class="mk-disc">−{{ $off }}%</span>@endif
@@ -32,9 +30,5 @@
         @else
             <button type="button" class="mk-add" data-add="{{ $p->id }}"><i class="bi bi-bag-plus"></i> {{ sft('cards.add_label') }}</button>
         @endif
-        @if (sf('cards.show_wish') || sf('cards.show_compare'))<div class="mk-card-icons">
-            @if (sf('cards.show_wish'))<button type="button" class="mk-ico @if ($wished) on @endif" data-wish="{{ $p->id }}" aria-label="{{ __('Wishlist') }}" aria-pressed="{{ $wished ? 'true' : 'false' }}" title="{{ __('Save') }}"><i class="bi bi-heart"></i></button>@endif
-            @if (sf('cards.show_compare'))<button type="button" class="mk-ico @if ($compared) on @endif" data-compare-toggle="{{ $p->id }}" aria-label="{{ __('Compare') }}" aria-pressed="{{ $compared ? 'true' : 'false' }}" title="{{ __('Compare') }}"><i class="bi bi-arrow-left-right"></i></button>@endif
-        </div>@endif
     </div>
 </article>

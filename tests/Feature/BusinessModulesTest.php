@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Mail\PrescriptionReviewed;
 use App\Models\DeliverySlot;
-use App\Models\ModifierGroup;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippingZone;
@@ -146,13 +145,14 @@ class BusinessModulesTest extends TestCase
 
     public function test_slots_are_off_without_the_module_or_without_slots(): void
     {
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
         $this->zone();
         DeliverySlot::create(['label' => 'X', 'starts_at' => '09:00', 'ends_at' => '10:00', 'is_active' => true]);
+        setting()->set('modules.delivery_slots', false);
         $this->assertFalse(app(SlotService::class)->enabled());
         $this->assertSame('pending', $this->place()->status);   // no slot needed
 
-        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.delivery_slots', true);
         DeliverySlot::query()->delete();
         $this->assertFalse(app(SlotService::class)->enabled());
     }
@@ -179,7 +179,7 @@ class BusinessModulesTest extends TestCase
         $this->delete("/admin/delivery-slots/{$s->id}")->assertRedirect();
         $this->assertNull(DeliverySlot::find($s->id));
 
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
         setting()->set('modules.delivery_slots', false);
         $this->get('/admin/delivery-slots')->assertNotFound();
         $this->actingAs($this->user('staff'))->get('/admin/delivery-slots')->assertNotFound();
@@ -189,7 +189,7 @@ class BusinessModulesTest extends TestCase
 
     private function rxOrder(): Order
     {
-        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.delivery_slots', true);
         DeliverySlot::query()->delete();   // keep the focus on prescriptions
         $this->zone();
         $rx = $this->product(['name' => 'Antibiotic', 'requires_prescription' => true]);
@@ -273,7 +273,7 @@ class BusinessModulesTest extends TestCase
 
     private function deliveryOrder(): Order
     {
-        BusinessProfile::apply('fastfood');
+        BusinessProfile::apply('pharmacy');
         $this->zone();
 
         return $this->place();
@@ -335,7 +335,7 @@ class BusinessModulesTest extends TestCase
 
     public function test_pickup_orders_cannot_get_a_rider(): void
     {
-        BusinessProfile::apply('fastfood');
+        BusinessProfile::apply('pharmacy');
         $zone = $this->zone();
         $pickup = $zone->rates()->where('is_pickup', true)->first();
         $o = $this->place(['shipping_rate_id' => $pickup->id, 'address_line' => null, 'city' => null]);
@@ -345,67 +345,16 @@ class BusinessModulesTest extends TestCase
 
     public function test_riders_module_off_hides_the_console(): void
     {
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.riders', false);
         $this->actingAs($this->user('rider'))->get('/admin/deliveries')->assertNotFound();
     }
 
-    // ================= kitchen & ETA =================
-
-    public function test_kitchen_board_moves_orders_along_and_never_dispatches_delivery(): void
-    {
-        $o = $this->deliveryOrder();
-        $this->actingAs($this->user('staff'));
-
-        $this->get('/admin/kitchen')->assertOk()->assertSee($o->number)->assertSee('Accept');
-        $this->get('/admin/kitchen/feed')->assertOk()->assertSee('data-new="1"', false);
-
-        $this->post("/admin/kitchen/{$o->id}/advance");
-        $this->assertSame('confirmed', $o->fresh()->status);
-        $this->get('/admin/kitchen/feed')->assertSee('Start cooking')->assertSee('data-new="0"', false);
-        $this->post("/admin/kitchen/{$o->id}/advance");
-        $this->post("/admin/kitchen/{$o->id}/advance");
-        $this->assertSame('ready', $o->fresh()->status);
-
-        $this->get('/admin/kitchen/feed')->assertSee('Waiting for a rider');
-        $this->post("/admin/kitchen/{$o->id}/advance")->assertStatus(422);   // handing a delivery to the customer is the rider's job
-        $this->assertSame('ready', $o->fresh()->status);
-    }
-
-    public function test_kitchen_hands_over_pickup_orders_and_respects_prescriptions(): void
-    {
-        BusinessProfile::apply('fastfood');
-        $zone = $this->zone();
-        $pickup = $zone->rates()->where('is_pickup', true)->first();
-        $o = $this->place(['shipping_rate_id' => $pickup->id, 'address_line' => null, 'city' => null]);
-        $this->actingAs($this->user('staff'));
-
-        foreach (range(1, 4) as $_) {
-            $this->post("/admin/kitchen/{$o->id}/advance");
-        }
-        $this->assertSame('completed', $o->fresh()->status);
-        $this->assertSame('paid', $o->fresh()->payment_status);   // paid in cash at the counter
-
-        // an order waiting for a prescription is shown but cannot be advanced
-        $o2 = $this->place(['shipping_rate_id' => $pickup->id, 'address_line' => null, 'city' => null]);
-        $o2->forceFill(['requires_prescription' => true, 'prescription_status' => 'pending'])->save();
-        $this->post("/admin/kitchen/{$o2->id}/advance");   // pending → confirmed is allowed
-        $this->post("/admin/kitchen/{$o2->id}/advance")->assertSessionHasErrors('status');
-        $this->assertSame('confirmed', $o2->fresh()->status);
-    }
-
-    public function test_kitchen_is_a_module_and_needs_permission(): void
-    {
-        BusinessProfile::apply('general');
-        $this->actingAs($this->user('staff'))->get('/admin/kitchen')->assertNotFound();
-
-        BusinessProfile::apply('fastfood');
-        $this->actingAs($this->user('rider'))->get('/admin/kitchen')->assertOk();   // riders may view orders
-        $this->actingAs(User::factory()->create())->get('/admin/kitchen')->assertForbidden();
-    }
+    // ================= ETA =================
 
     public function test_eta_uses_travel_time_plus_slowest_item_prep(): void
     {
-        BusinessProfile::apply('fastfood');
+        BusinessProfile::apply('pharmacy');
         $this->zone();
         $slow = $this->product(['name' => 'Slow Pizza', 'specs' => ['prep_time_min' => 20]]);
         $fast = $this->product(['name' => 'Cola', 'specs' => ['prep_time_min' => 2]]);
@@ -427,27 +376,23 @@ class BusinessModulesTest extends TestCase
 
     public function test_reorder_rebuilds_the_cart_with_current_prices_and_skips_unavailable_items(): void
     {
-        BusinessProfile::apply('fastfood');
+        BusinessProfile::apply('pharmacy');
         $this->zone();
-        $group = ModifierGroup::create(['name' => 'Extras', 'min_select' => 1, 'max_select' => 1]);
-        $cheese = $group->options()->create(['name' => 'Cheese', 'price_delta' => 80]);
-        $burger = $this->product(['name' => 'Burger', 'price' => 500]);
-        $burger->modifierGroups()->attach($group);
+        $syrup = $this->product(['name' => 'Cough Syrup', 'price' => 500]);
         $gone = $this->product(['name' => 'Seasonal']);
 
-        $this->postJson('/cart/add', ['product_id' => $burger->id, 'qty' => 2, 'options' => [$cheese->id]]);
+        $this->postJson('/cart/add', ['product_id' => $syrup->id, 'qty' => 2]);
         $this->postJson('/cart/add', ['product_id' => $gone->id, 'qty' => 1]);
         $this->post('/checkout', $this->form());
         $o = Order::firstOrFail();
-        $this->assertSame($cheese->id, $o->items[0]->options[0]['id']);
 
-        $burger->update(['price' => 600]);
+        $syrup->update(['price' => 600]);
         $gone->update(['status' => 'archived']);
 
         $this->post("/order/{$o->number}/{$o->public_token}/reorder")->assertRedirect('/cart')->assertSessionHas('error');
         $this->get('/cart')->assertSee('No longer available: Seasonal')->assertSee('items added to your cart');
         $cart = $this->getJson('/cart.json')->assertJsonPath('count', 2)->json();
-        $this->assertSame('Rs 1,360.00', $cart['subtotal']);   // 2 × (600 + 80) at today's price, extras kept
+        $this->assertSame('Rs 1,200.00', $cart['subtotal']);   // 2 × 600 at today's price
         $this->post("/order/{$o->number}/wrong/reorder")->assertNotFound();
     }
 
@@ -455,13 +400,13 @@ class BusinessModulesTest extends TestCase
     {
         setting()->set('system.installed', false);
         $this->post('/setup', [
-            'business_type' => 'pharmacy', 'store_name' => 'Health Plus', 'currency' => 'PKR', 'currency_symbol' => 'Rs', 'timezone' => 'Asia/Karachi',
+            'store_name' => 'Health Plus', 'currency' => 'PKR', 'currency_symbol' => 'Rs', 'timezone' => 'Asia/Karachi',
             'name' => 'Owner', 'email' => 'o@example.com', 'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1',
         ])->assertRedirect();
 
         $this->assertSame(1, ShippingZone::count());
         $this->assertTrue(ShippingZone::first()->rates()->where('is_pickup', false)->exists());
-        $this->assertFalse(ShippingZone::first()->rates()->where('is_pickup', true)->exists());   // pharmacy profile has no pickup
+        $this->assertTrue(ShippingZone::first()->rates()->where('is_pickup', true)->exists());   // pharmacy profile offers store pickup
         $this->assertSame(['Morning', 'Afternoon', 'Evening'], DeliverySlot::orderBy('sort_order')->pluck('label')->all());
     }
 }

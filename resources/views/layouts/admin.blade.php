@@ -22,7 +22,6 @@
         ],
         'Sales' => [
             ['admin.orders.index', 'admin.orders.*', 'receipt-cutoff', 'Orders', 'orders.view', null],
-            ['admin.kitchen.index', 'admin.kitchen.*', 'fire', 'Kitchen', 'orders.view', 'kitchen_display'],
             ['admin.deliveries.index', 'admin.deliveries.*', 'bicycle', 'Deliveries', 'deliveries.view', 'riders'],
             ['admin.prescriptions.index', 'admin.prescriptions.*', 'prescription2', 'Prescriptions', 'prescriptions.view', 'prescriptions'],
             ['admin.customers.index', 'admin.customers.*', 'people-fill', 'Customers', 'customers.view', null],
@@ -35,7 +34,6 @@
             ['admin.categories.index', 'admin.categories.*', 'diagram-3-fill', 'Categories', 'categories.view', null],
             ['admin.brands.index', 'admin.brands.*', 'award-fill', 'Brands', 'products.view', null],
             ['admin.inventory.index', 'admin.inventory.*', 'clipboard2-data-fill', 'Inventory', 'inventory.view', null],
-            ['admin.modifier-groups.index', 'admin.modifier-groups.*', 'plus-slash-minus', 'Add-ons', 'catalog_settings.manage', 'modifiers'],
             ['admin.attributes.index', 'admin.attributes.*', 'sliders2', 'Product fields', 'catalog_settings.manage', null],
         ],
         'Growth' => [

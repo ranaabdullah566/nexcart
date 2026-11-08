@@ -29,7 +29,7 @@ class AdminCrudTest extends TestCase
                 'tax_rate' => '16', 'tax_inclusive' => '1', 'default_locale' => 'ur', 'locales' => ['en'],
             ],
             'theme' => ['primary' => '#ff5500', 'accent' => '#00ffaa', 'mode' => 'light'],
-            'modules' => ['kitchen_display' => '1', 'prescriptions' => '0'],
+            'modules' => ['riders' => '1', 'prescriptions' => '0'],
         ])->assertRedirect('/admin/settings');
 
         $this->assertSame('Burger Hub', setting('store.name'));
@@ -37,7 +37,7 @@ class AdminCrudTest extends TestCase
         $this->assertEquals(16, setting('store.tax_rate'));
         $this->assertSame(['en', 'ur'], setting('store.locales'));   // default language is always enabled
         $this->assertSame('#ff5500', setting('theme.primary'));
-        $this->assertTrue(setting('modules.kitchen_display'));
+        $this->assertTrue(setting('modules.riders'));
         $this->assertFalse(setting('modules.prescriptions'));
     }
 

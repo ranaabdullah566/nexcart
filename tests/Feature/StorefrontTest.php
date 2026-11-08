@@ -6,7 +6,6 @@ use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
 use App\Models\HomeSection;
-use App\Models\ModifierGroup;
 use App\Models\Product;
 use App\Models\User;
 use App\Support\BusinessProfile;
@@ -23,7 +22,7 @@ class StorefrontTest extends TestCase
         parent::setUp();
         (new RolesSeeder)->run();
         setting()->set('system.installed', true);
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
     }
 
     private function product(array $o = []): Product
@@ -36,9 +35,9 @@ class StorefrontTest extends TestCase
 
     public function test_home_renders_default_sections_in_each_language(): void
     {
-        $this->get('/')->assertOk()->assertSee('Everything you need, delivered')->assertSee('mk-hero', false)->assertSee('Fast delivery');
+        $this->get('/')->assertOk()->assertSee('Your pharmacy, now online')->assertSee('mk-hero', false)->assertSee('Fast delivery');
 
-        $this->withSession(['locale' => 'ur'])->get('/')->assertOk()->assertSee('dir="rtl"', false)->assertSee('جو کچھ آپ کو چاہیے')->assertSee('تیز ڈیلیوری');
+        $this->withSession(['locale' => 'ur'])->get('/')->assertOk()->assertSee('dir="rtl"', false)->assertSee('آپ کی فارمیسی، اب آن لائن')->assertSee('تیز ڈیلیوری');
         $this->withSession(['locale' => 'ur_Latn'])->get('/')->assertSee('Tez delivery');
     }
 
@@ -81,12 +80,12 @@ class StorefrontTest extends TestCase
 
     public function test_attribute_filters_use_filterable_fields(): void
     {
-        BusinessProfile::apply('fastfood');
-        CatalogAttribute::where('key', 'spice_level')->update(['is_filterable' => true]);
-        $this->product(['name' => 'Hot Wings', 'specs' => ['spice_level' => 'Hot']]);
-        $this->product(['name' => 'Mild Wings', 'specs' => ['spice_level' => 'Mild']]);
+        BusinessProfile::apply('pharmacy');
+        CatalogAttribute::where('key', 'dosage_form')->update(['is_filterable' => true]);
+        $this->product(['name' => 'Tablet Alpha', 'specs' => ['dosage_form' => 'Tablet']]);
+        $this->product(['name' => 'Syrup Beta', 'specs' => ['dosage_form' => 'Syrup']]);
 
-        $this->get('/shop?spec[spice_level]=Hot')->assertSee('Hot Wings')->assertDontSee('Mild Wings');
+        $this->get('/shop?spec[dosage_form]=Tablet')->assertSee('Tablet Alpha')->assertDontSee('Syrup Beta');
     }
 
     public function test_instant_search_matches_names_and_urdu_translations(): void
@@ -157,33 +156,26 @@ class StorefrontTest extends TestCase
         $this->postJson('/cart/add', ['product_id' => $p->id, 'qty' => 500])->assertStatus(422);
     }
 
-    public function test_variants_and_modifiers_are_priced_server_side(): void
+    public function test_variants_are_priced_server_side(): void
     {
-        BusinessProfile::apply('fastfood');
-        $p = $this->product(['name' => 'Pizza', 'type' => 'variable', 'price' => 0, 'stock_qty' => 0]);
-        $small = $p->variants()->create(['name' => 'Small', 'price' => 500, 'stock_qty' => 5]);
-        $large = $p->variants()->create(['name' => 'Large', 'price' => 900, 'stock_qty' => 1]);
-        $group = ModifierGroup::create(['name' => 'Extras', 'min_select' => 1, 'max_select' => 2]);
-        $cheese = $group->options()->create(['name' => 'Cheese', 'price_delta' => 80]);
-        $olives = $group->options()->create(['name' => 'Olives', 'price_delta' => 30]);
-        $mushroom = $group->options()->create(['name' => 'Mushroom', 'price_delta' => 40]);
-        $p->modifierGroups()->attach($group);
+        BusinessProfile::apply('pharmacy');
+        $p = $this->product(['name' => 'Brufen', 'type' => 'variable', 'price' => 0, 'stock_qty' => 0]);
+        $small = $p->variants()->create(['name' => '10 tablets', 'price' => 500, 'stock_qty' => 5]);
+        $large = $p->variants()->create(['name' => '30 tablets', 'price' => 900, 'stock_qty' => 1]);
 
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'qty' => 1, 'options' => [$cheese->id]])->assertStatus(422)->assertJsonValidationErrors('variant_id');
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $small->id, 'qty' => 1])->assertStatus(422)->assertJsonValidationErrors('options');
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $small->id, 'qty' => 1, 'options' => [$cheese->id, $olives->id, $mushroom->id]])->assertStatus(422);
+        $this->postJson('/cart/add', ['product_id' => $p->id, 'qty' => 1])->assertStatus(422)->assertJsonValidationErrors('variant_id');
 
-        // 500 + 80 + 30 = 610 each, x2 = 1220
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $small->id, 'qty' => 2, 'options' => [$cheese->id, $olives->id], 'price' => 1])
-            ->assertOk()->assertJsonPath('subtotal', 'Rs 1,220.00')->assertJsonPath('lines.0.variant', 'Small');
+        // the price always comes from the server, never from the request
+        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $small->id, 'qty' => 2, 'price' => 1])
+            ->assertOk()->assertJsonPath('subtotal', 'Rs 1,000.00')->assertJsonPath('lines.0.variant', '10 tablets');
 
-        // other options of the same product with different add-ons are a different line; stock is shared across lines
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $small->id, 'qty' => 3, 'options' => [$mushroom->id]])->assertOk()->assertJsonCount(2, 'lines');
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $small->id, 'qty' => 1, 'options' => [$olives->id]])->assertStatus(422);
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $large->id, 'qty' => 2, 'options' => [$cheese->id]])->assertStatus(422);
+        // another pack size is another line; stock is checked per variant
+        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $large->id, 'qty' => 1])->assertOk()->assertJsonCount(2, 'lines');
+        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $large->id, 'qty' => 1])->assertStatus(422);
+        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $small->id, 'qty' => 9])->assertStatus(422);
         // a variant id from another product is rejected
         $other = $this->product(['name' => 'Other', 'type' => 'variable'])->variants()->create(['name' => 'X', 'price' => 1, 'stock_qty' => 9]);
-        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $other->id, 'qty' => 1, 'options' => [$cheese->id]])->assertStatus(422);
+        $this->postJson('/cart/add', ['product_id' => $p->id, 'variant_id' => $other->id, 'qty' => 1])->assertStatus(422);
     }
 
     public function test_cart_follows_price_changes_and_drops_unavailable_products(): void
@@ -196,17 +188,6 @@ class StorefrontTest extends TestCase
 
         $p->update(['status' => 'archived']);
         $this->getJson('/cart.json')->assertJsonPath('count', 0);
-    }
-
-    public function test_wishlist_toggle_and_page(): void
-    {
-        $p = $this->product(['name' => 'Loved']);
-
-        $this->postJson('/wishlist/'.$p->id)->assertJson(['added' => true, 'count' => 1]);
-        $this->get('/wishlist')->assertOk()->assertSee('Loved');
-        $this->postJson('/wishlist/'.$p->id)->assertJson(['added' => false, 'count' => 0]);
-        $this->get('/wishlist')->assertSee('Nothing saved yet');
-        $this->postJson('/wishlist/9999')->assertNotFound();
     }
 
     public function test_layout_has_theme_language_and_cart_drawer(): void

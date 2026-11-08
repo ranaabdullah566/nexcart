@@ -23,7 +23,7 @@
                         <a href="{{ $l['url'] }}" class="mk-line-img">@if ($l['image'])<img src="{{ $l['image'] }}" alt="" loading="lazy">@else<i class="bi bi-box-seam"></i>@endif</a>
                         <div class="mk-line-info">
                             <a href="{{ $l['url'] }}" class="mk-line-name">{{ $l['name'] }}</a>
-                            @php $opts = collect([$l['variant']])->merge($l['options'])->filter()->implode(' · '); @endphp
+                            @php $opts = $l['variant']; @endphp
                             @if ($opts)<small>{{ $opts }}</small>@endif
                             <small class="figure">{{ $l['unit'] }} {{ __('each') }}</small>
                             @if ($l['short'])<small class="warn"><i class="bi bi-exclamation-triangle"></i> {{ __('Only :n left in stock.', ['n' => $l['available']]) }}</small>@endif

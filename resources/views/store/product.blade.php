@@ -9,8 +9,6 @@
 @php
     $imgs = $product->getMedia('images');
     $off = (! $product->isVariable() && $product->compare_price && $product->compare_price > $product->price) ? (int) round((1 - $product->price / $product->compare_price) * 100) : null;
-    $wished = app(\App\Services\Wishlist::class)->has($product->id);
-    $compared = app(\App\Services\Compare::class)->has($product->id);
     $pages = \App\Models\MenuItem::resolved('footer')->take(4);
 @endphp
 <div class="sf-container">
@@ -56,10 +54,8 @@
             <div class="mk-buybox" id="mkBuy">
                 @include('store._buy')
                 @php $bbTrust = \App\Support\Sf::lines('product.bb_trust'); @endphp
-                @if (sf('product.show_save') || sf('product.show_compare') || sf('product.show_share') || (sf('product.show_whatsapp') && filled(setting('store.whatsapp'))))
+                @if (sf('product.show_share') || (sf('product.show_whatsapp') && filled(setting('store.whatsapp'))))
                 <div class="mk-util">
-                    @if (sf('product.show_save'))<button type="button" class="@if ($wished) on @endif" data-wish="{{ $product->id }}" aria-pressed="{{ $wished ? 'true' : 'false' }}"><i class="bi bi-heart"></i><span>{{ __('Save') }}</span></button>@endif
-                    @if (sf('product.show_compare'))<button type="button" class="@if ($compared) on @endif" data-compare-toggle="{{ $product->id }}" aria-pressed="{{ $compared ? 'true' : 'false' }}"><i class="bi bi-arrow-left-right"></i><span>{{ __('Compare') }}</span></button>@endif
                     @if (sf('product.show_share'))<button type="button" data-share data-title="{{ $product->trans('name') }}"><i class="bi bi-share"></i><span>{{ __('Share') }}</span></button>@endif
                     @if (sf('product.show_whatsapp') && filled(setting('store.whatsapp')))<a href="https://wa.me/{{ preg_replace('/\D/', '', setting('store.whatsapp')) }}?text={{ rawurlencode($product->trans('name').' '.url()->current()) }}" target="_blank" rel="noopener noreferrer" class="wa"><i class="bi bi-whatsapp"></i><span>{{ __('Ask us') }}</span></a>@endif
                 </div>

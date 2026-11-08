@@ -32,7 +32,8 @@ class InventoryTest extends TestCase
 
     public function test_adjust_adds_and_removes_stock_with_audit_trail(): void
     {
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.batch_expiry', false);
         $p = $this->product();
 
         $this->post('/admin/inventory/adjust', ['item' => "p:{$p->id}", 'direction' => 'in', 'qty' => 5, 'reason' => 'received'])->assertRedirect('/admin/inventory');
@@ -46,7 +47,8 @@ class InventoryTest extends TestCase
 
     public function test_cannot_remove_more_than_available(): void
     {
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.batch_expiry', false);
         $p = $this->product(['stock_qty' => 2]);
 
         $this->post('/admin/inventory/adjust', ['item' => "p:{$p->id}", 'direction' => 'out', 'qty' => 3, 'reason' => 'adjustment'])->assertSessionHasErrors('change');
@@ -56,7 +58,8 @@ class InventoryTest extends TestCase
 
     public function test_variant_stock_is_adjusted_separately(): void
     {
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.batch_expiry', false);
         $p = $this->product(['type' => 'variable', 'stock_qty' => 0]);
         $v = $p->variants()->create(['name' => 'L', 'price' => 10, 'stock_qty' => 4]);
 
@@ -118,7 +121,8 @@ class InventoryTest extends TestCase
 
     public function test_batches_tab_hidden_when_module_off(): void
     {
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
+        setting()->set('modules.batch_expiry', false);
         $this->get('/admin/inventory')->assertOk()->assertDontSee('Batches &amp; expiry', false);
         $this->get('/admin/inventory/adjust')->assertOk()->assertDontSee('Batch number');
     }

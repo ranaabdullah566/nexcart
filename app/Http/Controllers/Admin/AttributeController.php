@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CatalogAttribute;
 use App\Rules\UniqueActive;
-use App\Support\BusinessProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
-/** Admin-defined product fields (pharmacy: composition, fastfood: spice level …). */
+/** Admin-defined product fields (composition, strength, dosage form …). */
 class AttributeController extends Controller
 {
     public function index(): View
@@ -26,7 +25,7 @@ class AttributeController extends Controller
     {
         $this->authorizeTo('catalog_settings.manage');
 
-        return view('admin.attributes.create', ['profiles' => BusinessProfile::all()]);
+        return view('admin.attributes.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -41,7 +40,7 @@ class AttributeController extends Controller
     {
         $this->authorizeTo('catalog_settings.manage');
 
-        return view('admin.attributes.edit', ['attribute' => $attribute, 'profiles' => BusinessProfile::all()]);
+        return view('admin.attributes.edit', ['attribute' => $attribute]);
     }
 
     public function update(Request $request, CatalogAttribute $attribute): RedirectResponse
@@ -67,8 +66,6 @@ class AttributeController extends Controller
             'key' => ['required', 'regex:/^[a-z][a-z0-9_]{1,63}$/', new UniqueActive('catalog_attributes', 'key', $attribute->id)],
             'type' => ['required', Rule::in(CatalogAttribute::TYPES)],
             'options' => ['nullable', 'string', 'max:2000'],
-            'business_types' => ['nullable', 'array'],
-            'business_types.*' => [Rule::in(array_keys(BusinessProfile::all()))],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:65535'],
             'tr' => ['nullable', 'array'],
         ]);
@@ -81,7 +78,7 @@ class AttributeController extends Controller
         $attribute->fill([
             'label' => $data['label'], 'key' => $data['key'], 'type' => $data['type'],
             'options' => $data['type'] === 'select' ? $options : null,
-            'business_types' => $data['business_types'] ?: null,
+            'business_types' => null,
             'is_required' => $request->boolean('is_required'),
             'is_filterable' => $request->boolean('is_filterable'),
             'sort_order' => $data['sort_order'] ?? 0,

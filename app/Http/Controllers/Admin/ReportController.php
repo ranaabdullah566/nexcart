@@ -68,12 +68,12 @@ class ReportController extends Controller
 
         return response()->streamDownload(function () use ($from, $to, $tz) {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['number', 'placed_at', 'customer', 'email', 'phone', 'status', 'payment_status', 'payment_method', 'shipping', 'city', 'coupon', 'subtotal', 'discount', 'points_discount', 'shipping_cost', 'tax', 'total']);
+            fputcsv($out, ['number', 'placed_at', 'customer', 'email', 'phone', 'status', 'payment_status', 'payment_method', 'shipping', 'city', 'coupon', 'subtotal', 'discount', 'shipping_cost', 'tax', 'total']);
             $this->orders($from, $to)->chunk(500, function ($chunk) use ($out, $tz) {
                 foreach ($chunk as $o) {
                     fputcsv($out, array_map(fn ($v) => is_string($v) && preg_match('/^[=+\-@\t\r]/', $v) ? "'".$v : $v, [
                         $o->number, $o->placed_at?->copy()->timezone($tz)->format('Y-m-d H:i'), $o->name, $o->email, $o->phone, $o->status, $o->payment_status, $o->payment_method,
-                        $o->shipping_method, $o->city, $o->coupon_code, $o->subtotal, $o->discount, $o->points_discount, $o->shipping_cost, $o->tax, $o->total,
+                        $o->shipping_method, $o->city, $o->coupon_code, $o->subtotal, $o->discount, $o->shipping_cost, $o->tax, $o->total,
                     ]));
                 }
             });

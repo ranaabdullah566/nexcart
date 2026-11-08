@@ -30,7 +30,7 @@ class LocalizationTest extends TestCase
     {
         $this->get('/lang/ur');
         $this->post('/setup', [
-            'business_type' => 'general', 'store_name' => 'دکان', 'currency' => 'PKR', 'currency_symbol' => 'Rs',
+            'store_name' => 'دکان', 'currency' => 'PKR', 'currency_symbol' => 'Rs',
             'timezone' => 'Asia/Karachi', 'name' => 'Owner', 'email' => 'o@example.com',
             'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1',
         ])->assertRedirect('/admin');

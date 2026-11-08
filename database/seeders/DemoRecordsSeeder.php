@@ -11,12 +11,13 @@ use App\Models\ShippingZone;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * 100 products, 100 customers and 100 orders (plus categories, brands, shipping) so the storefront and every
+ * 100 medicines, 100 customers and 100 orders (plus categories, brands, shipping) so the storefront and every
  * admin screen can be tried with real-looking data.   php artisan db:seed --class=DemoRecordsSeeder
- * Run it again to add another batch. (The small per-business sample set is separate: nexcart:demo.)
+ * Run it again to add another batch. (The small hand-made medicine set is separate: nexcart:demo.)
  */
 class DemoRecordsSeeder extends Seeder
 {
@@ -26,9 +27,9 @@ class DemoRecordsSeeder extends Seeder
         $pick = fn (array $a) => $a[array_rand($a)];
 
         DB::transaction(function () use ($pick) {
-            $cats = collect(['Electronics', 'Fashion', 'Home & Kitchen', 'Beauty & Care', 'Groceries', 'Sports & Outdoors', 'Toys & Kids', 'Books & Stationery'])
+            $cats = collect(['Pain & fever', 'Cold, flu & allergy', 'Stomach & digestion', 'Vitamins & supplements', 'Diabetes care', 'Baby & mother care', 'Skin care', 'Health devices'])
                 ->map(fn ($n) => Category::firstOrCreate(['name' => $n], ['is_active' => true]));
-            $brands = collect(['Nexa', 'Urban Co', 'Zenith', 'Orbit', 'Lumina', 'Prime Choice'])->map(fn ($n) => Brand::firstOrCreate(['name' => $n], ['is_active' => true]));
+            $brands = collect(['GSK', 'Getz Pharma', 'Searle', 'Abbott', 'Sanofi', 'Hilton Pharma'])->map(fn ($n) => Brand::firstOrCreate(['name' => $n], ['is_active' => true]));
 
             if (! ShippingZone::exists()) {
                 $z = ShippingZone::create(['name' => 'Everywhere', 'cities' => null, 'is_active' => true]);
@@ -36,12 +37,12 @@ class DemoRecordsSeeder extends Seeder
                 $z->rates()->create(['name' => 'Express delivery', 'price' => 450, 'eta' => 'Next day', 'is_active' => true]);
             }
 
-            $nouns = ['Headphones', 'Backpack', 'Sneakers', 'Blender', 'Lamp', 'Notebook', 'Water Bottle', 'Watch', 'Sunglasses', 'Mug', 'Speaker', 'Jacket', 'Face Wash', 'Perfume', 'Rice 5kg', 'Olive Oil', 'Yoga Mat', 'Football', 'Puzzle', 'Pen Set', 'Cushion', 'Kettle', 'Charger', 'T-Shirt', 'Cap'];
-            $adjs = ['Classic', 'Pro', 'Ultra', 'Eco', 'Smart', 'Premium', 'Mini', 'Max', 'Daily', 'Royal'];
+            $nouns = ['Paracetamol', 'Ibuprofen', 'Cetirizine', 'Omeprazole', 'Vitamin D3', 'Vitamin C', 'Calcium', 'Zinc', 'Cough Syrup', 'ORS', 'Antacid', 'Multivitamin', 'Iron Tablets', 'Probiotic', 'Eye Drops', 'Nasal Spray', 'Pain Relief Gel', 'Antiseptic Cream', 'Glucose Strips', 'Face Mask', 'Thermometer', 'Baby Lotion', 'Sunblock', 'Hand Sanitizer', 'Bandage'];
+            $adjs = ['Fast', 'Extra', 'Forte', 'Plus', 'Junior', 'Daily', 'Max', 'Advance', 'Gentle', 'Rapid'];
 
             $products = collect();
             for ($i = 1; $i <= 100; $i++) {
-                $price = $pick([199, 349, 499, 799, 999, 1499, 1999, 2999, 4999, 7999]) + mt_rand(0, 9) * 10;
+                $price = $pick([45, 90, 140, 199, 280, 349, 499, 799, 1299, 1999]) + mt_rand(0, 9) * 10;
                 $variable = $i % 10 === 0;
                 $p = new Product;
                 $p->forceFill([
@@ -49,14 +50,14 @@ class DemoRecordsSeeder extends Seeder
                     'name' => $pick($adjs).' '.$pick($nouns).' '.str_pad((string) $i, 3, '0', STR_PAD_LEFT),
                     'sku' => 'DEMO-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT).'-'.Str::upper(Str::random(3)),
                     'type' => $variable ? 'variable' : 'simple', 'status' => 'active',
-                    'short_description' => 'A great everyday pick — sample product for testing.',
-                    'description' => 'Sample product '.$i.'. Replace it with your real catalogue. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    'short_description' => 'Sample medicine for testing — replace with your real catalogue.',
+                    'description' => 'Sample medicine '.$i.'. Replace it with your real catalogue. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                     'price' => $price, 'compare_price' => $i % 4 === 0 ? round($price * 1.25, 0) : null, 'cost' => round($price * 0.6, 2),
                     'track_stock' => true, 'stock_qty' => $variable ? 0 : mt_rand(0, 80), 'low_stock_threshold' => 5, 'is_featured' => $i % 7 === 0,
                 ])->save();
                 if ($variable) {
-                    foreach (['Small', 'Medium', 'Large'] as $k => $size) {
-                        $p->variants()->create(['name' => $size, 'sku' => $p->sku.'-'.($k + 1), 'price' => $price + $k * 100, 'stock_qty' => mt_rand(0, 30), 'is_active' => true, 'sort_order' => $k]);
+                    foreach (['10 tablets', '30 tablets', '60 tablets'] as $k => $size) {
+                        $p->variants()->create(['name' => $size, 'sku' => $p->sku.'-'.($k + 1), 'price' => $price + $k * 120, 'stock_qty' => mt_rand(0, 30), 'is_active' => true, 'sort_order' => $k]);
                     }
                     $p->update(['price' => $price]);
                 }
@@ -67,7 +68,7 @@ class DemoRecordsSeeder extends Seeder
             $last = ['Khan', 'Ahmed', 'Malik', 'Sheikh', 'Butt', 'Raza', 'Chaudhry', 'Qureshi', 'Siddiqui', 'Ansari'];
             $cities = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta'];
 
-            $hash = \Illuminate\Support\Facades\Hash::make('Demo-pass-123');   // hashed once: 100 slow bcrypts would take half a minute
+            $hash = Hash::make('Demo-pass-123');   // hashed once: 100 slow bcrypts would take half a minute
             $customers = collect();
             for ($i = 1; $i <= 100; $i++) {
                 $name = $pick($first).' '.$pick($last);
@@ -116,6 +117,6 @@ class DemoRecordsSeeder extends Seeder
             }
         });
 
-        $this->command?->info('Added 100 products, 100 customers and 100 orders (every demo customer signs in with password Demo-pass-123).');
+        $this->command?->info('Added 100 medicines, 100 customers and 100 orders (every demo customer signs in with password Demo-pass-123).');
     }
 }

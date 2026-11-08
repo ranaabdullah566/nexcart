@@ -33,7 +33,7 @@ class CheckoutTest extends TestCase
         parent::setUp();
         (new RolesSeeder)->run();
         setting()->set('system.installed', true);
-        BusinessProfile::apply('general');
+        BusinessProfile::apply('pharmacy');
         setting()->setMany(['store.name' => 'Burger Hub', 'store.email' => 'shop@example.com', 'store.currency' => 'PKR', 'store.currency_symbol' => 'Rs']);
         Mail::fake();
 
@@ -246,11 +246,12 @@ class CheckoutTest extends TestCase
         $pickup = $this->khi->rates()->create(['name' => 'Pick up from store', 'is_pickup' => true]);
         $this->cart($this->product());
 
-        // module off (general business): pickup is not offered
+        // module off: pickup is not offered
+        setting()->set('modules.pickup', false);
         $this->assertNotContains($pickup->id, $this->postJson('/checkout/quote', ['city' => 'Karachi'])->json('rates.*.id'));
         $this->post('/checkout', $this->form(['shipping_rate_id' => $pickup->id]))->assertSessionHasErrors('shipping_rate_id');
 
-        BusinessProfile::apply('fastfood');
+        setting()->set('modules.pickup', true);
         $this->assertContains($pickup->id, $this->postJson('/checkout/quote', ['city' => 'Lahore'])->json('rates.*.id'));   // pickup ignores the city
         $this->post('/checkout', $this->form(['shipping_rate_id' => $pickup->id, 'address_line' => '', 'city' => '']))->assertRedirect();
         $o = Order::firstOrFail();

@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Page;
-use App\Models\Product;
 use App\Support\PageText;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -44,15 +43,5 @@ class ContentPagesTest extends TestCase
         $this->get('/page/about')->assertOk()->assertSee('mk-cms', false)->assertSee('<h2>Who we are</h2>', false)->assertSee('Returns')->assertDontSee('Secret draft')
             ->assertSee('hi@shop.test')->assertSee('wa.me/923001234567', false);
         $this->get('/page/draft')->assertNotFound();
-    }
-
-    public function test_wishlist_page_empty_state_suggests_products_and_filled_state_lists_them(): void
-    {
-        $p = new Product;
-        $p->forceFill(['name' => 'Lucky Mug', 'price' => 50, 'status' => 'active', 'track_stock' => false, 'is_featured' => true])->save();
-
-        $this->get('/wishlist')->assertOk()->assertSee('Nothing saved yet')->assertSee('You may like')->assertSee('Lucky Mug');
-        $this->postJson("/wishlist/{$p->id}")->assertOk()->assertJson(['added' => true]);
-        $this->get('/wishlist')->assertOk()->assertDontSee('Nothing saved yet')->assertSee('Lucky Mug')->assertSee('1 item');
     }
 }
