@@ -29,6 +29,7 @@
     <link href="{{ asset('assets/css/store-market.css') }}?v={{ @filemtime(public_path('assets/css/store-market.css')) }}" rel="stylesheet">
     <script nonce="{{ csp_nonce() }}">document.documentElement.classList.add('sf-js')</script>
     <link href="{{ asset('assets/css/store-market-pages.css') }}?v={{ @filemtime(public_path('assets/css/store-market-pages.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/store-future.css') }}?v={{ @filemtime(public_path('assets/css/store-future.css')) }}" rel="stylesheet">
     <style>.sf{--mk-ratio:{{ sf('cards.ratio') }};--mk-fit:{{ sf('cards.fit') }}}</style>
     @stack('head')
 </head>
@@ -290,6 +291,7 @@
 <script defer src="{{ asset('assets/js/nx-validate.js') }}?v={{ @filemtime(public_path('assets/js/nx-validate.js')) }}"></script>
 <script defer src="{{ asset('assets/js/store-market.js') }}?v={{ @filemtime(public_path('assets/js/store-market.js')) }}"></script>
 <script defer src="{{ asset('assets/js/storefront.js') }}?v={{ @filemtime(public_path('assets/js/storefront.js')) }}"></script>
+<script defer src="{{ asset('assets/js/store-future.js') }}?v={{ @filemtime(public_path('assets/js/store-future.js')) }}"></script>
 @stack('jsonld')
 @stack('scripts')
 </body>

@@ -17,6 +17,11 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 - 100-record seeder now creates medicines.
 - Home page, product fields and report CSV no longer mention points.
 
+### Storefront look
+- New **Future** design layer on every customer page: animated aurora + grid backdrop, glass header that lights up on scroll, scroll-progress bar, deep-aurora hero with gradient headline, glass cards with cursor spotlight, rotating neon border and 3D tilt, staggered reveal, button ripples, floating glass dock on phones.
+- **Command palette** — press `Ctrl/⌘ K` or `/` (or tap the search icon on phones) for instant medicine search and quick links.
+- Honours light/dark mode, the owner's theme colours, RTL and *reduce motion*.
+
 ### Kept
 - Prescriptions + pharmacist review, batches / expiry, delivery slots, riders, coupons, pickup, customer reviews, licence keys, 2FA, reports, backups, activity log, Recycle Bin, alerts, Google sign-in, reCAPTCHA, password reset.
 
