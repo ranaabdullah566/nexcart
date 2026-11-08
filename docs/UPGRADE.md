@@ -34,3 +34,10 @@ and System health will tell the owner when a newer version exists. It only *tell
 Nothing manual: `nexcart:update` runs the new migrations (soft deletes, two-factor columns, Google ID, alerts, SEO fields, extra permissions).
 Existing deleted records stay deleted; from now on deletes go to the Recycle Bin. Staff passwords are not forced to change, but
 new passwords must be at least 10 characters with letters and numbers.
+
+## Upgrading to 1.2.0 (pharmacy-only)
+
+Version 1.2.0 removes fast food / medical store / general profiles, Kitchen display, Add-ons, Loyalty points, Wishlist and Compare.
+The update migration drops the add-on and loyalty tables, so **back up first**. Existing orders keep their totals; older orders that
+used points still show correctly in totals but no longer list a “Points used” line. Stores that were set up as another business type
+keep their data and are treated as a pharmacy.

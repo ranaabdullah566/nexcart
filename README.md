@@ -1,18 +1,18 @@
 # NexCart
 
-Fully dynamic, white-label e-commerce platform (Laravel 13 + MySQL) for many business types —
-fast food, pharmacy, medical store, general online store. Marketplace-style storefront and a NEXUS admin
+Online pharmacy platform (Laravel 13 + MySQL) for selling medicines on the web — prescriptions,
+batch & expiry tracking, delivery slots and riders. Marketplace-style storefront and a NEXUS admin
 (Bootstrap 5.3), dark/light themes, English / اردو (RTL) / Roman Urdu. See [PLAN.md](PLAN.md) for the roadmap.
 
 ## What you get
 
 **Storefront** — header with search, language and basket, an “All categories” mega menu, hero carousel with a
-“Top deals” panel, product cards with discount badges and compare / save / quick view, product page with
+“Top deals” panel, product cards with discount badges and quick view, product page with
 trust badges, tabs and related products, filterable shop (grid or list), cart with a free-delivery bar,
-one-page checkout, order tracking, customer accounts, wishlist, compare, content pages, cookie bar, WhatsApp
+one-page checkout, order tracking, customer accounts, content pages, cookie bar, WhatsApp
 and back-to-top buttons. Every page uses the same look and works on phones.
 
-**Admin** — products (variants, add-ons, custom fields, SEO), categories, brands, inventory with batches and
+**Admin** — medicines (pack sizes, custom fields such as composition / strength, SEO), categories, brands, inventory with batches and
 expiry, orders, customers (add / edit / delete), coupons, shipping zones, delivery slots, reviews, reports
 (sales, products, customers, inventory, finance & tax, operations, marketing — all exportable to CSV),
 roles & permissions you can build yourself, an alerts inbox, an activity log, a Recycle Bin and backups.
@@ -22,8 +22,8 @@ wording per language; **Interface text** rewords any word in any language; **Men
 and footer columns; **Home page** has 11 section types; **Theme** sets colours, logo and mode.
 See [docs/CUSTOMIZING.md](docs/CUSTOMIZING.md).
 
-**Business modules** — kitchen display and riders (fast food); prescription review, batches / expiry and
-delivery slots (pharmacy); pickup, reorder, loyalty points, abandoned-cart reminders.
+**Pharmacy tools** — prescription upload and pharmacist review, batches / expiry, delivery slots, riders,
+store pickup, reorder, customer reviews, abandoned-cart reminders.
 
 **Security** — login lockout, two-factor (authenticator app), password policy, idle sign-out,
 Content-Security-Policy, scanner blocking, reCAPTCHA, Google sign-in for customers, password reset by e-mail, audit trail.
@@ -53,7 +53,7 @@ php artisan storage:link
 php artisan serve
 ```
 
-Open the site once: `/install` (database) and `/setup` (business type, owner account). Production: see [docs/INSTALL.md](docs/INSTALL.md).
+Open the site once: `/install` (database) and `/setup` (store details, owner account). Production: see [docs/INSTALL.md](docs/INSTALL.md).
 
 ### Try it with 100 records
 
@@ -63,7 +63,7 @@ php artisan db:seed --class=DemoRecordsSeeder
 
 Adds 100 products (some with sizes), 100 customers and 100 orders, plus categories, brands and shipping.
 Every demo customer signs in with the password `Demo-pass-123`. Running it again adds another batch.
-For a small sample catalogue matched to your business type use `php artisan nexcart:demo` (and `--remove` to undo).
+For a small sample medicine catalogue use `php artisan nexcart:demo` (and `--remove` to undo).
 
 ## After pulling updates
 

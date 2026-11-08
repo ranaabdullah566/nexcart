@@ -19,10 +19,10 @@ Why this and not one shared multi-tenant system?
 
 The cost is operational: N clients means N containers to update. `scripts/provision-client.sh` and `nexcart:update` keep that small.
 
-## Business types
+## The pharmacy profile
 
-At setup each client chooses a profile (general, fast food, pharmacy, medical store) which switches the right modules on
-(kitchen display and riders; prescriptions, batches and delivery slots; …), sets product fields, theme colours and a starter home page.
+NexCart is pharmacy-only. Setup applies one profile that switches the pharmacy modules on
+(prescriptions, batches / expiry, delivery slots, riders, pickup, reviews), adds product fields (composition, dosage form, strength, manufacturer), theme colours and a starter home page.
 Everything can be changed afterwards under **Store settings → Modules**.
 
 ## Making each client’s store different

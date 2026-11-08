@@ -4,9 +4,9 @@ Everything is in the left menu. Languages (English / اردو / Roman Urdu) and 
 next to **Visit site** (opens your shop in a new tab) and the **bell** (your alerts).
 
 ## First day
-1. **Store settings** — name, tagline, contact, WhatsApp and social links, currency, tax, timezone, payment methods, loyalty and reminders.
+1. **Store settings** — name, tagline, contact, WhatsApp and social links, currency, tax, timezone, payment methods and reminders.
 2. **Shipping** — zones by city with delivery prices, free-over amounts and store pickup. No zone = nobody can check out.
-3. **Catalog** — categories, brands, products (simple or with variants), product fields, add-ons, inventory.
+3. **Catalog** — categories, brands, products (simple or with pack-size variants), product fields, inventory.
 4. **Storefront** — *Home page* sections, *Theme* (live preview), *Storefront options*, *Interface text*, *Pages*, *Menus*, *Email templates*. See [CUSTOMIZING.md](CUSTOMIZING.md).
 5. **Security** — turn on two-factor for yourself, then decide if the whole team needs it. Add reCAPTCHA / Google sign-in keys if you want them.
 6. **System health** — turn red/orange items green. **Backups** — switch on nightly backups.
@@ -15,7 +15,7 @@ next to **Visit site** (opens your shop in a new tab) and the **bell** (your ale
 - **Orders** — click an order to move it along; status e-mails go to the customer by themselves. Unpaid bank/cash orders can be marked paid.
 - **Alerts** (bell) — new orders, low stock and every message the system showed you, kept until you clear them. Alerts are personal: reading yours does not mark them read for others.
 - **Customers** — people with an account can be added, edited and deleted here; guests who only ordered show with a *Create account* button.
-- **Fast food:** *Kitchen* shows live orders; assign a *rider* in the order; riders use *Deliveries* on their phone.
+- **Delivery:** assign a *rider* in the order; riders use *Deliveries* on their phone.
 - **Pharmacy:** *Prescriptions* — approve or send back with a reason; medicines are not prepared until approved. *Delivery slots* limit orders per time window. *Inventory → Batches* shows what expires soon.
 - **Reviews** — approve or reply.
 

@@ -1,7 +1,7 @@
 # Installing NexCart
 
 Pick the route that matches your hosting. All three end at the same place: the **store wizard** at `/setup`
-where you choose the business type, create the owner account and (optionally) add sample products.
+where you create the owner account and (optionally) add sample products.
 
 ## 1. Web installer — shared hosting or any PHP server (no terminal needed)
 
@@ -13,7 +13,7 @@ Requirements: PHP 8.3+, MySQL/MariaDB (or SQLite for a small store), and these P
 3. Open your site. The first visit creates `.env` and an application key for you and shows **Install** (step 1 of 2):
    a one-line server check (open “Show all checks” for details), a choice of **MySQL / MariaDB** or **SQLite**,
    your database details — it creates the tables and then sends you to the wizard.
-4. Finish the wizard at `/setup` (step 2 of 2): business type, store name / timezone / currency, the owner account
+4. Finish the wizard at `/setup` (step 2 of 2): store name / timezone / currency, the owner account
    (password: at least 10 characters with a letter and a number) and optional sample products.
    The installer locks itself afterwards (`storage/app/installed.lock`).
 5. Open **System health** in the admin and fix anything red or orange (HTTPS, e-mail, the scheduler cron).

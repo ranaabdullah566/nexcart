@@ -11,10 +11,10 @@ back to the **built-in wording** (which is already translated).
 | Tab | You can change |
 |-----|----------------|
 | Top bar | on/off, text, the small links on the right |
-| Header & menu | sticky header; Shop / Saved / Compare icons; language switcher; light/dark toggle; search hint and button; the “All categories” mega menu and its “Popular” tiles; Deals link; Track-order link |
+| Header & menu | sticky header; Shop icon; language switcher; light/dark toggle; search hint and button; the “All categories” mega menu and its “Popular” tiles; Deals link; Track-order link |
 | Home page | the “Top deals” panel on the hero (on/off, title, how many); hero auto-slide and speed |
-| Product cards & listing | image shape and fit, products per row, products per page, category / rating / discount / quick view / save / compare, the Add-to-cart wording |
-| Product page | trust lines under the photos, small badges under the buttons, details table, Share / Save / Compare / WhatsApp, the “Delivery & returns” tab (name, lines, policy cards), related products (title, how many), sticky buy bar on phones |
+| Product cards & listing | image shape and fit, products per row, products per page, category / rating / discount / quick view, the Add-to-cart wording |
+| Product page | trust lines under the photos, small badges under the buttons, details table, Share / WhatsApp, the “Delivery & returns” tab (name, lines, policy cards), related products (title, how many), sticky buy bar on phones |
 | Footer | social icons, contact lines, text under the logo, the three column titles, copyright line, legal links |
 | Cookie bar & buttons | the cookie bar and its wording, the WhatsApp and back-to-top buttons |
 | Checkout & invoice | ask for area / postal code / order notes; logo, tax number and footer text on invoices |

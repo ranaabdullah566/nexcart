@@ -1,8 +1,7 @@
 # NexCart — Product & Build Plan
 
-Ek fully dynamic, white-label e-commerce platform jo multiple business types
-(Fastfood, Pharmacy, Medical Store, Online Store, Grocery, Fashion, ...) ko sell
-kiya ja sake.
+Ek online pharmacy platform — online medicine sale ke liye. (Shuru mein multiple business types
+ka plan tha; ab product sirf pharmacy-only hai, v1.2.0.)
 
 ## 1. Stack
 
@@ -108,6 +107,10 @@ kiya ja sake.
 - Everything customisable from the admin: Storefront options, Interface text, menu places, 11 home section types, SEO fields
 - Form validation in browser + server with messages under every field; 100-record demo seeder
 - Docs: README, CUSTOMIZING, SECURITY, ADMIN-GUIDE, DEPLOYMENT, UPGRADE refreshed
+
+### Phase 9 — Pharmacy-only ✅ (v1.2.0)
+- Sirf pharmacy profile; fast food / medical store / general profiles, Kitchen display, Add-ons, Loyalty points, Wishlist and Compare hata diye
+- Pharmacy demo data (24 medicines, pack sizes, Rx items), setup wizard mein business-type step nahi
 
 ## 5. Ideas not built yet
 - Vendors / marketplace mode (sellers, commissions, payouts) — only if you want to run a multi-seller marketplace

@@ -15,7 +15,7 @@ expensive and noisy. Keep PHP, Laravel and this app updated (see [UPGRADE.md](UP
 | Content-Security-Policy | Nonce-based: only our own scripts run; injected scripts are blocked. Also `frame-ancestors`, `object-src 'none'`, `form-action`. |
 | Headers | nosniff, X-Frame-Options, HSTS (on HTTPS), cross-origin opener policy, referrer / permissions policy, no `X-Powered-By`. Account, checkout, order and admin pages are `no-store` and `noindex`. |
 | Scanner guard | Requests for `.env`, `.git`, `wp-login`, `phpmyadmin` … get 404; 5 strikes → the IP is blocked for an hour. |
-| Rate limits | login, register, 2FA, cart, wishlist, compare, search, checkout, tracking. |
+| Rate limits | login, register, 2FA, cart, search, checkout, tracking. |
 | Bot protection | Optional Google reCAPTCHA v2 on sign-in, sign-up, checkout and order tracking (refuses when Google is unreachable), plus an invisible honeypot and a timing check on public forms. |
 | Form validation | Every form is checked in the browser *and* again on the server; messages appear under each field. The server never trusts the browser. |
 | Sign in with Google | Customers only. Keys are stored encrypted. |

@@ -1346,5 +1346,7 @@
     "we received a request to choose a new password for your :store account.": "Humein aap ke :store account ka naya password chunne ki darkhwast mili hai.",
     "This link works once and expires in :m minutes.": "Yeh link ek bar kaam karta hai aur :m minute mein khatam ho jata hai.",
     "If you did not ask for this, you can ignore this e-mail — your password stays the same.": "Agar aap ne yeh darkhwast nahin ki to is email ko nazar andaz kar dein — aap ka password wohi rahega.",
-    "Button not working? Copy this address into your browser:": "Button kaam nahin kar raha? Yeh pata apne browser mein copy karein:"
+    "Button not working? Copy this address into your browser:": "Button kaam nahin kar raha? Yeh pata apne browser mein copy karein:",
+    "Join :store for faster checkout, order tracking and prescription history.": "Tez checkout, order tracking aur nuskhon ki history ke liye :store mein shamil hon.",
+    "Your online pharmacy comes preconfigured — prescriptions, batch & expiry, delivery slots and riders. You can change everything later from the admin panel.": "Aap ki online pharmacy pehle se tarteeb shuda hai — nuskhe, batch aur expiry, delivery slots aur riders. Sab kuch baad mein admin panel se badal sakte hain."
 }

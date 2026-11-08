@@ -2,6 +2,24 @@
 
 All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
+## 1.2.0
+NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one migration that drops the removed tables (add-ons and loyalty data are discarded) — take a backup first, see [docs/UPGRADE.md](docs/UPGRADE.md).
+
+### Removed
+- Business types: fast food, medical store and general store. There is one pharmacy profile; the setup wizard no longer asks for a business type.
+- **Kitchen display** and **Add-ons** (modifier groups) — medicines use pack-size variants instead.
+- **Loyalty points** (earning, spending at checkout, settings, report, account counter).
+- **Wishlist** and **Compare** (pages, buttons, header / footer / bottom-bar links, and their Storefront options).
+
+### Changed
+- Pharmacy profile now includes variants, pickup, riders and reviews as built-in modules.
+- Sample data (`nexcart:demo`, Admin → System health, setup wizard) is a 24-item medicine catalogue with pack sizes and prescription items; `--type` is gone.
+- 100-record seeder now creates medicines.
+- Home page, product fields and report CSV no longer mention points.
+
+### Kept
+- Prescriptions + pharmacist review, batches / expiry, delivery slots, riders, coupons, pickup, customer reviews, licence keys, 2FA, reports, backups, activity log, Recycle Bin, alerts, Google sign-in, reCAPTCHA, password reset.
+
 ## 1.1.0
 A new marketplace-style storefront, a storefront you can customize from the admin, a safety net for deletes, and a security layer. Upgrading from 1.0.0 needs no manual steps — see [docs/UPGRADE.md](docs/UPGRADE.md).
 
