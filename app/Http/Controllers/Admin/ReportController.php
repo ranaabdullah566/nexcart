@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ReportController extends Controller
 {
+    use Concerns\ResolvesReportRange;
+
     public function index(Request $request): View
     {
         $this->authorizeTo('reports.view');
@@ -22,7 +24,7 @@ class ReportController extends Controller
 
         $orders = $this->orders($from, $to)->get();
         $live = $orders->reject(fn ($o) => in_array($o->status, ['cancelled', 'refunded'], true));
-        $span = $from->diffInDays($to) + 1;
+        $span = (int) floor($from->diffInDays($to)) + 1;
         $prevFrom = $from->copy()->subDays($span);
         $prev = $this->orders($prevFrom, $from->copy()->subSecond())->get()->reject(fn ($o) => in_array($o->status, ['cancelled', 'refunded'], true));
 
@@ -84,28 +86,6 @@ class ReportController extends Controller
     private function orders(Carbon $from, Carbon $to)
     {
         return Order::whereBetween('placed_at', [$from, $to])->orderBy('placed_at');
-    }
-
-    /** @return array{Carbon, Carbon, string} start / end of the period in UTC (day boundaries follow the store's timezone) and which preset was used */
-    private function range(Request $request): array
-    {
-        $tz = setting('store.timezone', config('app.timezone'));
-        $data = $request->validate(['range' => ['nullable', 'in:7,30,90,custom'], 'from' => ['nullable', 'date'], 'to' => ['nullable', 'date']]);
-        $key = $data['range'] ?? '30';
-
-        if ($key === 'custom' && filled($data['from'] ?? null) && filled($data['to'] ?? null)) {
-            $from = Carbon::parse($data['from'], $tz)->startOfDay();
-            $to = Carbon::parse($data['to'], $tz)->endOfDay();
-            if ($to->lt($from) || $from->diffInDays($to) > 366) {
-                [$from, $to, $key] = [now($tz)->subDays(29)->startOfDay(), now($tz)->endOfDay(), '30'];
-            }
-        } else {
-            $key = $key === 'custom' ? '30' : $key;
-            $from = now($tz)->subDays((int) $key - 1)->startOfDay();
-            $to = now($tz)->endOfDay();
-        }
-
-        return [$from->utc(), $to->utc(), $key];
     }
 
     private function change(float|int $now, float|int $before): ?float

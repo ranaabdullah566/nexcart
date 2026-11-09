@@ -17,7 +17,7 @@ class RolesSeeder extends Seeder
         'customers' => ['view', 'create', 'update', 'delete', 'export'],
         'staff' => ['view', 'create', 'update', 'delete'],
         'settings' => ['view', 'update'],
-        'reports' => ['view', 'export', 'sales', 'products', 'customers', 'inventory', 'finance', 'operations', 'marketing'],
+        'reports' => ['view', 'export', 'sales', 'products', 'customers', 'inventory', 'finance', 'operations', 'marketing', 'pharmacy'],
         'prescriptions' => ['view', 'verify'],
         'deliveries' => ['view', 'update'],
         'inventory' => ['view', 'adjust'],

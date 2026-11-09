@@ -4,6 +4,11 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Reports
+- New **Pharmacy (Rx)** report: prescription orders and their share, prescription revenue, approval rate, review waiting time, prescription vs other revenue by day, review results, top prescription medicines, reviews per pharmacist and the call-back requests. New permission `reports.pharmacy` (given by migration to every role that can already see reports).
+- One period picker for every report (Today, Yesterday, 7 / 30 / 90 days, This month, Last month, This year, 1 year, Custom) with quick chips, plus **payment-method and city filters** on all order-based reports.
+- **Print / PDF** (clean print layout with the store name, period and filters), **Export all (CSV)** with every table of a report in one file, plain-language highlights ("Revenue is up 12% …"), KPI cards with change vs the previous period (also for average order and items sold), a dashed **previous-period line** on *Revenue by day*, charts in the design's colours with whole-number axes.
+
 ### Storefront — five per row and sliders
 - Product rows now show **5 cards per row** on desktop (home, saved and other full-width pages; 4 / 3 / 2 on smaller screens). Shop and category pages, which share the row with the filter sidebar, show one card fewer (4). Storefront options → *Products per row* is now 5 by default (3–6 selectable).
 - Every row on the home page is a **slider** (products, categories, brands, blog, reviews, testimonials) with arrow buttons, swipe on phones and scroll-snap; arrows hide when everything already fits. Product-page rails use the same sliders. New home product sections default to 12 items.

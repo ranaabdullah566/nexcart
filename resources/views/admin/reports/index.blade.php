@@ -5,6 +5,7 @@
     $pct = fn ($c) => $c === null ? null : ($c >= 0 ? '+' : '').$c.'%';
     $tone = fn ($c) => $c === null ? '' : ($c >= 0 ? 'text-success' : 'text-danger');
 @endphp
+@push('styles')<link href="{{ asset('assets/css/reports.css') }}?v={{ @filemtime(public_path('assets/css/reports.css')) }}" rel="stylesheet">@endpush
 @section('content')
 <x-page-header :title="__('Reports')" :eyebrow="__('Growth')" :sub="local_time($from, 'd M Y').' → '.local_time($to, 'd M Y')">
     <x-slot:actions>
@@ -13,15 +14,7 @@
 </x-page-header>
 @include('admin.reports._nav', ['active' => 'overview'])
 
-<form method="GET" class="d-flex gap-2 flex-wrap align-items-end mb-4" data-no-ajax>
-    <div class="btn-group" role="group">@foreach (['7' => __('7 days'), '30' => __('30 days'), '90' => __('90 days'), 'custom' => __('Custom')] as $k => $l)<a class="btn btn-outline-secondary {{ $key === $k ? 'active' : '' }}" href="{{ route('admin.reports.index', $k === 'custom' ? ['range' => 'custom', 'from' => local_time($from, 'Y-m-d'), 'to' => local_time($to, 'Y-m-d')] : ['range' => $k]) }}" data-no-modal>{{ $l }}</a>@endforeach</div>
-    @if ($key === 'custom')
-        <input type="hidden" name="range" value="custom">
-        <div><label class="form-label small mb-0">{{ __('From') }}</label><input type="date" name="from" value="{{ local_time($from, 'Y-m-d') }}" class="form-control form-control-sm"></div>
-        <div><label class="form-label small mb-0">{{ __('To') }}</label><input type="date" name="to" value="{{ local_time($to, 'Y-m-d') }}" class="form-control form-control-sm"></div>
-        <button class="btn btn-sm btn-primary">{{ __('Apply') }}</button>
-    @endif
-</form>
+@include('admin.reports._range', ['route' => 'admin.reports.index'])
 
 <div class="row g-3 mb-3 stagger">
     <div class="col-6 col-lg-3"><x-stat-card :label="__('Revenue')" icon="cash-coin" tone="ok" :value="money($kpi['revenue'])" :sub="($pct($kpi['revenue_change']) ?? '—').' '.__('vs previous period')" /></div>

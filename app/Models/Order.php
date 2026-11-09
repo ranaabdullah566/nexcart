@@ -53,6 +53,11 @@ class Order extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'prescription_reviewed_by');
+    }
+
     public function rider(): BelongsTo
     {
         return $this->belongsTo(User::class, 'rider_id');

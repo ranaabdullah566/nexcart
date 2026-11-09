@@ -7,22 +7,31 @@
     };
 @endphp
 @section('content')
-<x-page-header :title="__($title)" :eyebrow="__('Reports')" :sub="local_time($from, 'd M Y').' → '.local_time($to, 'd M Y')" />
+@push('styles')<link href="{{ asset('assets/css/reports.css') }}?v={{ @filemtime(public_path('assets/css/reports.css')) }}" rel="stylesheet">@endpush
+@php
+    // plain-language highlights from the numbers that have a comparison
+    $insights = collect($report['kpis'])->filter(fn ($k) => $k[3] !== null && abs($k[3]) >= 0.1)->sortByDesc(fn ($k) => abs($k[3]))->take(3)
+        ->map(fn ($k) => ['up' => $k[3] >= 0, 'text' => __(':kpi is :dir :n% compared with the previous period (:v)', ['kpi' => __($k[0]), 'dir' => $k[3] >= 0 ? __('up') : __('down'), 'n' => abs($k[3]), 'v' => $fmt($k[1], $k[2])])]);
+@endphp
+<x-page-header :title="__($title)" :eyebrow="__('Reports')" :sub="local_time($from, 'd M Y').' → '.local_time($to, 'd M Y')">
+    <x-slot:actions>
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer me-1"></i> {{ __('Print / PDF') }}</button>
+        @can('reports.export')<a class="btn btn-outline-secondary" data-no-modal href="{{ route('admin.reports.show', [$type] + request()->query() + ['export' => 'all']) }}"><i class="bi bi-file-earmark-spreadsheet me-1"></i> {{ __('Export all (CSV)') }}</a>@endcan
+    </x-slot:actions>
+</x-page-header>
+<div class="rp-print-head"><b>{{ setting('store.name', config('app.name')) }}</b> — {{ __($title) }} · {{ local_time($from, 'd M Y') }} → {{ local_time($to, 'd M Y') }}@if (filled($filters['method'] ?? null) || filled($filters['city'] ?? null)) · {{ $filters['method'] ?? '' }} {{ $filters['city'] ?? '' }}@endif</div>
 @include('admin.reports._nav', ['active' => $type])
+@include('admin.reports._range', ['route' => 'admin.reports.show', 'routeParams' => ['type' => $type]])
 
-<form method="GET" class="d-flex gap-2 flex-wrap align-items-end mb-4" data-no-ajax>
-    <div class="btn-group" role="group">@foreach (['7' => __('7 days'), '30' => __('30 days'), '90' => __('90 days'), '365' => __('1 year'), 'custom' => __('Custom')] as $k => $l)<a class="btn btn-outline-secondary {{ $key === $k ? 'active' : '' }}" href="{{ route('admin.reports.show', [$type] + ($k === 'custom' ? ['range' => 'custom', 'from' => local_time($from, 'Y-m-d'), 'to' => local_time($to, 'Y-m-d')] : ['range' => $k])) }}" data-no-modal>{{ $l }}</a>@endforeach</div>
-    @if ($key === 'custom')
-        <input type="hidden" name="range" value="custom">
-        <div><label class="form-label small mb-0">{{ __('From') }}</label><input type="date" name="from" value="{{ local_time($from, 'Y-m-d') }}" class="form-control form-control-sm"></div>
-        <div><label class="form-label small mb-0">{{ __('To') }}</label><input type="date" name="to" value="{{ local_time($to, 'Y-m-d') }}" class="form-control form-control-sm"></div>
-        <button class="btn btn-sm btn-primary">{{ __('Apply') }}</button>
-    @endif
-</form>
+@if ($insights->isNotEmpty())
+<div class="rp-insights">@foreach ($insights as $i)<div class="rp-insight {{ $i['up'] ? 'up' : 'down' }}"><i class="bi bi-{{ $i['up'] ? 'graph-up-arrow' : 'graph-down-arrow' }}"></i><span>{{ $i['text'] }}</span></div>@endforeach</div>
+@endif
 
-<div class="row g-3 mb-3 stagger">
+<div class="rp-kpis">
     @foreach ($report['kpis'] as [$label, $value, $t, $change])
-        <div class="col-6 col-lg-3"><x-stat-card :label="__($label)" icon="activity" :value="$fmt($value, $t)" :sub="$change === null ? '' : (($change >= 0 ? '+' : '').$change.'% '.__('vs previous period'))" /></div>
+        <div class="rp-kpi"><div class="l">{{ __($label) }}</div><div class="v">{{ $fmt($value, $t) }}</div>
+            @if ($change !== null)<div class="s {{ abs($change) < 0.05 ? 'flat' : ($change >= 0 ? 'up' : 'down') }}"><i class="bi bi-{{ $change >= 0 ? 'arrow-up' : 'arrow-down' }}-short"></i>{{ abs($change) }}% {{ __('vs previous period') }}</div>@endif
+        </div>
     @endforeach
 </div>
 
@@ -57,16 +66,17 @@
 <script nonce="{{ csp_nonce() }}">
     (function () {
         var cur = @json(setting('store.currency_symbol', 'Rs'));
-        var palette = ['#22d3ee', '#8b5cf6', '#34d399', '#fbbf24', '#f472b6', '#60a5fa', '#fb7185', '#a3e635'];
+        var cs = function (v, d) { var b = getComputedStyle(document.body).getPropertyValue(v).trim(); return b || d; };
+        var palette = [cs('--tq-blue', '#22d3ee'), cs('--tq-orange', '#8b5cf6'), cs('--tq-green', '#34d399'), '#7c3aed', '#0e7490', cs('--tq-deal', '#fb7185'), '#64748b', '#be123c'];
         document.querySelectorAll('.nx-rchart').forEach(function (cv) {
             var c = JSON.parse(cv.dataset.chart), pie = c.type === 'doughnut';
             var ds = c.datasets.map(function (d, i) {
-                return Object.assign({}, d, pie ? { backgroundColor: palette, borderWidth: 0 } : { borderColor: palette[i], backgroundColor: c.type === 'line' ? 'rgba(34,211,238,.15)' : palette[i], fill: c.type === 'line', tension: .3, borderRadius: 6 });
+                return Object.assign({}, d, pie ? { backgroundColor: palette, borderWidth: 0 } : { borderColor: palette[i], backgroundColor: c.type === 'line' ? palette[i] + '22' : palette[i], fill: c.type === 'line' && i === 0, tension: .3, borderRadius: 6, borderDash: d.dashed ? [6, 4] : [], borderWidth: c.type === 'line' ? 2.5 : 0, pointRadius: d.dashed ? 0 : 2 });
             });
             new Chart(cv, { type: c.type, data: { labels: c.labels, datasets: ds }, options: {
                 responsive: true, maintainAspectRatio: false, indexAxis: c.horizontal ? 'y' : 'x',
                 plugins: { legend: { display: pie }, tooltip: { callbacks: { label: function (x) { var v = x.parsed.y !== undefined && !c.horizontal ? x.parsed.y : (x.parsed.x !== undefined && c.horizontal ? x.parsed.x : x.parsed); return (c.money ? cur + ' ' : '') + Number(v).toLocaleString(); } } } },
-                scales: pie ? {} : { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,.12)' } } }
+                scales: pie ? {} : { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,.12)' }, ticks: { precision: c.money ? undefined : 0 } } }
             } });
         });
     })();

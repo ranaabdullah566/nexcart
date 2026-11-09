@@ -51,4 +51,40 @@ class ReportHubTest extends TestCase
         $rider = tap(User::factory()->create(), fn ($u) => $u->assignRole('rider'));
         $this->actingAs($rider)->get('/admin/reports/sales')->assertForbidden();
     }
+
+    public function test_period_presets_filters_print_and_export_all(): void
+    {
+        $this->actingAs($this->owner);
+        foreach (['today', 'yesterday', '7', '30', '90', 'month', 'last_month', 'year', '365'] as $r) {
+            $this->get("/admin/reports/sales?range={$r}")->assertOk();
+            $this->get("/admin/reports?range={$r}")->assertOk();
+        }
+        $this->get('/admin/reports/sales?range=bogus')->assertSessionHasErrors('range');
+
+        // filters narrow every order-based number (the seeded orders are all cash on delivery in Lahore)
+        $this->get('/admin/reports/sales?method=cod&city=Lahore')->assertOk()->assertSee('575.00');
+        $this->get('/admin/reports/sales?method=stripe')->assertOk()->assertDontSee('575.00');
+        $this->get('/admin/reports/sales?city=Karachi')->assertOk()->assertDontSee('575.00');
+
+        $this->get('/admin/reports/sales')->assertSee('window.print()', false)->assertSee('Export all (CSV)')->assertSee('rp-kpis', false);
+        $csv = $this->get('/admin/reports/sales?export=all')->assertOk()->assertHeader('content-type', 'text/csv; charset=UTF-8')->streamedContent();
+        $this->assertStringContainsString('# Daily sales', $csv);
+        $this->assertStringContainsString('KPI,Revenue,575', $csv);
+    }
+
+    public function test_pharmacy_report_counts_prescriptions_and_requests(): void
+    {
+        $rx = Product::create(['name' => 'Amoxil', 'slug' => 'amoxil', 'type' => 'simple', 'status' => 'active', 'price' => 200, 'stock_qty' => 5, 'requires_prescription' => true]);
+        $o = Order::forceCreate(['number' => 'R1', 'public_token' => str()->random(20), 'status' => 'completed', 'payment_status' => 'paid', 'payment_method' => 'cod', 'name' => 'Sara', 'email' => 's@x.test', 'phone' => '1', 'shipping_method' => 'Standard', 'city' => 'Lahore', 'subtotal' => 400, 'total' => 400, 'currency' => 'PKR', 'requires_prescription' => true, 'prescription_status' => 'approved', 'prescription_reviewed_by' => $this->owner->id, 'prescription_reviewed_at' => now()->addMinutes(20), 'placed_at' => now()]);
+        OrderItem::forceCreate(['order_id' => $o->id, 'product_id' => $rx->id, 'name' => 'Amoxil', 'unit_price' => 200, 'qty' => 2, 'total' => 400]);
+        \App\Models\PrescriptionRequest::create(['name' => 'Ali', 'phone' => '0300', 'status' => 'new']);
+
+        $this->actingAs($this->owner)->get('/admin/reports/pharmacy')->assertOk()->assertSee('Prescription orders')->assertSee('Amoxil')->assertSee('Reviews by pharmacist')->assertSee('Call-back requests');
+        $csv = $this->get('/admin/reports/pharmacy?export=top')->assertOk()->streamedContent();
+        $this->assertStringContainsString('Amoxil,2,400', $csv);
+
+        // a role without the permission is turned away
+        $staff = User::factory()->create();
+        $this->actingAs($staff)->get('/admin/reports/pharmacy')->assertForbidden();
+    }
 }

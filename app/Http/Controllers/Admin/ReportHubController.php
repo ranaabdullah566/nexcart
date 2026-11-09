@@ -30,10 +30,15 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ReportHubController extends Controller
 {
+    use Concerns\ResolvesReportRange;
+
+    /** Optional filters from the page (payment method, city) applied to every order-based report. */
+    private array $filters = [];
+
     public const TYPES = [
         'sales' => ['Sales', 'graph-up-arrow'], 'products' => ['Products', 'box-seam-fill'], 'customers' => ['Customers', 'people-fill'],
         'inventory' => ['Inventory', 'boxes'], 'finance' => ['Finance & tax', 'cash-coin'], 'operations' => ['Operations', 'truck'],
-        'marketing' => ['Marketing', 'megaphone-fill'],
+        'marketing' => ['Marketing', 'megaphone-fill'], 'pharmacy' => ['Pharmacy (Rx)', 'prescription2'],
     ];
 
     public function show(Request $request, string $type): View|StreamedResponse
@@ -42,17 +47,30 @@ class ReportHubController extends Controller
         $this->authorizeTo('reports.view');
         $this->authorizeTo("reports.{$type}");
 
+        abort_if($type === 'pharmacy' && ! \App\Support\BusinessProfile::hasModule('prescriptions'), 404);
+
         [$from, $to, $key] = $this->range($request);
         $tz = setting('store.timezone', config('app.timezone'));
+        $this->filters = $request->validate(['method' => ['nullable', 'string', 'max:24'], 'city' => ['nullable', 'string', 'max:120']]);
         $report = $this->{$type}($from, $to, $tz);
 
         if ($request->filled('export')) {
             $this->authorizeTo('reports.export');
+            if ($request->query('export') === 'all') {
+                return $this->csvAll($report, $type, $from, $to);
+            }
 
             return $this->csv($report, (string) $request->query('export'), $type, $from, $to);
         }
 
-        return view('admin.reports.hub', ['type' => $type, 'title' => self::TYPES[$type][0], 'report' => $report, 'from' => $from, 'to' => $to, 'key' => $key, 'types' => self::TYPES]);
+        $filterable = ! in_array($type, ['inventory'], true);
+
+        return view('admin.reports.hub', [
+            'type' => $type, 'title' => self::TYPES[$type][0], 'report' => $report, 'from' => $from, 'to' => $to, 'key' => $key, 'types' => self::TYPES,
+            'filters' => $this->filters, 'filterable' => $filterable,
+            'methods' => $filterable ? Order::whereNotNull('payment_method')->distinct()->pluck('payment_method')->sort()->values() : collect(),
+            'cities' => $filterable ? Order::whereNotNull('city')->where('city', '!=', '')->distinct()->orderBy('city')->limit(100)->pluck('city') : collect(),
+        ]);
     }
 
     // ---------------------------------------------------------------- reports
@@ -62,11 +80,13 @@ class ReportHubController extends Controller
         $live = $this->live($from, $to);
         $revenue = (float) $live->sum('total');
         $items = $this->items($live);
-        $span = $from->diffInDays($to) + 1;
+        $span = (int) floor($from->diffInDays($to)) + 1;
         $prevLive = $this->live($from->copy()->subDays($span), $from->copy()->subSecond());
 
         $byDay = $live->groupBy(fn ($o) => $this->local($o->placed_at, $tz)->format('Y-m-d'));
         $days = collect(range(0, $span - 1))->map(fn ($i) => $from->copy()->timezone($tz)->addDays($i)->format('Y-m-d'));
+        $prevStart = $from->copy()->subDays($span)->timezone($tz)->startOfDay();
+        $prevByDay = $prevLive->groupBy(fn ($o) => (int) $prevStart->diffInDays($this->local($o->placed_at, $tz)->startOfDay()))->map(fn ($g) => $g->sum('total'));
         $hours = array_fill(0, 24, ['orders' => 0, 'revenue' => 0.0]);
         $weekdays = array_fill(0, 7, ['orders' => 0, 'revenue' => 0.0]);
         foreach ($live as $o) {
@@ -82,13 +102,13 @@ class ReportHubController extends Controller
             'kpis' => [
                 ['Revenue', $revenue, 'money', $this->change($revenue, (float) $prevLive->sum('total'))],
                 ['Orders', $live->count(), 'int', $this->change($live->count(), $prevLive->count())],
-                ['Average order', $live->count() ? $revenue / $live->count() : 0, 'money', null],
-                ['Items sold', (int) $items->sum('qty'), 'int', null],
+                ['Average order', $live->count() ? $revenue / $live->count() : 0, 'money', $this->change($live->count() ? $revenue / $live->count() : 0, $prevLive->count() ? (float) $prevLive->sum('total') / $prevLive->count() : 0)],
+                ['Items sold', (int) $items->sum('qty'), 'int', $this->change((int) $items->sum('qty'), (int) $this->items($prevLive)->sum('qty'))],
                 ['Best day', $byDay->map(fn ($g) => $g->sum('total'))->max() ?? 0, 'money', null],
                 ['Cancelled / refunded', $this->orders($from, $to)->get()->whereIn('status', ['cancelled', 'refunded'])->count(), 'int', null],
             ],
             'charts' => [
-                ['id' => 'day', 'type' => 'line', 'title' => 'Revenue by day', 'labels' => $days->map(fn ($d) => Carbon::parse($d)->format('d M'))->all(), 'money' => true, 'datasets' => [['label' => 'Revenue', 'data' => $days->map(fn ($d) => round((float) ($byDay[$d] ?? collect())->sum('total'), 2))->all()]]],
+                ['id' => 'day', 'type' => 'line', 'title' => 'Revenue by day', 'labels' => $days->map(fn ($d) => Carbon::parse($d)->format('d M'))->all(), 'money' => true, 'datasets' => [['label' => 'Revenue', 'data' => $days->map(fn ($d) => round((float) ($byDay[$d] ?? collect())->sum('total'), 2))->all()], ['label' => 'Previous period', 'data' => $days->keys()->map(fn ($i) => round((float) ($prevByDay[$i] ?? 0), 2))->all(), 'dashed' => true]]],
                 ['id' => 'hour', 'type' => 'bar', 'title' => 'Orders by hour of day', 'labels' => array_map(fn ($h) => sprintf('%02d:00', $h), range(0, 23)), 'datasets' => [['label' => 'Orders', 'data' => array_column($hours, 'orders')]]],
                 ['id' => 'wd', 'type' => 'bar', 'title' => 'Revenue by weekday', 'labels' => $names, 'money' => true, 'datasets' => [['label' => 'Revenue', 'data' => array_map(fn ($w) => round($w['revenue'], 2), array_values($weekdays))]]],
             ],
@@ -277,6 +297,58 @@ class ReportHubController extends Controller
         ];
     }
 
+    /** Prescription medicines: how much of the business needs a prescription, how the pharmacist handled it, and the call-back requests. */
+    private function pharmacy(Carbon $from, Carbon $to, string $tz): array
+    {
+        $all = $this->orders($from, $to)->with('reviewer')->get();
+        $rx = $all->where('requires_prescription', true)->values();
+        $rxLive = $rx->reject(fn ($o) => in_array($o->status, ['cancelled', 'refunded'], true));
+        $live = $all->reject(fn ($o) => in_array($o->status, ['cancelled', 'refunded'], true));
+        $span = (int) floor($from->diffInDays($to)) + 1;
+        $prev = $this->orders($from->copy()->subDays($span), $from->copy()->subSecond())->where('requires_prescription', true)->get();
+        $byStatus = $rx->groupBy(fn ($o) => $o->prescription_status ?: 'pending')->map->count();
+        $decided = ($byStatus['approved'] ?? 0) + ($byStatus['rejected'] ?? 0);
+        $waits = $rx->filter(fn ($o) => $o->prescription_reviewed_at && $o->placed_at)->map(fn ($o) => $o->placed_at->diffInMinutes($o->prescription_reviewed_at));
+        $reqs = \App\Models\PrescriptionRequest::whereBetween('created_at', [$from, $to])->get();
+
+        $days = collect(range(0, $span - 1))->map(fn ($i) => $from->copy()->timezone($tz)->addDays($i)->format('Y-m-d'));
+        $rxDay = $rxLive->groupBy(fn ($o) => $this->local($o->placed_at, $tz)->format('Y-m-d'));
+        $otcDay = $live->where('requires_prescription', false)->groupBy(fn ($o) => $this->local($o->placed_at, $tz)->format('Y-m-d'));
+        $items = $this->items($rxLive)->filter(fn ($i) => $i->product_id && \App\Models\Product::withTrashed()->where('id', $i->product_id)->value('requires_prescription'));
+        $label = fn ($s) => ucfirst(str_replace('_', ' ', $s));
+
+        return [
+            'kpis' => [
+                ['Prescription orders', $rx->count(), 'int', $this->change($rx->count(), $prev->count())],
+                ['Share of all orders %', $all->count() ? round($rx->count() / $all->count() * 100, 1) : 0, 'pct', null],
+                ['Prescription revenue', (float) $rxLive->sum('total'), 'money', null],
+                ['Approval rate %', $decided ? round(($byStatus['approved'] ?? 0) / $decided * 100, 1) : 0, 'pct', null],
+                ['Waiting for review', (int) ($byStatus['pending'] ?? 0), 'int', null],
+                ['Average review time (min)', $waits->count() ? (int) round($waits->avg()) : 0, 'int', null],
+                ['Call-back requests', $reqs->count(), 'int', null],
+                ['Requests handled %', $reqs->count() ? round($reqs->whereIn('status', ['contacted', 'closed'])->count() / $reqs->count() * 100, 1) : 0, 'pct', null],
+            ],
+            'charts' => [
+                ['id' => 'rxday', 'type' => 'line', 'title' => 'Prescription vs other revenue', 'money' => true, 'labels' => $days->map(fn ($d) => Carbon::parse($d)->format('d M'))->all(), 'datasets' => [
+                    ['label' => 'Prescription', 'data' => $days->map(fn ($d) => round((float) ($rxDay[$d] ?? collect())->sum('total'), 2))->all()],
+                    ['label' => 'Other', 'data' => $days->map(fn ($d) => round((float) ($otcDay[$d] ?? collect())->sum('total'), 2))->all()]]],
+                ['id' => 'rxstatus', 'type' => 'doughnut', 'title' => 'Prescription review results', 'labels' => $byStatus->keys()->map($label)->all(), 'datasets' => [['label' => 'Orders', 'data' => $byStatus->values()->all()]]],
+                ['id' => 'rxreq', 'type' => 'doughnut', 'title' => 'Call-back requests by status', 'labels' => $reqs->countBy('status')->keys()->map($label)->all(), 'datasets' => [['label' => 'Requests', 'data' => $reqs->countBy('status')->values()->all()]]],
+            ],
+            'tables' => [
+                $this->table('top', 'Top prescription medicines', ['Medicine', 'Units', 'Revenue'], ['text', 'int', 'money'],
+                    $items->groupBy(fn ($i) => $i->product_id)->map(fn ($g) => [$g->first()->name, (int) $g->sum('qty'), (float) $g->sum('total')])->sortByDesc(2)->take(25)->values()->all()),
+                $this->table('results', 'Review results', ['Result', 'Orders', 'Value'], ['text', 'int', 'money'],
+                    $rx->groupBy(fn ($o) => $o->prescription_status ?: 'pending')->map(fn ($g, $s) => [$label($s), $g->count(), (float) $g->sum('total')])->values()->all()),
+                $this->table('pharmacists', 'Reviews by pharmacist', ['Pharmacist', 'Reviewed', 'Approved', 'Rejected', 'Avg minutes'], ['text', 'int', 'int', 'int', 'int'],
+                    $rx->whereNotNull('prescription_reviewed_by')->groupBy('prescription_reviewed_by')->map(fn ($g) => [$g->first()->reviewer?->name ?? '—', $g->count(), $g->where('prescription_status', 'approved')->count(), $g->where('prescription_status', 'rejected')->count(),
+                        (int) round($g->filter(fn ($o) => $o->prescription_reviewed_at)->avg(fn ($o) => $o->placed_at->diffInMinutes($o->prescription_reviewed_at)) ?? 0)])->sortByDesc(1)->values()->all()),
+                $this->table('requests', 'Call-back requests', ['Date', 'Name', 'City', 'Status', 'Files'], ['text', 'text', 'text', 'text', 'int'],
+                    $reqs->sortByDesc('id')->take(100)->map(fn ($r) => [$this->local($r->created_at, $tz)->format('Y-m-d H:i'), $r->name, $r->city ?: '—', $label($r->status), $r->getMedia('files')->count()])->values()->all()),
+            ],
+        ];
+    }
+
     private function marketing(Carbon $from, Carbon $to, string $tz): array
     {
         $live = $this->live($from, $to);
@@ -315,7 +387,9 @@ class ReportHubController extends Controller
 
     private function orders(Carbon $from, Carbon $to)
     {
-        return Order::whereBetween('placed_at', [$from, $to])->orderBy('placed_at');
+        return Order::whereBetween('placed_at', [$from, $to])->orderBy('placed_at')
+            ->when(filled($this->filters['method'] ?? null), fn ($q) => $q->where('payment_method', $this->filters['method']))
+            ->when(filled($this->filters['city'] ?? null), fn ($q) => $q->where('city', $this->filters['city']));
     }
 
     private function live(Carbon $from, Carbon $to): Collection
@@ -343,6 +417,27 @@ class ReportHubController extends Controller
         return $before > 0 ? round(($now - $before) / $before * 100, 1) : null;
     }
 
+    /** Every table of the report in one CSV, one titled block after another. */
+    private function csvAll(array $report, string $type, Carbon $from, Carbon $to): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($report) {
+            $out = fopen('php://output', 'w');
+            $safe = fn ($row) => array_map(fn ($v) => is_string($v) && preg_match('/^[=+\-@\t\r]/', $v) ? "'".$v : $v, $row);
+            foreach ($report['kpis'] as [$label, $value]) {
+                fputcsv($out, $safe(['KPI', $label, $value]));
+            }
+            foreach ($report['tables'] as $t) {
+                fputcsv($out, []);
+                fputcsv($out, $safe(['# '.$t['title']]));
+                fputcsv($out, $safe($t['cols']));
+                foreach ($t['rows'] as $row) {
+                    fputcsv($out, $safe($row));
+                }
+            }
+            fclose($out);
+        }, "{$type}-report-".$from->format('Y-m-d').'-to-'.$to->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     private function csv(array $report, string $key, string $type, Carbon $from, Carbon $to): StreamedResponse
     {
         $table = collect($report['tables'])->firstWhere('key', $key);
@@ -359,23 +454,4 @@ class ReportHubController extends Controller
     }
 
     /** @return array{Carbon, Carbon, string} */
-    private function range(Request $request): array
-    {
-        $tz = setting('store.timezone', config('app.timezone'));
-        $data = $request->validate(['range' => ['nullable', 'in:7,30,90,365,custom'], 'from' => ['nullable', 'date'], 'to' => ['nullable', 'date']]);
-        $key = $data['range'] ?? '30';
-        if ($key === 'custom' && filled($data['from'] ?? null) && filled($data['to'] ?? null)) {
-            $from = Carbon::parse($data['from'], $tz)->startOfDay();
-            $to = Carbon::parse($data['to'], $tz)->endOfDay();
-            if ($to->lt($from) || $from->diffInDays($to) > 366) {
-                [$from, $to, $key] = [now($tz)->subDays(29)->startOfDay(), now($tz)->endOfDay(), '30'];
-            }
-        } else {
-            $key = $key === 'custom' ? '30' : $key;
-            $from = now($tz)->subDays((int) $key - 1)->startOfDay();
-            $to = now($tz)->endOfDay();
-        }
-
-        return [$from->utc(), $to->utc(), $key];
-    }
 }
