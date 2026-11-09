@@ -3,9 +3,10 @@
 <head>
     @include('partials.head')
     <title>@yield('title', __('Dashboard')) · {{ setting('store.name', config('app.name')) }}</title>
+    @if (sf('design.admin_marketplace'))<link href="{{ asset('assets/css/admin-tq.css') }}?v={{ @filemtime(public_path('assets/css/admin-tq.css')) }}" rel="stylesheet">@endif
     @stack('styles')
 </head>
-<body>
+<body @class(['nx-tq' => sf('design.admin_marketplace')])>
 @php
     $user = auth()->user();
     $initials = collect(explode(' ', $user->name))->map(fn ($n) => mb_strtoupper(mb_substr($n, 0, 1)))->take(2)->implode('');

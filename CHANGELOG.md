@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Admin — marketplace look
+- The admin panel follows the same look as the storefront: white pages, navy sidebar, orange buttons, blue links, flat cards and light table headers (`admin-tq.css`). It is light-only; switch it off with Storefront options → *Admin panel in the same marketplace look* (`design.admin_marketplace`) to get the dark glass admin back.
+
 ### Customer account area
 - `/account` is now a proper panel with a sidebar (tabs on phones): **Dashboard** (stats, orders on the way, quick actions), **My orders** (filter, track, invoice, order again), **Addresses** (up to 10, default address feeds checkout; the first order fills it automatically), **Prescriptions** (status and private file download), **Saved medicines**, **My reviews** and **Profile & password**. New table `user_addresses` — run `php artisan migrate`.
 

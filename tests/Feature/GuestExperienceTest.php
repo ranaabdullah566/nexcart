@@ -223,4 +223,13 @@ class GuestExperienceTest extends TestCase
         $this->get('/compare')->assertOk()->assertSee('Panadol');
         $this->get('/')->assertOk()->assertSee('sf-tq', false);
     }
+
+    public function test_admin_follows_the_marketplace_look_unless_switched_off(): void
+    {
+        $this->actingAs($this->user('owner'));
+        $this->get('/admin')->assertOk()->assertSee('admin-tq.css', false)->assertSee('nx-tq', false);
+
+        setting()->set('sf.design.admin_marketplace', false);
+        $this->get('/admin')->assertOk()->assertDontSee('admin-tq.css', false);
+    }
 }

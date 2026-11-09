@@ -2,7 +2,7 @@
     $__a1 = (string) setting('theme.accent', '#22d3ee');
     $__a2 = (string) setting('theme.primary', '#8b5cf6');
     $__default = (string) setting('theme.mode', 'dark');
-    $__forceLight = ($storefront ?? false) && sf('design.marketplace');
+    $__forceLight = (($storefront ?? false) && sf('design.marketplace')) || (! ($storefront ?? false) && auth()->check() && request()->is('admin*') && sf('design.admin_marketplace'));
 @endphp
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

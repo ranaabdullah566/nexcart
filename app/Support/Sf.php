@@ -31,6 +31,7 @@ class Sf
             'topbar.show_links' => $b('topbar', 'Show the small links on the right (from Menus → Top bar, or Track an order + phone)'),
 
             'design.marketplace' => $b('header', 'Marketplace design (white, navy and orange — like a classic online marketplace)', true, 'Switch off for the dark glass look. The marketplace design is always light.'),
+            'design.admin_marketplace' => $b('header', 'Admin panel in the same marketplace look (light, navy sidebar)', true, 'Switch off for the dark glass admin. The marketplace admin is always light.'),
             'header.light' => $b('header', 'White marketplace-style header (stays white in dark mode)', true, 'Switch off to let the header follow the light / dark theme.'),
             'header.sticky' => $b('header', 'Keep the header at the top while scrolling'),
             'header.show_shop' => $b('header', 'Shop icon'), 'header.show_saved' => $b('header', 'Saved (wishlist) icon'), 'header.show_compare' => $b('header', 'Compare icon'),
