@@ -198,4 +198,14 @@ class GuestExperienceTest extends TestCase
         $this->get('/blog')->assertOk()->assertSee('aria-label="Search articles…"', false);
         $this->assertStringContainsString('--acc-ink', $this->get('/')->getContent());   // readable accent for the light theme
     }
+
+    public function test_marketplace_header_is_on_by_default_and_can_follow_the_theme(): void
+    {
+        $html = $this->get('/')->assertOk()->getContent();
+        $this->assertSame(3, substr_count($html, 'mk-hd-light'));   // announcement strip, header row and navigation row
+        $this->assertStringContainsString('<button type="submit" aria-label="Search"><span>Search</span></button>', $html);
+
+        setting()->set('sf.header.light', false);
+        $this->assertStringNotContainsString('mk-hd-light', $this->get('/')->getContent());
+    }
 }

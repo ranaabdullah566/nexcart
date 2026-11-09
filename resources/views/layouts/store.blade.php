@@ -49,7 +49,7 @@
     $cookieOn = sf('cookie.enabled');
 @endphp
 @if (sf('topbar.enabled'))
-<div class="mk-topbar" id="sfAnnounce"><div class="sf-container">
+<div class="mk-topbar @if (sf('header.light')) mk-hd-light @endif" id="sfAnnounce"><div class="sf-container">
     @if ($ann)@if ($ann['url'])<a href="{{ $ann['url'] }}">{{ $ann['text'] }}</a>@else<span>{{ $ann['text'] }}</span>@endif
     @elseif (filled(sft('topbar.text')))<span>{{ sft('topbar.text') }}</span>
     @elseif (setting('store.tagline'))<span dir="auto">{{ setting('store.tagline') }}</span>@else<span>{{ __('Welcome to :store', ['store' => $storeName]) }}</span>@endif
@@ -65,7 +65,7 @@
 </div></div>
 @endif
 
-<header class="mk-header sf-header @unless (sf('header.sticky')) mk-static @endunless">
+<header class="mk-header sf-header @if (sf('header.light')) mk-hd-light @endif @unless (sf('header.sticky')) mk-static @endunless">
     <div class="sf-container mk-header-row">
         <button class="mk-menu-btn" type="button" data-mobile-open aria-controls="mkDrawer" aria-expanded="false" aria-label="{{ __('Open menu') }}"><i class="bi bi-list"></i></button>
         <a href="{{ route('store.home') }}" class="sf-brand mk-brand" aria-label="{{ $storeName }}">
@@ -75,7 +75,7 @@
         <form class="mk-search sf-search" id="mkSearch" action="{{ route('store.shop') }}" role="search" aria-label="{{ __('Search products') }}" autocomplete="off">
             <i class="bi bi-search"></i>
             <input id="sfSearch" type="search" name="q" value="{{ request('q') }}" placeholder="{{ sft('header.search_placeholder') }}" aria-label="{{ __('Search products…') }}">
-            <button type="submit" aria-label="{{ __('Search') }}">{{ sft('header.search_button') }}</button>
+            <button type="submit" aria-label="{{ __('Search') }}"><span>{{ sft('header.search_button') }}</span></button>
             <div class="sf-suggest" id="sfSuggest" role="listbox"></div>
         </form>
         @if (sf('header.show_lang'))
@@ -109,7 +109,7 @@
     </div>
 </header>
 
-<nav class="mk-cats" aria-label="{{ __('Store navigation') }}">
+<nav class="mk-cats @if (sf('header.light')) mk-hd-light @endif" aria-label="{{ __('Store navigation') }}">
     <div class="sf-container mk-cats-row">
         @if (sf('header.show_mega'))
         <div class="mk-mega" data-mega>

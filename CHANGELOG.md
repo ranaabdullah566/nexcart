@@ -47,6 +47,10 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 - **Recently viewed** medicines (home, product and cart pages) — stored on the device only, with a Clear button.
 - **Install app** button (Android / desktop prompt; iPhone shows the Add-to-Home-Screen steps) and a branded offline page.
 
+### Marketplace header
+- The header now follows the classic marketplace layout: a navy announcement strip, a **white** header row with a big search box and an attached orange search button, a language pill, labelled icons (Shop, Basket, Sign in), then a nav row with a solid **All categories** button, *Deals* in orange and the links on the right (Track an order, *Deliver to*, *Upload prescription*). The mega menu opens as a clean white panel; on phones the hamburger sits left, the store name in the middle and the icons right, with the search box under it.
+- It stays white in dark mode (switch off under Storefront → Header → *White marketplace-style header* to follow the theme). The mega menu also stays open when you click it after hovering (it used to close).
+
 ### Quality
 - Browser QA of 31 storefront pages and 76 admin pages (186 + 456 page loads: dark / light × desktop / tablet / phone) with axe accessibility checks, plus interactive and permission checks — see [docs/QA-REPORT.md](docs/QA-REPORT.md) and `scripts/qa`.
 - Fixes from it: accent colour auto-darkened for text on the light theme, heading structure (admin pages now have an `h1`), tab and radio-group ARIA, names for icon-only buttons and links, no buttons inside hidden links, phone overflow fixes, quick-view opened directly redirects to the product page.

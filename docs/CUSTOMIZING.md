@@ -11,7 +11,7 @@ back to the **built-in wording** (which is already translated).
 | Tab | You can change |
 |-----|----------------|
 | Top bar | on/off, text, the small links on the right |
-| Header & menu | sticky header; “Deliver to” city picker and its cities; Upload prescription button; trending searches (on/off and the words); Health blog link; Shop icon; language switcher; light/dark toggle; search hint and button; the “All categories” mega menu and its “Popular” tiles; Deals link; Track-order link |
+| Header & menu | white marketplace-style header on/off; sticky header; “Deliver to” city picker and its cities; Upload prescription button; trending searches (on/off and the words); Health blog link; Shop icon; language switcher; light/dark toggle; search hint and button; the “All categories” mega menu and its “Popular” tiles; Deals link; Track-order link |
 | Home page | the “Top deals” panel on the hero (on/off, title, how many); hero auto-slide and speed |
 | Product cards & listing | image shape and fit, products per row, products per page, category / rating / discount / quick view, the Add-to-cart wording |
 | Product page | trust lines under the photos, small badges under the buttons, details table, Share / WhatsApp, the “Delivery & returns” tab (name, lines, policy cards), related products (title, how many), sticky buy bar on phones |

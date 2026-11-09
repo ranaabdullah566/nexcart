@@ -12,7 +12,7 @@
     if (mega) {
         var btn = one('.mk-mega-btn', mega), timer;
         var setOpen = function (open) { mega.classList.toggle('open', open); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); };
-        btn.addEventListener('click', function (e) { e.stopPropagation(); setOpen(!mega.classList.contains('open')); });
+        btn.addEventListener('click', function (e) { e.stopPropagation(); /* with a mouse the menu already opened on hover, so a click keeps it open instead of closing it */ setOpen(matchMedia('(hover:hover)').matches ? true : !mega.classList.contains('open')); });
         mega.addEventListener('mouseenter', function () { if (matchMedia('(hover:hover)').matches) { clearTimeout(timer); setOpen(true); } });
         mega.addEventListener('mouseleave', function () { if (matchMedia('(hover:hover)').matches) timer = setTimeout(function () { setOpen(false); }, 180); });
         document.addEventListener('click', function (e) { if (!mega.contains(e.target)) setOpen(false); });

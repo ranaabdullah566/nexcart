@@ -30,6 +30,7 @@ class Sf
             'topbar.text' => $t('topbar', 'Top bar text', '', 'Leave empty to show the announcement / tagline. The announcement bar (Settings) still wins when it is on.'),
             'topbar.show_links' => $b('topbar', 'Show the small links on the right (from Menus → Top bar, or Track an order + phone)'),
 
+            'header.light' => $b('header', 'White marketplace-style header (stays white in dark mode)', true, 'Switch off to let the header follow the light / dark theme.'),
             'header.sticky' => $b('header', 'Keep the header at the top while scrolling'),
             'header.show_shop' => $b('header', 'Shop icon'),
             'header.show_lang' => $b('header', 'Language switcher'), 'header.show_theme' => $b('header', 'Light / dark toggle'),
