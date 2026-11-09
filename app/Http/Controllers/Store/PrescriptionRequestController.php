@@ -27,6 +27,7 @@ class PrescriptionRequestController extends Controller
         abort_unless(BusinessProfile::hasModule('prescriptions'), 404);
 
         $data = $request->validate([
+            'g-recaptcha-response' => \App\Rules\Recaptcha::rules(),
             'name' => ['required', new \App\Rules\NoMarkup, 'string', 'max:120'],
             'phone' => ['required', 'string', 'min:7', 'max:30', 'regex:/^[0-9+\-\s()]+$/'],
             'email' => ['nullable', 'email', 'max:190'],

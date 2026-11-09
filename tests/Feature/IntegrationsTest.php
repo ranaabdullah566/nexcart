@@ -108,4 +108,16 @@ class IntegrationsTest extends TestCase
     {
         $this->get('/auth/google')->assertNotFound();
     }
+
+    public function test_prescription_upload_form_is_protected_by_recaptcha_when_enabled(): void
+    {
+        \Illuminate\Support\Facades\Http::fake(['www.google.com/*' => \Illuminate\Support\Facades\Http::response(['success' => false])]);
+        setting()->set('integrations.recaptcha_enabled', true);
+        setting()->set('integrations.recaptcha_site', 'site-key');
+        Integrations::setSecret('recaptcha_secret', 'secret-key');
+        $form = ['name' => 'Sara', 'phone' => '03001234567', 'files' => [\Illuminate\Http\UploadedFile::fake()->image('rx.jpg')]];
+
+        $this->post('/upload-prescription', $form)->assertSessionHasErrors('g-recaptcha-response');
+        $this->post('/upload-prescription', $form + ['g-recaptcha-response' => 'bad'])->assertSessionHasErrors('g-recaptcha-response');
+    }
 }
