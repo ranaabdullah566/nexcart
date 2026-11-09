@@ -13,7 +13,7 @@
             <h1>{{ __('Healthy living, explained simply') }}</h1>
             <p>{{ __('Practical tips and medicine guidance from our pharmacy team.') }}</p>
         </div>
-        <form method="GET" action="{{ route('store.blog') }}" class="fx-blog-search" role="search">
+        <form method="GET" action="{{ route('store.blog') }}" class="fx-blog-search" role="search" aria-label="{{ __('Search articles…') }}">
             @if ($tag !== '')<input type="hidden" name="tag" value="{{ $tag }}">@endif
             <i class="bi bi-search"></i><input type="search" name="q" value="{{ $q }}" maxlength="100" placeholder="{{ __('Search articles…') }}" aria-label="{{ __('Search articles…') }}"><button>{{ __('Search') }}</button>
         </form>
@@ -31,7 +31,7 @@
     @else
         <div class="fx-art-grid">
             @foreach ($articles as $a)
-                @include('store._article_card', ['a' => $a, 'featured' => $loop->first && $articles->currentPage() === 1 && $tag === '' && $q === ''])
+                @include('store._article_card', ['a' => $a, 'featured' => $loop->first && $articles->currentPage() === 1 && $tag === '' && $q === '', 'level' => 2])
             @endforeach
         </div>
         <div class="mt-4">{{ $articles->links('pagination::bootstrap-5') }}</div>

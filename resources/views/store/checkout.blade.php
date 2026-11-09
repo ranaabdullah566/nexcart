@@ -63,7 +63,7 @@
                 @if ($slotDays)
                     <section class="ck-sec" id="slotSec">
                         <h2><span class="mk-step"><i class="bi bi-clock"></i></span>{{ __('Delivery time') }}</h2>
-                        <div class="sf-pills mb-3" id="slotDays" role="tablist">
+                        <div class="sf-pills mb-3" id="slotDays" role="radiogroup" aria-label="{{ __('Delivery day') }}">
                             @foreach ($slotDays as $i => $d)
                                 <label class="sf-pill"><input type="radio" name="slot_date" value="{{ $d['date'] }}" @checked(old('slot_date', collect($slotDays)->first(fn ($x) => collect($x['slots'])->contains('open', true))['date'] ?? $slotDays[0]['date']) === $d['date'])><span>{{ $d['label'] }}</span></label>
                             @endforeach

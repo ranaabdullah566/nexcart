@@ -44,6 +44,20 @@
 <link href="{{ asset('assets/css/nexcart.css') }}?v={{ @filemtime(public_path('assets/css/nexcart.css')) }}" rel="stylesheet">
 
 {{-- Brand colours chosen in Store settings → Appearance --}}
+@php
+    // Text in the accent colour must stay readable on the light background: darken it until it reaches ~4.7:1 (WCAG AA).
+    $__lum = function (string $hex): float {
+        $c = array_map(fn ($h) => hexdec($h) / 255, str_split(ltrim($hex, '#'), 2));
+        $c = array_map(fn ($v) => $v <= 0.03928 ? $v / 12.92 : (($v + 0.055) / 1.055) ** 2.4, $c);
+
+        return 0.2126 * $c[0] + 0.7152 * $c[1] + 0.0722 * $c[2];
+    };
+    $__ink = preg_match('/^#[0-9a-f]{6}$/i', $__a1) ? strtolower($__a1) : '#0891b2';
+    for ($__i = 0; $__i < 30 && (0.80 + 0.05) / ($__lum($__ink) + 0.05) < 4.7; $__i++) {
+        $__ink = '#'.implode('', array_map(fn ($h) => str_pad(dechex((int) round(hexdec($h) * 0.93)), 2, '0', STR_PAD_LEFT), str_split(ltrim($__ink, '#'), 2)));
+    }
+@endphp
+<style>html:root[data-theme="light"] { --acc-ink: {{ $__ink }}; }</style>
 @if (preg_match('/^#[0-9a-f]{6}$/i', $__a1) && preg_match('/^#[0-9a-f]{6}$/i', $__a2))
     <style>html:root[data-theme] { --acc-1: {{ $__a1 }}; --acc-2: {{ $__a2 }}; }</style>
 @endif

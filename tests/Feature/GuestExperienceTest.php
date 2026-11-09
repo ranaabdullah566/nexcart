@@ -184,4 +184,18 @@ class GuestExperienceTest extends TestCase
         $this->get('/cart')->assertSee('data-fx-recent', false);
         $this->assertStringContainsString('You are offline', file_get_contents(public_path('sw.js')));
     }
+
+    public function test_accessibility_basics_are_in_the_markup(): void
+    {
+        $p = new Product;
+        $p->forceFill(['name' => 'Panadol', 'price' => 50, 'status' => 'active', 'track_stock' => false, 'is_featured' => true])->save();
+        $html = $this->get('/')->assertOk()->getContent();
+        $this->assertStringContainsString('aria-label="Sign in"', $html);                // icon-only link on phones
+        $this->assertStringContainsString('aria-label="Search products"', $html);        // unique landmark names
+        $this->assertStringNotContainsString('<h6>', $html);                             // no skipped heading levels in the footer
+        $this->assertDoesNotMatchRegularExpression('/<a[^>]*aria-hidden="true"[^>]*>(?:(?!<\/a>).)*<button/s', $html);   // no buttons inside hidden links
+
+        $this->get('/blog')->assertOk()->assertSee('aria-label="Search articles…"', false);
+        $this->assertStringContainsString('--acc-ink', $this->get('/')->getContent());   // readable accent for the light theme
+    }
 }

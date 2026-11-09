@@ -23,7 +23,7 @@
             @foreach ($list as $r)
                 @php $city = $r->order?->city; $pname = $r->product?->trans('name'); @endphp
                 <figure class="fx-rev-card">
-                    <div class="fx-rev-top"><span class="sf-stars" aria-label="{{ $r->rating }} / 5">@include('store._stars', ['value' => $r->rating])</span><time datetime="{{ $r->created_at->toDateString() }}">{{ $r->created_at->translatedFormat('d M Y') }}</time></div>
+                    <div class="fx-rev-top"><span class="sf-stars" role="img" aria-label="{{ $r->rating }} / 5">@include('store._stars', ['value' => $r->rating])</span><time datetime="{{ $r->created_at->toDateString() }}">{{ $r->created_at->translatedFormat('d M Y') }}</time></div>
                     @if ($r->title)<h3 dir="auto">{{ $r->title }}</h3>@endif
                     @if ($r->body)<blockquote dir="auto">{{ $r->body }}</blockquote>@endif
                     @if ($r->reply)<div class="fx-rev-reply"><i class="bi bi-arrow-return-right"></i> <b>{{ setting('store.name', config('app.name')) }}:</b> <span dir="auto">{{ $r->reply }}</span></div>@endif

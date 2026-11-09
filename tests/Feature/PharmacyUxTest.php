@@ -28,6 +28,8 @@ class PharmacyUxTest extends TestCase
         setting()->set('system.installed', true);
         BusinessProfile::apply('pharmacy');
         Storage::fake('local');
+        Storage::fake('public');   // the demo-data test generates and deletes images: never touch the real disk
+        config(['media-library.disk_name' => 'public']);
     }
 
     private function user(string $role): User

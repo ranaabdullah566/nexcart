@@ -105,7 +105,8 @@ class StorefrontTest extends TestCase
 
         $this->get('/product/'.$p->slug)->assertOk()->assertSee('Lamp')->assertSee('application/ld+json', false)->assertSee('"price":"100.00"', false)
             ->assertSee('og:title', false)->assertSee('rel="canonical"', false);
-        $this->get('/product/'.$p->slug.'/quick')->assertOk()->assertSee('data-buy', false);
+        $this->get('/product/'.$p->slug.'/quick', ['X-Requested-With' => 'XMLHttpRequest'])->assertOk()->assertSee('data-buy', false);
+        $this->get('/product/'.$p->slug.'/quick')->assertRedirect('/product/'.$p->slug);   // opened directly: real page, not a bare fragment
         $this->get('/product/draft-lamp')->assertNotFound();
         $this->get('/product/missing')->assertNotFound();
     }

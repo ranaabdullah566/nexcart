@@ -18,7 +18,7 @@
         </div>
         @if (($deals ?? collect())->isNotEmpty())
             <aside class="mk-slide-panel" aria-label="{{ __('Top deals') }}">
-                <h4><i class="bi bi-fire"></i> {{ sft('home.hero_deals_title') }}</h4>
+                <p class="mk-panel-title"><i class="bi bi-fire"></i> {{ sft('home.hero_deals_title') }}</p>
                 @foreach ($deals as $d)
                     @php $off = (! $d->isVariable() && $d->compare_price > $d->price) ? (int) round((1 - $d->price / $d->compare_price) * 100) : null; @endphp
                     <a class="mk-mini" href="{{ route('store.product', $d->slug) }}" @if (! ($first ?? false)) tabindex="-1" @endif>

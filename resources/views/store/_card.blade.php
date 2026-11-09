@@ -5,13 +5,13 @@
     $thumb = $p->thumbUrl();
 @endphp
 <article class="mk-card sf-card">
-    <a href="{{ route('store.product', $p->slug) }}" class="mk-card-media" tabindex="-1" aria-hidden="true">
-        @if ($thumb)<img src="{{ $thumb }}" alt="" loading="lazy">@else<span class="ph"><i class="bi bi-box-seam"></i></span>@endif
+    <div class="mk-card-media">
+        <a href="{{ route('store.product', $p->slug) }}" class="fx-img-link" tabindex="-1" aria-hidden="true">@if ($thumb)<img src="{{ $thumb }}" alt="" loading="lazy">@else<span class="ph"><i class="bi bi-box-seam"></i></span>@endif</a>
         @if ($off && sf('cards.show_discount'))<span class="mk-disc">−{{ $off }}%</span>@endif
         @if ($out)<span class="mk-flag out">{{ __('Out of stock') }}</span>@elseif ($p->is_featured)<span class="mk-flag"><i class="bi bi-patch-check-fill"></i> {{ __('Featured') }}</span>@endif
         @if ($p->requires_prescription)<span class="mk-flag rx"><i class="bi bi-prescription2"></i> Rx</span>@endif
         @if (sf('cards.show_quick'))<button type="button" class="mk-qv" data-quick="{{ route('store.quick', $p->slug) }}" aria-label="{{ __('Quick view') }}" title="{{ __('Quick view') }}"><i class="bi bi-eye"></i></button>@endif
-    </a>
+    </div>
     <div class="mk-card-body">
         @if ($p->category && sf('cards.show_category'))<div class="mk-card-cat">{{ $p->category->trans('name') }}</div>@endif
         <a href="{{ route('store.product', $p->slug) }}" class="mk-card-name">{{ $p->trans('name') }}</a>

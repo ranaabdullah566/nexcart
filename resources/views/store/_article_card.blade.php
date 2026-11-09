@@ -11,7 +11,7 @@
     </a>
     <div class="fx-art-body">
         <div class="fx-art-meta"><time datetime="{{ $a->date()->toDateString() }}">{{ $a->date()->translatedFormat('d M Y') }}</time><span>·</span><span><i class="bi bi-clock"></i> {{ __(':n min read', ['n' => $a->readingMinutes()]) }}</span></div>
-        <h3><a href="{{ $href }}" dir="auto">{{ $a->trans('title') }}</a></h3>
+        <h{{ $level ?? 3 }}><a href="{{ $href }}" dir="auto">{{ $a->trans('title') }}</a></h{{ $level ?? 3 }}>
         <p dir="auto">{{ $a->summary(($featured ?? false) ? 220 : 130) }}</p>
         <a href="{{ $href }}" class="fx-art-more">{{ __('Read article') }} <i class="bi bi-arrow-right"></i></a>
     </div>

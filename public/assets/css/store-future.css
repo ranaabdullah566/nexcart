@@ -223,7 +223,7 @@
 .sf-alert[style*="acc-2"] { background: color-mix(in srgb, var(--fx-a) 12%, var(--fx-glass)) !important; }
 
 /* ---------- light mode: contrast fixes ---------- */
-[data-theme="light"] .sf { --fx-a: color-mix(in srgb, var(--acc-1, #22d3ee) 78%, #0b3a66); }
+[data-theme="light"] .sf { --acc-1: var(--acc-ink, #0b6f8a); --grad: linear-gradient(120deg, var(--acc-1), var(--acc-2)); }
 [data-theme="light"] .mk-crumbs a, [data-theme="light"] .sf-link-arrow, [data-theme="light"] .mk-seeall { color: color-mix(in srgb, var(--acc-1, #0891b2) 55%, #063a4f); }
 [data-theme="light"] .mk-slide-panel { background: rgba(8, 16, 40, .5) !important; color: #fff; }
 [data-theme="light"] .mk-slide-panel * { color: inherit; }
@@ -388,9 +388,9 @@
 .fx-art-body { display: flex; flex-direction: column; gap: .5rem; padding: 1.1rem 1.2rem 1.3rem; flex: 1; }
 .fx-art-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; font-size: .76rem; color: var(--text-3); }
 .fx-art-meta i { color: var(--fx-a); }
-.fx-art h3 { font-size: 1.12rem; line-height: 1.3; margin: 0; letter-spacing: -.015em; }
-.fx-art h3 a { color: var(--text); text-decoration: none; background: linear-gradient(var(--fx-a), var(--fx-a)) 0 100% / 0 2px no-repeat; transition: background-size .4s var(--ease); }
-.fx-art:hover h3 a { background-size: 100% 2px; }
+.fx-art h2, .fx-art h3 { font-size: 1.12rem; line-height: 1.3; margin: 0; letter-spacing: -.015em; }
+.fx-art h2 a, .fx-art h3 a { color: var(--text); text-decoration: none; background: linear-gradient(var(--fx-a), var(--fx-a)) 0 100% / 0 2px no-repeat; transition: background-size .4s var(--ease); }
+.fx-art:hover h2 a, .fx-art:hover h3 a { background-size: 100% 2px; }
 .fx-art p { color: var(--text-2); font-size: .9rem; line-height: 1.55; margin: 0; flex: 1; }
 .fx-art-more { font-weight: 800; font-size: .84rem; color: var(--fx-a); text-decoration: none; display: inline-flex; gap: .35rem; align-items: center; }
 .fx-art-more i { transition: transform .3s var(--ease); } .fx-art:hover .fx-art-more i { transform: translateX(5px); }
@@ -399,7 +399,7 @@
     .fx-art-lead { grid-column: 1 / -1; flex-direction: row; }
     .fx-art-lead .fx-art-cover { flex: 1.25; aspect-ratio: auto; min-height: 340px; }
     .fx-art-lead .fx-art-body { flex: 1; justify-content: center; padding: 2rem 2.2rem; }
-    .fx-art-lead h3 { font-size: 1.9rem; letter-spacing: -.03em; } .fx-art-lead p { font-size: 1rem; flex: 0; }
+    .fx-art-lead h2, .fx-art-lead h3 { font-size: 1.9rem; letter-spacing: -.03em; } .fx-art-lead p { font-size: 1rem; flex: 0; }
 }
 .fx-disclaimer { display: flex; gap: .6rem; align-items: flex-start; margin: 1.8rem 0 0; padding: .8rem 1rem; border-radius: 14px; font-size: .82rem; color: var(--text-2); background: color-mix(in srgb, var(--fx-a) 7%, transparent); border: 1px dashed var(--fx-line); }
 .fx-disclaimer i { color: var(--fx-a); margin-top: .15rem; }
@@ -463,3 +463,26 @@ a.fx-contact-card:hover { transform: translateY(-3px); border-color: var(--fx-a)
 /* light mode: tags outside the dark hero use a soft tint */
 [data-theme="light"] .mk-tag { background: color-mix(in srgb, var(--fx-a) 14%, #fff) !important; color: var(--text) !important; }
 [data-theme="light"] .mk-slide .mk-tag { background: rgba(8, 16, 40, .5) !important; color: #fff !important; }
+
+/* ---------- QA fixes: contrast on the light theme ---------- */
+[data-theme="light"] .mk-cats-row > a.hot, [data-theme="light"] .mk-badge.hot { color: #b8400b; }
+[data-theme="light"] .mk-badge.ok, [data-theme="light"] .mk-status-ok, [data-theme="light"] .mk-check-sum.ok, [data-theme="light"] .mk-checks .ok > i,
+[data-theme="light"] .mk-progress li.done, [data-theme="light"] .fx-verified, [data-theme="light"] .text-success { color: #047857 !important; }
+[data-theme="light"] .mk-pd-ask a, [data-theme="light"] .mk-pd-ask span { color: #047857; }
+[data-theme="light"] .mk-eyebrow, [data-theme="light"] .mk-status-now { color: var(--acc-1); }
+[data-theme="light"] .mk-btn-accent { background: #c2410c !important; }
+
+/* ---------- QA fixes: tap targets and small text links ---------- */
+.fx-art h2 a, .fx-art h3 a, .fx-art-more, .sf-link-arrow, .mk-line-name, .mk-line-del, .fx-recent-clear, .mk-seeall { display: inline-flex; align-items: center; min-height: 32px; }
+.fx-art h2 a, .fx-art h3 a { display: inline; padding-block: .35rem; min-height: 0; }
+.mk-badge[href] { min-height: 36px; }
+.mk-stepper input, .sf-qty input { min-height: 36px; }
+.mk-fh { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin-bottom: .9rem; font-weight: 700; }
+.mk-card-media { position: relative; display: block; }
+.mk-card-media .fx-img-link { display: block; width: 100%; height: 100%; }
+[data-theme="light"] .mk-secure { color: #046c4e; }
+[data-theme="light"] .mk-badge.ok, [data-theme="light"] .mk-status-ok, [data-theme="light"] .mk-check-sum.ok, [data-theme="light"] .mk-checks .ok > i,
+[data-theme="light"] .mk-progress li.done, [data-theme="light"] .fx-verified, [data-theme="light"] .text-success { color: #046c4e !important; }
+[data-theme="light"] .mk-cats-row > a.hot, [data-theme="light"] .mk-badge.hot { color: #a33608; }
+[data-theme="light"] .sf-tag.rx, [data-theme="light"] .sf-tag { color: #8a4a00; }
+[data-theme="light"] .mk-contact-row.wa, [data-theme="light"] .mk-contact-row.wa > span, [data-theme="light"] .wa > span { color: #046c4e; }

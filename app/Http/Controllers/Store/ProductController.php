@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\CatalogAttribute;
 use App\Models\Product;
 use App\Support\BusinessProfile;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -32,8 +34,13 @@ class ProductController extends Controller
     }
 
     /** Partial shown in the quick-view modal. */
-    public function quick(string $slug): View
+    public function quick(Request $request, string $slug): View|RedirectResponse
     {
+        // the partial has no <html>/<title>: opened directly (not by the modal), show the real product page instead
+        if (! $request->ajax()) {
+            return redirect()->route('store.product', $slug);
+        }
+
         return view('store.quick', $this->data($this->find($slug)));
     }
 

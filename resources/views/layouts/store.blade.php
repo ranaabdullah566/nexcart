@@ -72,7 +72,7 @@
             <span class="sf-brand-logo"><img src="{{ brand_logo() }}" alt=""></span>
             <span class="sf-brand-name">{{ $storeName }}</span>
         </a>
-        <form class="mk-search sf-search" id="mkSearch" action="{{ route('store.shop') }}" role="search" autocomplete="off">
+        <form class="mk-search sf-search" id="mkSearch" action="{{ route('store.shop') }}" role="search" aria-label="{{ __('Search products') }}" autocomplete="off">
             <i class="bi bi-search"></i>
             <input id="sfSearch" type="search" name="q" value="{{ request('q') }}" placeholder="{{ sft('header.search_placeholder') }}" aria-label="{{ __('Search products…') }}">
             <button type="submit" aria-label="{{ __('Search') }}">{{ sft('header.search_button') }}</button>
@@ -95,7 +95,7 @@
             @if (sf('header.show_theme'))<button type="button" class="mk-ic" data-theme-toggle aria-label="{{ __('Toggle light/dark mode') }}"><i class="bi bi-sun-fill"></i></button>@endif
             @auth
                 <div class="dropdown mk-acct">
-                    <button class="mk-ic" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-person-circle"></i><span class="d-none d-md-inline">{{ \Illuminate\Support\Str::limit(auth()->user()->name, 12) }}</span></button>
+                    <button class="mk-ic" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ __('My account') }}"><i class="bi bi-person-circle"></i><span class="d-none d-md-inline">{{ \Illuminate\Support\Str::limit(auth()->user()->name, 12) }}</span></button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="{{ route('store.account') }}"><i class="bi bi-person me-2"></i>{{ __('My account') }}</a></li>
                         @if (auth()->user()->isStaff())<li><a class="dropdown-item" href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>{{ __('Admin panel') }}</a></li>@endif
@@ -103,7 +103,7 @@
                     </ul>
                 </div>
             @else
-                <a class="mk-ic" href="{{ route('login') }}"><i class="bi bi-person"></i><span class="d-none d-md-inline">{{ __('Sign in') }}</span></a>
+                <a class="mk-ic" href="{{ route('login') }}" aria-label="{{ __('Sign in') }}"><i class="bi bi-person"></i><span class="d-none d-md-inline">{{ __('Sign in') }}</span></a>
             @endauth
         </div>
     </div>
@@ -201,7 +201,7 @@
                 @if ($about)<p dir="auto">{{ $about }}</p>@endif
                 @if ($socials && sf('footer.show_socials'))<div class="mk-socials" aria-label="{{ __('Follow us') }}">@foreach ($socials as $so)<a href="{{ $so['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $so['label'] }}"><i class="bi bi-{{ $so['icon'] }}"></i></a>@endforeach</div>@endif
             </div>
-            <div class="mk-fcol"><h6>{{ sft('footer.shop_title') }}</h6>
+            <div class="mk-fcol"><div class="mk-fh">{{ sft('footer.shop_title') }}</div>
                 @forelse ($colShop as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
                 @empty
                     <a href="{{ route('store.shop') }}">{{ __('All products') }}</a>
@@ -209,7 +209,7 @@
                     @foreach ($tree->take(4) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach
                 @endforelse
             </div>
-            <div class="mk-fcol"><h6>{{ sft('footer.help_title') }}</h6>
+            <div class="mk-fcol"><div class="mk-fh">{{ sft('footer.help_title') }}</div>
                 @forelse ($colHelp as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
                 @empty
                     <a href="{{ route('store.track') }}">{{ sft('header.track_label') }}</a>
@@ -217,7 +217,7 @@
                     <a href="{{ auth()->check() ? route('store.account') : route('login') }}">{{ __('My account') }}</a>
                 @endforelse
             </div>
-            <div class="mk-fcol"><h6>{{ sft('footer.company_title') }}</h6>
+            <div class="mk-fcol"><div class="mk-fh">{{ sft('footer.company_title') }}</div>
                 @forelse ($colCompany as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@empty<a href="{{ route('store.home') }}">{{ $storeName }}</a>@endforelse
                 @if (sf('footer.show_contact'))
                     @if (setting('store.email'))<a href="mailto:{{ setting('store.email') }}" dir="ltr"><i class="bi bi-envelope me-1"></i>{{ setting('store.email') }}</a>@endif

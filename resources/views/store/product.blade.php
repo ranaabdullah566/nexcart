@@ -100,7 +100,7 @@
                 <div class="d-flex align-items-center gap-2 mb-3"><span class="sf-stars fs-5" aria-hidden="true">@include('store._stars', ['value' => $rating['avg']])</span><b class="figure">{{ $rating['avg'] }}</b><span class="text-muted">{{ trans_choice(':n review|:n reviews', $rating['count'], ['n' => $rating['count']]) }}</span></div>
                 @foreach ($reviews as $r)
                     <article class="sf-review">
-                        <div class="d-flex justify-content-between gap-2 flex-wrap"><span class="sf-stars" aria-label="{{ $r->rating }}/5">@include('store._stars', ['value' => $r->rating])</span><small class="text-muted">{{ $r->name }} · {{ local_time($r->created_at, 'd M Y') }} · <i class="bi bi-patch-check-fill" style="color:var(--acc-1)"></i> {{ __('Verified buyer') }}</small></div>
+                        <div class="d-flex justify-content-between gap-2 flex-wrap"><span class="sf-stars" role="img" aria-label="{{ $r->rating }}/5">@include('store._stars', ['value' => $r->rating])</span><small class="text-muted">{{ $r->name }} · {{ local_time($r->created_at, 'd M Y') }} · <i class="bi bi-patch-check-fill" style="color:var(--acc-1)"></i> {{ __('Verified buyer') }}</small></div>
                         @if ($r->title)<div class="fw-semibold mt-1">{{ $r->title }}</div>@endif
                         @if ($r->body)<p class="mb-0 mt-1" style="color:var(--text-2)">{{ $r->body }}</p>@endif
                         @if ($r->reply)<div class="sf-reply"><b>{{ __('Reply from :store', ['store' => setting('store.name')]) }}</b><div>{{ $r->reply }}</div></div>@endif

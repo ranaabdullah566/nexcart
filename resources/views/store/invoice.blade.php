@@ -13,7 +13,7 @@
         td { padding: 10px 6px; border-bottom: 1px solid #eef0f5; vertical-align: top; } .r { text-align: end; } .num { font-family: 'JetBrains Mono', monospace; }
         .tot td { border: 0; padding: 4px 6px; } .grand td { font-size: 18px; font-weight: 700; border-top: 2px solid #101828; padding-top: 10px; }
         .row { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-top: 28px; }
-        .btn { display: inline-block; margin: 0 auto 16px; padding: 10px 18px; background: #0891b2; color: #fff; border: 0; border-radius: 10px; font: inherit; cursor: pointer; }
+        .btn { display: inline-block; margin: 0 auto 16px; padding: 10px 18px; background: #0b6f8a; color: #fff; border: 0; border-radius: 10px; font: inherit; cursor: pointer; }
         .paid { display: inline-block; padding: 3px 12px; border: 2px solid #059669; color: #059669; border-radius: 8px; font-weight: 700; text-transform: uppercase; font-size: 12px; transform: rotate(-4deg); }
         @media print { body { background: #fff; padding: 0; } .sheet { box-shadow: none; padding: 0; } .noprint { display: none; } }
     </style>
