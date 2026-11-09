@@ -64,6 +64,11 @@
                     @endforeach @endforeach
                 </div></div>
             @endfor
+        @elseif ($type === 'blog')
+            <div class="col-md-6"><label class="form-label">{{ __('Heading') }}</label><input name="title" value="{{ $st('title', 'From our health blog') }}" maxlength="120" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label">{{ __('How many articles') }}</label><input type="number" min="1" max="6" name="limit" value="{{ $st('limit', 3) }}" class="form-control figure"></div>
+            <div class="col-12"><label class="form-label">{{ __('Sub-heading') }}</label><input name="subtitle" value="{{ $st('subtitle') }}" maxlength="300" class="form-control"></div>
+            <div class="col-12 small text-muted">{{ __('Shows your newest published articles from Health blog. Nothing shows until there is one.') }}</div>
         @elseif ($type === 'reviews')
             <div class="col-md-6"><label class="form-label">{{ __('Heading') }}</label><input name="title" value="{{ $st('title', 'What our customers say') }}" maxlength="120" class="form-control"></div>
             <div class="col-md-6"><label class="form-label">{{ __('Sub-heading') }}</label><input name="subtitle" value="{{ $st('subtitle') }}" maxlength="300" class="form-control"></div>

@@ -145,6 +145,7 @@
         @endif
         @if (sf('header.show_deals'))<a href="{{ route('store.shop', ['sort' => 'discount']) }}" class="hot"><i class="bi bi-lightning-charge-fill"></i> {{ sft('header.deals_label') }}</a>@endif
         @if (sf('header.show_shop_link'))<a href="{{ route('store.shop') }}" @class(['on' => request()->routeIs('store.shop')])>{{ __('Shop') }}</a>@endif
+        @if (sf('header.show_blog') && \App\Models\Article::live()->exists())<a href="{{ route('store.blog') }}" @class(['on' => request()->routeIs('store.blog', 'store.article')])>{{ sft('header.blog_label') }}</a>@endif
         @foreach ($headerMenu as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach
         @if (sf('header.show_track'))<a href="{{ route('store.track') }}" class="mk-push">{{ sft('header.track_label') }}</a>@endif
         @if (sf('header.show_location'))<button type="button" class="fx-loc" data-fx-loc aria-haspopup="dialog"><i class="bi bi-geo-alt-fill"></i><span><small>{{ __('Deliver to') }}</small><b data-fx-loc-name>{{ __('Choose area') }}</b></span><i class="bi bi-chevron-down"></i></button>@endif
@@ -168,6 +169,7 @@
                     <a href="{{ route('store.home') }}"><i class="bi bi-house-door"></i>{{ __('Home') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop') }}"><i class="bi bi-shop"></i>{{ __('Shop') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop', ['sort' => 'discount']) }}"><i class="bi bi-lightning-charge"></i>{{ sft('header.deals_label') }}<i class="bi bi-chevron-right"></i></a>
+                    @if (sf('header.show_blog') && \App\Models\Article::live()->exists())<a href="{{ route('store.blog') }}"><i class="bi bi-journal-richtext"></i>{{ sft('header.blog_label') }}<i class="bi bi-chevron-right"></i></a>@endif
                     @if (sf('header.show_rx') && \App\Support\BusinessProfile::hasModule('prescriptions'))<a href="{{ route('store.prescription.upload') }}"><i class="bi bi-camera-fill"></i>{{ sft('header.rx_label') }}<i class="bi bi-chevron-right"></i></a>@endif
                     @if (sf('header.show_location'))<a href="#" data-fx-loc><i class="bi bi-geo-alt-fill"></i>{{ __('Deliver to') }}: <b data-fx-loc-name>{{ __('Choose area') }}</b><i class="bi bi-chevron-right"></i></a>@endif
                     <a href="{{ route('store.track') }}"><i class="bi bi-truck"></i>{{ sft('header.track_label') }}<i class="bi bi-chevron-right"></i></a>

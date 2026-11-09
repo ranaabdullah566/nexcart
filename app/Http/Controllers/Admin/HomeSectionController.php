@@ -27,6 +27,7 @@ class HomeSectionController extends Controller
         'steps' => ['title', 'subtitle'],
         'testimonials' => ['title', 'subtitle'],
         'reviews' => ['title', 'subtitle'],
+        'blog' => ['title', 'subtitle'],
         'faq' => ['title', 'subtitle'],
     ];
 
@@ -147,6 +148,7 @@ class HomeSectionController extends Controller
                 'category_id' => ['nullable', 'required_if:source,category', 'exists:categories,id']],
             'text' => ['title' => ['nullable', 'string', 'max:120'], 'body' => ['required', 'string', 'max:5000']],
             'features', 'steps', 'testimonials', 'faq' => $this->itemRules($type),
+            'blog' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:1', 'max:6']],
             'reviews' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:3', 'max:24'], 'min_rating' => ['required', Rule::in([1, 2, 3, 4, 5])], 'show_summary' => ['nullable', 'boolean']],
             'brands' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:1', 'max:30']],
             'cta' => ['eyebrow' => ['nullable', 'string', 'max:80'], 'title' => ['required', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'],

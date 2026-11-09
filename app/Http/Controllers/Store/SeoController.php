@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
+use App\Models\Article;
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\Product;
@@ -16,6 +17,7 @@ class SeoController extends Controller
         $urls = collect([['loc' => url('/'), 'mod' => null], ['loc' => route('store.shop'), 'mod' => null]])
             ->merge(Category::where('is_active', true)->get()->map(fn ($c) => ['loc' => route('store.category', $c->slug), 'mod' => $c->updated_at]))
             ->merge(Page::where('is_published', true)->get(['slug', 'updated_at'])->map(fn ($p) => ['loc' => route('store.page', $p->slug), 'mod' => $p->updated_at]))
+            ->merge(Article::live()->get(['slug', 'updated_at'])->map(fn ($a) => ['loc' => route('store.article', $a->slug), 'mod' => $a->updated_at]))
             ->merge(Product::active()->get(['slug', 'updated_at'])->map(fn ($p) => ['loc' => route('store.product', $p->slug), 'mod' => $p->updated_at]));
 
         return response()->view('store.sitemap', ['urls' => $urls])->header('Content-Type', 'application/xml');

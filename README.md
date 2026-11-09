@@ -9,7 +9,7 @@ batch & expiry tracking, delivery slots and riders. Marketplace-style storefront
 **Storefront** — header with search, language and basket, an “All categories” mega menu, hero carousel with a
 “Top deals” panel, product cards with discount badges and quick view, product page with
 trust badges, tabs and related products, filterable shop (grid or list), cart with a free-delivery bar,
-one-page checkout, order tracking, customer accounts, content pages, cookie bar, WhatsApp
+one-page checkout, order tracking, customer accounts, a health blog, content pages, cookie bar, WhatsApp
 and back-to-top buttons. Every page uses the same look and works on phones.
 
 **Admin** — medicines (pack sizes, custom fields such as composition / strength, SEO), categories, brands, inventory with batches and
@@ -19,7 +19,7 @@ roles & permissions you can build yourself, an alerts inbox, an activity log, a 
 
 **Make it yours (no code)** — Admin → **Storefront** switches parts of the shop on or off and changes their
 wording per language; **Interface text** rewords any word in any language; **Menus** fill the menu bar, top bar
-and footer columns; **Home page** has 12 section types (including an automatic customer-reviews wall); **Theme** sets colours, logo and mode.
+and footer columns; **Home page** has 13 section types (including an automatic customer-reviews wall and the latest health-blog articles); **Theme** sets colours, logo and mode.
 See [docs/CUSTOMIZING.md](docs/CUSTOMIZING.md).
 
 **Pharmacy tools** — prescription upload and pharmacist review, batches / expiry, delivery slots, riders,

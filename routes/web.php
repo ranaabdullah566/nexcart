@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\AlertController;
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\BrandController;
@@ -164,6 +165,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::put('theme', [ThemeController::class, 'update'])->name('theme.update');
     Route::get('emails', [EmailTemplateController::class, 'edit'])->name('emails.edit');
     Route::put('emails', [EmailTemplateController::class, 'update'])->name('emails.update');
+    Route::resource('articles', ArticleController::class)->except('show');
     Route::resource('pages', AdminPageController::class)->except('show');
     Route::post('menu-items/{menuItem}/move', [MenuItemController::class, 'move'])->name('menu-items.move');
     Route::post('menu-items/{menuItem}/toggle', [MenuItemController::class, 'toggle'])->name('menu-items.toggle');
@@ -211,6 +213,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/account', [Store\AccountController::class, 'update'])->name('store.account.update');
 });
 Route::get('/page/{slug}', [Store\PageController::class, 'show'])->name('store.page');
+Route::get('/blog', [Store\BlogController::class, 'index'])->name('store.blog');
+Route::get('/blog/{slug}', [Store\BlogController::class, 'show'])->name('store.article');
 Route::post('/order/{number}/{token}/review/{item}', [Store\ReviewController::class, 'store'])->middleware(['throttle:10,1', 'honeypot'])->name('store.order.review');
 Route::get('/sitemap.xml', [Store\SeoController::class, 'sitemap'])->name('store.sitemap');
 Route::get('/robots.txt', [Store\SeoController::class, 'robots']);

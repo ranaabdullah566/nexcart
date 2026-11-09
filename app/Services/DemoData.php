@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Article;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
@@ -10,6 +11,7 @@ use App\Support\BusinessProfile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use RuntimeException;
+use Spatie\MediaLibrary\HasMedia;
 
 /**
  * Sample medicine catalogue, so a new pharmacy (or a sales demo) looks alive in one click.
@@ -32,7 +34,7 @@ class DemoData
         }
         $this->reviewIds = [];
         $set = $this->dataset();
-        $ids = ['products' => [], 'categories' => [], 'brands' => [], 'reviews' => []];
+        $ids = ['products' => [], 'categories' => [], 'brands' => [], 'reviews' => [], 'articles' => []];
 
         DB::transaction(function () use ($set, &$ids) {
             $cats = [];
@@ -70,6 +72,7 @@ class DemoData
         });
 
         $ids['reviews'] = $this->reviewIds;
+        $ids['articles'] = $this->sampleArticles();
         setting()->set('demo.ids', $ids);
 
         return count($ids['products']);
@@ -83,6 +86,7 @@ class DemoData
 
         DB::transaction(function () use ($ids, &$n) {
             Review::withTrashed()->whereIn('id', $ids['reviews'] ?? [])->forceDelete();
+            Article::withTrashed()->whereIn('id', $ids['articles'] ?? [])->get()->each->forceDelete();
             foreach (Product::withTrashed()->whereIn('id', $ids['products'] ?? [])->get() as $p) {
                 $p->forceDelete();   // also deletes its images
                 $n++;
@@ -95,6 +99,95 @@ class DemoData
         setting()->set('demo.ids', null);
 
         return $n;
+    }
+
+    /** Starter health-blog articles (general, non-prescriptive advice). Removed with the sample data. @return array<int, int> */
+    private function sampleArticles(): array
+    {
+        $rows = [
+            ['Staying hydrated in the heat', 'Wellness', 'Our pharmacy team', 'Simple habits that keep you safe when temperatures climb.', 'Hot weather makes your body lose water and salts faster than you may notice.
+
+# Signs you need more fluids
+
+- Dark yellow urine
+- Headache or dizziness
+- Dry mouth and unusual tiredness
+
+# What helps
+
+1. Sip water through the day instead of waiting until you are thirsty.
+2. Use oral rehydration salts (ORS) after vomiting, diarrhoea or heavy sweating.
+3. Limit very sugary drinks and keep out of direct sun at midday.
+
+Children, older adults and people with long-term illnesses are more at risk. If someone is confused, faints or cannot keep fluids down, seek medical care urgently.', 205],
+            ['Antibiotics: why finishing the course matters', 'Medicines', 'Our pharmacy team', 'Antibiotics only work when they are used the right way.', 'Antibiotics fight bacterial infections. They do not help with colds or flu, which are caused by viruses.
+
+# Use them safely
+
+- Take antibiotics only when a doctor prescribes them.
+- Take the full course at the right times, even if you feel better early.
+- Never share leftover antibiotics or save them for later.
+
+# Why it matters
+
+Stopping early or taking them when they are not needed lets bacteria survive and become resistant, which makes future infections harder to treat. If you have side effects such as a rash or severe stomach upset, contact your doctor or pharmacist.', 150],
+            ['Storing your medicines properly', 'Medicines', 'Our pharmacy team', 'Heat, light and damp can spoil medicines long before the expiry date.', 'Most tablets and syrups should be kept in a cool, dry place away from direct sunlight, not in the bathroom or the kitchen next to the stove.
+
+# Quick checklist
+
+- Keep medicines in their original packs so the batch number and expiry stay with them.
+- Store them out of children\'s reach.
+- Follow the label: some medicines, like certain insulins and syrups, need a fridge.
+- Check expiry dates every few months and return expired medicines to a pharmacy instead of throwing them in the open.
+
+If a medicine looks discoloured, smells strange or the tablets are crumbling, do not use it and ask your pharmacist.', 95],
+            ['Eating well with diabetes: the basics', 'Diabetes care', 'Our pharmacy team', 'Small, steady choices make blood sugar easier to manage.', 'Managing diabetes is a daily routine, and food is a big part of it. This is general guidance; your doctor or dietitian can tailor it to you.
+
+# Helpful habits
+
+- Eat at regular times and avoid long gaps between meals.
+- Fill half your plate with vegetables, and choose whole grains over white rice and refined flour.
+- Keep sweets, sugary drinks and fried snacks for rare occasions.
+- Walk for about 30 minutes most days if your doctor agrees.
+
+# Do not skip monitoring
+
+Check your blood sugar as advised and keep a note of the readings to show your doctor. Never change or stop your medicines on your own.', 280],
+            ['Caring for a child with a fever', 'Baby & mother care', 'Our pharmacy team', 'What parents can do at home, and when to call a doctor.', 'Fever is common in children and is often the body fighting an infection.
+
+# At home
+
+- Offer plenty of fluids and let your child rest.
+- Dress them in light clothing; do not wrap them up tightly.
+- Use only the medicine and dose your doctor or pharmacist recommends for your child\'s age and weight.
+
+# See a doctor quickly if
+
+1. The baby is under three months old and has any fever.
+2. The fever lasts more than three days or keeps returning.
+3. Your child is very drowsy, has trouble breathing, a stiff neck, a rash that does not fade, or seems to be getting worse.
+
+Trust your instincts: if you are worried, get medical advice.', 330],
+            ['Protecting your skin from the sun', 'Skin care', 'Our pharmacy team', 'Everyday sun care that is easy to keep up.', 'Strong sunshine can cause sunburn, dark patches and long-term skin damage.
+
+# Everyday protection
+
+- Apply sunscreen of SPF 30 or higher to exposed skin, and reapply every two hours when outdoors.
+- Wear a hat and sunglasses, and seek shade between late morning and mid-afternoon.
+- Moisturise after sun exposure; aloe-based gels can soothe mild redness.
+
+Skin that blisters, a mole that changes shape or colour, or sunburn that does not settle should be checked by a doctor.', 25],
+        ];
+        $ids = [];
+        foreach ($rows as $i => [$title, $tag, $author, $excerpt, $body, $hue]) {
+            $a = new Article;
+            $a->fill(['title' => $title, 'tag' => $tag, 'author' => $author, 'excerpt' => $excerpt, 'body' => $body, 'is_published' => true, 'published_at' => now()->subDays($i * 3 + 1)]);
+            $a->save();
+            $this->attachImage($a, $hue, $title, 'cover', 1200, 675);
+            $ids[] = $a->id;
+        }
+
+        return $ids;
     }
 
     /** A few believable reviews on some products, so the home page wall is alive in a demo. Removed with the sample data. */
@@ -132,34 +225,34 @@ class DemoData
     }
 
     /** A generated gradient picture — no downloads, no licensing questions. */
-    private function attachImage(Product $p, int $hue, string $seed): void
+    private function attachImage(HasMedia $p, int $hue, string $seed, string $collection = 'images', int $w = 640, int $h = 640): void
     {
         if (! function_exists('imagecreatetruecolor')) {
             return;
         }
-        $size = 640;
-        $im = imagecreatetruecolor($size, $size);
+        $im = imagecreatetruecolor($w, $h);
         [$r1, $g1, $b1] = $this->hsv($hue, .55, .95);
         [$r2, $g2, $b2] = $this->hsv(($hue + 50) % 360, .65, .55);
-        for ($y = 0; $y < $size; $y++) {
-            $t = $y / $size;
-            imageline($im, 0, $y, $size, $y, imagecolorallocate($im, (int) ($r1 + ($r2 - $r1) * $t), (int) ($g1 + ($g2 - $g1) * $t), (int) ($b1 + ($b2 - $b1) * $t)));
+        for ($y = 0; $y < $h; $y++) {
+            $t = $y / $h;
+            imageline($im, 0, $y, $w, $y, imagecolorallocate($im, (int) ($r1 + ($r2 - $r1) * $t), (int) ($g1 + ($g2 - $g1) * $t), (int) ($b1 + ($b2 - $b1) * $t)));
         }
         imagealphablending($im, true);
         mt_srand(crc32($seed));
+        $m = min($w, $h);
         for ($k = 0; $k < 4; $k++) {
-            $d = mt_rand(140, 380);
-            imagefilledellipse($im, mt_rand(60, $size - 60), mt_rand(60, $size - 60), $d, $d, imagecolorallocatealpha($im, 255, 255, 255, mt_rand(104, 116)));
+            $d = mt_rand((int) ($m * .22), (int) ($m * .6));
+            imagefilledellipse($im, mt_rand(60, $w - 60), mt_rand(60, $h - 60), $d, $d, imagecolorallocatealpha($im, 255, 255, 255, mt_rand(104, 116)));
         }
-        imagefilledellipse($im, (int) ($size / 2), (int) ($size / 2), 230, 230, imagecolorallocatealpha($im, 255, 255, 255, 40));
-        imagefilledellipse($im, (int) ($size / 2), (int) ($size / 2), 170, 170, imagecolorallocatealpha($im, $r2, $g2, $b2, 40));
+        imagefilledellipse($im, (int) ($w / 2), (int) ($h / 2), (int) ($m * .36), (int) ($m * .36), imagecolorallocatealpha($im, 255, 255, 255, 40));
+        imagefilledellipse($im, (int) ($w / 2), (int) ($h / 2), (int) ($m * .27), (int) ($m * .27), imagecolorallocatealpha($im, $r2, $g2, $b2, 40));
 
         File::ensureDirectoryExists($dir = storage_path('app/tmp'));
-        $file = $dir.'/demo-'.$p->id.'.png';
+        $file = $dir.'/demo-'.$collection.'-'.$p->getKey().'.png';
         imagepng($im, $file);
         imagedestroy($im);
 
-        $p->addMedia($file)->toMediaCollection('images');   // moves the temp file
+        $p->addMedia($file)->toMediaCollection($collection);   // moves the temp file
     }
 
     private function hsv(int $h, float $s, float $v): array

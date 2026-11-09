@@ -55,6 +55,8 @@ class HomeDefaults
             ['ur' => ['title' => 'نئی آمد'], 'ur_Latn' => ['title' => 'Nayi aamad']], 'New arrivals');
         $make('reviews', ['title' => 'What our customers say', 'subtitle' => 'Real reviews from people who ordered from us.', 'limit' => 9, 'min_rating' => 4, 'show_summary' => true],
             ['ur' => ['title' => 'ہمارے گاہک کیا کہتے ہیں', 'subtitle' => 'ہم سے آرڈر کرنے والوں کی اصل رائے۔'], 'ur_Latn' => ['title' => 'Hamare customers kya kehte hain', 'subtitle' => 'Hum se order karne walon ki asal raaye.']], 'Customer reviews');
+        $make('blog', ['title' => 'From our health blog', 'subtitle' => 'Simple, practical advice from our pharmacy team.', 'limit' => 3],
+            ['ur' => ['title' => 'ہمارے ہیلتھ بلاگ سے', 'subtitle' => 'ہماری فارمیسی ٹیم کی آسان اور عملی رہنمائی۔'], 'ur_Latn' => ['title' => 'Hamare health blog se', 'subtitle' => 'Hamari pharmacy team ki aasan aur amali rehnumai.']], 'Health blog');
         $steps = [
             ['icon' => 'search', 'title' => 'Search or upload', 'text' => 'Find your medicine, or send a photo of the prescription.', 'ur' => ['title' => 'تلاش کریں یا بھیجیں', 'text' => 'دوا تلاش کریں یا نسخے کی تصویر بھیجیں۔'], 'ur_Latn' => ['title' => 'Talash karein ya bhejein', 'text' => 'Dawa talash karein ya nuskhe ki tasveer bhejein.']],
             ['icon' => 'person-check', 'title' => 'Pharmacist confirms', 'text' => 'We verify the prescription and confirm availability.', 'ur' => ['title' => 'فارماسسٹ تصدیق کرتا ہے', 'text' => 'ہم نسخے اور دستیابی کی تصدیق کرتے ہیں۔'], 'ur_Latn' => ['title' => 'Pharmacist tasdeeq karta hai', 'text' => 'Hum nuskhe aur dastiyabi ki tasdeeq karte hain.']],

@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\Article;
 use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
@@ -35,6 +36,7 @@ class Trash
             'shipping' => ['label' => 'Shipping zones', 'icon' => 'truck', 'model' => ShippingZone::class, 'name' => fn ($m) => $m->name, 'permission' => 'sales_settings.manage'],
             'delivery-slots' => ['label' => 'Delivery slots', 'icon' => 'calendar2-week', 'model' => DeliverySlot::class, 'name' => fn ($m) => $m->label.' · '.$m->range(), 'permission' => 'sales_settings.manage'],
             'home-sections' => ['label' => 'Home page sections', 'icon' => 'layout-text-window-reverse', 'model' => HomeSection::class, 'name' => fn ($m) => $m->title ?: ucfirst($m->type), 'permission' => 'storefront.manage'],
+            'articles' => ['label' => 'Health blog', 'icon' => 'journal-richtext', 'model' => Article::class, 'name' => fn ($m) => $m->title, 'permission' => 'storefront.manage'],
             'pages' => ['label' => 'Pages', 'icon' => 'file-earmark-text-fill', 'model' => Page::class, 'name' => fn ($m) => $m->title, 'permission' => 'storefront.manage'],
             'menu-items' => ['label' => 'Menu links', 'icon' => 'list-nested', 'model' => MenuItem::class, 'name' => fn ($m) => $m->label, 'permission' => 'storefront.manage'],
             'prescription-requests' => ['label' => 'Prescription requests', 'icon' => 'camera-fill', 'model' => PrescriptionRequest::class, 'name' => fn ($m) => $m->name.' ('.$m->phone.')', 'permission' => 'prescriptions.verify'],

@@ -34,6 +34,12 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 ### Customer reviews wall
 - New home section type **Customer reviews (automatic)**: shows real, approved reviews as a masonry wall with an overall rating, star distribution bars, *Verified buyer* badge, city (from the order), the product link and the store's reply. Pick the minimum star rating, how many to show and whether to show the summary. Hidden until at least one review is approved, and follows the Reviews module switch. Sample data now includes a few reviews (removed with it).
 
+### Health blog
+- **Health blog** at `/blog` and `/blog/{slug}`: latest-first cards with a large lead article, topic chips with counts, search, pagination, reading time, share buttons (WhatsApp, Facebook, X, copy link), related articles, a medical-advice disclaimer and a "Need medicines?" box. Included in the sitemap with SEO title / description and an Article og-image.
+- Admin → **Health blog**: write articles with topic, author, summary, cover image, publish date (a future date **schedules** it), draft/published, search-engine fields and Urdu / Roman Urdu translations. Deleted articles go to the Recycle Bin.
+- New home section type **Health blog (latest articles)** and a *Health blog* link in the menu bar (switchable under Storefront → Header); both stay hidden until there is an article.
+- Sample data adds six general-advice articles with covers (removed with it).
+
 ### Kept
 - Prescriptions + pharmacist review, batches / expiry, delivery slots, riders, coupons, pickup, customer reviews, licence keys, 2FA, reports, backups, activity log, Recycle Bin, alerts, Google sign-in, reCAPTCHA, password reset.
 
