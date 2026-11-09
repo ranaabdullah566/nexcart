@@ -190,7 +190,7 @@
     });
     document.getElementById('designResetBtn').addEventListener('click', function () {
         form.querySelectorAll('[data-design]').forEach(function (el) { if (el.dataset['default']) { el.value = el.dataset['default']; syncHex(el.dataset.design, el.value); } });
-        var dflt = { font: 'inter', heading_font: 'same', heading_weight: '700', font_size: '16', radius: '12', button: 'rounded', shadow: 'soft', width: '1440' };
+        var dflt = { font: 'inter', heading_font: 'same', heading_weight: '700', font_size: '16', radius: '12', button: 'rounded', shadow: 'soft', width: '1280' };
         Object.keys(dflt).forEach(function (k) { var el = form.querySelector('[data-design="' + k + '"]'); if (el) el.value = dflt[k]; });
         document.getElementById('dz_admin').checked = true; document.getElementById('designReset').value = '1';
         applyDesign();

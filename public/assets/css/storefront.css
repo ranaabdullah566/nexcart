@@ -4,7 +4,7 @@
 
 .sf { --sf-pad: clamp(1rem, 3vw, 2rem); --sf-r: calc(var(--radius, 16px) * 1.25); }
 .sf main { min-height: 60vh; }
-.sf-container { width: 100%; max-width: 1440px; margin-inline: auto; padding-inline: var(--sf-pad); }
+.sf-container { width: 100%; max-width: 1280px; margin-inline: auto; padding-inline: var(--sf-pad); }
 
 /* ---------- Header ---------- */
 .sf-header { position: sticky; top: 0; z-index: 1030; backdrop-filter: blur(18px) saturate(150%); background: color-mix(in srgb, var(--bg) 72%, transparent); border-bottom: 1px solid var(--border); }

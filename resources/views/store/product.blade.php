@@ -120,7 +120,7 @@
         <section class="sf-section mk-rail-sec" data-rail>
             <div class="sf-section-head"><div><h2>{{ __('Same composition, other brands') }}</h2><p class="mk-sub">{{ __('Same active ingredient (:salt) — compare prices and availability.', ['salt' => $product->specs['composition']]) }}</p></div>
                 <div class="mk-rail-ctrl"><button type="button" data-rail-prev aria-label="{{ __('Previous') }}"><i class="bi bi-chevron-left"></i></button><button type="button" data-rail-next aria-label="{{ __('Next') }}"><i class="bi bi-chevron-right"></i></button></div></div>
-            <div class="tq-rail tq-rail-6" data-rail-track>@foreach ($alternatives as $p)<div class="tq-rail-item">@include('store._card', ['p' => $p])</div>@endforeach</div>
+            <div class="tq-rail tq-rail-5" data-rail-track>@foreach ($alternatives as $p)<div class="tq-rail-item">@include('store._card', ['p' => $p])</div>@endforeach</div>
         </section>
     @endif
 
@@ -128,7 +128,7 @@
         <section class="sf-section mk-rail-sec" data-rail>
             <div class="sf-section-head"><div><h2>{{ sft('product.related_title') }}</h2><p class="mk-sub">{{ sft('product.related_sub') }}</p></div>
                 <div class="mk-rail-ctrl"><button type="button" data-rail-prev aria-label="{{ __('Previous') }}"><i class="bi bi-chevron-left"></i></button><button type="button" data-rail-next aria-label="{{ __('Next') }}"><i class="bi bi-chevron-right"></i></button></div></div>
-            <div class="tq-rail tq-rail-6" data-rail-track>@foreach ($related->take(sf('product.related_count')) as $p)<div class="tq-rail-item">@include('store._card', ['p' => $p])</div>@endforeach</div>
+            <div class="tq-rail tq-rail-5" data-rail-track>@foreach ($related->take(sf('product.related_count')) as $p)<div class="tq-rail-item">@include('store._card', ['p' => $p])</div>@endforeach</div>
         </section>
     @endif
 </div>

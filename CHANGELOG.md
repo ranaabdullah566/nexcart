@@ -4,8 +4,8 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
-### Storefront — six per row and sliders
-- Product rows now show **6 cards per row** on desktop (shop, categories, saved and the rest; 5 / 4 / 3 / 2 on smaller screens). Storefront options → *Products per row* gained a "6" choice and is the default. The page container is 1440px wide so six cards fit beside the shop filters.
+### Storefront — five per row and sliders
+- Product rows now show **5 cards per row** on desktop (shop, categories, saved and the rest; 4 / 3 / 2 on smaller screens). Storefront options → *Products per row* is now 5 by default (3–6 selectable).
 - Every row on the home page is a **slider** (products, categories, brands, blog, reviews, testimonials) with arrow buttons, swipe on phones and scroll-snap; arrows hide when everything already fits. Product-page rails use the same sliders. New home product sections default to 12 items.
 
 ### Admin
