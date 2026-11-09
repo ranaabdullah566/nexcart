@@ -216,6 +216,17 @@ Route::post('/track', [Store\OrderController::class, 'trackFind'])->middleware([
 Route::middleware('auth')->group(function () {
     Route::get('/account', [Store\AccountController::class, 'index'])->name('store.account');
     Route::put('/account', [Store\AccountController::class, 'update'])->name('store.account.update');
+    Route::get('/account/orders', [Store\AccountController::class, 'orders'])->name('store.account.orders');
+    Route::get('/account/addresses', [Store\AccountController::class, 'addresses'])->name('store.account.addresses');
+    Route::post('/account/addresses', [Store\AccountController::class, 'saveAddress'])->name('store.account.addresses.store');
+    Route::get('/account/addresses/{address}/edit', [Store\AccountController::class, 'editAddress'])->whereNumber('address')->name('store.account.addresses.edit');
+    Route::put('/account/addresses/{address}', [Store\AccountController::class, 'saveAddress'])->whereNumber('address')->name('store.account.addresses.update');
+    Route::post('/account/addresses/{address}/default', [Store\AccountController::class, 'defaultAddress'])->whereNumber('address')->name('store.account.addresses.default');
+    Route::delete('/account/addresses/{address}', [Store\AccountController::class, 'deleteAddress'])->whereNumber('address')->name('store.account.addresses.destroy');
+    Route::get('/account/prescriptions', [Store\AccountController::class, 'prescriptions'])->name('store.account.prescriptions');
+    Route::get('/account/prescriptions/{prescription}/file/{media}', [Store\AccountController::class, 'prescriptionFile'])->whereNumber(['prescription', 'media'])->name('store.account.prescriptions.file');
+    Route::get('/account/reviews', [Store\AccountController::class, 'reviews'])->name('store.account.reviews');
+    Route::get('/account/profile', [Store\AccountController::class, 'profile'])->name('store.account.profile');
 });
 Route::get('/page/{slug}', [Store\PageController::class, 'show'])->name('store.page');
 Route::get('/saved', [Store\WishlistController::class, 'index'])->name('store.wishlist');

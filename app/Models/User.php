@@ -68,6 +68,11 @@ class User extends Authenticatable
         return false;
     }
 
+    public function addresses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserAddress::class)->orderByDesc('is_default')->orderBy('id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *

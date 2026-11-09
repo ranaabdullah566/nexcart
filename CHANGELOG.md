@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Customer account area
+- `/account` is now a proper panel with a sidebar (tabs on phones): **Dashboard** (stats, orders on the way, quick actions), **My orders** (filter, track, invoice, order again), **Addresses** (up to 10, default address feeds checkout; the first order fills it automatically), **Prescriptions** (status and private file download), **Saved medicines**, **My reviews** and **Profile & password**. New table `user_addresses` — run `php artisan migrate`.
+
 ### Categories — 3 levels
 - Categories are now capped at **3 levels** (category › sub-category › sub-sub-category). Admin → Categories shows each row's level with an indent, has a **Sub** button to add a child, and the parent list offers only categories that still have room; moving a branch that would exceed 3 levels is refused. The storefront menu (desktop mega menu and phone drawer) shows all three levels.
 

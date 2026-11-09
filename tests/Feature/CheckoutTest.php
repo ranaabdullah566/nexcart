@@ -383,8 +383,9 @@ class CheckoutTest extends TestCase
         $this->cart($this->product());
         $this->get('/checkout')->assertSee('House 5, Street 2')->assertSee('0300 1234567');
 
-        $this->put('/account', ['name' => 'Sara K', 'email' => 'sara@example.com', 'city' => 'Lahore'])->assertSessionHas('success');
-        $this->assertSame('Lahore', $sara->fresh()->default_address['city']);
+        $this->assertSame(1, $sara->addresses()->count());   // the first order fills the address book
+        $this->put('/account', ['name' => 'Sara K', 'email' => 'sara@example.com'])->assertSessionHas('success');
+        $this->assertSame('Sara K', $sara->fresh()->name);
     }
 
     public function test_login_sends_customers_to_account_and_staff_to_admin(): void

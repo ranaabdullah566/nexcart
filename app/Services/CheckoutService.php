@@ -186,6 +186,15 @@ class CheckoutService
                 $user->forceFill(['phone' => $data['phone'], 'default_address' => array_filter([
                     'address_line' => $data['address_line'] ?? null, 'city' => $data['city'] ?? null, 'area' => $data['area'] ?? null, 'postal_code' => $data['postal_code'] ?? null,
                 ])])->save();
+
+                // first order: keep the address in the customer's address book too
+                if (filled($data['address_line'] ?? null) && ! $user->addresses()->exists()) {
+                    $user->addresses()->create([
+                        'label' => __('Home'), 'name' => $data['name'] ?? $user->name, 'phone' => $data['phone'],
+                        'address_line' => $data['address_line'], 'city' => $data['city'] ?? '', 'area' => $data['area'] ?? null,
+                        'postal_code' => $data['postal_code'] ?? null, 'is_default' => true,
+                    ]);
+                }
             }
 
             $this->orders->log($order, 'placed', 'pending', null, $user);
