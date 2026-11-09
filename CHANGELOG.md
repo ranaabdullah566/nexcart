@@ -31,6 +31,9 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 - Product page: **Same composition, other brands** rail, cheapest first.
 - Category tiles pick a matching icon; new default home: trust strip, *Shop by need*, *Most ordered*, a prescription banner, new arrivals and a 3-step *How ordering works*; hero has a second *Upload prescription* button and floating capsules.
 
+### Customer reviews wall
+- New home section type **Customer reviews (automatic)**: shows real, approved reviews as a masonry wall with an overall rating, star distribution bars, *Verified buyer* badge, city (from the order), the product link and the store's reply. Pick the minimum star rating, how many to show and whether to show the summary. Hidden until at least one review is approved, and follows the Reviews module switch. Sample data now includes a few reviews (removed with it).
+
 ### Kept
 - Prescriptions + pharmacist review, batches / expiry, delivery slots, riders, coupons, pickup, customer reviews, licence keys, 2FA, reports, backups, activity log, Recycle Bin, alerts, Google sign-in, reCAPTCHA, password reset.
 

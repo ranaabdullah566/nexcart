@@ -19,7 +19,7 @@ roles & permissions you can build yourself, an alerts inbox, an activity log, a 
 
 **Make it yours (no code)** — Admin → **Storefront** switches parts of the shop on or off and changes their
 wording per language; **Interface text** rewords any word in any language; **Menus** fill the menu bar, top bar
-and footer columns; **Home page** has 11 section types; **Theme** sets colours, logo and mode.
+and footer columns; **Home page** has 12 section types (including an automatic customer-reviews wall); **Theme** sets colours, logo and mode.
 See [docs/CUSTOMIZING.md](docs/CUSTOMIZING.md).
 
 **Pharmacy tools** — prescription upload and pharmacist review, batches / expiry, delivery slots, riders,

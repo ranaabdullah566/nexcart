@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\HomeSection;
 use App\Models\Product;
+use App\Models\Review;
+use App\Support\BusinessProfile;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -17,7 +20,8 @@ class HomeController extends Controller
                 $data = match ($s->type) {
                     'categories' => ['categories' => $this->categories($s)],
                     'products' => ['products' => $this->products($s)],
-                    'brands' => ['brands' => \App\Models\Brand::where('is_active', true)->whereHas('products', fn ($q) => $q->active())->withCount(['products' => fn ($q) => $q->active()])->orderBy('name')->limit(max(1, (int) ($s->settings['limit'] ?? 12)))->get()],
+                    'brands' => ['brands' => Brand::where('is_active', true)->whereHas('products', fn ($q) => $q->active())->withCount(['products' => fn ($q) => $q->active()])->orderBy('name')->limit(max(1, (int) ($s->settings['limit'] ?? 12)))->get()],
+                    'reviews' => ['reviewData' => $this->reviews($s)],
                     default => [],
                 };
 
@@ -34,6 +38,23 @@ class HomeController extends Controller
         }
 
         return view('store.home', ['sections' => $sections, 'deals' => $deals]);
+    }
+
+    /** Real, approved reviews + the overall rating summary (empty when the module is off or nobody reviewed yet). */
+    private function reviews(HomeSection $s): array
+    {
+        if (! BusinessProfile::hasModule('reviews')) {
+            return ['list' => collect(), 'count' => 0];
+        }
+        $all = Review::where('status', 'approved');
+        $count = (clone $all)->count();
+        $dist = (clone $all)->selectRaw('rating, count(*) n')->groupBy('rating')->pluck('n', 'rating');
+        $list = (clone $all)->where('rating', '>=', max(1, min(5, (int) ($s->settings['min_rating'] ?? 4))))
+            ->with(['product' => fn ($q) => $q->select('id', 'name', 'slug', 'status', 'translations'), 'order:id,city'])
+            ->latest('id')->limit(max(3, min(24, (int) ($s->settings['limit'] ?? 9))))->get();
+
+        return ['list' => $list, 'count' => $count, 'avg' => $count ? round((float) (clone $all)->avg('rating'), 1) : 0,
+            'dist' => collect([5, 4, 3, 2, 1])->mapWithKeys(fn ($r) => [$r => (int) ($dist[$r] ?? 0)])->all()];
     }
 
     private function categories(HomeSection $s)

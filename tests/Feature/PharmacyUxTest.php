@@ -3,9 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\HomeSection;
 use App\Models\PrescriptionRequest;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\User;
+use App\Services\DemoData;
 use App\Support\BusinessProfile;
 use App\Support\Storefront;
 use Database\Seeders\RolesSeeder;
@@ -151,5 +154,59 @@ class PharmacyUxTest extends TestCase
     {
         Category::create(['name' => 'Pain & fever', 'is_active' => true]);
         $this->get('/')->assertOk()->assertSee('100% genuine')->assertSee('Have a prescription? Just send a photo.')->assertSee('How ordering works')->assertSee('Shop by need');
+    }
+
+    private function review(Product $p, array $o = []): Review
+    {
+        return Review::create($o + ['product_id' => $p->id, 'name' => 'Ali', 'rating' => 5, 'title' => 'Great', 'body' => 'Fast delivery', 'status' => 'approved']);
+    }
+
+    public function test_home_reviews_wall_shows_only_approved_reviews_with_a_rating_summary(): void
+    {
+        $p = $this->med(['name' => 'Panadol']);
+        $this->get('/')->assertDontSee('What our customers say');   // nothing to show yet
+
+        $this->review($p, ['name' => 'Sara Ahmed', 'title' => 'Genuine stuff', 'rating' => 5, 'order_id' => null, 'reply' => 'Thank you Sara!']);
+        $this->review($p, ['name' => 'Bilal Khan', 'rating' => 4, 'title' => 'Decent', 'body' => 'Late by an hour']);
+        $this->review($p, ['name' => 'Pending Pete', 'status' => 'pending', 'title' => 'Not yet moderated']);
+        $this->review($p, ['name' => 'Hidden Hana', 'status' => 'hidden', 'title' => 'Hidden one']);
+        $this->review($p, ['name' => 'Angry Andy', 'rating' => 2, 'title' => 'Bad day', 'body' => 'Meh']);
+
+        $html = $this->get('/')->assertOk()->assertSee('What our customers say')->assertSee('Sara Ahmed')->assertSee('Genuine stuff')->assertSee('Thank you Sara!')
+            ->assertSee('Bilal Khan')->assertDontSee('Pending Pete')->assertDontSee('Hidden Hana')->assertDontSee('Angry Andy')->getContent();   // 2★ is below the default minimum of 4
+        $this->assertStringContainsString('3 reviews', $html);        // the summary counts every approved review
+        $this->assertStringContainsString('3.7', $html);              // (5 + 4 + 2) / 3
+        $this->assertStringContainsString('fx-rev-bars', $html);
+    }
+
+    public function test_reviews_section_is_configurable_and_follows_the_module(): void
+    {
+        $p = $this->med(['name' => 'Panadol']);
+        $this->review($p, ['name' => 'Low Lola', 'rating' => 3, 'title' => 'Average']);
+        $this->actingAs($this->user('owner'));
+        $section = HomeSection::where('type', 'reviews')->firstOrFail();
+
+        $this->get('/')->assertDontSee('Low Lola');
+        $this->put("/admin/home-sections/{$section->id}", ['title' => 'Voices', 'limit' => 6, 'min_rating' => 3, 'is_active' => 1])->assertRedirect();
+        $this->get('/')->assertSee('Voices')->assertSee('Low Lola')->assertDontSee('fx-rev-sum', false);   // summary switched off (unticked)
+
+        $this->put("/admin/home-sections/{$section->id}", ['title' => 'Voices', 'limit' => 6, 'min_rating' => 9])->assertSessionHasErrors('min_rating');
+
+        setting()->set('modules.reviews', false);
+        $this->get('/')->assertDontSee('Voices');
+    }
+
+    public function test_demo_data_adds_sample_reviews_and_removes_them_cleanly(): void
+    {
+        $demo = app(DemoData::class);
+        $demo->load();
+        $n = Review::count();
+        $this->assertGreaterThan(3, $n);
+        $this->get('/')->assertSee('What our customers say');
+
+        $mine = $this->med(['name' => 'Mine']);
+        $this->review($mine, ['name' => 'Real Rita']);
+        $demo->remove();
+        $this->assertSame(['Real Rita'], Review::pluck('name')->all());
     }
 }

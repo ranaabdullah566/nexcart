@@ -64,6 +64,13 @@
                     @endforeach @endforeach
                 </div></div>
             @endfor
+        @elseif ($type === 'reviews')
+            <div class="col-md-6"><label class="form-label">{{ __('Heading') }}</label><input name="title" value="{{ $st('title', 'What our customers say') }}" maxlength="120" class="form-control"></div>
+            <div class="col-md-6"><label class="form-label">{{ __('Sub-heading') }}</label><input name="subtitle" value="{{ $st('subtitle') }}" maxlength="300" class="form-control"></div>
+            <div class="col-md-4"><label class="form-label">{{ __('How many reviews') }}</label><input type="number" min="3" max="24" name="limit" value="{{ $st('limit', 9) }}" class="form-control figure"></div>
+            <div class="col-md-4"><label class="form-label">{{ __('Show reviews rated at least') }}</label><select name="min_rating" class="form-select">@foreach ([5, 4, 3, 2, 1] as $r)<option value="{{ $r }}" @selected((int) $st('min_rating', 4) === $r)>{{ $r }} ★</option>@endforeach</select></div>
+            <div class="col-md-4 d-flex align-items-end"><div class="form-check form-switch"><input type="checkbox" role="switch" class="form-check-input" name="show_summary" value="1" id="revSum" @checked(old('show_summary', $section->settings['show_summary'] ?? true))><label class="form-check-label" for="revSum">{{ __('Show the rating summary') }}</label></div></div>
+            <div class="col-12 small text-muted">{{ __('Real customer reviews appear here by themselves once they are approved under Reviews. Nothing shows until there is at least one.') }}</div>
         @elseif ($type === 'brands')
             <div class="col-md-6"><label class="form-label">{{ __('Heading') }}</label><input name="title" value="{{ $st('title', 'Shop by brand') }}" maxlength="120" class="form-control"></div>
             <div class="col-md-6"><label class="form-label">{{ __('How many') }}</label><input type="number" min="1" max="30" name="limit" value="{{ $st('limit', 12) }}" class="form-control figure"></div>

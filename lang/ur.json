@@ -1395,5 +1395,11 @@
     "We received your prescription. A pharmacist will call you shortly to confirm your medicines and delivery.": "ہمیں آپ کا نسخہ مل گیا۔ فارماسسٹ جلد کال کر کے ادویات اور ڈیلیوری کی تصدیق کرے گا۔",
     "Where should we deliver?": "ہم کہاں ڈیلیور کریں؟",
     "or tap to take a photo / choose files · JPG, PNG, PDF · up to 5 files, 5 MB each": "یا تصویر لینے / فائلیں چننے کے لیے ٹیپ کریں · JPG, PNG, PDF · زیادہ سے زیادہ 5 فائلیں، ہر ایک 5 MB",
-    "Trending:": "ٹرینڈنگ:"
+    "Trending:": "ٹرینڈنگ:",
+    "What our customers say": "ہمارے گاہک کیا کہتے ہیں",
+    "Rating summary": "ریٹنگ کا خلاصہ",
+    "Based on :n review|Based on :n reviews": "{1} :n جائزے پر مبنی|[2,*] :n جائزوں پر مبنی",
+    "Real customers": "اصل گاہک",
+    "Moderated": "جانچ شدہ",
+    "on :product": ":product پر"
 }

@@ -13,10 +13,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class HomeSection extends Model implements HasMedia
 {
     use Audited;
-
     use HasTranslations, InteractsWithMedia, SoftDeletes;
 
-    public const TYPES = ['hero', 'categories', 'products', 'brands', 'banner', 'cta', 'features', 'steps', 'testimonials', 'faq', 'text'];
+    public const TYPES = ['hero', 'categories', 'products', 'brands', 'banner', 'cta', 'features', 'steps', 'testimonials', 'reviews', 'faq', 'text'];
 
     protected $fillable = ['type', 'title', 'settings', 'sort_order', 'is_active'];
 

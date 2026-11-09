@@ -1395,5 +1395,11 @@
     "We received your prescription. A pharmacist will call you shortly to confirm your medicines and delivery.": "Humein aap ka nuskha mil gaya. Pharmacist jald call kar ke adwiya aur delivery ki tasdeeq karega.",
     "Where should we deliver?": "Hum kahan deliver karein?",
     "or tap to take a photo / choose files · JPG, PNG, PDF · up to 5 files, 5 MB each": "Ya tasveer lene / files chunne ke liye tap karein · JPG, PNG, PDF · ziyada se ziyada 5 files, har aik 5 MB",
-    "Trending:": "Trending:"
+    "Trending:": "Trending:",
+    "What our customers say": "Hamare customers kya kehte hain",
+    "Rating summary": "Rating ka khulasa",
+    "Based on :n review|Based on :n reviews": "{1} :n review par mabni|[2,*] :n reviews par mabni",
+    "Real customers": "Asal customers",
+    "Moderated": "Jaanch shuda",
+    "on :product": ":product par"
 }

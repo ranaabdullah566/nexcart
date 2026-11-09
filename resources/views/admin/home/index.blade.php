@@ -5,7 +5,7 @@
     $meta = [
         'hero' => ['window-fullscreen', 'Hero banner'], 'categories' => ['grid-1x2', 'Category tiles'], 'products' => ['box-seam', 'Product row'],
         'banner' => ['image', 'Promo banner'], 'features' => ['stars', 'Highlights'], 'text' => ['card-text', 'Text block'],
-        'brands' => ['award', 'Brands strip'], 'cta' => ['megaphone', 'Call-to-action banner'], 'steps' => ['list-ol', 'How it works (steps)'], 'testimonials' => ['chat-quote', 'Customer quotes'], 'faq' => ['question-circle', 'Questions & answers'],
+        'brands' => ['award', 'Brands strip'], 'cta' => ['megaphone', 'Call-to-action banner'], 'steps' => ['list-ol', 'How it works (steps)'], 'testimonials' => ['chat-quote', 'Customer quotes'], 'reviews' => ['star-half', 'Customer reviews (automatic)'], 'faq' => ['question-circle', 'Questions & answers'],
     ];
 @endphp
 

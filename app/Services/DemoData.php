@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Review;
 use App\Support\BusinessProfile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -29,8 +30,9 @@ class DemoData
         if ($this->loaded()) {
             throw new RuntimeException(__('Sample data is already loaded. Remove it first to load it again.'));
         }
+        $this->reviewIds = [];
         $set = $this->dataset();
-        $ids = ['products' => [], 'categories' => [], 'brands' => []];
+        $ids = ['products' => [], 'categories' => [], 'brands' => [], 'reviews' => []];
 
         DB::transaction(function () use ($set, &$ids) {
             $cats = [];
@@ -62,10 +64,12 @@ class DemoData
                 if (! isset($d['variants'])) {
                     $this->receive($p, $d['stock'] ?? 25, null, $d);
                 }
+                $this->sampleReviews($p, $i);
                 $this->attachImage($p, $d['hue'] ?? ($i * 47) % 360, $d['name']);
             }
         });
 
+        $ids['reviews'] = $this->reviewIds;
         setting()->set('demo.ids', $ids);
 
         return count($ids['products']);
@@ -78,6 +82,7 @@ class DemoData
         $n = 0;
 
         DB::transaction(function () use ($ids, &$n) {
+            Review::withTrashed()->whereIn('id', $ids['reviews'] ?? [])->forceDelete();
             foreach (Product::withTrashed()->whereIn('id', $ids['products'] ?? [])->get() as $p) {
                 $p->forceDelete();   // also deletes its images
                 $n++;
@@ -91,6 +96,29 @@ class DemoData
 
         return $n;
     }
+
+    /** A few believable reviews on some products, so the home page wall is alive in a demo. Removed with the sample data. */
+    private function sampleReviews(Product $p, int $i): void
+    {
+        $bank = [
+            [5, 'Genuine and fast', 'Delivered the same day and the pharmacist even called to confirm the dose. Packaging was sealed.', 'Ayesha K.'],
+            [5, 'Very reliable', 'I order my family’s medicines here every month. Prices are fair and everything is genuine.', 'Usman R.'],
+            [4, 'Good service', 'Easy to order. Delivery took a little longer than promised but the rider was polite.', 'Hira S.'],
+            [5, 'Saved me a trip', 'Uploaded my prescription at night and had the medicines by noon. Highly recommended.', 'Bilal A.'],
+            [4, 'Fair prices', 'Found the same medicine at a lower price than the corner store. Will order again.', 'Maryam F.'],
+            [5, 'Excellent', 'Everything arrived properly packed and the expiry was well over a year away.', 'Hassan M.'],
+            [5, 'Helpful team', 'They suggested a cheaper alternative with the same salt. Great honesty.', 'Zainab T.'],
+            [4, 'Smooth checkout', 'Cash on delivery made it easy for my parents. Simple site, no confusion.', 'Omar J.'],
+        ];
+        if ($i % 3 !== 0 || ! $bank) {
+            return;
+        }
+        [$rating, $title, $body, $name] = $bank[intdiv($i, 3) % count($bank)];
+        $r = Review::create(['product_id' => $p->id, 'name' => $name, 'rating' => $rating, 'title' => $title, 'body' => $body, 'status' => 'approved']);
+        $this->reviewIds[] = $r->id;
+    }
+
+    private array $reviewIds = [];
 
     private function receive(Product $p, int $qty, $variant, array $d): void
     {

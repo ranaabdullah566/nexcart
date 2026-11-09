@@ -26,6 +26,7 @@ class HomeSectionController extends Controller
         'cta' => ['eyebrow', 'title', 'subtitle', 'button_label', 'button2_label'],
         'steps' => ['title', 'subtitle'],
         'testimonials' => ['title', 'subtitle'],
+        'reviews' => ['title', 'subtitle'],
         'faq' => ['title', 'subtitle'],
     ];
 
@@ -146,6 +147,7 @@ class HomeSectionController extends Controller
                 'category_id' => ['nullable', 'required_if:source,category', 'exists:categories,id']],
             'text' => ['title' => ['nullable', 'string', 'max:120'], 'body' => ['required', 'string', 'max:5000']],
             'features', 'steps', 'testimonials', 'faq' => $this->itemRules($type),
+            'reviews' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:3', 'max:24'], 'min_rating' => ['required', Rule::in([1, 2, 3, 4, 5])], 'show_summary' => ['nullable', 'boolean']],
             'brands' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:1', 'max:30']],
             'cta' => ['eyebrow' => ['nullable', 'string', 'max:80'], 'title' => ['required', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'],
                 'button_label' => ['nullable', 'string', 'max:40'], 'button_url' => $url, 'button2_label' => ['nullable', 'string', 'max:40'], 'button2_url' => $url],
@@ -155,6 +157,9 @@ class HomeSectionController extends Controller
         $settings = collect($data)->except(['is_active', 'tr', 'image'])->all();
         if (isset(self::ITEMS[$type])) {
             $settings['items'] = collect($data['items'])->filter(fn ($i) => filled($i['title'] ?? null))->values()->all();
+        }
+        if ($type === 'reviews') {
+            $settings['show_summary'] = $request->boolean('show_summary');
         }
         if ($type === 'categories') {
             $settings['category_ids'] = array_values(array_filter($data['category_ids'] ?? []));
