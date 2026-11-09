@@ -15,7 +15,7 @@ expensive and noisy. Keep PHP, Laravel and this app updated (see [UPGRADE.md](UP
 | Content-Security-Policy | Nonce-based: only our own scripts run; injected scripts are blocked. Also `frame-ancestors`, `object-src 'none'`, `form-action`. |
 | Headers | nosniff, X-Frame-Options, HSTS (on HTTPS), cross-origin opener policy, referrer / permissions policy, no `X-Powered-By`. Account, checkout, order and admin pages are `no-store` and `noindex`. |
 | Scanner guard | Requests for `.env`, `.git`, `wp-login`, `phpmyadmin` … get 404; 5 strikes → the IP is blocked for an hour. |
-| Rate limits | login, register, 2FA, cart, search, checkout, tracking. |
+| Rate limits | login, register, 2FA, cart, search, checkout, tracking, contact form, newsletter sign-up, prescription upload. |
 | Bot protection | Optional Google reCAPTCHA v2 on sign-in, sign-up, checkout and order tracking (refuses when Google is unreachable), plus an invisible honeypot and a timing check on public forms. |
 | Form validation | Every form is checked in the browser *and* again on the server; messages appear under each field. The server never trusts the browser. |
 | Sign in with Google | Customers only. Keys are stored encrypted. |
@@ -25,6 +25,11 @@ expensive and noisy. Keep PHP, Laravel and this app updated (see [UPGRADE.md](UP
 | Soft delete | Every module deletes into the Recycle Bin first; restore or erase permanently there. |
 | Downloads | Backup and prescription files are served `nosniff` and `no-store`; backups are sandboxed. |
 | Web server | `.htaccess` refuses dotfiles; directory listing off; secrets are never flashed back into forms. |
+| Guest forms | Contact, newsletter and prescription upload need no account but are rate-limited, use the honeypot + timing check, and (if switched on) reCAPTCHA. The newsletter gives the same answer whether or not an address is already on the list. |
+| Guest orders | After a guest order, an account only receives the orders placed **from that browser session** — never “all orders with this e-mail”, which would let someone read another person's history. |
+| Prescription uploads | Photos / PDFs (JPG, PNG, WebP, PDF, 5 MB each, up to 5) go to a **private disk**, never a public URL; only staff with the prescription permission can open them. |
+| Recently viewed | Stored only in the visitor's own browser (`localStorage`), never sent to the server; there is a Clear button. |
+| Error pages | 403 / 404 / 419 / 429 / 500 / 503 are branded and work without the database, and never print stack traces in production. |
 | Page text | Text typed into pages is escaped first; only headings, lists and links are produced, and links open safely. |
 
 ## Setting up the optional parts

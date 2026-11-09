@@ -47,6 +47,11 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 - **Recently viewed** medicines (home, product and cart pages) — stored on the device only, with a Clear button.
 - **Install app** button (Android / desktop prompt; iPhone shows the Add-to-Home-Screen steps) and a branded offline page.
 
+### Quality
+- Browser QA of 31 storefront pages and 76 admin pages (186 + 456 page loads: dark / light × desktop / tablet / phone) with axe accessibility checks, plus interactive and permission checks — see [docs/QA-REPORT.md](docs/QA-REPORT.md) and `scripts/qa`.
+- Fixes from it: accent colour auto-darkened for text on the light theme, heading structure (admin pages now have an `h1`), tab and radio-group ARIA, names for icon-only buttons and links, no buttons inside hidden links, phone overflow fixes, quick-view opened directly redirects to the product page.
+- `phpunit.xml` forces its own in-memory database, cache and session; the demo-data tests use a fake disk.
+
 ### Kept
 - Prescriptions + pharmacist review, batches / expiry, delivery slots, riders, coupons, pickup, customer reviews, licence keys, 2FA, reports, backups, activity log, Recycle Bin, alerts, Google sign-in, reCAPTCHA, password reset.
 

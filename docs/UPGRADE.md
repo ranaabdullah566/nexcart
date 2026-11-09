@@ -41,3 +41,10 @@ Version 1.2.0 removes fast food / medical store / general profiles, Kitchen disp
 The update migration drops the add-on and loyalty tables, so **back up first**. Existing orders keep their totals; older orders that
 used points still show correctly in totals but no longer list a “Points used” line. Stores that were set up as another business type
 keep their data and are treated as a pharmacy.
+
+## Also in 1.2.0
+
+New tables are created by the migrations (`prescription_requests`, `articles`, `contact_messages`, `subscribers`) and new permissions are
+added by `nexcart:update`; nothing manual. Existing home pages are not rewritten — to get the new *Customer reviews* and *Health blog*
+sections, add them under **Home page**. New stores get them by default.
+Tests now force their own in-memory database, cache and session, so running `php artisan test` can never touch a real database.

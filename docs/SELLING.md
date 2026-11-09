@@ -6,9 +6,9 @@ Each client gets **their own** database, storage volume, `.env` and domain, all 
 
 ```bash
 docker build -t nexcart:latest .                                   # once per release
-scripts/provision-client.sh fresh-burgers https://fresh.pk 24001   # a client folder with fresh secrets
-(cd clients/fresh-burgers && docker compose up -d)
-php artisan nexcart:license:generate "Fresh Burgers" --domain=fresh.pk ...
+scripts/provision-client.sh city-pharmacy https://citypharmacy.pk 24001   # a client folder with fresh secrets
+(cd clients/city-pharmacy && docker compose up -d)
+php artisan nexcart:license:generate "City Pharmacy" --domain=citypharmacy.pk ...
 ```
 
 Why this and not one shared multi-tenant system?
@@ -28,13 +28,13 @@ Everything can be changed afterwards under **Store settings → Modules**.
 ## Making each client’s store different
 
 No code per client. Under **Storefront** the client (or you) can switch header, product-page and footer parts on or off, rename any word in any language
-(**Interface text**), build the menus and footer columns, pick colours and logo, and compose the home page from eleven section types.
+(**Interface text**), build the menus and footer columns, pick colours and logo, and compose the home page from thirteen section types (including a live customer-reviews wall and the health blog).
 Hand them [CUSTOMIZING.md](CUSTOMIZING.md). Roles are editable too, so a client can create e.g. a *cashier* role without you.
 
 ## Handing over a store
 
 1. Provision and start the deployment, open the site and run the wizard with the client’s details (or let them).
-2. Optional: **System health → Add sample products** for a demo, remove it before go-live.
+2. Optional: **System health → Add sample products** for a demo (24 medicines, sample reviews and six health-blog articles), remove it before go-live. Check the blog articles with a pharmacist first — they are general advice.
 3. Walk them through **docs/ADMIN-GUIDE.md**, send the license key, confirm backups and the scheduler cron are on.
 
 ## Multi-tenant SaaS (not built)

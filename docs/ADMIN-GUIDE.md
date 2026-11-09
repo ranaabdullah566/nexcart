@@ -4,7 +4,7 @@ Everything is in the left menu. Languages (English / اردو / Roman Urdu) and 
 next to **Visit site** (opens your shop in a new tab) and the **bell** (your alerts).
 
 ## First day
-1. **Store settings** — name, tagline, contact, WhatsApp and social links, currency, tax, timezone, payment methods and reminders.
+1. **Store settings** — name, tagline, contact, address and opening hours (shown on the Contact page), WhatsApp and social links, currency, tax, timezone, payment methods and reminders.
 2. **Shipping** — zones by city with delivery prices, free-over amounts and store pickup. No zone = nobody can check out.
 3. **Catalog** — categories, brands, products (simple or with pack-size variants), product fields, inventory.
 4. **Storefront** — *Home page* sections, *Theme* (live preview), *Storefront options*, *Interface text*, *Pages*, *Menus*, *Email templates*. See [CUSTOMIZING.md](CUSTOMIZING.md).
@@ -13,20 +13,20 @@ next to **Visit site** (opens your shop in a new tab) and the **bell** (your ale
 
 ## Every day
 - **Orders** — click an order to move it along; status e-mails go to the customer by themselves. Unpaid bank/cash orders can be marked paid.
-- **Alerts** (bell) — new orders, low stock and every message the system showed you, kept until you clear them. Alerts are personal: reading yours does not mark them read for others.
+- **Alerts** (bell) — new orders, new prescriptions, new contact messages, low stock and every message the system showed you, kept until you clear them. Alerts are personal: reading yours does not mark them read for others.
 - **Customers** — people with an account can be added, edited and deleted here; guests who only ordered show with a *Create account* button.
 - **Delivery:** assign a *rider* in the order; riders use *Deliveries* on their phone.
 - **Pharmacy:** *Prescription requests* lists photos customers sent without ordering — call them, mark *Called back* / *Closed*. *Prescriptions* — approve or send back with a reason; medicines are not prepared until approved. *Delivery slots* limit orders per time window. *Inventory → Batches* shows what expires soon.
-- **Messages** — Contact-page messages and the newsletter list (download subscribers as CSV).
-- **Health blog** — write tips and guidance for customers; set a future publish date to schedule an article.
-- **Reviews** — approve or reply.
+- **Messages** — what visitors sent from the Contact page (new / read / replied, reply by e-mail) and the newsletter list (*Subscribers* downloads active addresses as CSV; every address can unsubscribe with one link).
+- **Health blog** — write tips and guidance for customers: topic, author, summary, cover image, translations, search-engine fields. A future publish date schedules an article; a draft stays hidden. The blog link, the home-page blog section and the sitemap only appear once there is a published article.
+- **Reviews** — approve, hide or reply. Approved reviews appear on the product page *and* on the home-page reviews wall (Home page → add the section *Customer reviews*; you choose the minimum stars and how many to show).
 
 ## Reports
 *Overview* plus seven reports — **Sales, Products, Customers, Inventory, Finance & tax, Operations, Marketing**. Pick 7 days, 30 days, 90 days, a year or your own dates. Each table has a CSV button.
 Numbers follow one rule everywhere: *revenue* counts every order that is not cancelled or refunded (tax and shipping included), days follow your store’s timezone, and profit uses each product’s current cost.
 
 ## Deleting and restoring
-Everything you delete goes to the **Recycle Bin** first (orders are never deleted — they are accounting records).
+Everything you delete — products, articles, messages, prescription requests, pages, coupons … — goes to the **Recycle Bin** first (orders are never deleted — they are accounting records).
 Restore an item, delete it for good, empty a whole list, or set the bin to empty itself after N days.
 A deleted item still reserves its unique value (a coupon code, an SKU, a staff e-mail) until you restore or erase it.
 
@@ -38,7 +38,7 @@ A deleted item still reserves its unique value (a coupon code, an SKU, a staff e
 | owner | everything — always, and it cannot be edited or deleted |
 | manager | everything except Store settings, System, Roles and deleting staff |
 | staff | view catalog and customers, work orders and inventory |
-| rider | see and update their assigned deliveries |
+| rider | see the order list and update their assigned deliveries |
 | pharmacist | review prescriptions, adjust stock |
 
 A role cannot be deleted while people hold it. Updating NexCart never undoes the changes you made to roles.

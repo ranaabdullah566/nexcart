@@ -18,7 +18,10 @@ Work through this before taking real orders. **System health** in the admin chec
 | ☐ | Google sign-in (optional): client ID + secret, redirect URI `https://your-domain/auth/google/callback` | Customers only — staff always use password + two-factor. |
 | ☐ | Shipping zones, tax rate, payment methods, delivery slots | Without a shipping zone customers cannot check out. |
 | ☐ | Owner password is strong and two-factor is on; staff have the right role | Riders and pharmacists see far less than managers. Consider “Require two-factor for all staff”. |
-| ☐ | Store contact, WhatsApp number and social links filled in | They feed the footer, content pages and product page. |
+| ☐ | Store contact, address, opening hours, WhatsApp number and social links filled in | They feed the footer, the Contact page, content pages and the product page. |
+| ☐ | Sample data removed (System health → Remove sample data) and your own medicines, reviews and articles in place | Demo medicines, reviews and blog articles are placeholders. Have a pharmacist read any blog article before publishing. |
+| ☐ | HTTPS works, then open the site on a phone once | The *Install app* button and the offline page only work over HTTPS. |
+| ☐ | Submit `/sitemap.xml` to Google Search Console | It lists products, categories, pages and published blog articles. |
 | ☐ | License key entered (if you bought one) | Removes the license reminder and the footer credit. |
 
 ## Things worth knowing
@@ -27,6 +30,7 @@ Work through this before taking real orders. **System health** in the admin chec
 - **Prescriptions are private.** They are stored outside the web root and only staff with the right permission can open them. Backups contain them, so protect backup files like medical records.
 - **Security headers** (no-sniff, frame, referrer, HSTS on HTTPS, cross-origin policy) and a nonce-based **Content-Security-Policy** are sent on every page; account, checkout and admin pages are also `no-store` and `noindex`. The server-log viewer is the one place without the CSP (it ships its own scripts) and is owner-only. If you add your own inline `<script>` to a view, give it `nonce="{{ csp_nonce() }}"`.
 - **Scanner protection:** requests for `.env`, `.git`, `wp-login`, `phpmyadmin` … get 404 and repeat offenders are blocked for an hour (kept in the cache, so no database writes).
+- **Guest data you collect:** contact messages, newsletter e-mail addresses and prescription photos. Treat them like customer records — they are in the database and in backups; the newsletter list can be exported or deleted from Admin → Messages.
 - **No queue worker is needed.** E-mails are sent while the request runs; a failed e-mail never blocks an order.
 - **Performance:** in production `php artisan nexcart:update` caches config, routes and views. OPcache is on in the Docker image.
 - **Monitoring:** `GET /up` returns 200 when the app boots — point an uptime monitor at it.

@@ -14,7 +14,7 @@ Requirements: PHP 8.3+, MySQL/MariaDB (or SQLite for a small store), and these P
    a one-line server check (open “Show all checks” for details), a choice of **MySQL / MariaDB** or **SQLite**,
    your database details — it creates the tables and then sends you to the wizard.
 4. Finish the wizard at `/setup` (step 2 of 2): store name / timezone / currency, the owner account
-   (password: at least 10 characters with a letter and a number) and optional sample products.
+   (password: at least 10 characters with a letter and a number) and optional sample medicines. There is no business-type step: the store is a pharmacy.
    The installer locks itself afterwards (`storage/app/installed.lock`).
 5. Open **System health** in the admin and fix anything red or orange (HTTPS, e-mail, the scheduler cron).
 
@@ -49,7 +49,8 @@ php artisan serve                 # open /setup
 
 - Cron for the scheduler: `* * * * * cd /path/to/nexcart && php artisan schedule:run >> /dev/null 2>&1`
 - Staff accounts: **Admin → Staff**. Built-in roles: owner, manager, staff, rider, pharmacist — and you can build your own under **Roles & permissions**.
-- Try everything with **System health → Add sample products** (removable in one click), or load 100 products, 100 customers and 100 orders with
+- Try everything with **System health → Add sample products** (24 medicines, sample reviews and articles — removable in one click), or load 100 medicines, 100 customers and 100 orders with
   `php artisan db:seed --class=DemoRecordsSeeder` (demo customers sign in with `Demo-pass-123`; do not run it on a live store).
 - Make the shop yours: **Storefront options**, **Interface text**, **Menus**, **Home page** — see [CUSTOMIZING.md](CUSTOMIZING.md).
+- Fill in the store's phone, address and opening hours (**Store settings**) — they appear on the Contact page — and write your first **Health blog** article.
 - Turn on two-factor sign-in for the owner: **Security**.

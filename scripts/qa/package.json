@@ -1,0 +1,12 @@
+{
+  "name": "nexcart-qa",
+  "private": true,
+  "description": "Browser QA crawl (Playwright + axe-core) for the NexCart storefront and admin",
+  "scripts": {
+    "storefront": "node storefront.js",
+    "admin": "node admin.js",
+    "flow": "node admin-flow.js",
+    "summary": "node summarize.js"
+  },
+  "dependencies": { "axe-core": "^4.10.0", "playwright": "^1.48.0" }
+}

@@ -11,11 +11,11 @@ back to the **built-in wording** (which is already translated).
 | Tab | You can change |
 |-----|----------------|
 | Top bar | on/off, text, the small links on the right |
-| Header & menu | sticky header; “Deliver to” city picker and its cities; Upload prescription button; trending searches; Shop icon; language switcher; light/dark toggle; search hint and button; the “All categories” mega menu and its “Popular” tiles; Deals link; Track-order link |
+| Header & menu | sticky header; “Deliver to” city picker and its cities; Upload prescription button; trending searches (on/off and the words); Health blog link; Shop icon; language switcher; light/dark toggle; search hint and button; the “All categories” mega menu and its “Popular” tiles; Deals link; Track-order link |
 | Home page | the “Top deals” panel on the hero (on/off, title, how many); hero auto-slide and speed |
 | Product cards & listing | image shape and fit, products per row, products per page, category / rating / discount / quick view, the Add-to-cart wording |
 | Product page | trust lines under the photos, small badges under the buttons, details table, Share / WhatsApp, the “Delivery & returns” tab (name, lines, policy cards), related products (title, how many), sticky buy bar on phones |
-| Footer | social icons, contact lines, text under the logo, the three column titles, copyright line, legal links |
+| Footer | social icons, contact lines, text under the logo, the three column titles, the e-mail sign-up box and its words, copyright line, legal links |
 | Cookie bar & buttons | the cookie bar and its wording, the WhatsApp and back-to-top buttons |
 | Checkout & invoice | ask for area / postal code / order notes; logo, tax number and footer text on invoices |
 | Home page SEO | the title and description Google shows for the home page |
@@ -52,7 +52,7 @@ A link can point to a page, a category or any address.
 
 ## Admin → Home page
 
-Add, reorder, hide and edit sections. Eleven types:
+Add, reorder, hide and edit sections. Thirteen types:
 
 | Type | Use it for |
 |------|------------|
@@ -63,7 +63,9 @@ Add, reorder, hide and edit sections. Eleven types:
 | Promo banner / Call-to-action banner | a message with one or two buttons and a background image |
 | Highlights | up to 4 icon + title + text items (shown as a trust strip under the hero) |
 | How it works | up to 6 numbered or icon steps |
-| Customer quotes | up to 6 testimonials |
+| Customer quotes | up to 6 testimonials you type yourself |
+| Customer reviews (automatic) | a wall of real, approved reviews with the overall rating and star bars — no typing; choose the minimum stars, how many, and whether to show the summary |
+| Health blog (latest articles) | your newest published articles (1–6) |
 | Questions & answers | up to 10 FAQ items |
 | Text block | any paragraph |
 
@@ -74,6 +76,19 @@ Every text can be translated per language inside the section’s form.
 - **Pages** (About, Returns, …) — plain text with a few conventions: `# Heading`, `- bullet`, `1. numbered`, a blank line for a new paragraph, and a pasted `https://…` becomes a link. Published pages are listed in the sidebar of every other content page.
 - **SEO** — products, categories and pages have a *Search title* and *Search description*; empty means the name and description are used.
 - **Theme** — colours, logo, favicon, corner roundness, default light/dark mode, with a live preview.
+
+## Admin → Health blog, Messages and the Contact page
+
+- **Health blog** — articles at `/blog`. Text uses the same simple formatting as Pages. Set a future *publish date* to schedule one.
+- **Contact page** (`/contact`) shows the phone, WhatsApp, e-mail, **address** and **opening hours** from *Store settings*; visitors' messages arrive in **Messages**.
+- The **“Deliver to”** cities, the **trending searches** and the **footer sign-up** words are under *Storefront → Header / Footer*.
+
+## The design layer (for developers)
+
+The “glass / aurora” look is one extra stylesheet, `public/assets/css/store-future.css`, and one script, `public/assets/js/store-future.js`,
+loaded last on every storefront page. They use the same colour tokens as everything else, so the owner's theme colours and light / dark mode still apply.
+To restyle the whole shop, edit the `--fx-*` variables at the top of the CSS file; to remove the effects, delete the two `<link>` / `<script>` lines in `resources/views/layouts/store.blade.php`.
+In the light theme the accent colour is automatically darkened for *text* (`--acc-ink`, computed in `resources/views/partials/head.blade.php`) so it stays readable.
 
 ## For developers: adding an option
 
