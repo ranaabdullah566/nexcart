@@ -21,7 +21,7 @@
 
     /* ---- stagger index for cards in revealed sections ---- */
     $$('.sf-reveal').forEach(function (sec) {
-        $$('.mk-card, .mk-tile, .mk-step, .mk-quote', sec).forEach(function (el, i) { el.style.setProperty('--i', i % 8); });
+        $$('.mk-card, .mk-tile, .mk-steps li, .mk-quote', sec).forEach(function (el, i) { el.style.setProperty('--i', i % 8); });
     });
     /* sections that are already in view on load (and fallback when IntersectionObserver is missing) */
     if (!('IntersectionObserver' in window)) $$('.sf-reveal').forEach(function (e) { e.classList.add('in'); });
@@ -29,7 +29,7 @@
     /* ---- spotlight (all glass cards) + 3D tilt (product cards) ---- */
     if (fine && !reduce) {
         document.addEventListener('pointermove', function (e) {
-            var t = e.target.closest && e.target.closest('.mk-card, .mk-tile, .mk-step, .mk-quote, .sf-cat, .mk-summary');
+            var t = e.target.closest && e.target.closest('.mk-card, .mk-tile, .mk-steps li, .mk-quote, .sf-cat, .mk-summary');
             if (!t) return;
             var r = t.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
             t.style.setProperty('--mx', x + 'px'); t.style.setProperty('--my', y + 'px');

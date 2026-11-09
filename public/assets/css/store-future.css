@@ -95,16 +95,16 @@
 .mk-slide-row:hover { transform: translateX(4px); background: color-mix(in srgb, var(--fx-a) 14%, transparent); }
 
 /* ---------- trust strip / tiles / cards: glass + gradient border + spotlight ---------- */
-.mk-trust, .mk-tile, .mk-card, .mk-step, .mk-quote, .mk-faq details, .sf-cat, .mk-cta, .mk-box, .mk-wz-card, .mk-summary, .mk-line, .mk-acct-card {
+.mk-trust, .mk-tile, .mk-card, .mk-steps li, .mk-quote, .mk-faq details, .sf-cat, .mk-cta, .mk-box, .mk-wz-card, .mk-summary, .mk-line, .mk-acct-card {
     position: relative; background: var(--fx-glass) !important; border: 1px solid var(--border) !important; border-radius: var(--fx-r) !important;
     backdrop-filter: blur(12px) saturate(140%); -webkit-backdrop-filter: blur(12px) saturate(140%);
     transition: transform .35s var(--ease), box-shadow .35s, border-color .35s;
 }
-.mk-tile::before, .mk-card::before, .mk-step::before, .mk-quote::before, .sf-cat::before, .mk-summary::before {
+.mk-tile::before, .mk-card::before, .mk-steps li::before, .mk-quote::before, .sf-cat::before, .mk-summary::before {
     content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 1; opacity: 0; transition: opacity .35s;
     background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--fx-a) 22%, transparent), transparent 55%);
 }
-.mk-tile:hover::before, .mk-card:hover::before, .mk-step:hover::before, .mk-quote:hover::before, .sf-cat:hover::before { opacity: 1; }
+.mk-tile:hover::before, .mk-card:hover::before, .mk-steps li:hover::before, .mk-quote:hover::before, .sf-cat:hover::before { opacity: 1; }
 .mk-tile::after, .mk-card::after {
     content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none; z-index: 2; opacity: 0; transition: opacity .35s;
     background: conic-gradient(from var(--fx-ang, 0deg), var(--fx-a), var(--fx-b), var(--fx-a));
@@ -137,7 +137,7 @@
 /* ---------- reveal: staggered ---------- */
 .sf-js .sf-reveal { transform: translateY(34px) scale(.985); filter: blur(6px); transition: opacity .8s var(--ease), transform .8s var(--ease), filter .8s var(--ease); }
 .sf-js .sf-reveal.in { filter: none; }
-.sf-js .sf-reveal.in .mk-card, .sf-js .sf-reveal.in .mk-tile, .sf-js .sf-reveal.in .mk-step, .sf-js .sf-reveal.in .mk-quote { animation: fxRise .7s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+.sf-js .sf-reveal.in .mk-card, .sf-js .sf-reveal.in .mk-tile, .sf-js .sf-reveal.in .mk-steps li, .sf-js .sf-reveal.in .mk-quote { animation: fxRise .7s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
 @keyframes fxRise { from { opacity: 0; transform: translateY(26px) scale(.96); } to { opacity: 1; transform: none; } }
 
 /* ---------- inputs & forms ---------- */
@@ -217,3 +217,18 @@
 
 /* cart / checkout thumbnails: no white frames */
 .mk-line-img, .ck-thumb, .mk-mini-img { background: var(--surface-2) !important; border: 1px solid var(--fx-line) !important; border-radius: 16px !important; overflow: hidden; }
+
+/* ---------- alerts / notices get a clean tint instead of a muddy grey ---------- */
+.sf-alert { background: color-mix(in srgb, var(--warn, #f59e0b) 13%, var(--fx-glass)) !important; border-radius: 16px; backdrop-filter: blur(10px); }
+.sf-alert[style*="acc-2"] { background: color-mix(in srgb, var(--fx-a) 12%, var(--fx-glass)) !important; }
+
+/* ---------- light mode: contrast fixes ---------- */
+[data-theme="light"] .sf { --fx-a: color-mix(in srgb, var(--acc-1, #22d3ee) 78%, #0b3a66); }
+[data-theme="light"] .mk-crumbs a, [data-theme="light"] .sf-link-arrow, [data-theme="light"] .mk-seeall { color: color-mix(in srgb, var(--acc-1, #0891b2) 55%, #063a4f); }
+[data-theme="light"] .mk-slide-panel { background: rgba(8, 16, 40, .5) !important; color: #fff; }
+[data-theme="light"] .mk-slide-panel * { color: inherit; }
+[data-theme="light"] .mk-tag { background: rgba(8, 16, 40, .5) !important; color: #fff !important; }
+[data-theme="light"] .mk-topbar, [data-theme="light"] .mk-header { backdrop-filter: blur(22px) saturate(170%); }
+[data-theme="light"] .mk-card-cat { color: var(--text-2); }
+[data-theme="light"] .mk-card-media, [data-theme="light"] .mk-line-img, [data-theme="light"] .mk-stage { background: color-mix(in srgb, #fff 70%, var(--bg)) !important; }
+[data-theme="light"] .fx-cmd { background: rgba(120, 140, 180, .35); }

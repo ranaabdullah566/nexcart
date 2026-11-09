@@ -1348,5 +1348,19 @@
     "If you did not ask for this, you can ignore this e-mail — your password stays the same.": "اگر آپ نے یہ درخواست نہیں کی تو اس ای میل کو نظر انداز کر دیں — آپ کا پاس ورڈ وہی رہے گا۔",
     "Button not working? Copy this address into your browser:": "بٹن کام نہیں کر رہا؟ یہ پتہ اپنے براؤزر میں کاپی کریں:",
     "Join :store for faster checkout, order tracking and prescription history.": "تیز چیک آؤٹ، آرڈر ٹریکنگ اور نسخوں کی تاریخ کے لیے :store میں شامل ہوں۔",
-    "Your online pharmacy comes preconfigured — prescriptions, batch & expiry, delivery slots and riders. You can change everything later from the admin panel.": "آپ کی آن لائن فارمیسی پہلے سے ترتیب شدہ ہے — نسخے، بیچ اور ایکسپائری، ڈیلیوری سلاٹس اور رائیڈرز۔ سب کچھ بعد میں ایڈمن پینل سے بدل سکتے ہیں۔"
+    "Your online pharmacy comes preconfigured — prescriptions, batch & expiry, delivery slots and riders. You can change everything later from the admin panel.": "آپ کی آن لائن فارمیسی پہلے سے ترتیب شدہ ہے — نسخے، بیچ اور ایکسپائری، ڈیلیوری سلاٹس اور رائیڈرز۔ سب کچھ بعد میں ایڈمن پینل سے بدل سکتے ہیں۔",
+    "Page not found": "صفحہ نہیں ملا",
+    "We could not find what you were looking for. It may have moved, or the link may be wrong.": "جو آپ ڈھونڈ رہے تھے وہ نہیں ملا۔ ہو سکتا ہے صفحہ منتقل ہو گیا ہو یا لنک غلط ہو۔",
+    "Access denied": "رسائی ممنوع",
+    "You do not have permission to open this page.": "آپ کو یہ صفحہ کھولنے کی اجازت نہیں۔",
+    "Page expired": "صفحہ کی میعاد ختم",
+    "Your session timed out. Go back, refresh the page and try again.": "آپ کا سیشن ختم ہو گیا۔ واپس جائیں، صفحہ ریفریش کریں اور دوبارہ کوشش کریں۔",
+    "Too many requests": "بہت زیادہ درخواستیں",
+    "Please slow down a little and try again in a minute.": "براہِ کرم تھوڑا آہستہ چلیں اور ایک منٹ بعد دوبارہ کوشش کریں۔",
+    "Something went wrong": "کچھ گڑبڑ ہو گئی",
+    "Our side hit a problem. We have been notified — please try again shortly.": "ہماری طرف مسئلہ آ گیا۔ ہمیں اطلاع مل گئی ہے — تھوڑی دیر بعد دوبارہ کوشش کریں۔",
+    "Back in a moment": "ابھی واپس آتے ہیں",
+    "The store is being updated. Please check again in a few minutes.": "اسٹور اپ ڈیٹ ہو رہا ہے۔ چند منٹ بعد دوبارہ دیکھیں۔",
+    "Back to home": "ہوم پر واپس",
+    "Go back": "واپس جائیں"
 }

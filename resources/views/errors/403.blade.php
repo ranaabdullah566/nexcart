@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code', '403')
+@section('icon', 'shield-lock')
+@section('headline', __('Access denied'))
+@section('message', __('You do not have permission to open this page.'))

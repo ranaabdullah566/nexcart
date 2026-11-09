@@ -20,6 +20,8 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 ### Storefront look
 - New **Future** design layer on every customer page: animated aurora + grid backdrop, glass header that lights up on scroll, scroll-progress bar, deep-aurora hero with gradient headline, glass cards with cursor spotlight, rotating neon border and 3D tilt, staggered reveal, button ripples, floating glass dock on phones.
 - **Command palette** — press `Ctrl/⌘ K` or `/` (or tap the search icon on phones) for instant medicine search and quick links.
+- Branded **error pages** (404, 403, 419, 429, 500, 503) that work even when the database is down.
+- Light-mode contrast fixes; checkout step numbers, alerts and the track-order placeholder corrected.
 - Honours light/dark mode, the owner's theme colours, RTL and *reduce motion*.
 
 ### Kept

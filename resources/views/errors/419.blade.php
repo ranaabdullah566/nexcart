@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code', '419')
+@section('icon', 'hourglass-split')
+@section('headline', __('Page expired'))
+@section('message', __('Your session timed out. Go back, refresh the page and try again.'))

@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code', '503')
+@section('icon', 'cone-striped')
+@section('headline', __('Back in a moment'))
+@section('message', __('The store is being updated. Please check again in a few minutes.'))

@@ -1,0 +1,5 @@
+@extends('errors.layout')
+@section('code', '500')
+@section('icon', 'tools')
+@section('headline', __('Something went wrong'))
+@section('message', __('Our side hit a problem. We have been notified — please try again shortly.'))

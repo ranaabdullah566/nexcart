@@ -1348,5 +1348,19 @@
     "If you did not ask for this, you can ignore this e-mail — your password stays the same.": "Agar aap ne yeh darkhwast nahin ki to is email ko nazar andaz kar dein — aap ka password wohi rahega.",
     "Button not working? Copy this address into your browser:": "Button kaam nahin kar raha? Yeh pata apne browser mein copy karein:",
     "Join :store for faster checkout, order tracking and prescription history.": "Tez checkout, order tracking aur nuskhon ki history ke liye :store mein shamil hon.",
-    "Your online pharmacy comes preconfigured — prescriptions, batch & expiry, delivery slots and riders. You can change everything later from the admin panel.": "Aap ki online pharmacy pehle se tarteeb shuda hai — nuskhe, batch aur expiry, delivery slots aur riders. Sab kuch baad mein admin panel se badal sakte hain."
+    "Your online pharmacy comes preconfigured — prescriptions, batch & expiry, delivery slots and riders. You can change everything later from the admin panel.": "Aap ki online pharmacy pehle se tarteeb shuda hai — nuskhe, batch aur expiry, delivery slots aur riders. Sab kuch baad mein admin panel se badal sakte hain.",
+    "Page not found": "Page nahi mila",
+    "We could not find what you were looking for. It may have moved, or the link may be wrong.": "Jo aap dhoond rahe the wo nahi mila. Ho sakta hai page muntaqil ho gaya ho ya link ghalat ho.",
+    "Access denied": "Rasai mamnoo",
+    "You do not have permission to open this page.": "Aap ko ye page kholne ki ijazat nahi.",
+    "Page expired": "Page ki miyaad khatam",
+    "Your session timed out. Go back, refresh the page and try again.": "Aap ka session khatam ho gaya. Wapas jayein, page refresh karein aur dobara koshish karein.",
+    "Too many requests": "Bohat ziyada darkhwastein",
+    "Please slow down a little and try again in a minute.": "Barah-e-karam thora aahista chalein aur ek minute baad dobara koshish karein.",
+    "Something went wrong": "Kuch garbar ho gayi",
+    "Our side hit a problem. We have been notified — please try again shortly.": "Hamari taraf masla aa gaya. Humein ittila mil gayi hai — thori dair baad dobara koshish karein.",
+    "Back in a moment": "Abhi wapas aate hain",
+    "The store is being updated. Please check again in a few minutes.": "Store update ho raha hai. Chand minute baad dobara dekhein.",
+    "Back to home": "Home par wapas",
+    "Go back": "Wapas jayein"
 }
