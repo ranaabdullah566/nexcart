@@ -232,4 +232,21 @@ class GuestExperienceTest extends TestCase
         setting()->set('sf.design.admin_marketplace', false);
         $this->get('/admin')->assertOk()->assertDontSee('admin-tq.css', false);
     }
+
+    public function test_shop_sidebar_filters_by_type_offer_and_featured(): void
+    {
+        $mk = function (array $o) { $p = new Product; $p->forceFill($o + ['price' => 50, 'status' => 'active', 'track_stock' => false])->save(); };
+        $mk(['name' => 'Plain Syrup']);
+        $mk(['name' => 'Rx Antibiotic', 'requires_prescription' => true]);
+        $mk(['name' => 'Sale Vitamin', 'compare_price' => 80]);
+        $mk(['name' => 'Star Product', 'is_featured' => true]);
+
+        $this->get('/shop')->assertOk()->assertSee('tq-fsec', false)->assertSee('Medicine type')->assertSee('Search filters…')->assertSee('Clear all')->assertSee('Plain Syrup')->assertSee('Rx Antibiotic');
+        $this->get('/shop?type[]=rx')->assertSee('Rx Antibiotic')->assertDontSee('Plain Syrup');
+        $this->get('/shop?type[]=otc')->assertSee('Plain Syrup')->assertDontSee('Rx Antibiotic');
+        $this->get('/shop?type[]=otc&type[]=rx')->assertSee('Plain Syrup')->assertSee('Rx Antibiotic');
+        $this->get('/shop?on_sale=1')->assertSee('Sale Vitamin')->assertDontSee('Plain Syrup');
+        $this->get('/shop?featured=1')->assertSee('Star Product')->assertDontSee('Plain Syrup');
+        $this->get('/shop?type[]=bogus')->assertSessionHasErrors('type.0');
+    }
 }

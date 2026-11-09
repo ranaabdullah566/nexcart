@@ -4,6 +4,10 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Shop sidebar and header search (tuqqa.com style)
+- The shop filters are now plain (no card): a filter search box, small-caps section headings, a 3-level **category tree** with expanders and counts, **brand** list with counts, **medicine type** (OTC / Rx), **availability & offers** (in stock, on sale, featured), product-field selects, **price** min / max and a *Clear all* button. New query options `type[]`, `on_sale`, `featured`.
+- The header search is a fixed ~520px wide on desktop (it no longer stretches to the icons).
+
 ### Product cards — one size everywhere
 - Every card now has the same slots with fixed heights (image 4:3, category line, two-line name, composition, chips, rating, seller, price + old price, button, quick icons); empty slots are kept as invisible placeholders, so cards on home, shop, category, saved, product-page rails and the quick lists are identical in size and price / button sit on the same line. Long text is trimmed with an ellipsis instead of growing the card. A shop-page bug at phone width (card columns squeezed to 41px by a leftover wide-layout rule) is fixed.
 

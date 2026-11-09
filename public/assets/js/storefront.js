@@ -241,6 +241,25 @@
         f.addEventListener('change', function (e) { if (e.target.matches('[data-no-auto]')) return; f.submit(); });
     });
 
+    /* ---------- shop sidebar: category expanders and filter search ---------- */
+    document.addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('.tq-exp') : null; if (!b) return;
+        var ul = b.closest('li').querySelector(':scope > ul'); if (!ul) return;
+        var open = b.getAttribute('aria-expanded') === 'true'; b.setAttribute('aria-expanded', open ? 'false' : 'true'); ul.hidden = open;
+    });
+    $$('[data-flt-search]').forEach(function (inp) {
+        var form = inp.closest('form');
+        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
+        inp.addEventListener('input', function () {
+            var q = inp.value.trim().toLowerCase();
+            form.querySelectorAll('[data-flt-item]').forEach(function (it) { it.hidden = q !== '' && it.textContent.toLowerCase().indexOf(q) === -1 && !it.querySelector('[data-flt-item]:not([hidden])'); });
+            form.querySelectorAll('[data-flt-sec]').forEach(function (sec) {
+                var any = sec.querySelector('[data-flt-item]:not([hidden])'); sec.hidden = q !== '' && !any;
+                sec.querySelectorAll('.tq-cattree ul').forEach(function (ul) { if (q !== '') ul.hidden = false; });
+            });
+        });
+    });
+
     /* ---------- reveal on scroll ---------- */
     if ('IntersectionObserver' in window) {
         var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }); }, { threshold: .08 });

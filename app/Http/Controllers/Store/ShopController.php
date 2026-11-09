@@ -24,7 +24,8 @@ class ShopController extends Controller
             'q' => ['nullable', 'string', 'max:100'],
             'brand' => ['nullable', 'array'], 'brand.*' => ['integer'],
             'price_min' => ['nullable', 'numeric', 'min:0'], 'price_max' => ['nullable', 'numeric', 'min:0'],
-            'in_stock' => ['nullable', 'boolean'],
+            'in_stock' => ['nullable', 'boolean'], 'on_sale' => ['nullable', 'boolean'], 'featured' => ['nullable', 'boolean'],
+            'type' => ['nullable', 'array'], 'type.*' => ['in:rx,otc'],
             'sort' => ['nullable', 'in:'.implode(',', self::SORTS)],
             'spec' => ['nullable', 'array'],
         ]);
@@ -48,6 +49,16 @@ class ShopController extends Controller
         }
         if (! empty($f['in_stock'])) {
             $this->inStock($query);
+        }
+        if (! empty($f['on_sale'])) {
+            $query->whereNotNull('compare_price')->whereColumn('compare_price', '>', 'price');
+        }
+        if (! empty($f['featured'])) {
+            $query->where('is_featured', true);
+        }
+        $types = array_unique($f['type'] ?? []);
+        if (count($types) === 1) {   // both ticked = no restriction
+            $query->where('requires_prescription', $types[0] === 'rx');
         }
         foreach ($filterAttrs as $attr) {
             $value = $f['spec'][$attr->key] ?? null;
@@ -75,7 +86,7 @@ class ShopController extends Controller
             'title' => $title,
             'products' => $query->paginate((int) sf('cards.per_page'))->withQueryString(),
             'current' => $current,
-            'brands' => Brand::where('is_active', true)->whereHas('products', fn ($q) => $q->active())->orderBy('name')->get(),
+            'brands' => Brand::where('is_active', true)->whereHas('products', fn ($q) => $q->active())->withCount(['products' => fn ($q) => $q->active()])->orderBy('name')->get(),
             'filterAttrs' => $filterAttrs,
             'priceBounds' => ['min' => (float) (clone $base)->min('price'), 'max' => (float) (clone $base)->max('price')],
             'f' => $f,

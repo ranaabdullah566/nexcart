@@ -5,6 +5,8 @@
     foreach ($brands as $b) { if (in_array($b->id, $f['brand'] ?? [])) $active->push(['label' => $b->trans('name'), 'url' => request()->fullUrlWithQuery(['brand' => array_values(array_diff($f['brand'], [$b->id])), 'page' => null])]); }
     if (isset($f['price_min'])) $active->push(['label' => '≥ '.money($f['price_min']), 'url' => request()->fullUrlWithQuery(['price_min' => null, 'page' => null])]);
     if (isset($f['price_max'])) $active->push(['label' => '≤ '.money($f['price_max']), 'url' => request()->fullUrlWithQuery(['price_max' => null, 'page' => null])]);
+    foreach (['on_sale' => __('On sale'), 'featured' => __('Featured')] as $k => $l) { if (! empty($f[$k])) $active->push(['label' => $l, 'url' => request()->fullUrlWithQuery([$k => null, 'page' => null])]); }
+    foreach (array_unique($f['type'] ?? []) as $t) { $active->push(['label' => $t === 'rx' ? __('Prescription (Rx)') : __('Over the counter'), 'url' => request()->fullUrlWithQuery(['type' => array_values(array_diff($f['type'], [$t])), 'page' => null])]); }
     if (! empty($f['in_stock'])) $active->push(['label' => __('In stock'), 'url' => request()->fullUrlWithQuery(['in_stock' => null, 'page' => null])]);
     foreach ($filterAttrs as $a) { $v = $f['spec'][$a->key] ?? null; if ($v !== null && $v !== '') $active->push(['label' => $a->labelText().': '.($a->type === 'boolean' ? __('Yes') : $v), 'url' => request()->fullUrlWithQuery(['spec' => array_diff_key($f['spec'], [$a->key => 1]), 'page' => null])]); }
     $sorts = ['newest' => __('Newest'), 'price_asc' => __('Price: low to high'), 'price_desc' => __('Price: high to low'), 'name' => __('Name A–Z'), 'discount' => __('Biggest discount')];
@@ -39,35 +41,91 @@
             <form id="shopForm" method="GET" action="{{ url()->current() }}" class="mk-filter-card collapse d-lg-block" data-autosubmit data-no-validate>
                 @if (filled($f['q'] ?? null))<input type="hidden" name="q" value="{{ $f['q'] }}">@endif
                 <input type="hidden" name="sort" value="{{ $sortNow }}">
-                <div class="mk-filter-title"><b>{{ __('Filters') }}</b>@if ($active->isNotEmpty())<a href="{{ url()->current() }}{{ filled($f['q'] ?? null) ? '?q='.urlencode($f['q']) : '' }}">{{ __('Clear filters') }}</a>@endif</div>
+                <div class="tq-flt-search"><i class="bi bi-search"></i><input type="search" placeholder="{{ __('Search filters…') }}" aria-label="{{ __('Search filters…') }}" data-flt-search data-no-auto autocomplete="off" maxlength="40"></div>
+
+                @php $keepQ = request()->query() ? '?'.http_build_query(request()->except(['page'])) : ''; @endphp
+                <section class="tq-fsec" data-flt-sec>
+                    <h3>{{ __('Category') }}</h3>
+                    <ul class="tq-cattree">
+                        @foreach (\App\Support\Storefront::tree() as $c1)
+                            @php $open1 = $current && ($current->id === $c1->id || in_array($current->id, $c1->descendantIds())); @endphp
+                            <li data-flt-item>
+                                <div class="tq-catrow @if ($current && $current->id === $c1->id) on @endif">
+                                    <a href="{{ route('store.category', $c1->slug) }}{{ $keepQ }}">{{ $c1->trans('name') }}</a><small>{{ $c1->products_count }}</small>
+                                    @if ($c1->children->isNotEmpty())<button type="button" class="tq-exp" aria-expanded="{{ $open1 ? 'true' : 'false' }}" aria-label="{{ __('Show sub-categories') }}"><i class="bi bi-chevron-down"></i></button>@endif
+                                </div>
+                                @if ($c1->children->isNotEmpty())
+                                <ul @unless ($open1) hidden @endunless>
+                                    @foreach ($c1->children as $c2)
+                                        @php $open2 = $current && ($current->id === $c2->id || in_array($current->id, $c2->descendantIds())); @endphp
+                                        <li data-flt-item>
+                                            <div class="tq-catrow @if ($current && $current->id === $c2->id) on @endif">
+                                                <a href="{{ route('store.category', $c2->slug) }}{{ $keepQ }}">{{ $c2->trans('name') }}</a><small>{{ $c2->products_count }}</small>
+                                                @if ($c2->children->isNotEmpty())<button type="button" class="tq-exp" aria-expanded="{{ $open2 ? 'true' : 'false' }}" aria-label="{{ __('Show sub-categories') }}"><i class="bi bi-chevron-down"></i></button>@endif
+                                            </div>
+                                            @if ($c2->children->isNotEmpty())
+                                            <ul @unless ($open2) hidden @endunless>
+                                                @foreach ($c2->children as $c3)
+                                                    <li data-flt-item><div class="tq-catrow @if ($current && $current->id === $c3->id) on @endif"><a href="{{ route('store.category', $c3->slug) }}{{ $keepQ }}">{{ $c3->trans('name') }}</a><small>{{ $c3->products_count }}</small></div></li>
+                                                @endforeach
+                                            </ul>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+                </section>
 
                 @if ($brands->isNotEmpty())
-                    <details class="mk-fgroup" open><summary>{{ __('Brand') }}<i class="bi bi-chevron-down"></i></summary>
-                        <div class="mk-fbody">@foreach ($brands as $b)
-                            <label class="mk-check"><input type="checkbox" name="brand[]" value="{{ $b->id }}" @checked(in_array($b->id, $f['brand'] ?? []))><span>{{ $b->trans('name') }}</span></label>
-                        @endforeach</div>
-                    </details>
+                <section class="tq-fsec" data-flt-sec>
+                    <h3>{{ __('Brand') }}</h3>
+                    <div class="tq-fchecks">@foreach ($brands as $b)
+                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="brand[]" value="{{ $b->id }}" @checked(in_array($b->id, $f['brand'] ?? []))><span>{{ $b->trans('name') }}</span><small>{{ $b->products_count }}</small></label>
+                    @endforeach</div>
+                </section>
                 @endif
 
-                <details class="mk-fgroup" open><summary>{{ __('Price') }}<i class="bi bi-chevron-down"></i></summary>
-                    <div class="mk-fbody mk-price-range">
-                        <input type="number" min="0" step="any" name="price_min" value="{{ $f['price_min'] ?? '' }}" placeholder="{{ floor($priceBounds['min']) }}" class="form-control form-control-sm figure" aria-label="{{ __('Min price') }}">
-                        <span>–</span>
-                        <input type="number" min="0" step="any" name="price_max" value="{{ $f['price_max'] ?? '' }}" placeholder="{{ ceil($priceBounds['max']) }}" class="form-control form-control-sm figure" aria-label="{{ __('Max price') }}">
+                <section class="tq-fsec" data-flt-sec>
+                    <h3>{{ __('Medicine type') }}</h3>
+                    <div class="tq-fchecks">
+                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="type[]" value="otc" @checked(in_array('otc', $f['type'] ?? []))><span>{{ __('Over the counter') }}</span></label>
+                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="type[]" value="rx" @checked(in_array('rx', $f['type'] ?? []))><span><i class="bi bi-prescription2"></i> {{ __('Prescription (Rx)') }}</span></label>
                     </div>
-                </details>
+                </section>
+
+                <section class="tq-fsec" data-flt-sec>
+                    <h3>{{ __('Availability & offers') }}</h3>
+                    <div class="tq-fchecks">
+                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="in_stock" value="1" @checked(! empty($f['in_stock']))><span>{{ __('In stock only') }}</span></label>
+                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="on_sale" value="1" @checked(! empty($f['on_sale']))><span>{{ __('On sale') }}</span></label>
+                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="featured" value="1" @checked(! empty($f['featured']))><span>{{ __('Featured') }}</span></label>
+                    </div>
+                </section>
 
                 @foreach ($filterAttrs as $a)
-                    <details class="mk-fgroup" @if (($f['spec'][$a->key] ?? '') !== '') open @endif><summary>{{ $a->labelText() }}<i class="bi bi-chevron-down"></i></summary>
-                        <div class="mk-fbody"><select name="spec[{{ $a->key }}]" class="form-select form-select-sm">
+                    <section class="tq-fsec" data-flt-sec>
+                        <h3>{{ $a->labelText() }}</h3>
+                        <select name="spec[{{ $a->key }}]" class="form-select form-select-sm">
                             <option value="">{{ __('Any') }}</option>
                             @if ($a->type === 'boolean')<option value="1" @selected(($f['spec'][$a->key] ?? '') === '1')>{{ __('Yes') }}</option>
                             @else @foreach ($a->options ?? [] as $o)<option @selected(($f['spec'][$a->key] ?? '') === $o)>{{ $o }}</option>@endforeach @endif
-                        </select></div>
-                    </details>
+                        </select>
+                    </section>
                 @endforeach
 
-                <label class="mk-switch"><input type="checkbox" role="switch" name="in_stock" value="1" @checked(! empty($f['in_stock']))><span>{{ __('In stock only') }}</span></label>
+                <section class="tq-fsec">
+                    <h3>{{ __('Price') }} ({{ setting('store.currency_symbol', 'Rs') }})</h3>
+                    <div class="tq-fprice">
+                        <input type="number" min="0" step="any" name="price_min" value="{{ $f['price_min'] ?? '' }}" placeholder="{{ __('Min') }}" class="form-control form-control-sm" aria-label="{{ __('Min price') }}">
+                        <input type="number" min="0" step="any" name="price_max" value="{{ $f['price_max'] ?? '' }}" placeholder="{{ __('Max') }}" class="form-control form-control-sm" aria-label="{{ __('Max price') }}">
+                    </div>
+                    <p class="tq-fhint">{{ money($priceBounds['min']) }} – {{ money($priceBounds['max']) }}</p>
+                </section>
+
+                <a class="tq-fclear" href="{{ url()->current() }}{{ filled($f['q'] ?? null) ? '?q='.urlencode($f['q']) : '' }}">{{ __('Clear all') }}</a>
                 <noscript><button class="btn btn-primary btn-sm mt-3 w-100">{{ __('Apply') }}</button></noscript>
             </form>
         </aside>
