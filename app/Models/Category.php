@@ -16,6 +16,9 @@ class Category extends Model
 
     use HasSlug, HasTranslations, SoftDeletes;
 
+    /** Levels allowed: category › sub-category › sub-sub-category. */
+    public const MAX_DEPTH = 3;
+
     protected $fillable = ['parent_id', 'name', 'slug', 'description', 'sort_order', 'is_active', 'meta_title', 'meta_description'];
 
     protected function casts(): array
@@ -53,5 +56,22 @@ class Category extends Model
         }
 
         return $ids;
+    }
+
+    /** 1 for a top-level category, 2 for its child, 3 for a grandchild. */
+    public function depth(): int
+    {
+        $d = 1;
+        for ($c = $this->parent; $c && $d < 10; $c = $c->parent) {
+            $d++;
+        }
+
+        return $d;
+    }
+
+    /** How many levels this category's own subtree spans (1 = no children). */
+    public function height(): int
+    {
+        return 1 + ($this->children->isEmpty() ? 0 : $this->children->max(fn ($c) => $c->height()));
     }
 }

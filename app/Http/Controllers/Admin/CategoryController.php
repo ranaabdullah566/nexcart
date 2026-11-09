@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -16,7 +17,7 @@ class CategoryController extends Controller
         $this->authorizeTo('categories.view');
 
         return view('admin.categories.index', [
-            'categories' => Category::with('parent.parent')->withCount('products')->orderBy('sort_order')->orderBy('name')->get(),
+            'categories' => Category::with('parent.parent.parent')->withCount('products')->orderBy('sort_order')->orderBy('name')->get(),
         ]);
     }
 
@@ -24,7 +25,7 @@ class CategoryController extends Controller
     {
         $this->authorizeTo('categories.create');
 
-        return view('admin.categories.create', ['parents' => $this->parentOptions()]);
+        return view('admin.categories.create', ['parents' => $this->parentOptions(), 'preParent' => request('parent')]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -74,6 +75,14 @@ class CategoryController extends Controller
             'meta_title' => ['nullable', 'string', 'max:120'], 'meta_description' => ['nullable', 'string', 'max:300'],
         ]);
 
+        if (! empty($data['parent_id'])) {
+            $parent = Category::find($data['parent_id']);
+            $height = $category->exists ? $category->height() : 1;
+            if ($parent->depth() + $height > Category::MAX_DEPTH) {
+                throw ValidationException::withMessages(['parent_id' => __('Categories can only be :n levels deep (category › sub-category › sub-sub-category).', ['n' => Category::MAX_DEPTH])]);
+            }
+        }
+
         $category->fill([
             'name' => $data['name'],
             'parent_id' => $data['parent_id'] ?? null,
@@ -90,8 +99,11 @@ class CategoryController extends Controller
     private function parentOptions(?Category $editing = null)
     {
         $skip = $editing ? $editing->descendantIds() : [];
+        $height = $editing ? $editing->height() : 1;
 
-        return Category::with('parent.parent')->whereNotIn('id', $skip)->orderBy('name')->get()
+        // a parent is offered only if the new branch still fits in three levels
+        return Category::with('parent.parent.parent')->whereNotIn('id', $skip)->orderBy('name')->get()
+            ->filter(fn ($c) => $c->depth() + $height <= Category::MAX_DEPTH)
             ->sortBy(fn ($c) => $c->path)->values();
     }
 }

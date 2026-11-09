@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Categories — 3 levels
+- Categories are now capped at **3 levels** (category › sub-category › sub-sub-category). Admin → Categories shows each row's level with an indent, has a **Sub** button to add a child, and the parent list offers only categories that still have room; moving a branch that would exceed 3 levels is refused. The storefront menu (desktop mega menu and phone drawer) shows all three levels.
+
 ### Storefront — marketplace design
 - The whole storefront (home, shop, product, cart, checkout, account, blog, contact, prescription upload, error pages, setup wizard) now follows a clean marketplace look: white pages, navy header / footer, orange buttons, blue prices. It is light-only and switchable in Admin → Storefront → *Design → Marketplace look* (`design.marketplace`); turn it off to get the previous glass / dark-mode theme back.
 - **Saved medicines** (`/saved`, `/wishlist` redirects) and **Compare** (`/compare`) are back, for guests too, with header icons and counts, card buttons and a product-page tile. New Storefront options: `header.show_saved`, `header.show_compare`, `cards.show_wish`, `cards.show_compare`, `product.show_save`, `product.show_compare`, `product.show_disclaimer`, `product.disclaimer`.

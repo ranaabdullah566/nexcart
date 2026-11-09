@@ -136,7 +136,7 @@
                                 <section id="mg-{{ $c->id }}" class="{{ $loop->first ? 'is-active' : '' }}">
                                     <header><h3>{{ $c->trans('name') }}</h3><a href="{{ route('store.category', $c->slug) }}">{{ __('Browse all') }} →</a></header>
                                     <div class="mk-sub-grid">
-                                        @forelse ($c->children as $ch)<a href="{{ route('store.category', $ch->slug) }}"><span class="mk-mark"><i class="bi bi-tag"></i></span><b>{{ $ch->trans('name') }}</b><small>{{ trans_choice(':n item|:n items', $ch->products_count, ['n' => $ch->products_count]) }}</small></a>
+                                        @forelse ($c->children as $ch)<a href="{{ route('store.category', $ch->slug) }}"><span class="mk-mark"><i class="bi bi-tag"></i></span><b>{{ $ch->trans('name') }}</b><small>{{ trans_choice(':n item|:n items', $ch->products_count, ['n' => $ch->products_count]) }}</small></a>@foreach ($ch->children as $gc)<a class="mk-l3" href="{{ route('store.category', $gc->slug) }}"><i class="bi bi-arrow-return-right"></i>{{ $gc->trans('name') }}<small>{{ $gc->products_count }}</small></a>@endforeach
                                         @empty<a href="{{ route('store.category', $c->slug) }}"><span class="mk-mark"><i class="bi bi-grid-1x2"></i></span><b>{{ __('All :name', ['name' => $c->trans('name')]) }}</b><small>{{ trans_choice(':n item|:n items', $c->products_count, ['n' => $c->products_count]) }}</small></a>@endforelse
                                     </div>
                                 </section>
@@ -189,7 +189,7 @@
                 <a class="mk-drawer-all" href="{{ route('store.shop') }}">{{ __('Browse everything') }} <i class="bi bi-arrow-right"></i></a>
                 @foreach ($tree as $c)
                     <details><summary><span class="mk-mark sm"><i class="bi bi-grid-1x2"></i></span><span><b>{{ $c->trans('name') }}</b><small>{{ trans_choice(':n item|:n items', $c->products_count, ['n' => $c->products_count]) }}</small></span><i class="bi bi-chevron-down"></i></summary>
-                        <div class="mk-drawer-children"><a href="{{ route('store.category', $c->slug) }}">{{ __('All :name', ['name' => $c->trans('name')]) }}</a>@foreach ($c->children as $ch)<a href="{{ route('store.category', $ch->slug) }}">{{ $ch->trans('name') }}<small>{{ $ch->products_count }}</small></a>@endforeach</div>
+                        <div class="mk-drawer-children"><a href="{{ route('store.category', $c->slug) }}">{{ __('All :name', ['name' => $c->trans('name')]) }}</a>@foreach ($c->children as $ch)<a href="{{ route('store.category', $ch->slug) }}">{{ $ch->trans('name') }}<small>{{ $ch->products_count }}</small></a>@foreach ($ch->children as $gc)<a class="l3" href="{{ route('store.category', $gc->slug) }}">↳ {{ $gc->trans('name') }}<small>{{ $gc->products_count }}</small></a>@endforeach @endforeach</div>
                     </details>
                 @endforeach
             </section>

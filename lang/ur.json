@@ -1468,5 +1468,11 @@
     "Tap the heart on any medicine to keep it here.": "کسی بھی دوا پر دل کے نشان کو دبائیں تاکہ وہ یہاں محفوظ ہو جائے۔",
     "Tax excluded": "ٹیکس شامل نہیں",
     "Tax included": "ٹیکس شامل",
-    "Up to four medicines side by side.": "چار ادویات تک ساتھ ساتھ۔"
+    "Up to four medicines side by side.": "چار ادویات تک ساتھ ساتھ۔",
+    "Categories can only be :n levels deep (category › sub-category › sub-sub-category).": "زمرے صرف :n لیول تک ہو سکتے ہیں (زمرہ › ذیلی زمرہ › ذیلی کا ذیلی زمرہ)۔",
+    "Up to 3 levels: Category › Sub-category › Sub-sub-category. Only categories that still have room are listed.": "زیادہ سے زیادہ 3 لیول: زمرہ › ذیلی زمرہ › ذیلی کا ذیلی زمرہ۔ صرف وہی زمرے دکھائے گئے ہیں جن میں گنجائش ہے۔",
+    "Level :n": "لیول :n",
+    "Add sub-category": "ذیلی زمرہ شامل کریں",
+    "Sub": "ذیلی",
+    "Group medicines in up to 3 levels, e.g. Pain & fever › Pain relief › Tablets.": "ادویات کو 3 لیول تک گروپ کریں، مثلاً درد اور بخار › درد سے آرام › گولیاں۔"
 }

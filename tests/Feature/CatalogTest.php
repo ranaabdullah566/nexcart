@@ -45,6 +45,34 @@ class CatalogTest extends TestCase
         }
     }
 
+    public function test_categories_are_limited_to_three_levels(): void
+    {
+        $a = Category::create(['name' => 'Pain & fever', 'is_active' => true]);
+        $this->post('/admin/categories', ['name' => 'Pain relief', 'parent_id' => $a->id, 'is_active' => 1])->assertRedirect('/admin/categories');
+        $b = Category::firstWhere('name', 'Pain relief');
+        $this->post('/admin/categories', ['name' => 'Tablets', 'parent_id' => $b->id, 'is_active' => 1])->assertRedirect('/admin/categories');
+        $c = Category::firstWhere('name', 'Tablets');
+        $this->assertSame([1, 2, 3], [$a->depth(), $b->fresh()->depth(), $c->fresh()->depth()]);
+
+        // a fourth level is refused, and a branch that would grow past three levels cannot be moved
+        $this->post('/admin/categories', ['name' => 'Too deep', 'parent_id' => $c->id])->assertSessionHasErrors('parent_id');
+        $x = Category::create(['name' => 'Other', 'is_active' => true]);
+        $x->children()->create(['name' => 'Other child', 'is_active' => true]);
+        $this->put("/admin/categories/{$x->id}", ['name' => 'Other', 'parent_id' => $b->id])->assertSessionHasErrors('parent_id');
+
+        // the parent list only offers categories that still have room
+        $html = $this->get("/admin/categories/create")->assertOk()->getContent();
+        $this->assertStringContainsString('Pain &amp; fever › Pain relief', $html);
+        $this->assertStringNotContainsString('Pain relief › Tablets</option>', $html);
+
+        // the storefront menu shows all three levels
+        $p = new Product;
+        $p->forceFill(['name' => 'Panadol', 'price' => 5, 'status' => 'active', 'track_stock' => false, 'category_id' => $c->id])->save();
+        $this->get('/')->assertOk()->assertSee('Tablets')->assertSee('mk-l3', false);
+        $this->get('/category/'.$c->slug)->assertOk()->assertSee('Panadol');
+        $this->get('/category/'.$a->slug)->assertOk()->assertSee('Panadol');   // parent lists its descendants' products
+    }
+
     public function test_category_tree_and_loop_protection(): void
     {
         $this->post('/admin/categories', ['name' => 'Drinks', 'is_active' => 1])->assertRedirect('/admin/categories');

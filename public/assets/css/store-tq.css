@@ -383,3 +383,9 @@
 .sf-tq .fx-rev-badges i { color: var(--tq-green); }
 .sf-tq .fx-recent-item small { color: var(--tq-blue); }
 .sf-tq .dropdown-menu { border-radius: var(--tq-r-sm); }
+
+/* third category level */
+.sf-tq .mk-sub-grid a.mk-l3 { min-height: 0; padding: .35rem .75rem .35rem 1.4rem; font-size: .85rem; background: transparent; border-style: dashed; flex-direction: row; align-items: center; gap: .4rem; }
+.sf-tq .mk-sub-grid a.mk-l3 i { color: var(--tq-orange); font-size: .8rem; }
+.sf-tq .mk-sub-grid a.mk-l3 small { margin-inline-start: auto; }
+.sf-tq .mk-drawer-children a.l3 { padding-inline-start: 1.6rem; font-size: .9rem; opacity: .9; }

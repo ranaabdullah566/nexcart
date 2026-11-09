@@ -12,7 +12,8 @@ class Storefront
     public static function tree(): Collection
     {
         return Category::where('is_active', true)->whereNull('parent_id')->orderBy('sort_order')->orderBy('name')
-            ->with(['children' => fn ($q) => $q->where('is_active', true)->withCount(['products' => fn ($p) => $p->active()])])
+            ->with(['children' => fn ($q) => $q->where('is_active', true)->withCount(['products' => fn ($p) => $p->active()]),
+                'children.children' => fn ($q) => $q->where('is_active', true)->withCount(['products' => fn ($p) => $p->active()])])
             ->withCount(['products' => fn ($p) => $p->active()])->limit(12)->get();
     }
 

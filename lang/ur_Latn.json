@@ -1468,5 +1468,11 @@
     "Tap the heart on any medicine to keep it here.": "Kisi bhi dawa ke dil ke nishan ko dabayein taake wo yahan save ho jaye.",
     "Tax excluded": "Tax shamil nahi",
     "Tax included": "Tax shamil",
-    "Up to four medicines side by side.": "Char adviyaat tak saath saath."
+    "Up to four medicines side by side.": "Char adviyaat tak saath saath.",
+    "Categories can only be :n levels deep (category › sub-category › sub-sub-category).": "Categories sirf :n level tak ho sakti hain (category › sub-category › sub-sub-category).",
+    "Up to 3 levels: Category › Sub-category › Sub-sub-category. Only categories that still have room are listed.": "Ziada se ziada 3 level: Category › Sub-category › Sub-sub-category. Sirf wohi categories dikhai gayi hain jin mein gunjaish hai.",
+    "Level :n": "Level :n",
+    "Add sub-category": "Sub-category shamil karein",
+    "Sub": "Sub",
+    "Group medicines in up to 3 levels, e.g. Pain & fever › Pain relief › Tablets.": "Adviyaat ko 3 level tak group karein, masalan Pain & fever › Pain relief › Tablets."
 }

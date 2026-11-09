@@ -11,9 +11,10 @@
             <label class="form-label fw-medium">{{ __('Parent category') }}</label>
             <select name="parent_id" class="form-select @error('parent_id') is-invalid @enderror">
                 <option value="">— {{ __('Top level') }} —</option>
-                @foreach ($parents as $p)<option value="{{ $p->id }}" @selected((string) old('parent_id', $category->parent_id ?? '') === (string) $p->id)>{{ $p->path }}</option>@endforeach
+                @foreach ($parents as $p)<option value="{{ $p->id }}" @selected((string) old('parent_id', $category->parent_id ?? ($preParent ?? '')) === (string) $p->id)>{{ $p->path }}</option>@endforeach
             </select>
             @error('parent_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <div class="form-text">{{ __('Up to 3 levels: Category › Sub-category › Sub-sub-category. Only categories that still have room are listed.') }}</div>
         </div>
         <div class="col-12">
             <label class="form-label fw-medium">{{ __('Description') }}</label>
