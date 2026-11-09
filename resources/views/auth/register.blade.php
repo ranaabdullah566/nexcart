@@ -39,6 +39,7 @@
                 @endif
             </form>
             <p class="mk-auth-switch">{{ __('Already have an account?') }} <a href="{{ route('login') }}">{{ __('Sign in') }}</a></p>
+            <a href="{{ route('store.shop') }}" class="tq-guest">{{ __('Browse as guest') }} <i class="bi bi-arrow-right"></i></a>
         </div>
     </div>
 </div>

@@ -83,7 +83,7 @@ class Product extends Model implements HasMedia
     /** Everything a product card needs, loaded in one go. */
     public function scopeCard(Builder $q): Builder
     {
-        return $q->with(['variants', 'media'])->withCount('approvedReviews')->withAvg('approvedReviews', 'rating');
+        return $q->with(['variants', 'media', 'brand:id,name', 'category:id,name,slug,translations'])->withCount('approvedReviews')->withAvg('approvedReviews', 'rating');
     }
 
     public function scopeActive(Builder $q): Builder

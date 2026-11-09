@@ -8,9 +8,11 @@
     <link href="{{ asset('assets/css/store-market.css') }}?v={{ @filemtime(public_path('assets/css/store-market.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/store-market-pages.css') }}?v={{ @filemtime(public_path('assets/css/store-market-pages.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/store-future.css') }}?v={{ @filemtime(public_path('assets/css/store-future.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/store-tq.css') }}?v={{ @filemtime(public_path('assets/css/store-tq.css')) }}" rel="stylesheet">
     @stack('head')
 </head>
-<body class="sf mk-wizard">
+@php $__tq = false; try { $__tq = (bool) sf('design.marketplace'); } catch (\Throwable $e) {} @endphp
+<body class="sf mk-wizard @if ($__tq) sf-tq @endif">
 @php
     $step = (int) trim($__env->yieldContent('step', '1'));
     $steps = [1 => ['Server & database', 'hdd-network'], 2 => ['Store & owner', 'shop'], 3 => ['Launch', 'rocket-takeoff']];

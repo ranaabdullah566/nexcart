@@ -9,6 +9,8 @@
         $ogImage = trim($__env->yieldContent('og_image')) ?: asset('assets/images/icon-512.png');
         $navCats = \App\Models\Category::where('is_active', true)->whereNull('parent_id')->orderBy('sort_order')->orderBy('name')->limit(8)->get();
         $cartData = app(\App\Services\CartService::class)->toArray();
+        $wishCount = count(app(\App\Services\Wishlist::class)->ids());
+        $compareCount = count(app(\App\Services\Compare::class)->ids());
         $terms = (array) setting('business.terms', []);
         $headerMenu = \App\Models\MenuItem::resolved('header');
         $footerMenu = \App\Models\MenuItem::resolved('footer');
@@ -30,10 +32,11 @@
     <script nonce="{{ csp_nonce() }}">document.documentElement.classList.add('sf-js')</script>
     <link href="{{ asset('assets/css/store-market-pages.css') }}?v={{ @filemtime(public_path('assets/css/store-market-pages.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/store-future.css') }}?v={{ @filemtime(public_path('assets/css/store-future.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/store-tq.css') }}?v={{ @filemtime(public_path('assets/css/store-tq.css')) }}" rel="stylesheet">
     <style>.sf{--mk-ratio:{{ sf('cards.ratio') }};--mk-fit:{{ sf('cards.fit') }}}</style>
     @stack('head')
 </head>
-<body class="sf" data-page="{{ $page ?? '' }}">
+<body class="sf @if (sf('design.marketplace')) sf-tq @endif" data-page="{{ $page ?? '' }}">
 <a href="#main" class="visually-hidden-focusable position-absolute p-2" style="z-index:2000">{{ __('Skip to content') }}</a>
 
 @php
@@ -49,7 +52,7 @@
     $cookieOn = sf('cookie.enabled');
 @endphp
 @if (sf('topbar.enabled'))
-<div class="mk-topbar @if (sf('header.light')) mk-hd-light @endif" id="sfAnnounce"><div class="sf-container">
+<div class="mk-topbar @if (sf('header.light') || sf('design.marketplace')) mk-hd-light @endif" id="sfAnnounce"><div class="sf-container">
     @if ($ann)@if ($ann['url'])<a href="{{ $ann['url'] }}">{{ $ann['text'] }}</a>@else<span>{{ $ann['text'] }}</span>@endif
     @elseif (filled(sft('topbar.text')))<span>{{ sft('topbar.text') }}</span>
     @elseif (setting('store.tagline'))<span dir="auto">{{ setting('store.tagline') }}</span>@else<span>{{ __('Welcome to :store', ['store' => $storeName]) }}</span>@endif
@@ -65,7 +68,7 @@
 </div></div>
 @endif
 
-<header class="mk-header sf-header @if (sf('header.light')) mk-hd-light @endif @unless (sf('header.sticky')) mk-static @endunless">
+<header class="mk-header sf-header @if (sf('header.light') || sf('design.marketplace')) mk-hd-light @endif @unless (sf('header.sticky')) mk-static @endunless">
     <div class="sf-container mk-header-row">
         <button class="mk-menu-btn" type="button" data-mobile-open aria-controls="mkDrawer" aria-expanded="false" aria-label="{{ __('Open menu') }}"><i class="bi bi-list"></i></button>
         <a href="{{ route('store.home') }}" class="sf-brand mk-brand" aria-label="{{ $storeName }}">
@@ -90,9 +93,11 @@
         @endif
         <div class="mk-icons">
             @if (sf('header.show_shop'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.shop') }}"><i class="bi bi-shop"></i><span>{{ __('Shop') }}</span></a>@endif
+            @if (sf('header.show_saved'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.wishlist') }}" aria-label="{{ __('Saved') }}"><i class="bi bi-heart"></i><span>{{ __('Saved') }}</span><b class="mk-count" data-wish-count @if (! $wishCount) hidden @endif>{{ $wishCount }}</b></a>@endif
+            @if (sf('header.show_compare'))<a class="mk-ic d-none d-md-flex" href="{{ route('store.compare') }}" aria-label="{{ __('Compare') }}"><i class="bi bi-arrow-left-right"></i><span>{{ __('Compare') }}</span><b class="mk-count mk-count-blue" data-compare-count @if (! $compareCount) hidden @endif>{{ $compareCount }}</b></a>@endif
             <a class="mk-ic" href="{{ route('store.cart') }}" data-open-cart aria-label="{{ __('Cart') }}"><i class="bi bi-bag"></i><span class="d-none d-md-inline">{{ __('Basket') }}</span><b class="mk-count" data-cart-count @if (! $cartData['count']) hidden @endif>{{ $cartData['count'] }}</b></a>
             <button class="mk-ic mk-search-toggle" type="button" aria-controls="mkSearch" aria-expanded="false" aria-label="{{ __('Search') }}"><i class="bi bi-search"></i></button>
-            @if (sf('header.show_theme'))<button type="button" class="mk-ic" data-theme-toggle aria-label="{{ __('Toggle light/dark mode') }}"><i class="bi bi-sun-fill"></i></button>@endif
+            @if (sf('header.show_theme') && ! sf('design.marketplace'))<button type="button" class="mk-ic" data-theme-toggle aria-label="{{ __('Toggle light/dark mode') }}"><i class="bi bi-sun-fill"></i></button>@endif
             @auth
                 <div class="dropdown mk-acct">
                     <button class="mk-ic" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ __('My account') }}"><i class="bi bi-person-circle"></i><span class="d-none d-md-inline">{{ \Illuminate\Support\Str::limit(auth()->user()->name, 12) }}</span></button>
@@ -109,7 +114,7 @@
     </div>
 </header>
 
-<nav class="mk-cats @if (sf('header.light')) mk-hd-light @endif" aria-label="{{ __('Store navigation') }}">
+<nav class="mk-cats @if (sf('header.light') || sf('design.marketplace')) mk-hd-light @endif" aria-label="{{ __('Store navigation') }}">
     <div class="sf-container mk-cats-row">
         @if (sf('header.show_mega'))
         <div class="mk-mega" data-mega>
@@ -170,6 +175,8 @@
                     <a href="{{ route('store.shop') }}"><i class="bi bi-shop"></i>{{ __('Shop') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop', ['sort' => 'discount']) }}"><i class="bi bi-lightning-charge"></i>{{ sft('header.deals_label') }}<i class="bi bi-chevron-right"></i></a>
                     @if (sf('header.show_blog') && \App\Models\Article::live()->exists())<a href="{{ route('store.blog') }}"><i class="bi bi-journal-richtext"></i>{{ sft('header.blog_label') }}<i class="bi bi-chevron-right"></i></a>@endif
+                    <a href="{{ route('store.wishlist') }}"><i class="bi bi-heart"></i>{{ __('Saved') }}<i class="bi bi-chevron-right"></i></a>
+                    <a href="{{ route('store.compare') }}"><i class="bi bi-arrow-left-right"></i>{{ __('Compare') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.contact') }}"><i class="bi bi-chat-heart"></i>{{ __('Contact us') }}<i class="bi bi-chevron-right"></i></a>
                     @if (sf('header.show_rx') && \App\Support\BusinessProfile::hasModule('prescriptions'))<a href="{{ route('store.prescription.upload') }}"><i class="bi bi-camera-fill"></i>{{ sft('header.rx_label') }}<i class="bi bi-chevron-right"></i></a>@endif
                     @if (sf('header.show_location'))<a href="#" data-fx-loc><i class="bi bi-geo-alt-fill"></i>{{ __('Deliver to') }}: <b data-fx-loc-name>{{ __('Choose area') }}</b><i class="bi bi-chevron-right"></i></a>@endif
@@ -199,7 +206,6 @@
                 <a href="{{ route('store.home') }}" class="sf-brand mb-3"><span class="sf-brand-logo"><img src="{{ brand_logo() }}" alt=""></span><span class="sf-brand-name">{{ $storeName }}</span></a>
                 @php $about = sft('footer.about') ?: setting('store.tagline'); @endphp
                 @if ($about)<p dir="auto">{{ $about }}</p>@endif
-                @if ($socials && sf('footer.show_socials'))<div class="mk-socials" aria-label="{{ __('Follow us') }}">@foreach ($socials as $so)<a href="{{ $so['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $so['label'] }}"><i class="bi bi-{{ $so['icon'] }}"></i></a>@endforeach</div>@endif
             </div>
             <div class="mk-fcol"><div class="mk-fh">{{ sft('footer.shop_title') }}</div>
                 @forelse ($colShop as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
@@ -224,6 +230,11 @@
                     @if (setting('store.phone'))<a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('store.phone')) }}" dir="ltr"><i class="bi bi-telephone me-1"></i>{{ setting('store.phone') }}</a>@endif
                 @endif
             </div>
+            @if ($socials && sf('footer.show_socials'))
+            <div class="mk-fcol mk-ffollow"><div class="mk-fh">{{ __('Follow us') }}</div>
+                @if ($socials && sf('footer.show_socials'))<div class="mk-socials" aria-label="{{ __('Follow us') }}">@foreach ($socials as $so)<a href="{{ $so['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $so['label'] }}"><i class="bi bi-{{ $so['icon'] }}"></i></a>@endforeach</div>@endif
+            </div>
+            @endif
         </div>
         @if (sf('footer.show_newsletter'))
         <form method="POST" action="{{ route('store.subscribe') }}" class="fx-news" data-no-ajax>

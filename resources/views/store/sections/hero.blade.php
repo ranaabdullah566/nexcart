@@ -9,7 +9,7 @@
     <div class="sf-container mk-slide-row">
         <div class="mk-slide-text">
             @if ($s->text('eyebrow'))<span class="mk-tag"><i class="bi bi-patch-check-fill"></i> {{ $s->text('eyebrow') }}</span>@endif
-            <h{{ ($first ?? false) ? 1 : 2 }} class="mk-hero-title">{{ $s->text('title', setting('store.name')) }}</h{{ ($first ?? false) ? 1 : 2 }}>
+            <h{{ ($first ?? false) ? 1 : 2 }} class="mk-hero-title">{!! preg_replace('/\{(.+?)\}/u', '<em>$1</em>', e($s->text('title', setting('store.name')))) !!}</h{{ ($first ?? false) ? 1 : 2 }}>
             @if ($s->text('subtitle'))<p>{{ $s->text('subtitle') }}</p>@endif
             <div class="mk-hero-cta">
                 @if ($s->text('button_label'))<a href="{{ $s->settings['button_url'] ?? route('store.shop') }}" class="mk-btn-accent">{{ $s->text('button_label') }} <i class="bi bi-arrow-right"></i></a>@endif

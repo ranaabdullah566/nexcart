@@ -35,9 +35,9 @@ class StorefrontTest extends TestCase
 
     public function test_home_renders_default_sections_in_each_language(): void
     {
-        $this->get('/')->assertOk()->assertSee('Your pharmacy, now online')->assertSee('mk-hero', false)->assertSee('Fast delivery');
+        $this->get('/')->assertOk()->assertSee('Your pharmacy,', false)->assertSee('now online')->assertSee('mk-hero', false)->assertSee('Fast delivery');
 
-        $this->withSession(['locale' => 'ur'])->get('/')->assertOk()->assertSee('dir="rtl"', false)->assertSee('آپ کی فارمیسی، اب آن لائن')->assertSee('تیز ڈیلیوری');
+        $this->withSession(['locale' => 'ur'])->get('/')->assertOk()->assertSee('dir="rtl"', false)->assertSee('آپ کی فارمیسی،', false)->assertSee('اب آن لائن')->assertSee('تیز ڈیلیوری');
         $this->withSession(['locale' => 'ur_Latn'])->get('/')->assertSee('Tez delivery');
     }
 
@@ -193,7 +193,10 @@ class StorefrontTest extends TestCase
 
     public function test_layout_has_theme_language_and_cart_drawer(): void
     {
-        $this->get('/shop')->assertOk()->assertSee('sfDrawer', false)->assertSee('data-theme-toggle', false)->assertSee('rel="manifest"', false)->assertSee('English');
+        $this->get('/shop')->assertOk()->assertSee('sfDrawer', false)->assertSee('rel="manifest"', false)->assertSee('English')->assertDontSee('data-theme-toggle', false);   // marketplace look is light-only
+
+        setting()->set('sf.design.marketplace', false);
+        $this->get('/shop')->assertOk()->assertSee('data-theme-toggle', false);
     }
 
     public function test_admin_can_manage_home_sections(): void

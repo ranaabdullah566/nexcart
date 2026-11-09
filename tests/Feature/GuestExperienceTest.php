@@ -206,6 +206,21 @@ class GuestExperienceTest extends TestCase
         $this->assertStringContainsString('<button type="submit" aria-label="Search"><span>Search</span></button>', $html);
 
         setting()->set('sf.header.light', false);
+        setting()->set('sf.design.marketplace', false);
         $this->assertStringNotContainsString('mk-hd-light', $this->get('/')->getContent());
+    }
+
+    public function test_saved_medicines_and_compare_work_for_guests(): void
+    {
+        $p = new Product;
+        $p->forceFill(['name' => 'Panadol', 'price' => 50, 'status' => 'active', 'track_stock' => false])->save();
+
+        $this->get('/saved')->assertOk()->assertSee('tq-page-title', false);
+        $this->get('/wishlist')->assertRedirect('/saved');
+        $this->postJson('/saved/'.$p->id)->assertOk();
+        $this->get('/saved')->assertOk()->assertSee('Panadol');
+        $this->postJson('/compare/'.$p->id)->assertOk();
+        $this->get('/compare')->assertOk()->assertSee('Panadol');
+        $this->get('/')->assertOk()->assertSee('sf-tq', false);
     }
 }

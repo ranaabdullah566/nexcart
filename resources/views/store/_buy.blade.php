@@ -12,7 +12,10 @@
         @if ($product->isVariable())<small>{{ __('from') }}</small>@endif
         <b data-price>{{ money($product->isVariable() ? $product->displayPrice() : $product->price) }}</b>
         <s data-compare @if (! ($product->compare_price && $product->compare_price > $product->price && ! $product->isVariable())) hidden @endif>{{ $product->compare_price ? money($product->compare_price) : '' }}</s>
+        @if (! $product->isVariable() && $product->compare_price && $product->compare_price > $product->price)<span class="tq-save">{{ __('Save :n%', ['n' => (int) round((1 - $product->price / $product->compare_price) * 100)]) }}</span>@endif
+        <span class="tq-pill">{{ setting('store.tax_inclusive') ? __('Tax included') : __('Tax excluded') }}</span>
     </div>
+    <div class="tq-total"><small>{{ __('Order total') }}</small><b class="figure" data-total></b></div>
 
     @if ($product->isVariable())
         <div class="sf-opt-title">{{ __('Choose an option') }}</div>
@@ -34,6 +37,6 @@
     </div>
     <div class="d-flex justify-content-between mt-2 small">
         <span class="text-warning" data-stock-note></span>
-        <span class="text-muted">{{ __('Total') }}: <b class="figure text-body" data-total></b></span>
+        <span class="text-muted tq-poweredby">{{ __('Delivery is calculated at checkout.') }}</span>
     </div>
 </form>

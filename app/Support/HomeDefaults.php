@@ -9,9 +9,9 @@ class HomeDefaults
 {
     private const COPY = [
         'pharmacy' => [
-            'eyebrow' => 'Trusted care', 'title' => 'Your pharmacy, now online', 'subtitle' => 'Genuine medicines and health products, delivered safely.', 'button' => 'Shop medicines', 'button2' => 'Upload prescription',
-            'ur' => ['eyebrow' => 'بھروسے کی دیکھ بھال', 'title' => 'آپ کی فارمیسی، اب آن لائن', 'subtitle' => 'اصل ادویات اور صحت کی مصنوعات، محفوظ ڈیلیوری کے ساتھ۔', 'button_label' => 'ادویات خریدیں', 'button2_label' => 'نسخہ بھیجیں'],
-            'ur_Latn' => ['eyebrow' => 'Bharose ki dekh bhaal', 'title' => 'Aap ki pharmacy, ab online', 'subtitle' => 'Asal adwiya aur sehat ke products, mehfooz delivery ke saath.', 'button_label' => 'Adwiya khareedein', 'button2_label' => 'Nuskha bhejein'],
+            'eyebrow' => 'Trusted care', 'title' => 'Your pharmacy, {now online}', 'subtitle' => 'Genuine medicines and health products, delivered safely.', 'button' => 'Shop medicines', 'button2' => 'Upload prescription',
+            'ur' => ['eyebrow' => 'بھروسے کی دیکھ بھال', 'title' => 'آپ کی فارمیسی، {اب آن لائن}', 'subtitle' => 'اصل ادویات اور صحت کی مصنوعات، محفوظ ڈیلیوری کے ساتھ۔', 'button_label' => 'ادویات خریدیں', 'button2_label' => 'نسخہ بھیجیں'],
+            'ur_Latn' => ['eyebrow' => 'Bharose ki dekh bhaal', 'title' => 'Aap ki pharmacy, {ab online}', 'subtitle' => 'Asal adwiya aur sehat ke products, mehfooz delivery ke saath.', 'button_label' => 'Adwiya khareedein', 'button2_label' => 'Nuskha bhejein'],
         ],
     ];
 

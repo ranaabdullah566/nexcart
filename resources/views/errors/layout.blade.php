@@ -15,6 +15,7 @@
     <link href="{{ asset('assets/css/store-market.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/store-market-pages.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/store-future.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/store-tq.css') }}" rel="stylesheet">
     <style nonce="{{ csp_nonce() }}">
         .sf .fx-err { min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem; text-align: center; }
         .fx-err-code { font: 800 clamp(5rem, 22vw, 11rem)/1 var(--font-display, inherit); letter-spacing: -.06em; margin: 0; background: linear-gradient(110deg, var(--fx-a), var(--fx-b) 60%, var(--fx-a)); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: fxText 6s linear infinite alternate; filter: drop-shadow(0 10px 50px color-mix(in srgb, var(--fx-a) 45%, transparent)); }
@@ -25,7 +26,8 @@
         .fx-err-btns { display: flex; gap: .7rem; justify-content: center; flex-wrap: wrap; }
     </style>
 </head>
-<body class="sf">
+@php $__tq = $safe(fn () => (bool) sf('design.marketplace'), false); @endphp
+<body class="sf @if ($__tq) sf-tq @endif">
 <main class="fx-err">
     <div class="fx-err-card mk-box">
         <span class="fx-err-pill"><i class="bi bi-@yield('icon', 'exclamation-triangle')"></i></span>

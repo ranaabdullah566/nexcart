@@ -32,6 +32,7 @@
             @if ($imgs->count() > 1)
                 <div class="sf-thumbs">@foreach ($imgs as $i => $m)<button type="button" data-thumb="{{ $m->getUrl() }}" class="{{ $i === 0 ? 'on' : '' }}" aria-label="{{ $i + 1 }}"><img src="{{ $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl() }}" alt=""></button>@endforeach</div>
             @endif
+            @if (sf('product.show_disclaimer') && filled(sft('product.disclaimer')))<div class="tq-notice" role="note"><i class="bi bi-exclamation-triangle"></i><p><b>{{ __('Please note:') }}</b> {{ sft('product.disclaimer') }}</p></div>@endif
             @if (sf('product.show_trust'))
             <div class="mk-pd-trust">
                 @foreach (\App\Support\Sf::lines('product.trust_items') as $row)<div><i class="bi bi-{{ \App\Support\Sf::icon($row[0]) }}"></i> {{ $row[1] ?? '' }}</div>@endforeach
@@ -54,8 +55,10 @@
             <div class="mk-buybox" id="mkBuy">
                 @include('store._buy')
                 @php $bbTrust = \App\Support\Sf::lines('product.bb_trust'); @endphp
-                @if (sf('product.show_share') || (sf('product.show_whatsapp') && filled(setting('store.whatsapp'))))
+                @if (sf('product.show_save') || sf('product.show_compare') || sf('product.show_share') || (sf('product.show_whatsapp') && filled(setting('store.whatsapp'))))
                 <div class="mk-util">
+                    @if (sf('product.show_save'))<button type="button" class="@if (app(\App\Services\Wishlist::class)->has($product->id)) on @endif" data-wish="{{ $product->id }}" aria-pressed="{{ app(\App\Services\Wishlist::class)->has($product->id) ? 'true' : 'false' }}"><i class="bi bi-heart"></i><span>{{ __('Save') }}</span></button>@endif
+                    @if (sf('product.show_compare'))<button type="button" class="@if (app(\App\Services\Compare::class)->has($product->id)) on @endif" data-compare-toggle="{{ $product->id }}" aria-pressed="{{ app(\App\Services\Compare::class)->has($product->id) ? 'true' : 'false' }}"><i class="bi bi-arrow-left-right"></i><span>{{ __('Compare') }}</span></button>@endif
                     @if (sf('product.show_share'))<button type="button" data-share data-title="{{ $product->trans('name') }}"><i class="bi bi-share"></i><span>{{ __('Share') }}</span></button>@endif
                     @if (sf('product.show_whatsapp') && filled(setting('store.whatsapp')))<a href="https://wa.me/{{ preg_replace('/\D/', '', setting('store.whatsapp')) }}?text={{ rawurlencode($product->trans('name').' '.url()->current()) }}" target="_blank" rel="noopener noreferrer" class="wa"><i class="bi bi-whatsapp"></i><span>{{ __('Ask us') }}</span></a>@endif
                 </div>

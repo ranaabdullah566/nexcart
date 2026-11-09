@@ -218,6 +218,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/account', [Store\AccountController::class, 'update'])->name('store.account.update');
 });
 Route::get('/page/{slug}', [Store\PageController::class, 'show'])->name('store.page');
+Route::get('/saved', [Store\WishlistController::class, 'index'])->name('store.wishlist');
+Route::redirect('/wishlist', '/saved', 301);
+Route::post('/saved/{product}', [Store\WishlistController::class, 'toggle'])->whereNumber('product')->middleware('throttle:60,1')->name('store.wishlist.toggle');
+Route::get('/compare', [Store\CompareController::class, 'index'])->name('store.compare');
+Route::post('/compare/{product}', [Store\CompareController::class, 'toggle'])->whereNumber('product')->middleware('throttle:60,1')->name('store.compare.toggle');
+Route::delete('/compare', [Store\CompareController::class, 'clear'])->name('store.compare.clear');
 Route::get('/contact', [Store\ContactController::class, 'show'])->name('store.contact');
 Route::post('/contact', [Store\ContactController::class, 'send'])->middleware(['throttle:5,1', 'honeypot'])->name('store.contact.send');
 Route::post('/subscribe', [Store\ContactController::class, 'subscribe'])->middleware(['throttle:6,1', 'honeypot'])->name('store.subscribe');

@@ -2,6 +2,15 @@
 
 All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
+## Unreleased
+
+### Storefront — marketplace design
+- The whole storefront (home, shop, product, cart, checkout, account, blog, contact, prescription upload, error pages, setup wizard) now follows a clean marketplace look: white pages, navy header / footer, orange buttons, blue prices. It is light-only and switchable in Admin → Storefront → *Design → Marketplace look* (`design.marketplace`); turn it off to get the previous glass / dark-mode theme back.
+- **Saved medicines** (`/saved`, `/wishlist` redirects) and **Compare** (`/compare`) are back, for guests too, with header icons and counts, card buttons and a product-page tile. New Storefront options: `header.show_saved`, `header.show_compare`, `cards.show_wish`, `cards.show_compare`, `product.show_save`, `product.show_compare`, `product.show_disclaimer`, `product.disclaimer`.
+- Product cards show brand / category, Genuine / Rx flag, Add-to-cart and four quick buttons; the buy box shows savings and a live total; login and sign-up are a split layout with *Browse as guest*.
+- Hero title supports a highlighted part with `{curly braces}`.
+- New Urdu / Roman Urdu strings for the above.
+
 ## 1.2.0
 NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one migration that drops the removed tables (add-ons and loyalty data are discarded) — take a backup first, see [docs/UPGRADE.md](docs/UPGRADE.md).
 
@@ -9,7 +18,7 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 - Business types: fast food, medical store and general store. There is one pharmacy profile; the setup wizard no longer asks for a business type.
 - **Kitchen display** and **Add-ons** (modifier groups) — medicines use pack-size variants instead.
 - **Loyalty points** (earning, spending at checkout, settings, report, account counter).
-- **Wishlist** and **Compare** (pages, buttons, header / footer / bottom-bar links, and their Storefront options).
+- **Wishlist** and **Compare** (removed here, restored as *Saved medicines* and *Compare* in the next release — see Unreleased).
 
 ### Changed
 - Pharmacy profile now includes variants, pickup, riders and reviews as built-in modules.

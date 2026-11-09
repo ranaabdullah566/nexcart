@@ -196,3 +196,45 @@
         });
     });
 })();
+
+/* ---- Saved (wishlist) and Compare toggles on cards, product page, saved and compare pages ---- */
+(function () {
+    'use strict';
+    var csrf = (document.querySelector('meta[name=csrf-token]') || {}).content || '';
+    function toast(msg, bad) {
+        var box = document.getElementById('sfToasts'); if (!box) return;
+        var el = document.createElement('div'); el.className = 'nx-toast ' + (bad ? 'bad' : 'ok'); el.setAttribute('role', 'status');
+        el.innerHTML = '<i class="bi ' + (bad ? 'bi-exclamation-octagon-fill' : 'bi-check-circle-fill') + '"></i><div></div>'; el.lastChild.textContent = msg;
+        box.appendChild(el); setTimeout(function () { el.style.transition = 'all .3s'; el.style.opacity = 0; setTimeout(function () { el.remove(); }, 300); }, 3200);
+    }
+    function post(url) {
+        return fetch(url, { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': csrf } })
+            .then(function (r) { if (!r.ok) throw new Error('error'); return r.json(); });
+    }
+    function paint(sel, id, on, attr) {
+        Array.prototype.forEach.call(document.querySelectorAll('[' + attr + '="' + id + '"]'), function (b) { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    }
+    function counts(sel, n) { Array.prototype.forEach.call(document.querySelectorAll(sel), function (c) { c.textContent = n; c.hidden = !n; }); }
+    document.addEventListener('click', function (e) {
+        var w = e.target.closest('[data-wish]');
+        if (w) {
+            e.preventDefault(); var id = w.getAttribute('data-wish');
+            post('/saved/' + id).then(function (r) {
+                paint('', id, r.added, 'data-wish'); counts('[data-wish-count]', r.count);
+                toast(r.added ? 'Saved' : 'Removed from saved');
+                if (!r.added && document.body.dataset.page === 'saved') { var c = w.closest('[data-saved-item]'); if (c) c.remove(); if (!document.querySelector('[data-saved-item]')) location.reload(); }
+            }).catch(function () { toast('Something went wrong', true); });
+            return;
+        }
+        var c2 = e.target.closest('[data-compare-toggle]');
+        if (c2) {
+            e.preventDefault(); var cid = c2.getAttribute('data-compare-toggle');
+            post('/compare/' + cid).then(function (r) {
+                if (r.full) { toast('You can compare up to ' + r.max + ' products', true); return; }
+                paint('', cid, r.added, 'data-compare-toggle'); counts('[data-compare-count]', r.count);
+                toast(r.added ? 'Added to compare' : 'Removed from compare');
+                if (c2.hasAttribute('data-compare-remove')) location.reload();
+            }).catch(function () { toast('Something went wrong', true); });
+        }
+    });
+})();

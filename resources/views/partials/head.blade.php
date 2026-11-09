@@ -2,6 +2,7 @@
     $__a1 = (string) setting('theme.accent', '#22d3ee');
     $__a2 = (string) setting('theme.primary', '#8b5cf6');
     $__default = (string) setting('theme.mode', 'dark');
+    $__forceLight = ($storefront ?? false) && sf('design.marketplace');
 @endphp
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,7 +24,7 @@
 <script nonce="{{ csp_nonce() }}">
     (function () {
         try {
-            var t = localStorage.getItem('nx-theme') || @json($__default);
+            var t = @json($__forceLight) ? 'light' : (localStorage.getItem('nx-theme') || @json($__default));
             if (t === 'auto') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', t);
             document.documentElement.setAttribute('data-bs-theme', t);
