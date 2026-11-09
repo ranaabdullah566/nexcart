@@ -94,7 +94,7 @@
                 <div class="mk-empty"><span><i class="bi bi-search"></i></span><h2>{{ __('No products found') }}</h2><p>{{ __('Try removing a filter or searching for something else.') }}</p>@if ($active->isNotEmpty() || filled($f['q'] ?? null))<a href="{{ route('store.shop') }}" class="btn btn-primary">{{ __('Clear filters') }}</a>@endif</div>
             @else
                 <div data-product-list>
-                    @include('store._grid', ['products' => $products, 'cols' => 'row-cols-xl-'.(int) sf('cards.cols')])
+                    @include('store._grid', ['products' => $products, 'cols' => 'row-cols-xl-'.max(2, (int) sf('cards.cols') - 1)])
                 </div>
                 <div class="mk-pager">
                     <small>{{ __('Showing :from–:to of :total', ['from' => $products->firstItem(), 'to' => $products->lastItem(), 'total' => $products->total()]) }}</small>
