@@ -29,5 +29,6 @@
     @empty
         @if ($heroes->isEmpty())<div class="sf-empty"><i class="bi bi-stars"></i>{{ __('This store is being set up. Please check back soon.') }}</div>@endif
     @endforelse
+    @include('store._recent')
 </div>
 @endsection

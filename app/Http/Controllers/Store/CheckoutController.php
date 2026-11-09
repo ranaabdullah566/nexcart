@@ -14,6 +14,7 @@ use App\Services\CartService;
 use App\Services\CheckoutService;
 use App\Services\Payments\PaymentManager;
 use App\Services\SlotService;
+use App\Support\GuestOrders;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -97,6 +98,7 @@ class CheckoutController extends Controller
         session()->forget('coupon');
 
         $this->notify($order);
+        GuestOrders::remember($order);
 
         $gateway = $this->payments->find($order->payment_method);
         try {

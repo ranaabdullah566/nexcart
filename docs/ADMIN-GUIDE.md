@@ -17,6 +17,7 @@ next to **Visit site** (opens your shop in a new tab) and the **bell** (your ale
 - **Customers** — people with an account can be added, edited and deleted here; guests who only ordered show with a *Create account* button.
 - **Delivery:** assign a *rider* in the order; riders use *Deliveries* on their phone.
 - **Pharmacy:** *Prescription requests* lists photos customers sent without ordering — call them, mark *Called back* / *Closed*. *Prescriptions* — approve or send back with a reason; medicines are not prepared until approved. *Delivery slots* limit orders per time window. *Inventory → Batches* shows what expires soon.
+- **Messages** — Contact-page messages and the newsletter list (download subscribers as CSV).
 - **Health blog** — write tips and guidance for customers; set a future publish date to schedule an article.
 - **Reviews** — approve or reply.
 

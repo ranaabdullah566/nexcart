@@ -40,6 +40,13 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 - New home section type **Health blog (latest articles)** and a *Health blog* link in the menu bar (switchable under Storefront → Header); both stay hidden until there is an article.
 - Sample data adds six general-advice articles with covers (removed with it).
 
+### Guest experience
+- **Contact page** (`/contact`): no account needed; shows phone, WhatsApp, e-mail, address and opening hours (new *Store address* and *Opening hours* settings). Messages land in **Admin → Messages** (new / read / replied, reply by e-mail, delete → Recycle Bin) and alert the team.
+- **E-mail sign-up** box in the footer (switchable): duplicates are harmless, every address can unsubscribe with one link, **Admin → Messages → Subscribers** downloads active addresses as a formula-safe CSV.
+- **Guest orders follow you**: after a guest order, creating an account or signing in adds *that browser's* orders to the account (never every order with the same e-mail), and the register form is prefilled. The checkout says "No account needed", and the order page offers "Create a free account".
+- **Recently viewed** medicines (home, product and cart pages) — stored on the device only, with a Clear button.
+- **Install app** button (Android / desktop prompt; iPhone shows the Add-to-Home-Screen steps) and a branded offline page.
+
 ### Kept
 - Prescriptions + pharmacist review, batches / expiry, delivery slots, riders, coupons, pickup, customer reviews, licence keys, 2FA, reports, backups, activity log, Recycle Bin, alerts, Google sign-in, reCAPTCHA, password reset.
 

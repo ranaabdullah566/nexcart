@@ -41,6 +41,7 @@ class Sf
             'header.show_rx' => $b('header', 'Show the “Upload prescription” button'), 'header.rx_label' => $t('header', 'Upload prescription button text', 'Upload prescription'),
             'header.show_trending' => $b('header', 'Show trending searches under the header'), 'header.trending' => $t('header', 'Trending searches (comma separated)', 'Paracetamol, Fever, Vitamin C, Cough, Diabetes'), 'header.trending_label' => $t('header', 'Trending label', 'Trending'),
             'header.show_blog' => $b('header', 'Show the “Health blog” link in the menu bar'), 'header.blog_label' => $t('header', 'Health blog link text', 'Health blog'),
+            'footer.show_newsletter' => $b('footer', 'Show the e-mail sign-up box'), 'footer.newsletter_title' => $t('footer', 'Sign-up title', 'Get health tips & offers'), 'footer.newsletter_sub' => $t('footer', 'Sign-up text', 'One useful email now and then. Unsubscribe any time.'),
             'header.show_deals' => $b('header', 'Show the Deals link'), 'header.deals_label' => $t('header', 'Deals link text', 'Deals'),
             'header.show_shop_link' => $b('header', 'Show the Shop link in the menu bar'), 'header.show_track' => $b('header', 'Show the “Track an order” link'), 'header.track_label' => $t('header', 'Track link text', 'Track an order'),
 

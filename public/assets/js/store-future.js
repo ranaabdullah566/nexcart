@@ -139,3 +139,60 @@
     form.addEventListener('submit', function (e) { e.preventDefault(); var v = form.querySelector('input').value.trim(); if (v) { set(v); paint(); close(); } });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
 })();
+
+/* ---- recently viewed (this device only) ---- */
+(function () {
+    'use strict';
+    var KEY = 'fx-recent', MAX = 12;
+    function load() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+    function save(v) { try { localStorage.setItem(KEY, JSON.stringify(v.slice(0, MAX))); } catch (e) { } }
+    var cur = document.querySelector('[data-fx-viewed]');
+    if (cur) {
+        try { var p = JSON.parse(cur.getAttribute('data-fx-viewed')); if (p && p.id) save([p].concat(load().filter(function (x) { return x.id !== p.id; }))); } catch (e) { }
+    }
+    var box = document.querySelector('[data-fx-recent]');
+    if (!box) return;
+    function paint() {
+        var skip = box.getAttribute('data-current'), list = load().filter(function (x) { return String(x.id) !== String(skip); }).slice(0, 8);
+        var row = box.querySelector('[data-fx-recent-row]'); row.innerHTML = '';
+        if (list.length < 1) { box.hidden = true; return; }
+        list.forEach(function (x) {
+            var a = document.createElement('a'); a.className = 'fx-recent-item'; a.href = x.url;
+            var im = document.createElement('span'); im.className = 'im';
+            if (x.img) { var i = document.createElement('img'); i.src = x.img; i.alt = ''; i.loading = 'lazy'; im.appendChild(i); } else { var ic = document.createElement('i'); ic.className = 'bi bi-capsule'; im.appendChild(ic); }
+            var b = document.createElement('b'); b.textContent = x.name; var s = document.createElement('small'); s.textContent = x.price || '';
+            a.appendChild(im); a.appendChild(b); a.appendChild(s); row.appendChild(a);
+        });
+        box.hidden = false;
+    }
+    paint();
+    var clr = box.querySelector('[data-fx-recent-clear]');
+    if (clr) clr.addEventListener('click', function () { save([]); paint(); });
+})();
+
+/* ---- install as an app (Android / desktop prompt; iPhone gets instructions) ---- */
+(function () {
+    'use strict';
+    var btns = Array.prototype.slice.call(document.querySelectorAll('[data-fx-install]'));
+    if (!btns.length) return;
+    var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone;
+    if (standalone) return;
+    var ev = null, ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+    function show() { btns.forEach(function (b) { b.hidden = false; }); }
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); ev = e; show(); });
+    window.addEventListener('appinstalled', function () { btns.forEach(function (b) { b.hidden = true; }); ev = null; });
+    if (ios) show();
+    function iosHelp() {
+        var m = document.createElement('div'); m.className = 'fx-modal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+        m.innerHTML = '<div class="fx-modal-box"><button type="button" class="fx-modal-x" aria-label="Close"><i class="bi bi-x-lg"></i></button><span class="fx-modal-ic"><i class="bi bi-phone"></i></span><h3>Install on your iPhone</h3><p>Tap the <b>Share</b> button <i class="bi bi-box-arrow-up"></i> in Safari, then choose <b>Add to Home Screen</b>.</p></div>';
+        document.body.appendChild(m);
+        function close() { m.remove(); }
+        m.addEventListener('click', function (e) { if (e.target === m || e.target.closest('.fx-modal-x')) close(); });
+    }
+    btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+            if (ev) { ev.prompt(); ev.userChoice.then(function () { ev = null; btns.forEach(function (x) { x.hidden = true; }); }); }
+            else if (ios) iosHelp();
+        });
+    });
+})();

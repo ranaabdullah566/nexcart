@@ -53,5 +53,6 @@
             </aside>
         </div>
     @endif
+    @include('store._recent')
 </div>
 @endsection

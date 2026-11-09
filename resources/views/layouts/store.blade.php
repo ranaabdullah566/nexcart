@@ -170,6 +170,7 @@
                     <a href="{{ route('store.shop') }}"><i class="bi bi-shop"></i>{{ __('Shop') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop', ['sort' => 'discount']) }}"><i class="bi bi-lightning-charge"></i>{{ sft('header.deals_label') }}<i class="bi bi-chevron-right"></i></a>
                     @if (sf('header.show_blog') && \App\Models\Article::live()->exists())<a href="{{ route('store.blog') }}"><i class="bi bi-journal-richtext"></i>{{ sft('header.blog_label') }}<i class="bi bi-chevron-right"></i></a>@endif
+                    <a href="{{ route('store.contact') }}"><i class="bi bi-chat-heart"></i>{{ __('Contact us') }}<i class="bi bi-chevron-right"></i></a>
                     @if (sf('header.show_rx') && \App\Support\BusinessProfile::hasModule('prescriptions'))<a href="{{ route('store.prescription.upload') }}"><i class="bi bi-camera-fill"></i>{{ sft('header.rx_label') }}<i class="bi bi-chevron-right"></i></a>@endif
                     @if (sf('header.show_location'))<a href="#" data-fx-loc><i class="bi bi-geo-alt-fill"></i>{{ __('Deliver to') }}: <b data-fx-loc-name>{{ __('Choose area') }}</b><i class="bi bi-chevron-right"></i></a>@endif
                     <a href="{{ route('store.track') }}"><i class="bi bi-truck"></i>{{ sft('header.track_label') }}<i class="bi bi-chevron-right"></i></a>
@@ -212,6 +213,7 @@
                 @forelse ($colHelp as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
                 @empty
                     <a href="{{ route('store.track') }}">{{ sft('header.track_label') }}</a>
+                    <a href="{{ route('store.contact') }}">{{ __('Contact us') }}</a>
                     <a href="{{ auth()->check() ? route('store.account') : route('login') }}">{{ __('My account') }}</a>
                 @endforelse
             </div>
@@ -223,10 +225,19 @@
                 @endif
             </div>
         </div>
+        @if (sf('footer.show_newsletter'))
+        <form method="POST" action="{{ route('store.subscribe') }}" class="fx-news" data-no-ajax>
+            @csrf
+            <div class="fx-news-text"><b><i class="bi bi-envelope-heart me-1"></i>{{ sft('footer.newsletter_title') }}</b><small>{{ sft('footer.newsletter_sub') }}</small></div>
+            <div class="fx-news-in"><input type="email" name="email" required maxlength="190" autocomplete="email" placeholder="{{ __('Your email') }}" aria-label="{{ __('Your email') }}"><button class="btn btn-primary">{{ __('Subscribe') }}</button></div>
+            <x-honeypot />
+        </form>
+        @endif
         <div class="mk-fbot">
             <span>{{ sft('footer.copyright') ?: '© '.date('Y').' '.$storeName.'. '.__('All rights reserved.') }}</span>
             <nav class="mk-legal" aria-label="{{ __('Legal') }}">
                 @if (sf('footer.show_legal'))@foreach ($footerMenu->take(6) as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach @endif
+                <button type="button" class="fx-install" data-fx-install hidden><i class="bi bi-download"></i> {{ __('Install app') }}</button>
                 @if ($cookieOn)<button type="button" data-cookie-settings>{{ __('Cookie settings') }}</button>@endif
                 @if (\App\Support\License::showBranding())<span>{{ __('Powered by NexCart') }}</span>@endif
             </nav>

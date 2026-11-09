@@ -110,6 +110,9 @@
         @endif
     </div>
 
+    <span hidden data-fx-viewed="{{ json_encode(['id' => $product->id, 'name' => $product->trans('name'), 'url' => route('store.product', $product->slug), 'img' => $product->thumbUrl(), 'price' => ($product->isVariable() ? __('from').' ' : '').money($product->displayPrice())], JSON_UNESCAPED_UNICODE) }}"></span>
+    @include('store._recent', ['current' => $product->id])
+
     @if ($alternatives->isNotEmpty())
         <section class="sf-section mk-rail-sec" data-rail>
             <div class="sf-section-head"><div><h2>{{ __('Same composition, other brands') }}</h2><p class="mk-sub">{{ __('Same active ingredient (:salt) — compare prices and availability.', ['salt' => $product->specs['composition']]) }}</p></div>

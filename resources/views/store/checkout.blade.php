@@ -27,6 +27,7 @@
                 <section class="ck-sec">
                     <div class="d-flex justify-content-between align-items-center"><h2><span class="mk-step">1</span>{{ __('Contact') }}</h2>
                         @guest<a href="{{ route('login') }}" class="small fw-bold">{{ __('Have an account? Sign in') }}</a>@endguest</div>
+                    @guest<p class="fx-guest-note"><i class="bi bi-person-check"></i> {{ __('No account needed — you are checking out as a guest. You can create an account after ordering.') }}</p>@endguest
                     <div class="row g-3">
                         <div class="col-md-7"><label class="form-label" for="ckEmail">{{ __('Email') }}</label><input id="ckEmail" type="email" name="email" value="{{ old('email', $defaults['email']) }}" required autocomplete="email" class="form-control @error('email') is-invalid @enderror"></div>
                         <div class="col-md-5"><label class="form-label" for="ckPhone">{{ __('Phone') }}</label><input id="ckPhone" type="tel" name="phone" value="{{ old('phone', $defaults['phone']) }}" required autocomplete="tel" inputmode="tel" class="form-control @error('phone') is-invalid @enderror"></div>

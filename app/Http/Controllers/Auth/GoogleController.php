@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Support\Audit;
+use App\Support\GuestOrders;
 use App\Support\Integrations;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -54,6 +55,7 @@ class GoogleController extends Controller
 
         Auth::login($user, true);
         $request->session()->regenerate();
+        GuestOrders::claim($user);
         Audit::log('auth.login_google', [], null, $user);
 
         return redirect()->intended(route('store.account'));

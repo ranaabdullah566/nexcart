@@ -21,6 +21,15 @@
             </div>
             <a href="{{ route('store.shop') }}" class="btn btn-primary">{{ __('Continue shopping') }}</a>
         </div>
+        @guest
+            @if (! $order->user_id)
+                <div class="fx-save-acct">
+                    <span class="fx-modal-ic"><i class="bi bi-person-heart"></i></span>
+                    <div><b>{{ __('Want to track this order and reorder in one tap?') }}</b><small>{{ __('Create a free account — this order will be added to it automatically.') }}</small></div>
+                    <a href="{{ route('register') }}" class="btn btn-primary">{{ __('Create account') }}</a>
+                </div>
+            @endif
+        @endguest
     @endif
 
     <div class="mk-page-head">

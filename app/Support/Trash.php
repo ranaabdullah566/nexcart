@@ -6,6 +6,7 @@ use App\Models\Article;
 use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
+use App\Models\ContactMessage;
 use App\Models\Coupon;
 use App\Models\DeliverySlot;
 use App\Models\HomeSection;
@@ -17,6 +18,7 @@ use App\Models\Review;
 use App\Models\ShippingZone;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * The Recycle Bin registry: every kind of record an admin can delete, how to label it and who may restore or erase it.
@@ -37,6 +39,7 @@ class Trash
             'delivery-slots' => ['label' => 'Delivery slots', 'icon' => 'calendar2-week', 'model' => DeliverySlot::class, 'name' => fn ($m) => $m->label.' · '.$m->range(), 'permission' => 'sales_settings.manage'],
             'home-sections' => ['label' => 'Home page sections', 'icon' => 'layout-text-window-reverse', 'model' => HomeSection::class, 'name' => fn ($m) => $m->title ?: ucfirst($m->type), 'permission' => 'storefront.manage'],
             'articles' => ['label' => 'Health blog', 'icon' => 'journal-richtext', 'model' => Article::class, 'name' => fn ($m) => $m->title, 'permission' => 'storefront.manage'],
+            'messages' => ['label' => 'Messages', 'icon' => 'envelope-paper-fill', 'model' => ContactMessage::class, 'name' => fn ($m) => $m->name.' — '.($m->subject ?: Str::limit($m->message, 40)), 'permission' => 'storefront.manage'],
             'pages' => ['label' => 'Pages', 'icon' => 'file-earmark-text-fill', 'model' => Page::class, 'name' => fn ($m) => $m->title, 'permission' => 'storefront.manage'],
             'menu-items' => ['label' => 'Menu links', 'icon' => 'list-nested', 'model' => MenuItem::class, 'name' => fn ($m) => $m->label, 'permission' => 'storefront.manage'],
             'prescription-requests' => ['label' => 'Prescription requests', 'icon' => 'camera-fill', 'model' => PrescriptionRequest::class, 'name' => fn ($m) => $m->name.' ('.$m->phone.')', 'permission' => 'prescriptions.verify'],

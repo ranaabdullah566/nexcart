@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Rules\Recaptcha;
 use App\Support\Audit;
+use App\Support\GuestOrders;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +30,7 @@ class LoginController extends Controller
         $credentials = collect($request->validate([
             'email' => ['required', 'email', 'max:190'],
             'password' => ['required', 'string', 'max:200'],
-            'g-recaptcha-response' => \App\Rules\Recaptcha::rules(),
+            'g-recaptcha-response' => Recaptcha::rules(),
         ]))->except('g-recaptcha-response')->all();
 
         // lockout per account+IP, so one attacker cannot lock the real owner out from elsewhere
@@ -96,6 +98,7 @@ class LoginController extends Controller
     {
         Auth::login($user, $remember);
         $request->session()->regenerate();
+        GuestOrders::claim($user);
         $request->session()->put('nx_last_seen', time());
         Audit::log('auth.login', [], null, $user);
 

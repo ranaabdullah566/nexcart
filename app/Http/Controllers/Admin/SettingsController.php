@@ -34,6 +34,8 @@ class SettingsController extends Controller
             'store.tagline' => ['nullable', 'string', 'max:190'],
             'store.email' => ['nullable', 'email', 'max:190'],
             'store.phone' => ['nullable', 'string', 'max:40'],
+            'store.address' => ['nullable', 'string', 'max:200'],
+            'store.hours' => ['nullable', 'string', 'max:120'],
             'store.currency' => ['required', 'string', 'size:3'],
             'store.currency_symbol' => ['required', 'string', 'max:5'],
             'store.timezone' => ['required', 'timezone'],

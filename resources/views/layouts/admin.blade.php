@@ -15,6 +15,7 @@
     if ($user->can('orders.view')) { $badges['admin.orders.index'] = \App\Models\Order::where('status', 'pending')->count(); }
     if ($user->can('prescriptions.view') && \App\Support\BusinessProfile::hasModule('prescriptions')) { $badges['admin.prescriptions.index'] = \App\Models\Order::where('requires_prescription', true)->where('prescription_status', 'pending')->count(); }
     if ($user->can('prescriptions.view') && \App\Support\BusinessProfile::hasModule('prescriptions')) { $badges['admin.prescription-requests.index'] = \App\Models\PrescriptionRequest::where('status', 'new')->count(); }
+    if ($user->can('storefront.manage')) { $badges['admin.messages.index'] = \App\Models\ContactMessage::where('status', 'new')->count(); }
     if ($user->can('reviews.manage') && \App\Support\BusinessProfile::hasModule('reviews')) { $badges['admin.reviews.index'] = \App\Models\Review::where('status', 'pending')->count(); }
     // [group => [[route, active-pattern, icon, label, permission]]]  — later phases append here.
     $navGroups = [
@@ -48,6 +49,7 @@
             ['admin.texts.index', 'admin.texts.*', 'fonts', 'Interface text', 'storefront.manage', null],
             ['admin.theme.edit', 'admin.theme.*', 'palette-fill', 'Theme', 'storefront.manage', null],
             ['admin.pages.index', 'admin.pages.*', 'file-earmark-text-fill', 'Pages', 'storefront.manage', null],
+            ['admin.messages.index', 'admin.messages.*', 'envelope-paper-fill', 'Messages', 'storefront.manage', null],
             ['admin.articles.index', 'admin.articles.*', 'journal-richtext', 'Health blog', 'storefront.manage', null],
             ['admin.menu-items.index', 'admin.menu-items.*', 'list-nested', 'Menus', 'storefront.manage', null],
             ['admin.emails.edit', 'admin.emails.*', 'envelope-paper-fill', 'Email templates', 'storefront.manage', null],
