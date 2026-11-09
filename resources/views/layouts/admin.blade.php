@@ -82,7 +82,7 @@
             </span>
         </a>
 
-        <nav class="nx-nav">
+        <nav class="nx-nav" aria-label="{{ __('Admin menu') }}">
             @foreach ($navGroups as $groupLabel => $items)
                 @php $visible = array_values(array_filter($items, fn ($i) => ($i[4] === null || $user->can($i[4])) && ($i[5] === null || \App\Support\BusinessProfile::hasModule($i[5])))); @endphp
                 @if ($visible)

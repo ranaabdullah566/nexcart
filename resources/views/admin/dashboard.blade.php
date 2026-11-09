@@ -19,9 +19,9 @@
     <div class="col-6 col-lg-3"><x-stat-card :label="__('Average order')" icon="graph-up-arrow" tone="vio" :value="money($sales['avg'])" :sub="__('Last 30 days')" /></div>
 </div>
 <div class="row g-3 mb-3">
-    <div class="col-lg-8"><div class="card h-100"><div class="card-body"><h5 class="mb-3">{{ __('Revenue, last 14 days') }}</h5><div style="height:260px"><canvas id="revChart" role="img" aria-label="{{ __('Revenue, last 14 days') }}"></canvas></div></div></div></div>
+    <div class="col-lg-8"><div class="card h-100"><div class="card-body"><h2 class="mb-3 h5">{{ __('Revenue, last 14 days') }}</h2><div style="height:260px"><canvas id="revChart" role="img" aria-label="{{ __('Revenue, last 14 days') }}"></canvas></div></div></div></div>
     <div class="col-lg-4"><div class="card h-100"><div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-2"><h5 class="mb-0">{{ __('Recent orders') }}</h5><a href="{{ route('admin.orders.index') }}" class="small">{{ __('All orders') }}</a></div>
+        <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="mb-0 h5">{{ __('Recent orders') }}</h2><a href="{{ route('admin.orders.index') }}" class="small">{{ __('All orders') }}</a></div>
         @forelse ($recentOrders as $o)
             <a href="{{ route('admin.orders.show', $o) }}" class="d-flex justify-content-between align-items-center py-2 border-bottom text-decoration-none" style="border-color:var(--border) !important;color:var(--text)">
                 <span><b class="figure">{{ $o->number }}</b><span class="d-block small text-muted">{{ $o->name }}</span></span>
@@ -34,7 +34,7 @@
 
 @if ($lowStock->isNotEmpty())
 <div class="card mb-3"><div class="card-body">
-    <div class="d-flex justify-content-between align-items-center mb-2"><h5 class="mb-0"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>{{ __('Low stock') }}</h5><a href="{{ route('admin.inventory.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Open inventory') }}</a></div>
+    <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="mb-0 h5"><i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>{{ __('Low stock') }}</h2><a href="{{ route('admin.inventory.index') }}" class="btn btn-sm btn-outline-secondary">{{ __('Open inventory') }}</a></div>
     <div class="row g-2">
         @foreach ($lowStock as $p)
             <div class="col-md-6 col-xl-4"><div class="d-flex justify-content-between border rounded-3 px-3 py-2" style="border-color:var(--border) !important"><span class="text-truncate me-2">{{ $p->trans('name') }}</span><b class="figure {{ $p->totalStock() === 0 ? 'text-danger' : 'text-warning' }}">{{ $p->totalStock() }}</b></div></div>
@@ -46,7 +46,7 @@
 <div class="row g-3">
     <div class="col-lg-7">
         <div class="card h-100"><div class="card-body">
-            <h5 class="mb-3">{{ __('Enabled modules') }}</h5>
+            <h2 class="mb-3 h5">{{ __('Enabled modules') }}</h2>
             <div class="d-flex flex-wrap gap-2">
                 @forelse ($modules as $m)
                     <span class="badge rounded-pill text-bg-secondary px-3 py-2">{{ str($m)->replace('_', ' ')->title() }}</span>
@@ -61,7 +61,7 @@
     </div>
     <div class="col-lg-5">
         <div class="card h-100"><div class="card-body">
-            <h5 class="mb-3">{{ __('Next up') }}</h5>
+            <h2 class="mb-3 h5">{{ __('Next up') }}</h2>
             <ul class="list-unstyled mb-0 d-grid gap-2">
                 <li><i class="bi bi-check-circle-fill text-success me-2"></i>{{ __('Store set up and admin ready') }}</li>
                 <li><a href="{{ route('admin.products.index') }}" class="text-reset text-decoration-none"><i class="bi bi-{{ $productCount ? 'check-circle-fill text-success' : 'circle text-muted' }} me-2"></i>{{ __('Add categories and products') }}</a></li>

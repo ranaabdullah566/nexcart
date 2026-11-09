@@ -22,7 +22,7 @@
 @endif
 
 <div class="card mb-3"><div class="card-body">
-    <h5 class="mb-3">{{ __('Checks') }}</h5>
+    <h2 class="mb-3 h5">{{ __('Checks') }}</h2>
     @foreach ($checks as $c)
         <div class="d-flex gap-3 py-2 border-bottom align-items-start" style="border-color:var(--border) !important">
             <i class="bi bi-{{ ['ok' => 'check-circle-fill text-success', 'warn' => 'exclamation-triangle-fill text-warning', 'bad' => 'x-octagon-fill text-danger'][$c['status']] }} mt-1"></i>
@@ -33,7 +33,7 @@
 </div></div>
 
 <div class="card"><div class="card-body">
-    <h5 class="mb-1"><i class="bi bi-box-seam me-1"></i>{{ __('Sample data') }}</h5>
+    <h2 class="mb-1 h5"><i class="bi bi-box-seam me-1"></i>{{ __('Sample data') }}</h2>
     <p class="text-muted small">{{ __('A ready-made catalogue for your pharmacy with pictures — handy for a demo or to see how the store looks full.', []) }}</p>
     @if ($demo)
         <form method="POST" action="{{ route('admin.system.demo.remove') }}" data-confirm="{{ __('Remove all sample products? Your own products are not touched.') }}" data-no-ajax>@csrf @method('DELETE')<button class="btn btn-outline-danger"><i class="bi bi-trash3 me-1"></i> {{ __('Remove sample data') }}</button></form>

@@ -10,7 +10,7 @@
 @forelse ($zones as $z)
     <div class="card" style="{{ $z->is_active ? '' : 'opacity:.6' }}"><div class="card-body">
         <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-            <div><h5 class="mb-1">{{ $z->name }} @unless ($z->is_active)<span class="badge text-bg-secondary ms-1">{{ __('Hidden') }}</span>@endunless</h5>
+            <div><h2 class="mb-1 h5">{{ $z->name }} @unless ($z->is_active)<span class="badge text-bg-secondary ms-1">{{ __('Hidden') }}</span>@endunless</h2>
                 <div class="small text-muted">{{ $z->cities ? implode(', ', $z->cities) : __('All other cities') }}</div></div>
             <x-row-actions :edit="route('admin.shipping.edit', $z)" :delete="route('admin.shipping.destroy', $z)" :confirm="__('Delete this zone and its rates?')" />
         </div>

@@ -12,14 +12,14 @@
     @php $active = request('tab', array_key_first($groups)); @endphp
     <ul class="nav nav-pills mb-3 gap-2 flex-wrap" role="tablist">
         @foreach ($groups as $g => [$label, $icon])
-            <li class="nav-item"><button type="button" class="nav-link {{ $active === $g ? 'active' : '' }}" data-bs-toggle="pill" data-bs-target="#sfg-{{ $g }}" data-tab-key="{{ $g }}"><i class="bi bi-{{ $icon }} me-1"></i>{{ __($label) }}</button></li>
+            <li class="nav-item" role="presentation"><button type="button" class="nav-link {{ $active === $g ? 'active' : '' }}" data-bs-toggle="pill" data-bs-target="#sfg-{{ $g }}" data-tab-key="{{ $g }}"><i class="bi bi-{{ $icon }} me-1"></i>{{ __($label) }}</button></li>
         @endforeach
     </ul>
     <div class="tab-content">
         @foreach ($groups as $g => [$label, $icon])
             <div class="tab-pane fade {{ $active === $g ? 'show active' : '' }}" id="sfg-{{ $g }}">
                 <div class="card mb-3"><div class="card-body">
-                    <h5 class="mb-3">{{ __($label) }}</h5>
+                    <h2 class="mb-3 h5">{{ __($label) }}</h2>
                     <div class="row g-3">
                         @foreach ($schema as $key => $def) @continue($def['group'] !== $g)
                             @php $f = 'v['.str_replace('.', '_', $key).']'; @endphp

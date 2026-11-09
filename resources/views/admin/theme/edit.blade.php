@@ -13,7 +13,7 @@
         <form method="POST" action="{{ route('admin.theme.update') }}" enctype="multipart/form-data" id="themeForm" data-no-ajax>
             @csrf @method('PUT')
             <div class="card mb-3"><div class="card-body">
-                <h5 class="mb-3">{{ __('Colours & shape') }}</h5>
+                <h2 class="mb-3 h5">{{ __('Colours & shape') }}</h2>
                 <div class="row g-3">
                     <div class="col-6"><label class="form-label">{{ __('Primary colour') }}</label><input type="color" name="primary" value="{{ $v('theme.primary') }}" class="form-control form-control-color w-100" data-live="primary"></div>
                     <div class="col-6"><label class="form-label">{{ __('Accent colour') }}</label><input type="color" name="accent" value="{{ $v('theme.accent') }}" class="form-control form-control-color w-100" data-live="accent"></div>
@@ -27,7 +27,7 @@
             </div></div>
 
             <div class="card mb-3"><div class="card-body">
-                <h5 class="mb-3">{{ __('Logo') }}</h5>
+                <h2 class="mb-3 h5">{{ __('Logo') }}</h2>
                 @if ($logo)<div class="d-flex align-items-center gap-3 mb-2"><img src="{{ brand_logo() }}" alt="" style="height:48px;border-radius:12px"><div class="form-check"><input class="form-check-input" type="checkbox" name="remove_logo" value="1" id="rmLogo"><label class="form-check-label" for="rmLogo">{{ __('Remove logo') }}</label></div></div>@endif
                 <input type="file" name="logo" accept="image/png,image/jpeg,image/webp" class="form-control @error('logo') is-invalid @enderror" data-live="logo">@error('logo')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 <div class="form-text">{{ __('PNG, JPG or WebP, square works best, up to 2 MB.') }}</div>
@@ -37,7 +37,7 @@
             </div></div>
 
             <div class="card mb-3"><div class="card-body">
-                <h5 class="mb-3">{{ __('Announcement bar') }}</h5>
+                <h2 class="mb-3 h5">{{ __('Announcement bar') }}</h2>
                 <div class="form-check form-switch mb-3"><input type="checkbox" role="switch" class="form-check-input" name="announce_enabled" value="1" id="annOn" @checked(old('announce_enabled', setting('announce.enabled'))) data-live="annOn"><label class="form-check-label" for="annOn">{{ __('Show a bar above the header') }}</label></div>
                 <input name="announce_text" maxlength="160" value="{{ $v('announce.text') }}" class="form-control mb-2" placeholder="{{ __('Free delivery over Rs 3,000!') }}" data-live="annText">
                 <input name="announce_url" value="{{ $v('announce.url') }}" class="form-control figure mb-2 @error('announce_url') is-invalid @enderror" placeholder="/shop">@error('announce_url')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -53,8 +53,8 @@
             <div class="d-flex justify-content-between align-items-center px-2 py-1">
                 <span class="small text-muted"><i class="bi bi-eye me-1"></i>{{ __('Live preview') }}</span>
                 <div class="btn-group btn-group-sm" role="group" aria-label="{{ __('Preview size') }}">
-                    <button type="button" class="btn btn-outline-secondary active" data-w="100%"><i class="bi bi-display"></i></button>
-                    <button type="button" class="btn btn-outline-secondary" data-w="390px"><i class="bi bi-phone"></i></button>
+                    <button type="button" class="btn btn-outline-secondary active" data-w="100%" aria-label="{{ __('Desktop') }}" title="{{ __('Desktop') }}"><i class="bi bi-display"></i></button>
+                    <button type="button" class="btn btn-outline-secondary" data-w="390px" aria-label="{{ __('Phone') }}" title="{{ __('Phone') }}"><i class="bi bi-phone"></i></button>
                 </div>
             </div>
             <div style="background:var(--surface);border-radius:14px;overflow:hidden;text-align:center">

@@ -14,7 +14,7 @@
         <div class="col-md-6"><label class="form-label fw-medium">{{ __('Confirm password') }}</label><input type="password" name="password_confirmation" autocomplete="new-password" class="form-control"></div>
     </div>
     @if ($editing && isset($orders) && $orders->isNotEmpty())
-        <h6 class="mt-4 mb-2 text-uppercase small text-muted">{{ __('Recent orders') }}</h6>
+        <h3 class="mt-4 mb-2 text-uppercase small text-muted h6">{{ __('Recent orders') }}</h3>
         @foreach ($orders as $o)<div class="d-flex justify-content-between small py-1 border-bottom"><a href="{{ route('admin.orders.show', $o) }}">{{ $o->number }}</a><span>{{ $o->statusLabel() }} · <b class="figure">{{ money($o->total) }}</b></span></div>@endforeach
     @endif
     <div class="d-flex justify-content-end gap-2 mt-4">

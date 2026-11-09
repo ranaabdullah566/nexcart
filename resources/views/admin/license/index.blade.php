@@ -10,7 +10,7 @@
 @else
     <div class="row g-3">
         <div class="col-lg-6"><div class="card h-100"><div class="card-body">
-            <h5 class="mb-3">{{ __('Status') }}</h5>
+            <h2 class="mb-3 h5">{{ __('Status') }}</h2>
             @php($ok = $license['state'] === 'valid')
             <div class="d-flex align-items-center gap-2 mb-3"><span class="badge rounded-pill text-bg-{{ $ok ? 'success' : ($license['state'] === 'grace' ? 'warning' : 'danger') }} px-3 py-2">{{ ['valid' => __('Licensed'), 'grace' => __('Expired — grace period'), 'expired' => __('Expired'), 'missing' => __('No license'), 'invalid' => __('Invalid key'), 'domain' => __('Wrong domain')][$license['state']] }}</span></div>
             @if ($license['reason'])<p class="text-muted">{{ $license['reason'] }}</p>@endif
@@ -26,7 +26,7 @@
             @endif
         </div></div></div>
         <div class="col-lg-6"><div class="card h-100"><div class="card-body">
-            <h5 class="mb-3">{{ $d ? __('Replace key') : __('Enter your license key') }}</h5>
+            <h2 class="mb-3 h5">{{ $d ? __('Replace key') : __('Enter your license key') }}</h2>
             <form method="POST" action="{{ route('admin.license.activate') }}" data-no-ajax>
                 @csrf
                 <textarea name="key" rows="5" required class="form-control figure @error('key') is-invalid @enderror" placeholder="NXC.eyJ…">{{ old('key') }}</textarea>@error('key')<div class="invalid-feedback">{{ $message }}</div>@enderror

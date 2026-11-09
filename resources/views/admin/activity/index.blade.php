@@ -15,7 +15,7 @@
     <div class="col-6 col-md-2"><label class="form-label small">{{ __('Record type') }}</label><select name="subject" class="form-select"><option value="">{{ __('Any') }}</option>@foreach ($subjects as $s)<option value="{{ $s['class'] }}" @selected(($f['subject'] ?? '') === $s['class'])>{{ $s['label'] }}</option>@endforeach</select></div>
     <div class="col-3 col-md-1"><label class="form-label small">{{ __('From') }}</label><input type="date" name="from" value="{{ $f['from'] ?? '' }}" class="form-control px-1"></div>
     <div class="col-3 col-md-1"><label class="form-label small">{{ __('To') }}</label><input type="date" name="to" value="{{ $f['to'] ?? '' }}" class="form-control px-1"></div>
-    <div class="col-12 col-md-1 d-grid"><button class="btn btn-primary"><i class="bi bi-funnel"></i></button></div>
+    <div class="col-12 col-md-1 d-grid"><button class="btn btn-primary" aria-label="{{ __('Filter') }}" title="{{ __('Filter') }}"><i class="bi bi-funnel"></i></button></div>
 </div></form>
 
 <div class="card"><div class="card-body table-responsive">

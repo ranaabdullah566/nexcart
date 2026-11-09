@@ -29,7 +29,7 @@
 <div class="row g-3 mb-3">
     @foreach ($report['charts'] as $c)
         <div class="col-lg-{{ count($report['charts']) === 1 ? 12 : (($loop->first && count($report['charts']) === 3) ? 12 : 6) }}"><div class="card h-100"><div class="card-body">
-            <h5 class="mb-3">{{ __($c['title']) }}</h5>
+            <h2 class="mb-3 h5">{{ __($c['title']) }}</h2>
             <div style="height:{{ ($c['horizontal'] ?? false) ? 320 : 260 }}px"><canvas class="nx-rchart" data-chart='@json($c)' role="img" aria-label="{{ __($c['title']) }}"></canvas></div>
         </div></div></div>
     @endforeach
@@ -38,7 +38,7 @@
 @foreach ($report['tables'] as $t)
 <div class="card mb-3"><div class="card-body">
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h5 class="mb-0">{{ __($t['title']) }}</h5>
+        <h2 class="mb-0 h5">{{ __($t['title']) }}</h2>
         @can('reports.export')@if ($t['rows'])<a class="btn btn-sm btn-outline-secondary" data-no-modal href="{{ route('admin.reports.show', [$type] + request()->query() + ['export' => $t['key']]) }}"><i class="bi bi-download me-1"></i> CSV</a>@endif @endcan
     </div>
     @if (empty($t['rows']))

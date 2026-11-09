@@ -7,7 +7,7 @@
         @endif
         <div class="min-w-0">
             @if($eyebrow)<div class="nx-eyebrow">{{ $eyebrow }}</div>@endif
-            <h2 class="nx-title">{{ $title }}</h2>
+            <h1 class="nx-title">{{ $title }}</h1>
             @if($sub)<p class="nx-sub">{{ $sub }}</p>@endif
         </div>
     </div>

@@ -6,7 +6,7 @@
 <div class="row g-3">
     <div class="col-lg-7">
         <div class="card mb-3"><div class="card-body">
-            <h6 class="text-uppercase text-muted small">{{ __('Uploaded files') }}</h6>
+            <h3 class="text-uppercase text-muted small h6">{{ __('Uploaded files') }}</h3>
             <div class="d-grid gap-3">
                 @forelse ($order->getMedia('prescriptions') as $m)
                     @php($url = route('admin.orders.prescription', [$order, $m->id]))
@@ -19,7 +19,7 @@
             </div>
         </div></div>
         <div class="card"><div class="card-body">
-            <h6 class="text-uppercase text-muted small">{{ __('Medicines ordered') }}</h6>
+            <h3 class="text-uppercase text-muted small h6">{{ __('Medicines ordered') }}</h3>
             @foreach ($order->items as $i)
                 <div class="d-flex justify-content-between py-1"><span>{{ $i->qty }} × <b>{{ $i->name }}</b>@if ($i->variant_name) · {{ $i->variant_name }}@endif @if ($i->product?->requires_prescription)<span class="badge text-bg-warning ms-1">Rx</span>@endif</span></div>
             @endforeach
@@ -27,7 +27,7 @@
     </div>
     <div class="col-lg-5">
         <div class="card"><div class="card-body">
-            <h6 class="text-uppercase text-muted small">{{ __('Decision') }}</h6>
+            <h3 class="text-uppercase text-muted small h6">{{ __('Decision') }}</h3>
             <p>{{ __('Status') }}: <span class="badge rounded-pill text-bg-{{ ['approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning'][$order->prescription_status] ?? 'secondary' }}">{{ __(ucfirst((string) $order->prescription_status)) }}</span>
                 @if ($order->prescriptionReviewer)<span class="small text-muted"> · {{ $order->prescriptionReviewer->name }}, {{ local_time($order->prescription_reviewed_at, 'd M H:i') }}</span>@endif</p>
             @if ($order->prescription_note)<p class="small">{{ $order->prescription_note }}</p>@endif

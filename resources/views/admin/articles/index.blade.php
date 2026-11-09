@@ -10,7 +10,7 @@
         <tbody>
         @foreach ($articles as $a)
             @php $scheduled = $a->is_published && $a->published_at && $a->published_at->isFuture(); @endphp
-            <tr><td class="fw-semibold">{{ $a->title }}<div class="small text-muted figure">/blog/{{ $a->slug }}</div></td>
+            <tr><td class="fw-semibold">{{ $a->title }}<div class="small text-muted figure" style="overflow-wrap:anywhere">/blog/{{ $a->slug }}</div></td>
                 <td>{{ $a->tag }}</td>
                 <td class="small text-muted text-nowrap" data-order="{{ $a->date()->timestamp }}">{{ local_time($a->date(), 'd M Y, H:i') }}</td>
                 <td><span class="badge rounded-pill text-bg-{{ $scheduled ? 'info' : ($a->is_published ? 'success' : 'secondary') }}">{{ $scheduled ? __('Scheduled') : ($a->is_published ? __('Published') : __('Draft')) }}</span></td>

@@ -1031,3 +1031,12 @@ div.dataTables_wrapper div.dataTables_paginate { display: flex; justify-content:
 .nx-kbd-i:hover { color: var(--acc-1); }
 .nx-kbd-tip { --bs-tooltip-max-width: 420px; }
 .nx-kbd-tip .kt-label { white-space: nowrap; }
+
+
+/* ---------- light theme: accent-coloured TEXT must stay readable (--acc-ink is computed in partials/head) ---------- */
+[data-theme="light"] body:not(.sf) { --acc-1: var(--acc-ink, #0b6f8a); }
+[data-theme="light"] body:not(.sf) .nx-eyebrow, [data-theme="light"] body:not(.sf) .nx-user-role { color: var(--acc-ink, #0b6f8a); }
+
+/* long slugs / URLs and wide badges must wrap instead of widening the page on phones */
+.dtr-details .figure, td .figure { overflow-wrap: anywhere; }
+.d-flex.flex-wrap > .badge { max-width: 100%; white-space: normal; text-align: start; }
