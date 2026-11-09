@@ -49,7 +49,7 @@ class StorefrontTest extends TestCase
         $a = $this->product(['name' => 'Plain One']);
         $b = $this->product(['name' => 'Star One', 'is_featured' => true]);
         $this->product(['name' => 'Draft One', 'status' => 'draft']);
-        HomeSection::where('type', 'products')->first()->update(['settings' => ['title' => 'Stars', 'source' => 'featured', 'limit' => 8]]);
+        HomeSection::where('type', 'products')->update(['settings' => ['title' => 'Stars', 'source' => 'featured', 'limit' => 8]]);
 
         $this->get('/')->assertSee('Star One')->assertDontSee('Plain One')->assertDontSee('Draft One');
     }
@@ -231,7 +231,7 @@ class StorefrontTest extends TestCase
         $ids = HomeSection::orderBy('sort_order')->pluck('id')->all();
 
         $this->post("/admin/home-sections/{$ids[1]}/move", ['dir' => 'up']);
-        $this->assertSame([$ids[1], $ids[0], $ids[2], $ids[3]], HomeSection::orderBy('sort_order')->pluck('id')->all());
+        $this->assertSame([$ids[1], $ids[0], ...array_slice($ids, 2)], HomeSection::orderBy('sort_order')->pluck('id')->all());
 
         $this->post("/admin/home-sections/{$ids[1]}/move", ['dir' => 'up']);   // already first: no change, no error
         $this->assertSame($ids[1], HomeSection::orderBy('sort_order')->first()->id);

@@ -112,3 +112,30 @@
     /* tapping the header search icon on phones opens the palette too */
     $$('.mk-search-toggle').forEach(function (b) { b.addEventListener('click', function (e) { e.preventDefault(); e.stopImmediatePropagation(); open(); }, true); });
 })();
+
+/* ---- "Deliver to" city picker: remembered in this browser, prefills checkout / prescription forms ---- */
+(function () {
+    'use strict';
+    var KEY = 'fx-city', modal = document.getElementById('fxLoc');
+    function get() { try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
+    function set(v) { try { localStorage.setItem(KEY, v); } catch (e) { } }
+    function paint() {
+        var c = get();
+        Array.prototype.forEach.call(document.querySelectorAll('[data-fx-loc-name]'), function (n) { if (c) n.textContent = c; });
+        if (c) Array.prototype.forEach.call(document.querySelectorAll('input[name=city], [data-fx-city]'), function (i) { if (!i.value && i.tagName === 'INPUT') i.value = c; });
+        if (modal) Array.prototype.forEach.call(modal.querySelectorAll('[data-fx-city-pick]'), function (b) { b.classList.toggle('on', b.dataset.fxCityPick === c); });
+    }
+    function open() { if (!modal) return; modal.hidden = false; document.body.classList.add('mk-lock'); var f = modal.querySelector('button[data-fx-city-pick], input'); f && f.focus(); }
+    function close() { if (!modal) return; modal.hidden = true; document.body.classList.remove('mk-lock'); }
+    paint();
+    if (!modal) return;
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('[data-fx-loc]')) { e.preventDefault(); open(); return; }
+        var pick = e.target.closest('[data-fx-city-pick]');
+        if (pick) { set(pick.dataset.fxCityPick); paint(); close(); return; }
+        if (e.target.closest('[data-fx-close]') || e.target === modal) close();
+    });
+    var form = modal.querySelector('[data-fx-city-form]');
+    form.addEventListener('submit', function (e) { e.preventDefault(); var v = form.querySelector('input').value.trim(); if (v) { set(v); paint(); close(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) close(); });
+})();

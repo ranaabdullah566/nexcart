@@ -16,7 +16,7 @@ next to **Visit site** (opens your shop in a new tab) and the **bell** (your ale
 - **Alerts** (bell) — new orders, low stock and every message the system showed you, kept until you clear them. Alerts are personal: reading yours does not mark them read for others.
 - **Customers** — people with an account can be added, edited and deleted here; guests who only ordered show with a *Create account* button.
 - **Delivery:** assign a *rider* in the order; riders use *Deliveries* on their phone.
-- **Pharmacy:** *Prescriptions* — approve or send back with a reason; medicines are not prepared until approved. *Delivery slots* limit orders per time window. *Inventory → Batches* shows what expires soon.
+- **Pharmacy:** *Prescription requests* lists photos customers sent without ordering — call them, mark *Called back* / *Closed*. *Prescriptions* — approve or send back with a reason; medicines are not prepared until approved. *Delivery slots* limit orders per time window. *Inventory → Batches* shows what expires soon.
 - **Reviews** — approve or reply.
 
 ## Reports

@@ -18,7 +18,17 @@ class ProductController extends Controller
             ->when($product->category_id, fn ($q) => $q->where('category_id', $product->category_id))
             ->latest('id')->limit(16)->get();
 
-        return view('store.product', $this->data($product) + ['related' => $related]);
+        // same salt / composition under other brand names (a pharmacy staple: cheaper or available alternatives)
+        $salt = trim((string) ($product->specs['composition'] ?? ''));
+        $alternatives = collect();
+        if ($salt !== '' && $salt !== '—') {
+            $alternatives = Product::active()->card()->whereKeyNot($product->id)->where('specs', 'like', '%'.addcslashes($salt, '%_\\').'%')
+                ->limit(40)->get()
+                ->filter(fn ($p) => mb_strtolower(trim((string) ($p->specs['composition'] ?? ''))) === mb_strtolower($salt))
+                ->sortBy(fn ($p) => $p->displayPrice())->take(8)->values();
+        }
+
+        return view('store.product', $this->data($product) + ['related' => $related, 'alternatives' => $alternatives]);
     }
 
     /** Partial shown in the quick-view modal. */

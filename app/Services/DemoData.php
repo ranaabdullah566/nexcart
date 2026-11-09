@@ -153,6 +153,8 @@ class DemoData
             'brands' => ['GSK', 'Getz Pharma', 'Searle', 'Abbott', 'Omron'],
             'products' => [
                 ['name' => 'Panadol 500mg (20 tablets)', 'cat' => 'pain', 'brand' => 'GSK', 'price' => 45, 'featured' => true, 'short' => 'Paracetamol for pain and fever.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'GSK'), 'stock' => 120, 'hue' => 205],
+                ['name' => 'Paracip 500mg (20 tablets)', 'cat' => 'pain', 'brand' => 'Getz Pharma', 'price' => 38, 'short' => 'Paracetamol for pain and fever — a lower-priced alternative.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'Getz Pharma'), 'stock' => 90, 'hue' => 150],
+                ['name' => 'Fevadol 500mg (20 tablets)', 'cat' => 'pain', 'brand' => 'Searle', 'price' => 52, 'short' => 'Paracetamol for pain and fever.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'Searle'), 'stock' => 70, 'hue' => 275],
                 ['name' => 'Brufen 400mg', 'cat' => 'pain', 'brand' => 'Abbott', 'short' => 'Ibuprofen anti-inflammatory.', 'variants' => [['10 tablets', 70, 60], ['30 tablets', 190, 60]], 'specs' => $m('Ibuprofen 400mg', 'Tablet', '400mg', 'Abbott'), 'expires_in' => 40, 'hue' => 25],
                 ['name' => 'Calpol Suspension 120ml', 'cat' => 'pain', 'brand' => 'GSK', 'price' => 160, 'short' => 'Paracetamol syrup for children.', 'specs' => $m('Paracetamol 120mg/5ml', 'Syrup', '120mg/5ml', 'GSK'), 'stock' => 50, 'hue' => 190],
                 ['name' => 'Disprin (10 tablets)', 'cat' => 'pain', 'price' => 30, 'short' => 'Soluble aspirin.', 'specs' => $m('Aspirin 300mg', 'Tablet', '300mg', 'Reckitt'), 'stock' => 90, 'hue' => 15],

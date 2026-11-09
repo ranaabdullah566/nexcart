@@ -24,6 +24,13 @@ NexCart is now **pharmacy-only**: an online medicine store. Upgrading runs one m
 - Light-mode contrast fixes; checkout step numbers, alerts and the track-order placeholder corrected.
 - Honours light/dark mode, the owner's theme colours, RTL and *reduce motion*.
 
+### Pharmacy storefront (inspired by Pakistani pharmacy sites)
+- **Upload prescription** (`/upload-prescription`): customers send a photo / PDF without building a cart; drag-and-drop with previews. Staff see it under **Prescription requests** (call back, close, delete → Recycle Bin) and get an alert. Files are private.
+- **Deliver to** city picker in the header (remembered in the browser, prefills checkout and the prescription form), a header **Upload prescription** button, a phone floating button, and **Trending searches** chips. All switchable under Storefront → Header.
+- Product cards show the **composition (salt)**, dosage form, strength and a *Pack sizes* chip; search also matches composition.
+- Product page: **Same composition, other brands** rail, cheapest first.
+- Category tiles pick a matching icon; new default home: trust strip, *Shop by need*, *Most ordered*, a prescription banner, new arrivals and a 3-step *How ordering works*; hero has a second *Upload prescription* button and floating capsules.
+
 ### Kept
 - Prescriptions + pharmacist review, batches / expiry, delivery slots, riders, coupons, pickup, customer reviews, licence keys, 2FA, reports, backups, activity log, Recycle Bin, alerts, Google sign-in, reCAPTCHA, password reset.
 

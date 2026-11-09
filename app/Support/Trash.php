@@ -10,6 +10,7 @@ use App\Models\DeliverySlot;
 use App\Models\HomeSection;
 use App\Models\MenuItem;
 use App\Models\Page;
+use App\Models\PrescriptionRequest;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\ShippingZone;
@@ -36,6 +37,7 @@ class Trash
             'home-sections' => ['label' => 'Home page sections', 'icon' => 'layout-text-window-reverse', 'model' => HomeSection::class, 'name' => fn ($m) => $m->title ?: ucfirst($m->type), 'permission' => 'storefront.manage'],
             'pages' => ['label' => 'Pages', 'icon' => 'file-earmark-text-fill', 'model' => Page::class, 'name' => fn ($m) => $m->title, 'permission' => 'storefront.manage'],
             'menu-items' => ['label' => 'Menu links', 'icon' => 'list-nested', 'model' => MenuItem::class, 'name' => fn ($m) => $m->label, 'permission' => 'storefront.manage'],
+            'prescription-requests' => ['label' => 'Prescription requests', 'icon' => 'camera-fill', 'model' => PrescriptionRequest::class, 'name' => fn ($m) => $m->name.' ('.$m->phone.')', 'permission' => 'prescriptions.verify'],
             'reviews' => ['label' => 'Reviews', 'icon' => 'chat-heart-fill', 'model' => Review::class, 'name' => fn ($m) => ($m->product?->name ?? '—').' · '.$m->rating.'★ '.$m->name, 'permission' => 'reviews.manage'],
             'customers' => ['label' => 'Customers', 'icon' => 'person-heart', 'model' => User::class, 'scope' => 'customers', 'name' => fn ($m) => $m->name.' ('.$m->email.')', 'permission' => 'customers.delete'],
             'staff' => ['label' => 'Staff', 'icon' => 'person-badge-fill', 'model' => User::class, 'scope' => 'staff', 'name' => fn ($m) => $m->name.' ('.$m->email.')', 'permission' => 'staff.delete'],

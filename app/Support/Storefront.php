@@ -32,4 +32,33 @@ class Storefront
 
         return $out;
     }
+
+    /** A fitting Bootstrap icon for a medicine category, by its name (works in any language that uses the English words). */
+    public static function categoryIcon(?string $name): string
+    {
+        $n = mb_strtolower((string) $name);
+        foreach ([
+            'bandaid' => ['pain', 'fever', 'relief', 'analges'],
+            'wind' => ['cold', 'flu', 'cough', 'allerg', 'respir'],
+            'moisture' => ['stomach', 'digest', 'gastr', 'acid'],
+            'capsule' => ['vitamin', 'supplement', 'mineral', 'nutri'],
+            'droplet-half' => ['diabet', 'sugar', 'insulin', 'glucose'],
+            'emoji-smile' => ['baby', 'mother', 'kid', 'child', 'infant'],
+            'sun' => ['skin', 'derma', 'beauty', 'hair', 'sun'],
+            'heart-pulse' => ['heart', 'blood', 'pressure', 'cardio', 'device', 'monitor'],
+            'prescription2' => ['prescription', 'rx', 'antibiotic'],
+            'eyedropper' => ['eye', 'ear', 'drop'],
+            'shield-plus' => ['first aid', 'protect', 'mask', 'sanit', 'immun'],
+            'gender-female' => ['women', 'female', 'feminine'],
+            'lungs' => ['asthma', 'lung', 'breath'],
+        ] as $icon => $words) {
+            foreach ($words as $w) {
+                if (str_contains($n, $w)) {
+                    return $icon;
+                }
+            }
+        }
+
+        return 'capsule-pill';
+    }
 }

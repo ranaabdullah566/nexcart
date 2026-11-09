@@ -120,11 +120,11 @@
                 @else
                     @if (sf('header.mega_recommended'))<div class="mk-mega-rec">
                         <div class="mk-mega-title"><div><b>{{ sft('header.mega_rec_title') }}</b><small>{{ sft('header.mega_rec_sub') }}</small></div><a href="{{ route('store.shop') }}">{{ __('Browse everything') }} →</a></div>
-                        <div class="mk-rec-grid">@foreach ($recommended as $c)<a href="{{ route('store.category', $c->slug) }}"><span class="mk-mark"><i class="bi bi-grid-1x2"></i></span><b>{{ $c->trans('name') }}</b></a>@endforeach</div>
+                        <div class="mk-rec-grid">@foreach ($recommended as $c)<a href="{{ route('store.category', $c->slug) }}"><span class="mk-mark"><i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c->name) }}"></i></span><b>{{ $c->trans('name') }}</b></a>@endforeach</div>
                     </div>@endif
                     <div class="mk-mega-browser">
                         <div class="mk-mega-main" role="tablist">
-                            @foreach ($tree as $c)<button type="button" role="tab" data-mega-target="mg-{{ $c->id }}" class="{{ $loop->first ? 'is-active' : '' }}"><span class="mk-mark sm"><i class="bi bi-grid-1x2"></i></span><b>{{ $c->trans('name') }}</b><i class="bi bi-chevron-right"></i></button>@endforeach
+                            @foreach ($tree as $c)<button type="button" role="tab" data-mega-target="mg-{{ $c->id }}" class="{{ $loop->first ? 'is-active' : '' }}"><span class="mk-mark sm"><i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c->name) }}"></i></span><b>{{ $c->trans('name') }}</b><i class="bi bi-chevron-right"></i></button>@endforeach
                         </div>
                         <div class="mk-mega-sub">
                             @foreach ($tree as $c)
@@ -147,7 +147,13 @@
         @if (sf('header.show_shop_link'))<a href="{{ route('store.shop') }}" @class(['on' => request()->routeIs('store.shop')])>{{ __('Shop') }}</a>@endif
         @foreach ($headerMenu as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach
         @if (sf('header.show_track'))<a href="{{ route('store.track') }}" class="mk-push">{{ sft('header.track_label') }}</a>@endif
+        @if (sf('header.show_location'))<button type="button" class="fx-loc" data-fx-loc aria-haspopup="dialog"><i class="bi bi-geo-alt-fill"></i><span><small>{{ __('Deliver to') }}</small><b data-fx-loc-name>{{ __('Choose area') }}</b></span><i class="bi bi-chevron-down"></i></button>@endif
+        @if (sf('header.show_rx') && \App\Support\BusinessProfile::hasModule('prescriptions'))<a href="{{ route('store.prescription.upload') }}" class="fx-rx-btn"><i class="bi bi-camera-fill"></i> {{ sft('header.rx_label') }}</a>@endif
     </div>
+    @php $trend = array_filter(array_map('trim', explode(',', sft('header.trending')))); @endphp
+    @if ($trend && sf('header.show_trending'))
+        <div class="sf-container fx-trend"><b>{{ sft('header.trending_label') }}:</b>@foreach ($trend as $term)<a href="{{ route('store.shop', ['q' => $term]) }}">{{ $term }}</a>@endforeach</div>
+    @endif
 </nav>
 
 {{-- mobile drawer --}}
@@ -162,6 +168,8 @@
                     <a href="{{ route('store.home') }}"><i class="bi bi-house-door"></i>{{ __('Home') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop') }}"><i class="bi bi-shop"></i>{{ __('Shop') }}<i class="bi bi-chevron-right"></i></a>
                     <a href="{{ route('store.shop', ['sort' => 'discount']) }}"><i class="bi bi-lightning-charge"></i>{{ sft('header.deals_label') }}<i class="bi bi-chevron-right"></i></a>
+                    @if (sf('header.show_rx') && \App\Support\BusinessProfile::hasModule('prescriptions'))<a href="{{ route('store.prescription.upload') }}"><i class="bi bi-camera-fill"></i>{{ sft('header.rx_label') }}<i class="bi bi-chevron-right"></i></a>@endif
+                    @if (sf('header.show_location'))<a href="#" data-fx-loc><i class="bi bi-geo-alt-fill"></i>{{ __('Deliver to') }}: <b data-fx-loc-name>{{ __('Choose area') }}</b><i class="bi bi-chevron-right"></i></a>@endif
                     <a href="{{ route('store.track') }}"><i class="bi bi-truck"></i>{{ sft('header.track_label') }}<i class="bi bi-chevron-right"></i></a>
                     @foreach ($headerMenu as $m)<a href="{{ $m['href'] }}"><i class="bi bi-link-45deg"></i>{{ $m['label'] }}<i class="bi bi-chevron-right"></i></a>@endforeach
                 </nav>
@@ -236,6 +244,9 @@
 @if (isset($socials['whatsapp']) && sf('float.whatsapp'))<a class="mk-wa" href="{{ $socials['whatsapp']['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>@endif
 @if (sf('float.top'))<button class="mk-top" id="mkTop" type="button" aria-label="{{ __('Back to top') }}" hidden><i class="bi bi-arrow-up"></i></button>@endif
 
+@if (sf('header.show_rx') && \App\Support\BusinessProfile::hasModule('prescriptions') && ! request()->routeIs('store.prescription.*', 'store.checkout*', 'store.cart'))
+<a href="{{ route('store.prescription.upload') }}" class="fx-rx-fab"><i class="bi bi-camera-fill"></i> {{ sft('header.rx_label') }}</a>
+@endif
 {{-- mobile bottom bar --}}
 <nav class="sf-bottom mk-bottom" aria-label="Quick">
     <a href="{{ route('store.home') }}" @class(['on' => request()->routeIs('store.home')])><i class="bi bi-house-door"></i>{{ __('Home') }}</a>
@@ -278,6 +289,18 @@
             'seeAll' => __('See all results'), 'noResults' => __('No products found'),
         ];
 @endphp
+@if (sf('header.show_location'))
+<div class="fx-modal" id="fxLoc" role="dialog" aria-modal="true" aria-labelledby="fxLocT" hidden>
+    <div class="fx-modal-box">
+        <button type="button" class="fx-modal-x" data-fx-close aria-label="{{ __('Close') }}"><i class="bi bi-x-lg"></i></button>
+        <span class="fx-modal-ic"><i class="bi bi-geo-alt-fill"></i></span>
+        <h3 id="fxLocT">{{ __('Where should we deliver?') }}</h3>
+        <p>{{ __('Pick your city so we can show delivery options and prefill checkout.') }}</p>
+        <div class="fx-cities">@foreach (array_filter(array_map('trim', explode(',', sft('header.cities')))) as $c)<button type="button" data-fx-city-pick="{{ $c }}">{{ $c }}</button>@endforeach</div>
+        <form class="fx-city-form" data-fx-city-form><input type="text" maxlength="60" placeholder="{{ __('Other city…') }}" aria-label="{{ __('Other city…') }}" class="form-control"><button class="btn btn-primary">{{ __('Select') }}</button></form>
+    </div>
+</div>
+@endif
 <script nonce="{{ csp_nonce() }}">
     window.SF = {
         cart: @json($cartData),

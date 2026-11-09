@@ -72,7 +72,7 @@ class StorefrontDynamicTest extends TestCase
         $this->post('/admin/home-sections', ['type' => 'brands', 'title' => 'Our brands', 'limit' => 6, 'is_active' => 1])->assertRedirect();
         $this->post('/admin/home-sections', ['type' => 'cta', 'title' => 'Join us today', 'button_label' => 'Start', 'button_url' => '/shop', 'is_active' => 1])->assertRedirect();
         $this->post('/admin/home-sections', ['type' => 'cta', 'title' => 'Bad', 'button_url' => 'javascript:alert(1)', 'is_active' => 1])->assertSessionHasErrors('button_url');
-        $this->assertSame(2, collect(HomeSection::where('type', 'steps')->first()->settings['items'])->count());   // empty item dropped
+        $this->assertSame(2, collect(HomeSection::where('type', 'steps')->where('title', 'Easy as 1-2-3')->first()->settings['items'])->count());   // empty item dropped
         $this->get('/admin/home-sections/create?type=faq')->assertOk();
 
         auth()->logout();

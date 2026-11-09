@@ -37,6 +37,9 @@ class Sf
             'header.show_mega' => $b('header', 'Show the “All categories” mega menu'), 'header.mega_label' => $t('header', 'Mega menu button text', 'All categories'),
             'header.mega_recommended' => $b('header', 'Show the “Popular” tiles inside the mega menu'), 'header.mega_rec_title' => $t('header', 'Popular tiles title', 'Popular right now'),
             'header.mega_rec_sub' => $t('header', 'Popular tiles subtitle', 'A quick way into what shoppers look for most.'),
+            'header.show_location' => $b('header', 'Show the “Deliver to” city picker'), 'header.cities' => $t('header', 'Cities in the picker (comma separated)', 'Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar, Quetta'),
+            'header.show_rx' => $b('header', 'Show the “Upload prescription” button'), 'header.rx_label' => $t('header', 'Upload prescription button text', 'Upload prescription'),
+            'header.show_trending' => $b('header', 'Show trending searches under the header'), 'header.trending' => $t('header', 'Trending searches (comma separated)', 'Paracetamol, Fever, Vitamin C, Cough, Diabetes'), 'header.trending_label' => $t('header', 'Trending label', 'Trending'),
             'header.show_deals' => $b('header', 'Show the Deals link'), 'header.deals_label' => $t('header', 'Deals link text', 'Deals'),
             'header.show_shop_link' => $b('header', 'Show the Shop link in the menu bar'), 'header.show_track' => $b('header', 'Show the “Track an order” link'), 'header.track_label' => $t('header', 'Track link text', 'Track an order'),
 

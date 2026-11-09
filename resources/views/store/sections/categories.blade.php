@@ -6,7 +6,7 @@
     </div>
     <div class="mk-tiles">
         @foreach ($categories as $c)
-            <a class="mk-tile" href="{{ route('store.category', $c->slug) }}"><span class="mk-tile-mark"><i class="bi bi-grid-1x2"></i></span><b>{{ $c->trans('name') }}</b><small>{{ trans_choice(':n item|:n items', $c->products_count, ['n' => $c->products_count]) }}</small></a>
+            <a class="mk-tile" href="{{ route('store.category', $c->slug) }}"><span class="mk-tile-mark"><i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c->name) }}"></i></span><b>{{ $c->trans('name') }}</b><small>{{ trans_choice(':n item|:n items', $c->products_count, ['n' => $c->products_count]) }}</small></a>
         @endforeach
     </div>
 </section>

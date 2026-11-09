@@ -14,6 +14,7 @@
     $badges = [];
     if ($user->can('orders.view')) { $badges['admin.orders.index'] = \App\Models\Order::where('status', 'pending')->count(); }
     if ($user->can('prescriptions.view') && \App\Support\BusinessProfile::hasModule('prescriptions')) { $badges['admin.prescriptions.index'] = \App\Models\Order::where('requires_prescription', true)->where('prescription_status', 'pending')->count(); }
+    if ($user->can('prescriptions.view') && \App\Support\BusinessProfile::hasModule('prescriptions')) { $badges['admin.prescription-requests.index'] = \App\Models\PrescriptionRequest::where('status', 'new')->count(); }
     if ($user->can('reviews.manage') && \App\Support\BusinessProfile::hasModule('reviews')) { $badges['admin.reviews.index'] = \App\Models\Review::where('status', 'pending')->count(); }
     // [group => [[route, active-pattern, icon, label, permission]]]  — later phases append here.
     $navGroups = [
@@ -24,6 +25,7 @@
             ['admin.orders.index', 'admin.orders.*', 'receipt-cutoff', 'Orders', 'orders.view', null],
             ['admin.deliveries.index', 'admin.deliveries.*', 'bicycle', 'Deliveries', 'deliveries.view', 'riders'],
             ['admin.prescriptions.index', 'admin.prescriptions.*', 'prescription2', 'Prescriptions', 'prescriptions.view', 'prescriptions'],
+            ['admin.prescription-requests.index', 'admin.prescription-requests.*', 'camera-fill', 'Prescription requests', 'prescriptions.view', 'prescriptions'],
             ['admin.customers.index', 'admin.customers.*', 'people-fill', 'Customers', 'customers.view', null],
             ['admin.coupons.index', 'admin.coupons.*', 'ticket-perforated-fill', 'Coupons', 'sales_settings.manage', null],
             ['admin.shipping.index', 'admin.shipping.*', 'truck', 'Shipping', 'sales_settings.manage', null],

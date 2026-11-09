@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PageController as AdminPageController;
 use App\Http\Controllers\Admin\PrescriptionController;
+use App\Http\Controllers\Admin\PrescriptionRequestController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCsvController;
 use App\Http\Controllers\Admin\ReportController;
@@ -95,6 +96,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::post('orders/{order}/rider', [OrderController::class, 'rider'])->name('orders.rider');
     Route::get('deliveries', [DeliveryController::class, 'index'])->name('deliveries.index');
     Route::post('deliveries/{order}/advance', [DeliveryController::class, 'advance'])->name('deliveries.advance');
+    Route::get('prescription-requests', [PrescriptionRequestController::class, 'index'])->name('prescription-requests.index');
+    Route::get('prescription-requests/{prescriptionRequest}/files/{media}', [PrescriptionRequestController::class, 'file'])->name('prescription-requests.file');
+    Route::put('prescription-requests/{prescriptionRequest}', [PrescriptionRequestController::class, 'update'])->name('prescription-requests.update');
+    Route::delete('prescription-requests/{prescriptionRequest}', [PrescriptionRequestController::class, 'destroy'])->name('prescription-requests.destroy');
     Route::get('prescriptions', [PrescriptionController::class, 'index'])->name('prescriptions.index');
     Route::get('prescriptions/{order}', [PrescriptionController::class, 'show'])->name('prescriptions.show');
     Route::post('prescriptions/{order}/review', [PrescriptionController::class, 'review'])->name('prescriptions.review');
@@ -197,6 +202,8 @@ Route::post('/order/{number}/{token}/pay', [Store\OrderController::class, 'pay']
 Route::post('/order/{number}/{token}/reorder', [Store\OrderController::class, 'reorder'])->middleware('throttle:20,1')->name('store.order.reorder');
 Route::post('/order/{number}/{token}/prescription', [Store\OrderController::class, 'prescription'])->middleware('throttle:10,1')->name('store.order.prescription');
 Route::get('/order/{number}/{token}/paid', [Store\OrderController::class, 'stripeReturn'])->name('store.stripe.return');
+Route::get('/upload-prescription', [Store\PrescriptionRequestController::class, 'create'])->name('store.prescription.upload');
+Route::post('/upload-prescription', [Store\PrescriptionRequestController::class, 'store'])->middleware(['throttle:6,1', 'honeypot'])->name('store.prescription.send');
 Route::get('/track', [Store\OrderController::class, 'trackForm'])->name('store.track');
 Route::post('/track', [Store\OrderController::class, 'trackFind'])->middleware(['throttle:10,1', 'honeypot'])->name('store.track.find');
 Route::middleware('auth')->group(function () {

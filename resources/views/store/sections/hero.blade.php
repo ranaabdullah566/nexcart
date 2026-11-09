@@ -1,6 +1,11 @@
 {{-- one slide; store/home.blade.php wraps every hero section into a carousel --}}
 @php $img = $s->imageUrl(); @endphp
 <div class="mk-slide {{ ($first ?? false) ? 'is-active' : '' }}" @if ($img) style="--mk-photo:url('{{ $img }}')" @endif @if (! ($first ?? false)) aria-hidden="true" @endif>
+    <div class="fx-caps" aria-hidden="true">
+        @foreach ([['8%','12%','54px','28deg','#38bdf8','#f8fafc','9s','0s'],['44%','70%','40px','-34deg','#f472b6','#fde68a','11s','-3s'],['70%','8%','62px','62deg','#34d399','#f8fafc','10s','-5s'],['86%','78%','44px','-12deg','#fbbf24','#fb7185','12s','-2s'],['52%','6%','34px','48deg','#a78bfa','#f8fafc','8s','-6s']] as [$l, $t, $w, $r, $c1, $c2, $d, $dl])
+            <i class="fx-cap" style="inset-inline-start:{{ $l }};top:{{ $t }};--w:{{ $w }};--r:{{ $r }};--c1:{{ $c1 }};--c2:{{ $c2 }};--d:{{ $d }};--dl:{{ $dl }}"></i>
+        @endforeach
+    </div>
     <div class="sf-container mk-slide-row">
         <div class="mk-slide-text">
             @if ($s->text('eyebrow'))<span class="mk-tag"><i class="bi bi-patch-check-fill"></i> {{ $s->text('eyebrow') }}</span>@endif
