@@ -159,7 +159,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/export', [ReportController::class, 'export'])->name('reports.export');
     Route::get('reports/{type}', [ReportHubController::class, 'show'])->name('reports.show');
-    Route::resource('reviews', ReviewController::class)->only(['index', 'edit', 'update', 'destroy']);
+    Route::resource('reviews', ReviewController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
     // Storefront
     Route::get('theme', [ThemeController::class, 'edit'])->name('theme.edit');

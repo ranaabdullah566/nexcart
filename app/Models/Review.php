@@ -15,11 +15,16 @@ class Review extends Model
 
     public const STATUSES = ['pending', 'approved', 'hidden'];
 
-    protected $fillable = ['product_id', 'order_id', 'user_id', 'name', 'rating', 'title', 'body', 'status', 'reply'];
+    protected $fillable = ['product_id', 'order_id', 'user_id', 'added_by', 'name', 'rating', 'title', 'body', 'status', 'reply'];
 
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class)->withTrashed();
+    }
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'added_by');
     }
 
     public function order(): BelongsTo

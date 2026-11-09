@@ -2,7 +2,9 @@
 @section('title', __('Reviews'))
 @php($tabs = ['pending' => __('To approve'), 'approved' => __('Approved'), 'hidden' => __('Hidden'), 'all' => __('All')])
 @section('content')
-<x-page-header :title="__('Reviews')" :eyebrow="__('Growth')" :sub="__('What customers say about your products. Approve, hide or reply.')" />
+<x-page-header :title="__('Reviews')" :eyebrow="__('Growth')" :sub="__('What customers say about your products. Approve, hide or reply.')">
+    <x-slot:actions><a href="{{ route('admin.reviews.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> {{ __('Add review') }}</a></x-slot:actions>
+</x-page-header>
 <div class="row g-3 mb-4 stagger">
     <div class="col-6 col-lg-3"><x-stat-card :label="__('To approve')" icon="hourglass-split" tone="warn" :value="$counts['pending'] ?? 0" :sub="__('Waiting for you')" /></div>
     <div class="col-6 col-lg-3"><x-stat-card :label="__('Approved')" icon="chat-heart-fill" tone="ok" :value="$counts['approved'] ?? 0" :sub="__('Visible in the store')" /></div>
@@ -14,7 +16,7 @@
         <tbody>
         @foreach ($reviews as $r)
             <tr>
-                <td class="fw-semibold">{{ $r->product?->name }}<div class="small text-muted">{{ $r->name }} · {{ local_time($r->created_at, 'd M Y') }}</div></td>
+                <td class="fw-semibold">{{ $r->product?->name }}<div class="small text-muted">{{ $r->name }} · {{ local_time($r->created_at, 'd M Y') }}@if ($r->added_by) · <span class="badge text-bg-light border">{{ __('Added by staff') }}</span>@endif</div></td>
                 <td data-order="{{ $r->rating }}"><span class="sf-stars" style="color:#fbbf24">@include('store._stars', ['value' => $r->rating])</span></td>
                 <td style="max-width:420px"><b>{{ $r->title }}</b><div class="small text-muted">{{ \Illuminate\Support\Str::limit($r->body, 140) }}</div>@if ($r->reply)<div class="small"><i class="bi bi-reply-fill"></i> {{ \Illuminate\Support\Str::limit($r->reply, 80) }}</div>@endif</td>
                 <td><span class="badge rounded-pill text-bg-{{ ['approved' => 'success', 'pending' => 'warning', 'hidden' => 'secondary'][$r->status] }}">{{ __(ucfirst($r->status)) }}</span></td>

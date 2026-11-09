@@ -1,0 +1,53 @@
+/* Admin dashboard */
+.dz-quick { display: flex; flex-wrap: wrap; gap: .5rem; }
+.dz-attn { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.2rem; }
+.dz-attn a { display: inline-flex; align-items: center; gap: .55rem; padding: .5rem .9rem; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--text); text-decoration: none; font-weight: 600; font-size: .88rem; }
+.dz-attn a b { min-width: 1.5rem; height: 1.5rem; display: inline-grid; place-items: center; padding: 0 .4rem; border-radius: 999px; background: var(--warn, #b45309); color: #fff; font-size: .78rem; }
+.dz-attn a.bad b { background: var(--bad, #c0283d); } .dz-attn a.vio b { background: var(--acc-1); }
+.dz-attn a:hover { border-color: var(--acc-1); }
+.dz-attn .dz-ok { color: var(--ok); border-style: dashed; }
+
+.dz-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.dz-kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.1rem; position: relative; overflow: hidden; min-width: 0; }
+.dz-kpi::before { content: ''; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 4px; background: var(--k, var(--acc-1)); }
+.dz-kpi .l { display: flex; justify-content: space-between; align-items: center; gap: .5rem; font-size: .74rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-2); }
+.dz-kpi .l i { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 1rem; background: color-mix(in srgb, var(--k, var(--acc-1)) 14%, transparent); color: var(--k, var(--acc-1)); flex-shrink: 0; }
+.dz-kpi .v { font-size: clamp(1.25rem, 2.2vw, 1.75rem); font-weight: 800; color: var(--text); margin: .45rem 0 .2rem; overflow-wrap: anywhere; line-height: 1.15; }
+.dz-kpi .s { font-size: .78rem; color: var(--text-2); display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; }
+.dz-delta { display: inline-flex; align-items: center; gap: .15rem; font-weight: 700; padding: .08rem .45rem; border-radius: 999px; font-size: .74rem; }
+.dz-delta.up { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+.dz-delta.down { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad); }
+.dz-delta.flat { background: var(--surface-2); color: var(--text-2); }
+
+.dz-grid { display: grid; gap: 1rem; margin-bottom: 1rem; }
+.dz-g-8-4 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.dz-g-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dz-g-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.dz-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1.2rem; min-width: 0; display: flex; flex-direction: column; }
+.dz-card > h2 { font-size: 1rem; font-weight: 700; margin: 0 0 .15rem; color: var(--text); display: flex; align-items: center; justify-content: space-between; gap: .6rem; flex-wrap: wrap; }
+.dz-card > h2 a { font-size: .8rem; font-weight: 600; }
+.dz-card > .sub { font-size: .78rem; color: var(--text-2); margin-bottom: .7rem; }
+.dz-chart { position: relative; flex: none; height: 250px; }
+.dz-chart.tall { height: 310px; } .dz-chart.short { height: 210px; }
+.dz-range { display: inline-flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 2px; }
+.dz-range button { border: 0; background: transparent; padding: .22rem .7rem; border-radius: 999px; font-size: .78rem; font-weight: 600; color: var(--text-2); }
+.dz-range button.on { background: var(--acc-2); color: #fff; }
+.dz-empty { color: var(--text-2); text-align: center; padding: 2rem .5rem; font-size: .9rem; }
+
+.dz-list a, .dz-list .li { display: flex; justify-content: space-between; align-items: center; gap: .8rem; padding: .6rem 0; border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text); min-width: 0; }
+.dz-list > :last-child { border-bottom: 0; }
+.dz-list .t { min-width: 0; } .dz-list .t b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .dz-list .t small { color: var(--text-2); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dz-list .r { text-align: end; flex-shrink: 0; }
+.dz-rate-row { display: grid; grid-template-columns: 2.2rem 1fr 2.2rem; align-items: center; gap: .6rem; font-size: .82rem; margin: .3rem 0; }
+.dz-bar { height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; } .dz-bar i { display: block; height: 100%; background: var(--tq-orange, var(--acc-1)); border-radius: 99px; }
+.dz-big { font-size: 2.4rem; font-weight: 800; line-height: 1; color: var(--text); }
+.dz-glance { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .8rem; }
+.dz-glance div { padding: .7rem .9rem; border: 1px dashed var(--border); border-radius: 12px; } .dz-glance b { display: block; font-size: 1.2rem; color: var(--text); } .dz-glance span { font-size: .78rem; color: var(--text-2); }
+
+@media (max-width: 1199.98px) { .dz-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dz-g-8-4 { grid-template-columns: 1fr; } .dz-g-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 767.98px) {
+    .dz-kpis { gap: .7rem; } .dz-kpi { padding: .8rem .85rem; } .dz-kpi .l { font-size: .66rem; } .dz-kpi .l i { width: 28px; height: 28px; font-size: .85rem; }
+    .dz-g-3, .dz-g-2 { grid-template-columns: 1fr; } .dz-card { padding: .9rem .95rem; } .dz-chart { height: 230px; } .dz-chart.tall { height: 260px; }
+    .dz-attn a { font-size: .82rem; padding: .4rem .75rem; }
+}
+@media (max-width: 420px) { .dz-kpis { grid-template-columns: 1fr 1fr; } .dz-kpi .v { font-size: 1.1rem; } }

@@ -4,6 +4,13 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Admin
+- **Add reviews from the admin** (Reviews → *Add review*): choose a product, name, rating, title, text, date and status. Staff-written reviews are marked *Added by staff*, can be edited later, and are never shown as a verified buyer; customers' own reviews stay unchangeable. New column `reviews.added_by` — run `php artisan migrate`.
+- **New dashboard**: attention chips (orders, prescriptions, requests, messages, reviews), 8 KPI cards with trend vs the previous period, a 7/14/30/90-day sales trend (revenue line + order bars), orders by status, top products, sales by category, payment methods, busiest hours / weekdays, top cities, new customers, rating breakdown, top customers, recent orders, stock alerts and latest reviews. Sections follow the user's permissions.
+
+### Mobile / layout fixes
+- Footer was a five-column grid on phones (page scrolled sideways); header overflowed at 360px; product-page Save / Compare / Share / Ask tiles now fit; admin content can no longer scroll sideways. Checked storefront and admin at 360 / 390 / 768 / 1024px for horizontal overflow.
+
 ### Security — public forms
 - New `SanitizeInput` middleware: every submitted text loses NUL / control characters and invalid UTF-8 and is trimmed (passwords untouched).
 - New `NoMarkup` rule on names, addresses, notes, messages, titles and reviews: HTML tags, `javascript:`, inline event handlers and character-entity tricks are refused (ordinary `<3`, `5 > 3` are fine). Output stays escaped as before.

@@ -35,3 +35,4 @@
 .nav-pills .nav-link { color: var(--text-2); border: 1px solid var(--border); background: var(--surface); border-radius: 999px; font-weight: 600; }
 .nav-pills .nav-link:hover { color: var(--text); }
 .nav-pills .nav-link.active { color: #fff; border-color: transparent; background: var(--grad); }
+.nx-main { min-width: 0; overflow-x: clip; }
