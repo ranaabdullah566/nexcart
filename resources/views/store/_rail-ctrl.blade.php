@@ -1,0 +1,1 @@
+<div class="mk-rail-ctrl" data-rail-ctrl><button type="button" data-rail-prev aria-label="{{ __('Previous') }}"><i class="bi bi-chevron-left"></i></button><button type="button" data-rail-next aria-label="{{ __('Next') }}"><i class="bi bi-chevron-right"></i></button></div>

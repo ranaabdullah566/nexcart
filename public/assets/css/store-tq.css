@@ -439,3 +439,20 @@
 @media (max-width: 991.98px) { .sf-tq .mk-header.mk-hd-light .mk-header-row { gap: .55rem .6rem; padding-block: .6rem; } }
 .sf-tq .mk-util { grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); }
 @media (max-width: 575.98px) { .sf-tq .mk-util { grid-template-columns: 1fr 1fr; } .sf-tq .mk-util > * { flex-direction: row; justify-content: center; gap: .5rem; padding: .7rem .5rem; } }
+
+/* ---- sliders: every home row scrolls sideways; N cards visible per breakpoint ---- */
+.tq-rail { --n: 2; --gap: .8rem; display: flex !important; gap: var(--gap); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: .2rem .15rem .9rem; margin-inline: -.15rem; scrollbar-width: thin; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; grid-template-columns: none !important; }
+.tq-rail > .tq-rail-item { flex: 0 0 calc((100% - (var(--n) - 1) * var(--gap)) / var(--n)); min-width: 0; scroll-snap-align: start; max-width: none; }
+.tq-rail-6 { --n: 2.15; } .tq-rail-8 { --n: 3.3; } .tq-rail-3 { --n: 1.12; } .tq-rail-2 { --n: 1.12; }
+.tq-rail-auto > .tq-rail-item { flex: 0 0 auto; }
+@media (min-width: 576px) { .tq-rail { --gap: 1rem; } .tq-rail-6 { --n: 3; } .tq-rail-8 { --n: 4.2; } .tq-rail-3 { --n: 2; } .tq-rail-2 { --n: 2; } }
+@media (min-width: 768px) { .tq-rail-6 { --n: 4; } .tq-rail-8 { --n: 5; } .tq-rail-3 { --n: 2.2; } .tq-rail-2 { --n: 2; } }
+@media (min-width: 992px) { .tq-rail-6 { --n: 5; } .tq-rail-8 { --n: 6; } .tq-rail-3 { --n: 3; } .tq-rail-2 { --n: 2; } }
+@media (min-width: 1200px) { .tq-rail { --gap: 1rem; } .tq-rail-6 { --n: 6; } .tq-rail-8 { --n: 8; } }
+.tq-rail > .mk-tile { min-width: 0; }
+.mk-rail-ctrl[hidden] { display: none; }
+.mk-rail-ctrl button:disabled { opacity: .35; cursor: default; }
+/* shop: more room so six cards fit beside the filters */
+
+.sf-container-wide .mk-shop { grid-template-columns: 240px minmax(0, 1fr); gap: 1.2rem; }
+@media (min-width: 1200px) { .sf-container-wide .mk-shop .row { --bs-gutter-x: .75rem; --bs-gutter-y: .75rem; } }

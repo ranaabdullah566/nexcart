@@ -102,6 +102,16 @@
         var b = one('[data-rail-prev]', r), f = one('[data-rail-next]', r);
         if (b) b.addEventListener('click', function () { tr.scrollBy({ left: (rtl ? 1 : -1) * step(), behavior: 'smooth' }); });
         if (f) f.addEventListener('click', function () { tr.scrollBy({ left: (rtl ? -1 : 1) * step(), behavior: 'smooth' }); });
+        // arrows only when there is something to scroll; dim at either end
+        var ctrl = one('[data-rail-ctrl]', r) || one('.mk-rail-ctrl', r);
+        var sync = function () {
+            var max = tr.scrollWidth - tr.clientWidth, pos = Math.abs(tr.scrollLeft);
+            if (ctrl) ctrl.hidden = max <= 4;
+            var atStart = pos <= 2, atEnd = pos >= max - 2;
+            if (b) b.disabled = atStart; if (f) f.disabled = atEnd;
+        };
+        tr.addEventListener('scroll', function () { window.requestAnimationFrame(sync); }, { passive: true });
+        window.addEventListener('resize', sync); sync(); setTimeout(sync, 400);
     });
     document.addEventListener('click', function (e) {
         var sh = e.target.closest('[data-share]');

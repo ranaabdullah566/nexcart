@@ -14,7 +14,7 @@
 @section('description', $current?->meta_description ?: ($current?->trans('description') ?? __('Browse all products')))
 
 @section('content')
-<div class="sf-container">
+<div class="sf-container sf-container-wide">
     <nav class="sf-crumbs mk-crumbs" aria-label="Breadcrumb">
         <a href="{{ route('store.home') }}">{{ __('Home') }}</a><span>›</span>
         @if ($current)<a href="{{ route('store.shop') }}">{{ __('Shop') }}</a>@if ($current->parent)<span>›</span><a href="{{ route('store.category', $current->parent->slug) }}">{{ $current->parent->trans('name') }}</a>@endif<span>›</span><span>{{ $current->trans('name') }}</span>
@@ -94,7 +94,7 @@
                 <div class="mk-empty"><span><i class="bi bi-search"></i></span><h2>{{ __('No products found') }}</h2><p>{{ __('Try removing a filter or searching for something else.') }}</p>@if ($active->isNotEmpty() || filled($f['q'] ?? null))<a href="{{ route('store.shop') }}" class="btn btn-primary">{{ __('Clear filters') }}</a>@endif</div>
             @else
                 <div data-product-list>
-                    @include('store._grid', ['products' => $products, 'cols' => 'row-cols-xl-'.max(2, (int) sf('cards.cols') - 1)])
+                    @include('store._grid', ['products' => $products, 'cols' => 'row-cols-xl-'.(int) sf('cards.cols')])
                 </div>
                 <div class="mk-pager">
                     <small>{{ __('Showing :from–:to of :total', ['from' => $products->firstItem(), 'to' => $products->lastItem(), 'total' => $products->total()]) }}</small>

@@ -110,6 +110,6 @@ class StorefrontDynamicTest extends TestCase
     {
         $this->product(['name' => 'Gizmo']);
         $this->opts(['cards_ratio' => '4 / 3', 'cards_fit' => 'cover', 'cards_cols' => '5', 'cards_per_page' => '4', 'cards_show_wish' => '1', 'cards_add_label' => ['en' => 'Grab it']]);
-        $this->get('/shop')->assertSee('--mk-ratio:4 / 3', false)->assertSee('--mk-fit:cover', false)->assertSee('row-cols-xl-4', false)->assertSee('Grab it')->assertDontSee('data-quick', false);
+        $this->get('/shop')->assertSee('--mk-ratio:4 / 3', false)->assertSee('--mk-fit:cover', false)->assertSee('row-cols-xl-5', false)->assertSee('Grab it')->assertDontSee('data-quick', false);
     }
 }

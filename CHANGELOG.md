@@ -4,6 +4,10 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Storefront — six per row and sliders
+- Product rows now show **6 cards per row** on desktop (shop, categories, saved and the rest; 5 / 4 / 3 / 2 on smaller screens). Storefront options → *Products per row* gained a "6" choice and is the default. The page container is 1440px wide so six cards fit beside the shop filters.
+- Every row on the home page is a **slider** (products, categories, brands, blog, reviews, testimonials) with arrow buttons, swipe on phones and scroll-snap; arrows hide when everything already fits. Product-page rails use the same sliders. New home product sections default to 12 items.
+
 ### Admin
 - **Add reviews from the admin** (Reviews → *Add review*): choose a product, name, rating, title, text, date and status. Staff-written reviews are marked *Added by staff*, can be edited later, and are never shown as a verified buyer; customers' own reviews stay unchangeable. New column `reviews.added_by` — run `php artisan migrate`.
 - **New dashboard**: attention chips (orders, prescriptions, requests, messages, reviews), 8 KPI cards with trend vs the previous period, a 7/14/30/90-day sales trend (revenue line + order bars), orders by status, top products, sales by category, payment methods, busiest hours / weekdays, top cities, new customers, rating breakdown, top customers, recent orders, stock alerts and latest reviews. Sections follow the user's permissions.

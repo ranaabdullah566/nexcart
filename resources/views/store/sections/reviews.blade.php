@@ -3,8 +3,8 @@
     $list = $rv['list'];
 @endphp
 @if ($list->isNotEmpty())
-<section class="sf-section sf-reveal fx-rev-sec" aria-labelledby="rev-{{ $s->id }}">
-    <div class="sf-section-head"><div><h2 id="rev-{{ $s->id }}">{{ $s->text('title', __('What our customers say')) }}</h2>@if ($s->text('subtitle'))<p class="mk-sub">{{ $s->text('subtitle') }}</p>@endif</div></div>
+<section class="sf-section sf-reveal fx-rev-sec" data-rail aria-labelledby="rev-{{ $s->id }}">
+    <div class="sf-section-head"><div><h2 id="rev-{{ $s->id }}">{{ $s->text('title', __('What our customers say')) }}</h2>@if ($s->text('subtitle'))<p class="mk-sub">{{ $s->text('subtitle') }}</p>@endif</div>@include('store._rail-ctrl')</div>
     <div class="fx-rev {{ ($s->settings['show_summary'] ?? true) ? '' : 'fx-rev-solo' }}">
         @if ($s->settings['show_summary'] ?? true)
         <aside class="fx-rev-sum" aria-label="{{ __('Rating summary') }}">
@@ -19,10 +19,10 @@
             <div class="fx-rev-badges"><span><i class="bi bi-patch-check-fill"></i> {{ __('Real customers') }}</span><span><i class="bi bi-shield-check"></i> {{ __('Moderated') }}</span></div>
         </aside>
         @endif
-        <div class="fx-rev-grid">
+        <div class="fx-rev-grid tq-rail tq-rail-2" data-rail-track>
             @foreach ($list as $r)
                 @php $city = $r->order?->city; $pname = $r->product?->trans('name'); @endphp
-                <figure class="fx-rev-card">
+                <figure class="fx-rev-card tq-rail-item">
                     <div class="fx-rev-top"><span class="sf-stars" role="img" aria-label="{{ $r->rating }} / 5">@include('store._stars', ['value' => $r->rating])</span><time datetime="{{ $r->created_at->toDateString() }}">{{ $r->created_at->translatedFormat('d M Y') }}</time></div>
                     @if ($r->title)<h3 dir="auto">{{ $r->title }}</h3>@endif
                     @if ($r->body)<blockquote dir="auto">{{ $r->body }}</blockquote>@endif

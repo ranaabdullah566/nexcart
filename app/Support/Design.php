@@ -53,7 +53,7 @@ class Design
             $d[$k] = $c[1];
         }
 
-        return $d + ['font' => 'inter', 'heading_font' => 'same', 'heading_weight' => '700', 'font_size' => '16', 'radius' => '12', 'button' => 'rounded', 'shadow' => 'soft', 'width' => '1280', 'apply_admin' => true];
+        return $d + ['font' => 'inter', 'heading_font' => 'same', 'heading_weight' => '700', 'font_size' => '16', 'radius' => '12', 'button' => 'rounded', 'shadow' => 'soft', 'width' => '1440', 'apply_admin' => true];
     }
 
     /** The saved values over the defaults (invalid saved values fall back to the default). */

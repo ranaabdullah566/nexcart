@@ -46,12 +46,12 @@ class HomeDefaults
             ['ur' => ['items' => array_map(fn ($f) => $f['ur'], self::FEATURES)], 'ur_Latn' => ['items' => array_map(fn ($f) => $f['ur_Latn'], self::FEATURES)]], 'Why shop with us');
         $make('categories', ['title' => 'Shop by need', 'limit' => 8],
             ['ur' => ['title' => 'ضرورت کے مطابق خریداری'], 'ur_Latn' => ['title' => 'Zaroorat ke mutabiq khareedari']], 'Shop by need');
-        $make('products', ['title' => 'Most ordered', 'source' => 'featured', 'limit' => 8],
+        $make('products', ['title' => 'Most ordered', 'source' => 'featured', 'limit' => 12],
             ['ur' => ['title' => 'سب سے زیادہ منگوائی جانے والی'], 'ur_Latn' => ['title' => 'Sab se ziyada mangwayi jane wali']], 'Most ordered');
         $make('cta', ['eyebrow' => 'No cart needed', 'title' => 'Have a prescription? Just send a photo.', 'subtitle' => 'Our pharmacist will call you, confirm the medicines and deliver to your door.', 'button_label' => 'Upload prescription', 'button_url' => '/upload-prescription'],
             ['ur' => ['eyebrow' => 'کارٹ کی ضرورت نہیں', 'title' => 'نسخہ ہے؟ بس تصویر بھیج دیں۔', 'subtitle' => 'ہمارا فارماسسٹ آپ کو کال کرے گا، ادویات کی تصدیق کرے گا اور دروازے تک پہنچائے گا۔', 'button_label' => 'نسخہ بھیجیں'],
                 'ur_Latn' => ['eyebrow' => 'Cart ki zaroorat nahi', 'title' => 'Nuskha hai? Bas tasveer bhej dein.', 'subtitle' => 'Hamara pharmacist aap ko call karega, adwiya ki tasdeeq karega aur darwaze tak pohanchayega.', 'button_label' => 'Nuskha bhejein']], 'Prescription banner');
-        $make('products', ['title' => 'New arrivals', 'source' => 'new', 'limit' => 8],
+        $make('products', ['title' => 'New arrivals', 'source' => 'new', 'limit' => 12],
             ['ur' => ['title' => 'نئی آمد'], 'ur_Latn' => ['title' => 'Nayi aamad']], 'New arrivals');
         $make('reviews', ['title' => 'What our customers say', 'subtitle' => 'Real reviews from people who ordered from us.', 'limit' => 9, 'min_rating' => 4, 'show_summary' => true],
             ['ur' => ['title' => 'ہمارے گاہک کیا کہتے ہیں', 'subtitle' => 'ہم سے آرڈر کرنے والوں کی اصل رائے۔'], 'ur_Latn' => ['title' => 'Hamare customers kya kehte hain', 'subtitle' => 'Hum se order karne walon ki asal raaye.']], 'Customer reviews');
