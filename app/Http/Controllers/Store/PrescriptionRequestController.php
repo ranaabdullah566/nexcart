@@ -27,11 +27,11 @@ class PrescriptionRequestController extends Controller
         abort_unless(BusinessProfile::hasModule('prescriptions'), 404);
 
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:120'],
+            'name' => ['required', new \App\Rules\NoMarkup, 'string', 'max:120'],
             'phone' => ['required', 'string', 'min:7', 'max:30', 'regex:/^[0-9+\-\s()]+$/'],
             'email' => ['nullable', 'email', 'max:190'],
-            'city' => ['nullable', 'string', 'max:120'],
-            'notes' => ['nullable', 'string', 'max:500'],
+            'city' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:120'],
+            'notes' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:500'],
             'files' => ['required', 'array', 'min:1', 'max:5'],
             'files.*' => ['file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
         ]);

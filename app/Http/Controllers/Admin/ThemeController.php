@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Support\Design;
 use App\Support\Locales;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class ThemeController extends Controller
     {
         $this->authorizeTo('storefront.manage');
 
-        return view('admin.theme.edit', ['radii' => self::RADII, 'locales' => collect(Locales::all())->except('en')]);
+        return view('admin.theme.edit', ['design' => Design::values(), 'radii' => self::RADII, 'locales' => collect(Locales::all())->except('en')]);
     }
 
     public function update(Request $request): RedirectResponse
@@ -37,7 +38,30 @@ class ThemeController extends Controller
             'announce_text' => ['nullable', 'string', 'max:160'],
             'announce_url' => ['nullable', 'string', 'max:300', 'regex:/^(\/|https?:\/\/)/'],
             'tr' => ['nullable', 'array'],
+            'design' => ['nullable', 'array'],
+            'design.*' => ['nullable', 'string', 'max:20'],
         ]);
+
+        // marketplace design: every value is checked against the allowed list / pattern, anything else is dropped
+        $design = [];
+        foreach (Design::defaults() as $key => $default) {
+            if ($key === 'apply_admin') {
+                $design["design.$key"] = $request->boolean('design_apply_admin') ? '1' : '0';
+
+                continue;
+            }
+            $val = data_get($data, "design.$key");
+            if ($val === null || $val === '') {
+                continue;
+            }
+            if (! Design::valid($key, $val)) {
+                throw \Illuminate\Validation\ValidationException::withMessages(["design.$key" => __('That value is not allowed.')]);
+            }
+            $design["design.$key"] = strtolower((string) $val);
+        }
+        if ($request->boolean('design_reset')) {
+            $design = array_fill_keys(array_map(fn ($k) => "design.$k", array_keys(Design::defaults())), null);
+        }
 
         $flat = [
             'theme.primary' => $data['primary'], 'theme.accent' => $data['accent'], 'theme.mode' => $data['mode'],
@@ -61,7 +85,7 @@ class ThemeController extends Controller
             }
         }
 
-        setting()->setMany($flat);
+        setting()->setMany($flat + $design);
 
         return redirect()->route('admin.theme.edit')->with('success', __('Theme saved'));
     }

@@ -29,20 +29,20 @@
                         @guest<a href="{{ route('login') }}" class="small fw-bold">{{ __('Have an account? Sign in') }}</a>@endguest</div>
                     @guest<p class="fx-guest-note"><i class="bi bi-person-check"></i> {{ __('No account needed — you are checking out as a guest. You can create an account after ordering.') }}</p>@endguest
                     <div class="row g-3">
-                        <div class="col-md-7"><label class="form-label" for="ckEmail">{{ __('Email') }}</label><input id="ckEmail" type="email" name="email" value="{{ old('email', $defaults['email']) }}" required autocomplete="email" class="form-control @error('email') is-invalid @enderror"></div>
-                        <div class="col-md-5"><label class="form-label" for="ckPhone">{{ __('Phone') }}</label><input id="ckPhone" type="tel" name="phone" value="{{ old('phone', $defaults['phone']) }}" required autocomplete="tel" inputmode="tel" class="form-control @error('phone') is-invalid @enderror"></div>
+                        <div class="col-md-7"><label class="form-label" for="ckEmail">{{ __('Email') }}</label><input id="ckEmail" type="email" name="email" value="{{ old('email', $defaults['email']) }}" required maxlength="190" autocomplete="email" class="form-control @error('email') is-invalid @enderror"></div>
+                        <div class="col-md-5"><label class="form-label" for="ckPhone">{{ __('Phone') }}</label><input id="ckPhone" type="tel" name="phone" value="{{ old('phone', $defaults['phone']) }}" required autocomplete="tel" inputmode="tel" maxlength="40" pattern="[0-9+\-()\s]{6,}" title="{{ __('Digits, spaces, + - ( ) only') }}" class="form-control @error('phone') is-invalid @enderror"></div>
                     </div>
                 </section>
 
                 <section class="ck-sec">
                     <h2><span class="mk-step">2</span>{{ __('Delivery') }}</h2>
                     <div class="row g-3" id="addrBox">
-                        <div class="col-12"><label class="form-label" for="ckName">{{ __('Full name') }}</label><input id="ckName" name="name" value="{{ old('name', $defaults['name']) }}" required autocomplete="name" class="form-control @error('name') is-invalid @enderror"></div>
-                        <div class="col-12 addr-only"><label class="form-label" for="ckAddr">{{ __('Address') }}</label><input id="ckAddr" name="address_line" value="{{ old('address_line', $defaults['address_line']) }}" autocomplete="street-address" class="form-control @error('address_line') is-invalid @enderror" placeholder="{{ __('House, street, landmark') }}"></div>
-                        <div class="col-md-5 addr-only"><label class="form-label" for="ckCity">{{ __('City') }}</label><input id="ckCity" name="city" value="{{ old('city', $defaults['city']) }}" list="ckCities" autocomplete="address-level2" class="form-control @error('city') is-invalid @enderror">
+                        <div class="col-12"><label class="form-label" for="ckName">{{ __('Full name') }}</label><input id="ckName" name="name" value="{{ old('name', $defaults['name']) }}" required maxlength="120" autocomplete="name" class="form-control @error('name') is-invalid @enderror"></div>
+                        <div class="col-12 addr-only"><label class="form-label" for="ckAddr">{{ __('Address') }}</label><input id="ckAddr" name="address_line" value="{{ old('address_line', $defaults['address_line']) }}" maxlength="255" autocomplete="street-address" class="form-control @error('address_line') is-invalid @enderror" placeholder="{{ __('House, street, landmark') }}"></div>
+                        <div class="col-md-5 addr-only"><label class="form-label" for="ckCity">{{ __('City') }}</label><input id="ckCity" name="city" value="{{ old('city', $defaults['city']) }}" maxlength="120" list="ckCities" autocomplete="address-level2" class="form-control @error('city') is-invalid @enderror">
                             <datalist id="ckCities">@foreach ($cities as $c)<option value="{{ $c }}">@endforeach</datalist></div>
-                        @if (sf('checkout.show_area'))<div class="col-md-4 addr-only"><label class="form-label" for="ckArea">{{ __('Area') }}</label><input id="ckArea" name="area" value="{{ old('area', $defaults['area']) }}" class="form-control"></div>@endif
-                        @if (sf('checkout.show_postal'))<div class="col-md-3 addr-only"><label class="form-label" for="ckPostal">{{ __('Postal code') }}</label><input id="ckPostal" name="postal_code" value="{{ old('postal_code', $defaults['postal_code']) }}" autocomplete="postal-code" class="form-control figure"></div>@endif
+                        @if (sf('checkout.show_area'))<div class="col-md-4 addr-only"><label class="form-label" for="ckArea">{{ __('Area') }}</label><input id="ckArea" name="area" value="{{ old('area', $defaults['area']) }}" maxlength="120" class="form-control"></div>@endif
+                        @if (sf('checkout.show_postal'))<div class="col-md-3 addr-only"><label class="form-label" for="ckPostal">{{ __('Postal code') }}</label><input id="ckPostal" name="postal_code" value="{{ old('postal_code', $defaults['postal_code']) }}" maxlength="20" autocomplete="postal-code" class="form-control figure"></div>@endif
                     </div>
                 </section>
 
@@ -130,7 +130,7 @@
                     @endforeach
 
                     <div class="d-flex gap-2 my-3">
-                        <input type="text" id="couponInput" class="form-control" placeholder="{{ __('Discount code') }}" value="{{ session('coupon') }}" autocomplete="off" aria-label="{{ __('Discount code') }}">
+                        <input type="text" id="couponInput" maxlength="40" class="form-control" placeholder="{{ __('Discount code') }}" value="{{ session('coupon') }}" autocomplete="off" aria-label="{{ __('Discount code') }}">
                         <button type="button" class="btn btn-outline-secondary" id="couponBtn">{{ __('Apply') }}</button>
                     </div>
                     <div class="small mb-2" id="couponMsg">@if ($q['coupon'] && ! $q['coupon_problem'])<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>{{ $q['coupon']->code }} · {{ $q['coupon']->label() }}</span>@endif</div>

@@ -23,9 +23,9 @@ class ReviewController extends Controller
 
         $data = $request->validate([
             'rating' => ['required', 'integer', 'between:1,5'],
-            'title' => ['nullable', 'string', 'max:120'],
-            'body' => ['nullable', 'string', 'max:2000'],
-            'name' => ['required', 'string', 'max:80'],
+            'title' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:120'],
+            'body' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:2000'],
+            'name' => ['required', new \App\Rules\NoMarkup, 'string', 'max:80'],
         ]);
 
         if (Review::where('order_id', $order->id)->where('product_id', $line->product_id)->exists()) {

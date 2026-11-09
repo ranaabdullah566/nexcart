@@ -68,10 +68,10 @@ class AccountController extends Controller
         }
 
         $data = $request->validate([
-            'label' => ['required', 'string', 'max:40'], 'name' => ['required', 'string', 'max:120'],
+            'label' => ['required', new \App\Rules\NoMarkup, 'string', 'max:40'], 'name' => ['required', new \App\Rules\NoMarkup, 'string', 'max:120'],
             'phone' => ['required', 'string', 'max:40', 'regex:/^[0-9+\-()\s]{6,}$/'],
-            'address_line' => ['required', 'string', 'max:255'], 'city' => ['required', 'string', 'max:120'],
-            'area' => ['nullable', 'string', 'max:120'], 'postal_code' => ['nullable', 'string', 'max:20'],
+            'address_line' => ['required', new \App\Rules\NoMarkup, 'string', 'max:255'], 'city' => ['required', new \App\Rules\NoMarkup, 'string', 'max:120'],
+            'area' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:120'], 'postal_code' => ['nullable', 'string', 'max:20'],
         ]);
 
         $address ??= new UserAddress(['user_id' => $user->id]);
@@ -139,7 +139,7 @@ class AccountController extends Controller
     {
         $user = $request->user();
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:120'],
+            'name' => ['required', new \App\Rules\NoMarkup, 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190', new UniqueActive('users', 'email', $user->id, true)],
             'phone' => ['nullable', 'string', 'max:40', 'regex:/^[0-9+\-()\s]{6,}$/'],
             'password' => ['nullable', 'string', 'confirmed', StrongPassword::rule()],

@@ -18,8 +18,8 @@
         </div>
         <form method="POST" action="{{ route('store.track.find') }}" class="mk-box mk-track-form">
             @csrf
-            <div class="mb-3"><label class="form-label" for="trNum">{{ __('Order number') }}</label><input id="trNum" name="number" value="{{ old('number') }}" required class="form-control form-control-lg figure @error('number') is-invalid @enderror" placeholder="{{ \App\Models\Order::numberFor(1) }}" autocomplete="off">@error('number')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-            <div class="mb-3"><label class="form-label" for="trMail">{{ __('Email') }}</label><input id="trMail" type="email" name="email" value="{{ old('email') }}" required class="form-control form-control-lg @error('email') is-invalid @enderror" autocomplete="email">@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+            <div class="mb-3"><label class="form-label" for="trNum">{{ __('Order number') }}</label><input id="trNum" name="number" value="{{ old('number') }}" required maxlength="30" class="form-control form-control-lg figure @error('number') is-invalid @enderror" placeholder="{{ \App\Models\Order::numberFor(1) }}" autocomplete="off">@error('number')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
+            <div class="mb-3"><label class="form-label" for="trMail">{{ __('Email') }}</label><input id="trMail" type="email" name="email" value="{{ old('email') }}" required maxlength="190" class="form-control form-control-lg @error('email') is-invalid @enderror" autocomplete="email">@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
             <x-honeypot />
             <x-captcha />
             <button class="btn btn-primary btn-lg w-100"><i class="bi bi-search me-1"></i> {{ __('Find my order') }}</button>

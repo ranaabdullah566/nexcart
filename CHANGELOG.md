@@ -4,6 +4,16 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Security — public forms
+- New `SanitizeInput` middleware: every submitted text loses NUL / control characters and invalid UTF-8 and is trimmed (passwords untouched).
+- New `NoMarkup` rule on names, addresses, notes, messages, titles and reviews: HTML tags, `javascript:`, inline event handlers and character-entity tricks are refused (ordinary `<3`, `5 > 3` are fine). Output stays escaped as before.
+- Rate limits added to cart updates, order pages and invoices (token guessing), account area, compare, setup and sign-out; password length capped at 200.
+- Missing `maxlength` / phone `pattern` attributes added to checkout, track, password and profile fields so browser checks match the server rules.
+- `tests/Feature/FormSecurityTest.php` covers markup, control characters, lengths, file types, honeypot, rate limits and login lock-out.
+
+### Theme — marketplace design settings
+- Admin → Theme → **Marketplace design**: 10 colours (hex + picker), 5 ready-made colour sets, body / heading fonts (bundled fonts only), heading weight, text size, corner roundness, button shape, card shadow, page width, and "use in admin too". Live preview, contrast warnings, and *Reset to default*. Values are validated against allow-lists, so nothing can inject CSS.
+
 ### Admin — marketplace look
 - The admin panel follows the same look as the storefront: white pages, navy sidebar, orange buttons, blue links, flat cards and light table headers (`admin-tq.css`). It is light-only; switch it off with Storefront options → *Admin panel in the same marketplace look* (`design.admin_marketplace`) to get the dark glass admin back.
 

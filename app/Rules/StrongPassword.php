@@ -9,6 +9,6 @@ class StrongPassword
 {
     public static function rule(): Password
     {
-        return Password::min(10)->letters()->numbers();
+        return Password::min(10)->max(200)->letters()->numbers();
     }
 }

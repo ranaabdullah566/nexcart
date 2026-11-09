@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias(['staff' => EnsureStaff::class, 'staff.session' => SecureStaffSession::class, 'honeypot' => \App\Http\Middleware\Honeypot::class]);
         $middleware->redirectUsersTo('/admin');
         $middleware->prepend(ProbeGuard::class);
+        $middleware->appendToGroup('web', \App\Http\Middleware\SanitizeInput::class);
         $middleware->web(append: [NotifyFlash::class, SetLocale::class, EnsureInstalled::class, SecurityHeaders::class]);
         // behind a reverse proxy / Docker the real client scheme and IP arrive in forwarded headers
         $middleware->trustHosts(at: fn () => array_filter(explode(',', (string) env('TRUSTED_HOSTS'))) ?: [], subdomains: false);

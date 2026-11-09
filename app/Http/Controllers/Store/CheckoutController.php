@@ -58,7 +58,7 @@ class CheckoutController extends Controller
     /** Live order summary + delivery options while the customer types. */
     public function quote(Request $request): JsonResponse
     {
-        $data = $request->validate(['city' => ['nullable', 'string', 'max:120'], 'rate_id' => ['nullable', 'integer'], 'coupon' => ['nullable', 'string', 'max:40']]);
+        $data = $request->validate(['city' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:120'], 'rate_id' => ['nullable', 'integer'], 'coupon' => ['nullable', 'string', 'max:40']]);
 
         $coupon = $data['coupon'] ?? null;
         $q = $this->checkout->quote($data['city'] ?? null, $data['rate_id'] ?? null, $coupon);
@@ -77,14 +77,14 @@ class CheckoutController extends Controller
     {
         $data = $request->validate([
             'g-recaptcha-response' => Recaptcha::rules(),
-            'name' => ['required', 'string', 'max:120'],
+            'name' => ['required', new \App\Rules\NoMarkup, 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190'],
             'phone' => ['required', 'string', 'max:40', 'regex:/^[0-9+\-()\s]{6,}$/'],
-            'address_line' => ['nullable', 'string', 'max:255'],
+            'address_line' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:255'],
             'city' => ['nullable', 'string', 'max:120'],
-            'area' => ['nullable', 'string', 'max:120'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
-            'notes' => ['nullable', 'string', 'max:500'],
+            'area' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:120'],
+            'postal_code' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:20'],
+            'notes' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:500'],
             'shipping_rate_id' => ['required', 'integer'],
             'payment_method' => ['required', 'string', 'max:24'],
             'coupon' => ['nullable', 'string', 'max:40'],

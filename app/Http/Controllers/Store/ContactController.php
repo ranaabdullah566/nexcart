@@ -24,11 +24,11 @@ class ContactController extends Controller
     public function send(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:120'],
+            'name' => ['required', new \App\Rules\NoMarkup, 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190'],
             'phone' => ['nullable', 'string', 'max:30', 'regex:/^[0-9+\-\s()]+$/'],
-            'subject' => ['nullable', 'string', 'max:150'],
-            'message' => ['required', 'string', 'min:10', 'max:3000'],
+            'subject' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:150'],
+            'message' => ['required', new \App\Rules\NoMarkup, 'string', 'min:10', 'max:3000'],
             'g-recaptcha-response' => Recaptcha::rules(),
         ]);
 

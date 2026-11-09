@@ -21,7 +21,7 @@
                         <div class="mk-field"><i class="bi bi-telephone"></i><input id="rgPhone" name="phone" value="{{ old('phone', session('guest_prefill.phone')) }}" autocomplete="tel" inputmode="tel" maxlength="40" pattern="[0-9+\-()\s]{6,}" data-msg-pattern="{{ __('Enter a valid phone number.') }}" class="form-control form-control-lg @error('phone') is-invalid @enderror"></div>@error('phone')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror</div>
                 </div>
                 <div class="mb-2"><label class="form-label" for="rgPass">{{ __('Password') }} <span class="text-danger">*</span></label>
-                    <div class="mk-field"><i class="bi bi-lock"></i><input id="rgPass" type="password" name="password" required minlength="10" autocomplete="new-password" data-strength="#pwRules" class="form-control form-control-lg @error('password') is-invalid @enderror"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div>
+                    <div class="mk-field"><i class="bi bi-lock"></i><input id="rgPass" type="password" name="password" required minlength="10" maxlength="200" autocomplete="new-password" data-strength="#pwRules" class="form-control form-control-lg @error('password') is-invalid @enderror"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div>
                     @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror</div>
                 <ul class="mk-rules" id="pwRules" aria-live="polite">
                     <li data-rule="len"><i class="bi bi-circle"></i> {{ __('At least 10 characters') }}</li>
@@ -29,7 +29,7 @@
                     <li data-rule="digit"><i class="bi bi-circle"></i> {{ __('A number') }}</li>
                 </ul>
                 <div class="mb-3"><label class="form-label" for="rgPass2">{{ __('Confirm password') }} <span class="text-danger">*</span></label>
-                    <div class="mk-field"><i class="bi bi-shield-lock"></i><input id="rgPass2" type="password" name="password_confirmation" required autocomplete="new-password" class="form-control form-control-lg"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div></div>
+                    <div class="mk-field"><i class="bi bi-shield-lock"></i><input id="rgPass2" type="password" name="password_confirmation" required maxlength="200" autocomplete="new-password" class="form-control form-control-lg"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div></div>
                 <x-honeypot />
                 <x-captcha />
                 <button class="btn btn-primary btn-lg w-100"><i class="bi bi-person-plus me-1"></i> {{ __('Create account') }}</button>

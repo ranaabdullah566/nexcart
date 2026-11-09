@@ -69,3 +69,8 @@
 @if ($__radius || $__font)
     <style>html:root[data-theme] { @if ($__radius) --radius: {{ $__radius }}; @endif @if ($__font) --font-display: {!! $__font !!}, ui-sans-serif, sans-serif; @endif }</style>
 @endif
+@if (($storefront ?? false) && sf('design.marketplace') && \App\Support\Design::isCustom())
+    <style id="nx-design">{!! \App\Support\Design::css() !!}</style>
+@elseif (! ($storefront ?? false) && auth()->check() && request()->is('admin*') && sf('design.admin_marketplace') && \App\Support\Design::isCustom())
+    <style id="nx-design">{!! \App\Support\Design::css(true) !!}</style>
+@endif

@@ -50,7 +50,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/install', [InstallController::class, 'show'])->name('install');
 Route::post('/install', [InstallController::class, 'store'])->middleware('throttle:10,1')->name('install.store');
 Route::get('/setup', [SetupController::class, 'show'])->name('setup');
-Route::post('/setup', [SetupController::class, 'store'])->name('setup.store');
+Route::post('/setup', [SetupController::class, 'store'])->middleware('throttle:10,1')->name('setup.store');
 
 Route::get('/lang/{locale}', LocaleController::class)->name('locale');
 
@@ -72,7 +72,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login/two-factor', [LoginController::class, 'challenge'])->name('login.2fa');
     Route::post('/login/two-factor', [LoginController::class, 'verify'])->middleware('throttle:10,1');
 });
-Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
+Route::post('/logout', [LoginController::class, 'destroy'])->middleware(['auth', 'throttle:30,1'])->name('logout');
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.session'])->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
@@ -195,16 +195,16 @@ Route::get('/search/suggest', [Store\SearchController::class, 'suggest'])->middl
 Route::get('/cart', [Store\CartController::class, 'show'])->name('store.cart');
 Route::get('/cart.json', [Store\CartController::class, 'json'])->name('store.cart.json');
 Route::post('/cart/add', [Store\CartController::class, 'add'])->middleware('throttle:60,1')->name('store.cart.add');
-Route::patch('/cart/{key}', [Store\CartController::class, 'update'])->name('store.cart.update');
-Route::delete('/cart/{key}', [Store\CartController::class, 'destroy'])->name('store.cart.remove');
+Route::patch('/cart/{key}', [Store\CartController::class, 'update'])->middleware('throttle:60,1')->name('store.cart.update');
+Route::delete('/cart/{key}', [Store\CartController::class, 'destroy'])->middleware('throttle:60,1')->name('store.cart.remove');
 Route::get('/checkout', [Store\CheckoutController::class, 'show'])->name('store.checkout');
 Route::post('/checkout/quote', [Store\CheckoutController::class, 'quote'])->middleware('throttle:60,1')->name('store.checkout.quote');
 Route::post('/checkout', [Store\CheckoutController::class, 'place'])->middleware(['throttle:20,1', 'honeypot'])->name('store.checkout.place');
 Route::post('/checkout/capture', [Store\CheckoutController::class, 'capture'])->middleware('throttle:30,1')->name('store.checkout.capture');
 Route::get('/cart/recover/{token}', [Store\CheckoutController::class, 'recover'])->name('store.cart.recover');
 Route::get('/cart/recover/{token}/stop', [Store\CheckoutController::class, 'stopReminders'])->name('store.cart.recover.stop');
-Route::get('/order/{number}/{token}', [Store\OrderController::class, 'show'])->name('store.order');
-Route::get('/order/{number}/{token}/invoice', [Store\OrderController::class, 'invoice'])->name('store.invoice');
+Route::get('/order/{number}/{token}', [Store\OrderController::class, 'show'])->middleware('throttle:60,1')->name('store.order');
+Route::get('/order/{number}/{token}/invoice', [Store\OrderController::class, 'invoice'])->middleware('throttle:60,1')->name('store.invoice');
 Route::post('/order/{number}/{token}/pay', [Store\OrderController::class, 'pay'])->middleware('throttle:10,1')->name('store.order.pay');
 Route::post('/order/{number}/{token}/reorder', [Store\OrderController::class, 'reorder'])->middleware('throttle:20,1')->name('store.order.reorder');
 Route::post('/order/{number}/{token}/prescription', [Store\OrderController::class, 'prescription'])->middleware('throttle:10,1')->name('store.order.prescription');
@@ -213,7 +213,7 @@ Route::get('/upload-prescription', [Store\PrescriptionRequestController::class, 
 Route::post('/upload-prescription', [Store\PrescriptionRequestController::class, 'store'])->middleware(['throttle:6,1', 'honeypot'])->name('store.prescription.send');
 Route::get('/track', [Store\OrderController::class, 'trackForm'])->name('store.track');
 Route::post('/track', [Store\OrderController::class, 'trackFind'])->middleware(['throttle:10,1', 'honeypot'])->name('store.track.find');
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'throttle:60,1'])->group(function () {
     Route::get('/account', [Store\AccountController::class, 'index'])->name('store.account');
     Route::put('/account', [Store\AccountController::class, 'update'])->name('store.account.update');
     Route::get('/account/orders', [Store\AccountController::class, 'orders'])->name('store.account.orders');
@@ -234,7 +234,7 @@ Route::redirect('/wishlist', '/saved', 301);
 Route::post('/saved/{product}', [Store\WishlistController::class, 'toggle'])->whereNumber('product')->middleware('throttle:60,1')->name('store.wishlist.toggle');
 Route::get('/compare', [Store\CompareController::class, 'index'])->name('store.compare');
 Route::post('/compare/{product}', [Store\CompareController::class, 'toggle'])->whereNumber('product')->middleware('throttle:60,1')->name('store.compare.toggle');
-Route::delete('/compare', [Store\CompareController::class, 'clear'])->name('store.compare.clear');
+Route::delete('/compare', [Store\CompareController::class, 'clear'])->middleware('throttle:30,1')->name('store.compare.clear');
 Route::get('/contact', [Store\ContactController::class, 'show'])->name('store.contact');
 Route::post('/contact', [Store\ContactController::class, 'send'])->middleware(['throttle:5,1', 'honeypot'])->name('store.contact.send');
 Route::post('/subscribe', [Store\ContactController::class, 'subscribe'])->middleware(['throttle:6,1', 'honeypot'])->name('store.subscribe');

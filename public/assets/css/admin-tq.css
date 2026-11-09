@@ -3,12 +3,12 @@
    Scoped to body.nx-tq. Re-points the theme tokens so every page follows.
    ========================================================================== */
 body.nx-tq {
-    --tq-navy: #0c3b68; --tq-navy-2: #0a2f54; --tq-blue: #1b74bb; --tq-orange: #c9590b; --tq-orange-2: #b04d08; --tq-sky: #e8f1fa;
+    --tq-navy: #0c3b68; --tq-navy-2: color-mix(in srgb, var(--tq-navy) 82%, #000); --tq-blue: #1b74bb; --tq-blue-2: color-mix(in srgb, var(--tq-blue) 82%, #000); --tq-orange: #c9590b; --tq-orange-2: color-mix(in srgb, var(--tq-orange) 84%, #000); --tq-sky: color-mix(in srgb, var(--tq-blue) 10%, #fff); --tq-bg: #f5f8fc; --tq-card: #fff; --tq-ink: #14263a; --tq-muted: #4a5b6e; --tq-line: #dde6f0; --tq-deal: #d9481c; --tq-green: #0f7a4d;
     --font-ui: 'Inter', ui-sans-serif, system-ui, sans-serif; --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif; --font-mono: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --bg: #f5f8fc; --bg-2: #ffffff; --surface: #ffffff; --surface-2: #f1f6fb; --surface-solid: #ffffff;
-    --border: #dde6f0; --border-strong: #c5d3e2;
-    --text: #14263a; --text-2: #4a5b6e; --text-3: #5b6b7d;
-    --acc-1: #1b74bb; --acc-2: #0c3b68; --acc-3: #0f7a4d; --acc-ink: #165f99;
+    --bg: var(--tq-bg); --bg-2: var(--tq-card); --surface: var(--tq-card); --surface-2: color-mix(in srgb, var(--tq-blue) 6%, #fff); --surface-solid: var(--tq-card);
+    --border: var(--tq-line); --border-strong: color-mix(in srgb, var(--tq-line) 80%, #000);
+    --text: var(--tq-ink); --text-2: var(--tq-muted); --text-3: var(--tq-muted);
+    --acc-1: var(--tq-blue); --acc-2: var(--tq-navy); --acc-3: var(--tq-green); --acc-ink: var(--tq-blue-2, var(--tq-blue));
     --ok: #0f7a4d; --warn: #9a5b00; --bad: #c0283d;
     --grad: var(--tq-orange); --radius: 12px; --radius-sm: 8px;
     --shadow: 0 1px 2px rgba(12, 59, 104, .06), 0 4px 14px -8px rgba(12, 59, 104, .18);

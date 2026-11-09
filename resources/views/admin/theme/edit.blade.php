@@ -26,6 +26,63 @@
                 </div>
             </div></div>
 
+
+            <div class="card mb-3" id="designCard"><div class="card-body">
+                <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap mb-1">
+                    <h2 class="h5 mb-0">{{ __('Marketplace design') }}</h2>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="designResetBtn"><i class="bi bi-arrow-counterclockwise me-1"></i>{{ __('Reset to default') }}</button>
+                </div>
+                <p class="text-muted small">{{ __('Colours, fonts and shapes of the white-and-navy storefront (and the admin panel). The preview updates as you go; nothing is live until you save.') }}</p>
+                <input type="hidden" name="design_reset" value="0" id="designReset">
+
+                <div class="mb-3">
+                    <div class="form-label">{{ __('Ready-made colour sets') }}</div>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (\App\Support\Design::PRESETS as $pk => [$plabel, $pvals])
+                            <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2" data-preset='@json($pvals)'>
+                                <span class="d-inline-flex"><i style="width:14px;height:14px;background:{{ $pvals['navy'] }};border-radius:3px 0 0 3px"></i><i style="width:14px;height:14px;background:{{ $pvals['blue'] }}"></i><i style="width:14px;height:14px;background:{{ $pvals['orange'] }};border-radius:0 3px 3px 0"></i></span>{{ __($plabel) }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    @foreach (\App\Support\Design::COLORS as $ck => [$clabel, $cdef, $chelp])
+                        <div class="col-6">
+                            <label class="form-label" for="dz_{{ $ck }}">{{ __($clabel) }}</label>
+                            <div class="input-group">
+                                <input type="color" id="dz_{{ $ck }}" name="design[{{ $ck }}]" value="{{ old("design.$ck", $design[$ck]) }}" class="form-control form-control-color" data-design="{{ $ck }}" data-default="{{ $cdef }}" style="max-width:56px">
+                                <input type="text" class="form-control figure" value="{{ old("design.$ck", $design[$ck]) }}" maxlength="7" pattern="#[0-9a-fA-F]{6}" aria-label="{{ __($clabel) }} (hex)" data-design-hex="{{ $ck }}">
+                            </div>
+                            @if ($chelp)<div class="form-text">{{ __($chelp) }}</div>@endif
+                            @error("design.$ck")<div class="text-danger small">{{ $message }}</div>@enderror
+                        </div>
+                    @endforeach
+                </div>
+                <div class="small mt-2" id="designContrast" role="status" aria-live="polite"></div>
+
+                <hr>
+                <div class="row g-3">
+                    <div class="col-6"><label class="form-label" for="dz_font">{{ __('Body font') }}</label>
+                        <select id="dz_font" name="design[font]" class="form-select" data-design="font">@foreach (\App\Support\Design::FONTS as $fk => [$flabel]) <option value="{{ $fk }}" @selected($design['font'] === $fk)>{{ __($flabel) }}</option>@endforeach</select></div>
+                    <div class="col-6"><label class="form-label" for="dz_hfont">{{ __('Heading font') }}</label>
+                        <select id="dz_hfont" name="design[heading_font]" class="form-select" data-design="heading_font"><option value="same" @selected($design['heading_font'] === 'same')>{{ __('Same as body') }}</option>@foreach (\App\Support\Design::FONTS as $fk => [$flabel]) <option value="{{ $fk }}" @selected($design['heading_font'] === $fk)>{{ __($flabel) }}</option>@endforeach</select></div>
+                    <div class="col-6"><label class="form-label" for="dz_hw">{{ __('Heading weight') }}</label>
+                        <select id="dz_hw" name="design[heading_weight]" class="form-select" data-design="heading_weight">@foreach (['500' => 'Medium', '600' => 'Semi-bold', '700' => 'Bold', '800' => 'Extra bold'] as $wk => $wl)<option value="{{ $wk }}" @selected($design['heading_weight'] === $wk)>{{ __($wl) }}</option>@endforeach</select></div>
+                    <div class="col-6"><label class="form-label" for="dz_fs">{{ __('Text size') }}: <b id="dz_fs_v">{{ $design['font_size'] }}px</b></label>
+                        <input type="range" id="dz_fs" name="design[font_size]" min="14" max="19" step="1" value="{{ $design['font_size'] }}" class="form-range" data-design="font_size"></div>
+                    <div class="col-6"><label class="form-label" for="dz_r">{{ __('Corner roundness') }}: <b id="dz_r_v">{{ $design['radius'] }}px</b></label>
+                        <input type="range" id="dz_r" name="design[radius]" min="0" max="28" step="2" value="{{ $design['radius'] }}" class="form-range" data-design="radius"></div>
+                    <div class="col-6"><label class="form-label" for="dz_btn">{{ __('Button shape') }}</label>
+                        <select id="dz_btn" name="design[button]" class="form-select" data-design="button">@foreach (\App\Support\Design::BUTTONS as $bk => [$bl]) <option value="{{ $bk }}" @selected($design['button'] === $bk)>{{ __($bl) }}</option>@endforeach</select></div>
+                    <div class="col-6"><label class="form-label" for="dz_sh">{{ __('Card shadow') }}</label>
+                        <select id="dz_sh" name="design[shadow]" class="form-select" data-design="shadow">@foreach (\App\Support\Design::SHADOWS as $sk => [$sl]) <option value="{{ $sk }}" @selected($design['shadow'] === $sk)>{{ __($sl) }}</option>@endforeach</select></div>
+                    <div class="col-6"><label class="form-label" for="dz_w">{{ __('Page width') }}</label>
+                        <select id="dz_w" name="design[width]" class="form-select" data-design="width">@foreach (\App\Support\Design::WIDTHS as $wk => $wl) <option value="{{ $wk }}" @selected($design['width'] === (string) $wk)>{{ __($wl) }}</option>@endforeach</select></div>
+                    <div class="col-12"><div class="form-check form-switch"><input type="checkbox" role="switch" class="form-check-input" name="design_apply_admin" value="1" id="dz_admin" @checked(old('design_apply_admin', $design['apply_admin']))><label class="form-check-label" for="dz_admin">{{ __('Use the same design in the admin panel') }}</label></div></div>
+                </div>
+            </div></div>
+
             <div class="card mb-3"><div class="card-body">
                 <h2 class="mb-3 h5">{{ __('Logo') }}</h2>
                 @if ($logo)<div class="d-flex align-items-center gap-3 mb-2"><img src="{{ brand_logo() }}" alt="" style="height:48px;border-radius:12px"><div class="form-check"><input class="form-check-input" type="checkbox" name="remove_logo" value="1" id="rmLogo"><label class="form-check-label" for="rmLogo">{{ __('Remove logo') }}</label></div></div>@endif
@@ -86,6 +143,61 @@
         var logo = form.querySelector('[name=logo]').files[0];
         if (logo) { var u = URL.createObjectURL(logo); d.querySelectorAll('.sf-brand-logo img').forEach(function (i) { i.src = u; }); }
     }
+
+    // ---- marketplace design ----
+    var FONTS = @json(collect(\App\Support\Design::FONTS)->map(fn ($f) => $f[1])), BTN = @json(collect(\App\Support\Design::BUTTONS)->map(fn ($b) => $b[1])), SHADOW = @json(collect(\App\Support\Design::SHADOWS)->map(fn ($s) => $s[1]));
+    var colorKeys = @json(array_keys(\App\Support\Design::COLORS));
+    function lum(h) { var c = [1, 3, 5].map(function (i) { var v = parseInt(h.substr(i, 2), 16) / 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }); return .2126 * c[0] + .7152 * c[1] + .0722 * c[2]; }
+    function ratio(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); }
+    function dval(k) { var el = form.querySelector('[data-design="' + k + '"]'); return el ? el.value : ''; }
+    function applyDesign() {
+        var d = frame.contentDocument; if (!d || !d.body) return;
+        var s = d.body.style, set = function (n, v) { s.setProperty(n, v); };
+        colorKeys.forEach(function (k) { set('--tq-' + k, dval(k)); });
+        var mix = function (c, p, w) { return 'color-mix(in srgb, ' + c + ' ' + p + '%, ' + w + ')'; };
+        set('--tq-navy-2', mix('var(--tq-navy)', 82, '#000')); set('--tq-blue-2', mix('var(--tq-blue)', 82, '#000')); set('--tq-orange-2', mix('var(--tq-orange)', 84, '#000'));
+        set('--tq-orange-soft', mix('var(--tq-orange)', 10, '#fff')); set('--tq-sky', mix('var(--tq-blue)', 10, '#fff')); set('--tq-green-soft', mix('var(--tq-green)', 12, '#fff'));
+        set('--bg', 'var(--tq-bg)'); set('--surface', 'var(--tq-card)'); set('--text', 'var(--tq-ink)'); set('--text-2', 'var(--tq-muted)'); set('--border', 'var(--tq-line)');
+        set('--tq-font', FONTS[dval('font')]); set('--tq-font-head', dval('heading_font') === 'same' ? 'inherit' : FONTS[dval('heading_font')]); set('--tq-head-weight', dval('heading_weight'));
+        set('--tq-r', dval('radius') + 'px'); set('--tq-r-sm', Math.max(2, Math.round(dval('radius') * .66)) + 'px'); set('--tq-btn-r', BTN[dval('button')]); set('--tq-shadow', SHADOW[dval('shadow')]);
+        set('font-family', 'var(--tq-font)'); d.documentElement.style.fontSize = dval('font_size') + 'px';
+        var st = d.getElementById('nx-design-live'); if (!st) { st = d.createElement('style'); st.id = 'nx-design-live'; d.head.appendChild(st); }
+        st.textContent = 'body.sf-tq h1,body.sf-tq h2,body.sf-tq h3,body.sf-tq h4,body.sf-tq h5,body.sf-tq h6{font-family:var(--tq-font-head);font-weight:var(--tq-head-weight)}'
+          + 'body.sf-tq .btn,body.sf-tq [class*=\"btn\"],body.sf-tq .tq-act,body.sf-tq .mk-search button{border-radius:var(--tq-btn-r)}body.sf-tq .mk-card,body.sf-tq .mk-box{box-shadow:var(--tq-shadow)}'
+          + '.sf-container{max-width:' + dval('width') + 'px}';
+        document.getElementById('dz_fs_v').textContent = dval('font_size') + 'px'; document.getElementById('dz_r_v').textContent = dval('radius') + 'px';
+        var warn = [], c1 = ratio(dval('orange'), '#ffffff'), c2 = ratio(dval('ink'), dval('bg')), c3 = ratio(dval('blue'), dval('card')), c4 = ratio(dval('navy'), '#ffffff');
+        if (c1 < 3) warn.push(@json(__('White text on the button colour is hard to read')) + ' (' + c1.toFixed(1) + ':1)');
+        if (c2 < 4.5) warn.push(@json(__('Text on the page background is hard to read')) + ' (' + c2.toFixed(1) + ':1)');
+        if (c3 < 4.5) warn.push(@json(__('Links and prices on cards are hard to read')) + ' (' + c3.toFixed(1) + ':1)');
+        if (c4 < 4.5) warn.push(@json(__('White text on the header strip and footer is hard to read')) + ' (' + c4.toFixed(1) + ':1)');
+        var box = document.getElementById('designContrast');
+        box.className = 'small mt-2 ' + (warn.length ? 'text-danger' : 'text-success');
+        box.innerHTML = warn.length ? '<i class="bi bi-exclamation-triangle-fill me-1"></i>' + warn.join('<br>') : '<i class="bi bi-check-circle-fill me-1"></i>' + @json(__('Contrast looks good (WCAG AA).'));
+        box.querySelectorAll && 0;
+    }
+    function syncHex(k, v) { var h = form.querySelector('[data-design-hex="' + k + '"]'); if (h) h.value = v; }
+    form.querySelectorAll('[data-design-hex]').forEach(function (h) {
+        h.addEventListener('input', function () { if (/^#[0-9a-fA-F]{6}$/.test(h.value)) { form.querySelector('[data-design="' + h.dataset.designHex + '"]').value = h.value; applyDesign(); } });
+    });
+    form.querySelectorAll('input[type=color][data-design]').forEach(function (c) { c.addEventListener('input', function () { syncHex(c.dataset.design, c.value); }); });
+    document.querySelectorAll('[data-preset]').forEach(function (b) {
+        b.addEventListener('click', function () {
+            var p = JSON.parse(b.dataset.preset);
+            Object.keys(p).forEach(function (k) { var el = form.querySelector('[data-design="' + k + '"]'); if (el) { el.value = p[k]; syncHex(k, p[k]); } });
+            applyDesign();
+        });
+    });
+    document.getElementById('designResetBtn').addEventListener('click', function () {
+        form.querySelectorAll('[data-design]').forEach(function (el) { if (el.dataset['default']) { el.value = el.dataset['default']; syncHex(el.dataset.design, el.value); } });
+        var dflt = { font: 'inter', heading_font: 'same', heading_weight: '700', font_size: '16', radius: '12', button: 'rounded', shadow: 'soft', width: '1280' };
+        Object.keys(dflt).forEach(function (k) { var el = form.querySelector('[data-design="' + k + '"]'); if (el) el.value = dflt[k]; });
+        document.getElementById('dz_admin').checked = true; document.getElementById('designReset').value = '1';
+        applyDesign();
+    });
+    form.addEventListener('input', function (e) { if (e.target.matches('[data-design],[data-design-hex]')) { document.getElementById('designReset').value = '0'; applyDesign(); } });
+    form.addEventListener('change', function (e) { if (e.target.matches('[data-design]')) applyDesign(); });
+    frame.addEventListener('load', applyDesign);
     form.addEventListener('input', apply); form.addEventListener('change', apply); frame.addEventListener('load', apply);
     document.querySelectorAll('[data-w]').forEach(function (b) {
         b.addEventListener('click', function () {

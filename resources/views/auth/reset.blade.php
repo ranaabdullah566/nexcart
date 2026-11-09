@@ -20,7 +20,7 @@
                 </div>
                 <div class="mb-2">
                     <label class="form-label" for="rpPass">{{ __('New password') }} <span class="text-danger">*</span></label>
-                    <div class="mk-field"><i class="bi bi-lock"></i><input id="rpPass" type="password" name="password" required minlength="10" autofocus autocomplete="new-password" data-strength="#pwRules" class="form-control form-control-lg @error('password') is-invalid @enderror"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div>
+                    <div class="mk-field"><i class="bi bi-lock"></i><input id="rpPass" type="password" name="password" required minlength="10" maxlength="200" autofocus autocomplete="new-password" data-strength="#pwRules" class="form-control form-control-lg @error('password') is-invalid @enderror"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div>
                     @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
                 <ul class="mk-rules" id="pwRules" aria-live="polite">
@@ -30,7 +30,7 @@
                 </ul>
                 <div class="mb-3">
                     <label class="form-label" for="rpPass2">{{ __('Confirm password') }} <span class="text-danger">*</span></label>
-                    <div class="mk-field"><i class="bi bi-shield-lock"></i><input id="rpPass2" type="password" name="password_confirmation" required autocomplete="new-password" class="form-control form-control-lg"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div>
+                    <div class="mk-field"><i class="bi bi-shield-lock"></i><input id="rpPass2" type="password" name="password_confirmation" required maxlength="200" autocomplete="new-password" class="form-control form-control-lg"><button type="button" class="mk-eye" data-pw-toggle aria-label="{{ __('Show password') }}"><i class="bi bi-eye"></i></button></div>
                 </div>
                 <x-honeypot />
                 <button class="btn btn-primary btn-lg w-100"><i class="bi bi-check2 me-1"></i> {{ __('Change password') }}</button>
