@@ -14,11 +14,11 @@
     @csrf @method('PUT')
     <fieldset {{ $fieldset }}>
     <ul class="nav nav-pills mb-3 gap-2" role="tablist">
-        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-store" type="button"><i class="bi bi-shop me-1"></i> {{ __('Store') }}</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-look" type="button"><i class="bi bi-palette-fill me-1"></i> {{ __('Appearance') }}</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-growth" type="button"><i class="bi bi-rocket-takeoff me-1"></i> {{ __('Growth') }}</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pay" type="button"><i class="bi bi-wallet2 me-1"></i> {{ __('Payments') }}</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-modules" type="button"><i class="bi bi-puzzle-fill me-1"></i> {{ __('Modules') }}</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-store" type="button"><i class="bi bi-shop me-1"></i> {{ __('Store') }}</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-look" type="button"><i class="bi bi-palette-fill me-1"></i> {{ __('Appearance') }}</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-growth" type="button"><i class="bi bi-rocket-takeoff me-1"></i> {{ __('Growth') }}</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pay" type="button"><i class="bi bi-wallet2 me-1"></i> {{ __('Payments') }}</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-modules" type="button"><i class="bi bi-puzzle-fill me-1"></i> {{ __('Modules') }}</button></li>
     </ul>
 
     <div class="tab-content">

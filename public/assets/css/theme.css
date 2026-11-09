@@ -60,8 +60,8 @@
     --orb-b: rgba(139, 92, 246, .16);
     --acc-1: #0891b2;
     --acc-2: #7c3aed;
-    --ok: #059669;
-    --warn: #d97706;
+    --ok: #047857;
+    --warn: #b45309;
     --bad: #e11d48;
     color-scheme: light;
 }
@@ -1040,3 +1040,7 @@ div.dataTables_wrapper div.dataTables_paginate { display: flex; justify-content:
 /* long slugs / URLs and wide badges must wrap instead of widening the page on phones */
 .dtr-details .figure, td .figure { overflow-wrap: anywhere; }
 .d-flex.flex-wrap > .badge { max-width: 100%; white-space: normal; text-align: start; }
+[data-theme="light"] body:not(.sf) code { color: #a82466; }
+[data-theme="light"] body:not(.sf) .text-muted { color: #566478 !important; }
+.list-group-item.opacity-75 { opacity: 1 !important; }
+.list-group-item.opacity-75 .text-muted, .list-group-item.opacity-75 { color: var(--text-2); }

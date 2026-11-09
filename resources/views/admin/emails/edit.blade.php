@@ -9,7 +9,7 @@
     </div></div>
     @foreach ($fields as $key => [$label, $placeholders])
         <div class="card mb-3"><div class="card-body">
-            <h3 class="mb-1 h6">{{ __($label) }}</h3>
+            <h2 class="mb-1 h6">{{ __($label) }}</h2>
             @if ($placeholders)<div class="small text-muted mb-3">{{ __('You can use') }}: <code>{{ implode('  ', $placeholders) }}</code></div>@endif
             <div class="row g-2">
                 @foreach ($locales as $code => $m)

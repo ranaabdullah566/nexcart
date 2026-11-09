@@ -12,7 +12,7 @@
             <div class="form-text">{{ __('Comma or line separated. Leave empty for the “all other cities” zone.') }}</div></div>
     </div>
 
-    <h3 class="mt-4 mb-2 h6">{{ __('Delivery options') }}</h3>
+    <h2 class="mt-4 mb-2 h6">{{ __('Delivery options') }}</h2>
     @error('rates')<div class="text-danger small mb-2">{{ $message }}</div>@enderror
     <div id="rateRows" class="d-grid gap-2">
         @foreach ($rows as $i => $r)

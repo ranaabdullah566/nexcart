@@ -12,7 +12,7 @@
     @php $active = request('tab', array_key_first($groups)); @endphp
     <ul class="nav nav-pills mb-3 gap-2 flex-wrap" role="tablist">
         @foreach ($groups as $g => [$label, $icon])
-            <li class="nav-item" role="presentation"><button type="button" class="nav-link {{ $active === $g ? 'active' : '' }}" data-bs-toggle="pill" data-bs-target="#sfg-{{ $g }}" data-tab-key="{{ $g }}"><i class="bi bi-{{ $icon }} me-1"></i>{{ __($label) }}</button></li>
+            <li class="nav-item" role="presentation"><button role="tab" type="button" class="nav-link {{ $active === $g ? 'active' : '' }}" data-bs-toggle="pill" data-bs-target="#sfg-{{ $g }}" data-tab-key="{{ $g }}"><i class="bi bi-{{ $icon }} me-1"></i>{{ __($label) }}</button></li>
         @endforeach
     </ul>
     <div class="tab-content">

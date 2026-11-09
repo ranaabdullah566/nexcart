@@ -47,9 +47,9 @@
         @forelse ($categories as $name => $amt)
             <div class="mb-2"><div class="d-flex justify-content-between small"><span>{{ $name }}</span><b class="figure">{{ money($amt) }}</b></div><div class="progress" style="height:6px;background:var(--surface-2)"><div class="progress-bar" style="width:{{ $kpi['revenue'] > 0 ? round($amt / max(1, array_sum($categories)) * 100) : 0 }}%;background:var(--grad)"></div></div></div>
         @empty<div class="text-muted small">{{ __('No sales yet.') }}</div>@endforelse
-        <h3 class="mt-4 mb-2 text-uppercase small text-muted h6">{{ __('Payment methods') }}</h3>
+        <h2 class="mt-4 mb-2 text-uppercase small text-muted h6">{{ __('Payment methods') }}</h2>
         @foreach ($payments as $m => $p)<div class="d-flex justify-content-between small py-1"><span>{{ ['cod' => __('Cash on delivery'), 'bank' => __('Bank transfer'), 'stripe' => __('Card (Stripe)')][$m] ?? $m }} · {{ $p['orders'] }}</span><b class="figure">{{ money($p['total']) }}</b></div>@endforeach
-        @if ($coupons)<h3 class="mt-4 mb-2 text-uppercase small text-muted h6">{{ __('Coupons used') }}</h3>@foreach ($coupons as $code => $c)<div class="d-flex justify-content-between small py-1"><span class="figure">{{ $code }} · {{ $c['orders'] }}</span><b class="figure text-success">−{{ money($c['discount']) }}</b></div>@endforeach @endif
+        @if ($coupons)<h2 class="mt-4 mb-2 text-uppercase small text-muted h6">{{ __('Coupons used') }}</h2>@foreach ($coupons as $code => $c)<div class="d-flex justify-content-between small py-1"><span class="figure">{{ $code }} · {{ $c['orders'] }}</span><b class="figure text-success">−{{ money($c['discount']) }}</b></div>@endforeach @endif
     </div></div></div>
 </div>
 

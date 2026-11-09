@@ -13,13 +13,13 @@
     @csrf @if ($editing) @method('PUT') @endif
 
     <ul class="nav nav-pills mb-3 gap-2 flex-wrap" role="tablist">
-        <li class="nav-item" role="presentation"><button class="nav-link active" type="button" data-bs-toggle="pill" data-bs-target="#pt-general"><i class="bi bi-card-text me-1"></i> {{ __('General') }}</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-price"><i class="bi bi-cash-coin me-1"></i> {{ __('Pricing & stock') }}</button></li>
-        <li class="nav-item" id="tabVariantsLi"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-variants"><i class="bi bi-layers-fill me-1"></i> {{ __('Variants') }}</button></li>
-        @if ($attributes->isNotEmpty())<li class="nav-item" role="presentation"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-specs"><i class="bi bi-sliders2 me-1"></i> {{ __('Details') }}</button></li>@endif
-        <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-images"><i class="bi bi-images me-1"></i> {{ __('Images') }}</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-seo"><i class="bi bi-search me-1"></i> SEO</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-tr"><i class="bi bi-translate me-1"></i> {{ __('Translations') }}</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link active" type="button" data-bs-toggle="pill" data-bs-target="#pt-general"><i class="bi bi-card-text me-1"></i> {{ __('General') }}</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-price"><i class="bi bi-cash-coin me-1"></i> {{ __('Pricing & stock') }}</button></li>
+        <li class="nav-item" id="tabVariantsLi" role="presentation"><button role="tab" class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-variants"><i class="bi bi-layers-fill me-1"></i> {{ __('Variants') }}</button></li>
+        @if ($attributes->isNotEmpty())<li class="nav-item" role="presentation"><button role="tab" class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-specs"><i class="bi bi-sliders2 me-1"></i> {{ __('Details') }}</button></li>@endif
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-images"><i class="bi bi-images me-1"></i> {{ __('Images') }}</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-seo"><i class="bi bi-search me-1"></i> SEO</button></li>
+        <li class="nav-item" role="presentation"><button role="tab" class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#pt-tr"><i class="bi bi-translate me-1"></i> {{ __('Translations') }}</button></li>
     </ul>
 
     <div class="tab-content">

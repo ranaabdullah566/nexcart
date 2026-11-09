@@ -39,3 +39,28 @@ Plus Urdu (RTL) and Roman Urdu spot checks: 7 pages × 2 themes × 2 viewports �
 - Real devices and real browsers other than Chromium; screen-reader listening tests.
 - Admin panel pages (only functionally tested by the PHPUnit suite).
 - Stripe / reCAPTCHA / Google sign-in flows (need real keys).
+
+---
+
+# Admin panel QA
+
+Same method as above: Playwright + axe-core on **76 admin pages** (every list, create and edit page, the order and prescription pages, the 7 report tabs, settings, storefront, theme, system, trash, server logs) × dark / light × desktop / tablet / phone = **456 page loads**, signed in as the owner, followed by interactive and permission checks.
+
+| Check | Before fixes | After fixes |
+|---|---|---|
+| Pages that failed to load (non-200) | 0 | 0 |
+| JavaScript errors | 0 | 0 |
+| Failed requests | 3 (aborted by navigation) | 0 |
+| Colour contrast (light theme) | 154 | 0 on our pages |
+| Heading structure (no `h1`, skipped levels) | 66 | 0 |
+| Tab lists with invalid ARIA (product, settings, storefront) | 12 + 12 | 0 (tabs still switch panes) |
+| Icon buttons without a name (menu order, activity filter, theme preview) | 9 | 0 |
+| Duplicate navigation landmark | 6 | 0 |
+| Phone overflow (long blog slug, wide badges) | 2 pages | 0 |
+
+**Interactive checks (dark/light × desktop/phone):** "New" opens the popup; an empty submit shows inline errors; a valid submit closes the popup and lists the record; delete asks for confirmation and can be cancelled; a confirmed delete removes the row; theme toggle; the phone menu opens the sidebar; table search filters rows; the pharmacist approves a prescription; an order moves to its next status; settings save round-trips. No JavaScript errors.
+
+**Permissions:** pharmacist is refused settings, staff, system and product creation (403) and can open prescriptions and orders; rider is refused settings and prescriptions and can open deliveries (riders do see the order list by design); guests are sent to sign in; a shopper account is refused at `/admin` (403).
+
+**Left as is — third-party:** the *Server logs* page is the Log Viewer package (Tailwind): it has 3 unnamed buttons, 1 unnamed link, a zoom-disabling viewport tag and one low-contrast label. They would need to be fixed upstream.
+

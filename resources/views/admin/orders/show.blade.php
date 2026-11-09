@@ -20,7 +20,7 @@
 <div class="row g-3">
     <div class="col-lg-7">
         <div class="card mb-3"><div class="card-body">
-            <h3 class="text-uppercase text-muted small h6">{{ __('Items') }}</h3>
+            <h2 class="text-uppercase text-muted small h6">{{ __('Items') }}</h2>
             @foreach ($order->items as $i)
                 <div class="d-flex justify-content-between gap-3 py-2 border-bottom" style="border-color:var(--border) !important">
                     <div><b>{{ $i->qty }} × {{ $i->name }}</b>@if ($i->variant_name) <span class="text-muted">· {{ $i->variant_name }}</span>@endif
@@ -38,7 +38,7 @@
         </div></div>
 
         <div class="card"><div class="card-body">
-            <h3 class="text-uppercase text-muted small h6">{{ __('History') }}</h3>
+            <h2 class="text-uppercase text-muted small h6">{{ __('History') }}</h2>
             @foreach ($order->events->reverse() as $e)
                 <div class="d-flex gap-2 py-1 small"><span class="text-muted figure text-nowrap">{{ local_time($e->created_at, 'd M H:i') }}</span>
                     <span><b>{{ $e->type === 'placed' ? __('Order placed') : ($e->type === 'payment' ? __('Payment').': '.__(ucfirst((string) $e->status)) : __(str_replace('_', ' ', ucfirst((string) $e->status)))) }}</b>
@@ -50,7 +50,7 @@
     <div class="col-lg-5">
         @if ($next && auth()->user()->can('orders.update'))
             <div class="card mb-3"><div class="card-body">
-                <h3 class="text-uppercase text-muted small h6">{{ __('Update status') }}</h3>
+                <h2 class="text-uppercase text-muted small h6">{{ __('Update status') }}</h2>
                 <form method="POST" action="{{ route('admin.orders.status', $order) }}">
                     @csrf
                     <select name="status" class="form-select mb-2">@foreach ($next as $s)<option value="{{ $s }}">{{ __(str_replace('_', ' ', ucfirst($s))) }}</option>@endforeach</select>
@@ -62,7 +62,7 @@
 
         @if ($riders->isNotEmpty() && ! $order->is_pickup && $order->isOpen() && auth()->user()->can('orders.update'))
             <div class="card mb-3"><div class="card-body">
-                <h3 class="text-uppercase text-muted small h6"><i class="bi bi-bicycle me-1"></i>{{ __('Rider') }}</h3>
+                <h2 class="text-uppercase text-muted small h6"><i class="bi bi-bicycle me-1"></i>{{ __('Rider') }}</h2>
                 <form method="POST" action="{{ route('admin.orders.rider', $order) }}" class="d-flex gap-2">
                     @csrf
                     <select name="rider_id" class="form-select"><option value="">— {{ __('Unassigned') }} —</option>@foreach ($riders as $r)<option value="{{ $r->id }}" @selected($order->rider_id === $r->id)>{{ $r->name }}</option>@endforeach</select>
@@ -70,12 +70,12 @@
                 </form>
             </div></div>
         @elseif ($order->rider)
-            <div class="card mb-3"><div class="card-body"><h3 class="text-uppercase text-muted small h6">{{ __('Rider') }}</h3><b>{{ $order->rider->name }}</b></div></div>
+            <div class="card mb-3"><div class="card-body"><h2 class="text-uppercase text-muted small h6">{{ __('Rider') }}</h2><b>{{ $order->rider->name }}</b></div></div>
         @endif
 
         @if ($order->payment_status === 'unpaid' && $order->isOpen() && auth()->user()->can('orders.update'))
             <div class="card mb-3"><div class="card-body">
-                <h3 class="text-uppercase text-muted small h6">{{ __('Payment received?') }}</h3>
+                <h2 class="text-uppercase text-muted small h6">{{ __('Payment received?') }}</h2>
                 <form method="POST" action="{{ route('admin.orders.paid', $order) }}" class="d-flex gap-2">
                     @csrf
                     <input name="reference" maxlength="120" class="form-control" placeholder="{{ __('Reference (optional)') }}">
@@ -85,7 +85,7 @@
         @endif
 
         <div class="card mb-3"><div class="card-body">
-            <h3 class="text-uppercase text-muted small h6">{{ __('Customer') }}</h3>
+            <h2 class="text-uppercase text-muted small h6">{{ __('Customer') }}</h2>
             <div class="fw-semibold">{{ $order->name }} @if ($order->user)<span class="badge text-bg-secondary">{{ __('Account') }}</span>@endif</div>
             <div class="text-muted">{{ $order->phone }}<br>{{ $order->email }}</div>
             @php($digits = preg_replace('/\D/', '', $order->phone))
@@ -97,8 +97,8 @@
 
         @if ($order->requires_prescription)
             <div class="card"><div class="card-body">
-                <h3 class="text-uppercase text-muted small h6"><i class="bi bi-prescription2 me-1"></i>{{ __('Prescription') }}
-                    <span class="badge rounded-pill text-bg-{{ ['approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning'][$order->prescription_status] ?? 'secondary' }} ms-1">{{ __(ucfirst((string) $order->prescription_status)) }}</span></h3>
+                <h2 class="text-uppercase text-muted small h6"><i class="bi bi-prescription2 me-1"></i>{{ __('Prescription') }}
+                    <span class="badge rounded-pill text-bg-{{ ['approved' => 'success', 'rejected' => 'danger', 'pending' => 'warning'][$order->prescription_status] ?? 'secondary' }} ms-1">{{ __(ucfirst((string) $order->prescription_status)) }}</span></h2>
                 @if ($order->prescription_note)<div class="small mb-2">{{ $order->prescription_note }}</div>@endif
                 @if (\App\Support\BusinessProfile::hasModule('prescriptions') && auth()->user()->can('prescriptions.view'))<a href="{{ route('admin.prescriptions.show', $order) }}" class="btn btn-sm btn-outline-secondary mb-2"><i class="bi bi-clipboard2-check me-1"></i>{{ __('Review') }}</a>@endif
                 @forelse ($order->getMedia('prescriptions') as $m)
