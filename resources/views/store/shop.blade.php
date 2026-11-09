@@ -14,7 +14,7 @@
 @section('description', $current?->meta_description ?: ($current?->trans('description') ?? __('Browse all products')))
 
 @section('content')
-<div class="sf-container sf-container-wide">
+<div class="sf-container">
     <nav class="sf-crumbs mk-crumbs" aria-label="Breadcrumb">
         <a href="{{ route('store.home') }}">{{ __('Home') }}</a><span>›</span>
         @if ($current)<a href="{{ route('store.shop') }}">{{ __('Shop') }}</a>@if ($current->parent)<span>›</span><a href="{{ route('store.category', $current->parent->slug) }}">{{ $current->parent->trans('name') }}</a>@endif<span>›</span><span>{{ $current->trans('name') }}</span>

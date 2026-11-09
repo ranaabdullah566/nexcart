@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Product cards — one size everywhere
+- Every card now has the same slots with fixed heights (image 4:3, category line, two-line name, composition, chips, rating, seller, price + old price, button, quick icons); empty slots are kept as invisible placeholders, so cards on home, shop, category, saved, product-page rails and the quick lists are identical in size and price / button sit on the same line. Long text is trimmed with an ellipsis instead of growing the card. A shop-page bug at phone width (card columns squeezed to 41px by a leftover wide-layout rule) is fixed.
+
 ### Fixes from a full-site check
 - **Contrast (WCAG AA):** the orange buttons / category labels (4.27:1), green flags, sale badges, struck-through prices, cancelled-order status, WhatsApp tile, mobile bottom bar and admin delta chips were just under 4.5:1. Default orange is now `#bb4f09`, green `#28803a`, sale `#c9401a`; the mobile bottom bar is solid white. An automated axe-core pass over 30 storefront, account and admin pages (desktop + phone) now reports no violations.
 - **Mobile account sign-out:** the account sidebar's Sign out was a blank box on phones while the real button (Profile page) was hidden by a CSS rule that never applied. Fixed.

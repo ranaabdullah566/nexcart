@@ -11,17 +11,17 @@
         @if ($out)<span class="mk-flag out">{{ __('Out of stock') }}</span>@elseif ($p->requires_prescription)<span class="mk-flag rx"><i class="bi bi-prescription2"></i> Rx</span>@else<span class="mk-flag ok"><i class="bi bi-patch-check-fill"></i> {{ __('Genuine') }}</span>@endif
     </div>
     <div class="mk-card-body">
-        @if ($p->category && sf('cards.show_category'))<div class="mk-card-cat">{{ $p->category->trans('name') }}</div>@endif
+        <div class="mk-card-cat">@if ($p->category && sf('cards.show_category')){{ $p->category->trans('name') }}@else&nbsp;@endif</div>
         <a href="{{ route('store.product', $p->slug) }}" class="mk-card-name">{{ $p->trans('name') }}</a>
         @php $salt = trim((string) ($p->specs['composition'] ?? '')); $form = trim((string) ($p->specs['dosage_form'] ?? '')); $strength = trim((string) ($p->specs['strength'] ?? '')); @endphp
-        @if ($salt !== '' && $salt !== '—')<div class="fx-salt" title="{{ $salt }}"><i class="bi bi-eyedropper"></i><span>{{ \Illuminate\Support\Str::limit($salt, 38) }}</span></div>@endif
-        @if (($form !== '' && $form !== 'Other') || ($strength !== '' && $strength !== '—') || $p->isVariable())<div class="fx-chips">@if ($form !== '' && $form !== 'Other')<span>{{ $form }}</span>@endif @if ($strength !== '' && $strength !== '—')<span>{{ $strength }}</span>@endif @if ($p->isVariable())<span class="alt">{{ __('Pack sizes') }}</span>@endif</div>@endif
-        @if (sf('cards.show_rating') && ($p->approved_reviews_count ?? 0) > 0)<div class="mk-card-rate"><span class="sf-stars" aria-hidden="true">@include('store._stars', ['value' => (float) $p->approved_reviews_avg_rating])</span><span class="figure">{{ number_format((float) $p->approved_reviews_avg_rating, 1) }} ({{ $p->approved_reviews_count }})</span></div>@endif
+        @if ($salt !== '' && $salt !== '—')<div class="fx-salt" title="{{ $salt }}"><i class="bi bi-eyedropper"></i><span>{{ \Illuminate\Support\Str::limit($salt, 38) }}</span></div>@else<div class="fx-salt is-empty" aria-hidden="true"></div>@endif
+        @if (($form !== '' && $form !== 'Other') || ($strength !== '' && $strength !== '—') || $p->isVariable())<div class="fx-chips">@if ($form !== '' && $form !== 'Other')<span>{{ $form }}</span>@endif @if ($strength !== '' && $strength !== '—')<span>{{ $strength }}</span>@endif @if ($p->isVariable())<span class="alt">{{ __('Pack sizes') }}</span>@endif</div>@else<div class="fx-chips is-empty" aria-hidden="true"></div>@endif
+        @if (sf('cards.show_rating') && ($p->approved_reviews_count ?? 0) > 0)<div class="mk-card-rate"><span class="sf-stars" aria-hidden="true">@include('store._stars', ['value' => (float) $p->approved_reviews_avg_rating])</span><span class="figure">{{ number_format((float) $p->approved_reviews_avg_rating, 1) }} ({{ $p->approved_reviews_count }})</span></div>@else<div class="mk-card-rate is-empty" aria-hidden="true"></div>@endif
         <div class="tq-seller"><i class="bi bi-check2"></i> {{ __('Genuine product') }}@if ($p->brand) · {{ $p->brand->name }}@endif</div>
         <div class="mk-price">
             @if ($p->isVariable())<small>{{ __('from') }}</small>@endif
             <b>{{ money($p->displayPrice()) }}</b>
-            @if ($off)<s>{{ money($p->compare_price) }}</s>@endif
+            <s class="@if (! $off) is-empty @endif" @if (! $off) aria-hidden="true" @endif>@if ($off){{ money($p->compare_price) }}@else&nbsp;@endif</s>
         </div>
     </div>
     <div class="mk-card-foot">
