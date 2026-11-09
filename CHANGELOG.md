@@ -4,6 +4,10 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Fixes from a full-site check
+- **Contrast (WCAG AA):** the orange buttons / category labels (4.27:1), green flags, sale badges, struck-through prices, cancelled-order status, WhatsApp tile, mobile bottom bar and admin delta chips were just under 4.5:1. Default orange is now `#bb4f09`, green `#28803a`, sale `#c9401a`; the mobile bottom bar is solid white. An automated axe-core pass over 30 storefront, account and admin pages (desktop + phone) now reports no violations.
+- **Mobile account sign-out:** the account sidebar's Sign out was a blank box on phones while the real button (Profile page) was hidden by a CSS rule that never applied. Fixed.
+
 ### Reports
 - New **Pharmacy (Rx)** report: prescription orders and their share, prescription revenue, approval rate, review waiting time, prescription vs other revenue by day, review results, top prescription medicines, reviews per pharmacist and the call-back requests. New permission `reports.pharmacy` (given by migration to every role that can already see reports).
 - One period picker for every report (Today, Yesterday, 7 / 30 / 90 days, This month, Last month, This year, 1 year, Custom) with quick chips, plus **payment-method and city filters** on all order-based reports.

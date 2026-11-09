@@ -13,9 +13,9 @@ class Design
     public const COLORS = [
         'navy' => ['Header strip, footer & admin sidebar', '#0c3b68', 'The dark brand colour.'],
         'blue' => ['Links & prices', '#1b74bb', 'Links, prices and highlights.'],
-        'orange' => ['Buttons (calls to action)', '#c9590b', 'Add to cart, Search, Checkout and other main buttons.'],
-        'deal' => ['Sale / discount', '#d9481c', 'Discount badges and saved items.'],
-        'green' => ['Success / in stock', '#2f8a3b', 'In-stock and success messages.'],
+        'orange' => ['Buttons (calls to action)', '#bb4f09', 'Add to cart, Search, Checkout and other main buttons.'],
+        'deal' => ['Sale / discount', '#c9401a', 'Discount badges and saved items.'],
+        'green' => ['Success / in stock', '#28803a', 'In-stock and success messages.'],
         'bg' => ['Page background', '#f5f8fc', ''],
         'card' => ['Cards & header', '#ffffff', ''],
         'ink' => ['Text', '#2b3136', ''],
@@ -39,7 +39,7 @@ class Design
     public const WIDTHS = ['1140' => 'Narrow (1140px)', '1280' => 'Standard (1280px)', '1440' => 'Wide (1440px)'];
 
     public const PRESETS = [
-        'tuqqa' => ['Navy & orange (default)', ['navy' => '#0c3b68', 'blue' => '#1b74bb', 'orange' => '#c9590b', 'deal' => '#d9481c', 'green' => '#2f8a3b', 'bg' => '#f5f8fc']],
+        'tuqqa' => ['Navy & orange (default)', ['navy' => '#0c3b68', 'blue' => '#1b74bb', 'orange' => '#bb4f09', 'deal' => '#c9401a', 'green' => '#28803a', 'bg' => '#f5f8fc']],
         'emerald' => ['Emerald pharmacy', ['navy' => '#064e3b', 'blue' => '#0f766e', 'orange' => '#b45309', 'deal' => '#be123c', 'green' => '#15803d', 'bg' => '#f3faf7']],
         'royal' => ['Royal purple', ['navy' => '#2e1065', 'blue' => '#6d28d9', 'orange' => '#be185d', 'deal' => '#c2410c', 'green' => '#15803d', 'bg' => '#f7f5fc']],
         'crimson' => ['Crimson care', ['navy' => '#4a0d1c', 'blue' => '#b42343', 'orange' => '#0f6b8f', 'deal' => '#c2410c', 'green' => '#15803d', 'bg' => '#fbf6f7']],

@@ -150,7 +150,9 @@ class CalculationTest extends TestCase
         Order::forceCreate(['number' => 'T-1', 'public_token' => 'x', 'status' => 'pending', 'payment_status' => 'unpaid', 'payment_method' => 'cod', 'name' => 'A', 'email' => 'a@x', 'phone' => '1', 'shipping_method' => 's', 'subtotal' => 10, 'discount' => 0, 'shipping_cost' => 0, 'tax' => 0, 'total' => 10, 'tax_rate' => 0, 'currency' => 'PKR', 'placed_at' => $placed->copy()->utc()]);
         $r = $this->actingAs($owner)->get('/admin');
         $r->assertOk();
-        $this->assertSame(1, $r->viewData('sales')['today']);
-        $this->assertSame(10.0, (float) end($r->viewData('chart')['revenue']));
+        $sales = $r->viewData('sales');
+        $this->assertSame(1, $sales['kpi']['orders_today']);
+        $this->assertSame(10.0, (float) $sales['kpi']['revenue_today']);
+        $this->assertSame(10.0, (float) end($sales['series']['revenue']));   // the last bar is today, on the store's clock
     }
 }

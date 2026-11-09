@@ -36,11 +36,11 @@
 @if ($canSales)
 <div class="dz-kpis">
     <div class="dz-kpi" style="--k:var(--tq-blue, #1b74bb)"><div class="l">{{ __('Revenue today') }}<i class="bi bi-cash-coin"></i></div><div class="v">{{ money($k['revenue_today']) }}</div><div class="s">{!! $delta($k['revenue_today_delta']) !!} {{ __('vs yesterday') }}</div></div>
-    <div class="dz-kpi" style="--k:var(--tq-orange, #c9590b)"><div class="l">{{ __('Orders today') }}<i class="bi bi-receipt-cutoff"></i></div><div class="v">{{ $k['orders_today'] }}</div><div class="s">{!! $delta($k['orders_today_delta']) !!} {{ __('vs yesterday') }}</div></div>
-    <div class="dz-kpi" style="--k:var(--tq-green, #2f8a3b)"><div class="l">{{ __('Revenue (30 days)') }}<i class="bi bi-graph-up-arrow"></i></div><div class="v">{{ money($k['revenue_30']) }}</div><div class="s">{!! $delta($k['revenue_30_delta']) !!} {{ __('vs previous 30 days') }}</div></div>
+    <div class="dz-kpi" style="--k:var(--tq-orange, #bb4f09)"><div class="l">{{ __('Orders today') }}<i class="bi bi-receipt-cutoff"></i></div><div class="v">{{ $k['orders_today'] }}</div><div class="s">{!! $delta($k['orders_today_delta']) !!} {{ __('vs yesterday') }}</div></div>
+    <div class="dz-kpi" style="--k:var(--tq-green, #28803a)"><div class="l">{{ __('Revenue (30 days)') }}<i class="bi bi-graph-up-arrow"></i></div><div class="v">{{ money($k['revenue_30']) }}</div><div class="s">{!! $delta($k['revenue_30_delta']) !!} {{ __('vs previous 30 days') }}</div></div>
     <div class="dz-kpi" style="--k:#7c3aed"><div class="l">{{ __('Orders (30 days)') }}<i class="bi bi-bag-check"></i></div><div class="v">{{ $k['orders_30'] }}</div><div class="s">{!! $delta($k['orders_30_delta']) !!} {{ __('vs previous 30 days') }}</div></div>
     <div class="dz-kpi" style="--k:#0e7490"><div class="l">{{ __('Average order') }}<i class="bi bi-calculator"></i></div><div class="v">{{ money($k['avg']) }}</div><div class="s">{!! $delta($k['avg_delta']) !!} {{ __('Last 30 days') }}</div></div>
-    <div class="dz-kpi" style="--k:var(--tq-deal, #d9481c)"><div class="l">{{ __('Open orders') }}<i class="bi bi-hourglass-split"></i></div><div class="v">{{ $k['open'] }}</div><div class="s">{{ trans_choice(':n unpaid|:n unpaid', $k['unpaid'], ['n' => $k['unpaid']]) }}</div></div>
+    <div class="dz-kpi" style="--k:var(--tq-deal, #c9401a)"><div class="l">{{ __('Open orders') }}<i class="bi bi-hourglass-split"></i></div><div class="v">{{ $k['open'] }}</div><div class="s">{{ trans_choice(':n unpaid|:n unpaid', $k['unpaid'], ['n' => $k['unpaid']]) }}</div></div>
     <div class="dz-kpi" style="--k:#be123c"><div class="l">{{ __('Cancel rate') }}<i class="bi bi-x-octagon"></i></div><div class="v">{{ $k['cancel_rate'] }}%</div><div class="s">{{ __('Cancelled or refunded, 30 days') }}</div></div>
     <div class="dz-kpi" style="--k:#15803d"><div class="l">{{ __('Repeat buyers') }}<i class="bi bi-arrow-repeat"></i></div><div class="v">{{ $k['repeat_buyers'] }}<small class="fs-6 text-muted fw-normal"> / {{ $k['buyers'] }}</small></div><div class="s">{{ __('Signed-in buyers who ordered before') }}</div></div>
 </div>
@@ -138,7 +138,7 @@ $(function () {
     var charts = {}, range = 14, T = { revenue: @json(__('Revenue')), orders: @json(__('Orders')), units: @json(__('Units')) };
     var statusLabels = { pending: @json(__('Pending')), confirmed: @json(__('Confirmed')), preparing: @json(__('Preparing')), out_for_delivery: @json(__('Out for delivery')), ready: @json(__('Ready')), completed: @json(__('Completed')), cancelled: @json(__('Cancelled')), refunded: @json(__('Refunded')) };
     var days = [@json(__('Mon')), @json(__('Tue')), @json(__('Wed')), @json(__('Thu')), @json(__('Fri')), @json(__('Sat')), @json(__('Sun'))];
-    function pal() { return [css('--tq-blue', '#1b74bb'), css('--tq-orange', '#c9590b'), css('--tq-green', '#2f8a3b'), '#7c3aed', '#0e7490', css('--tq-deal', '#d9481c'), '#64748b', '#be123c']; }
+    function pal() { return [css('--tq-blue', '#1b74bb'), css('--tq-orange', '#bb4f09'), css('--tq-green', '#28803a'), '#7c3aed', '#0e7490', css('--tq-deal', '#c9401a'), '#64748b', '#be123c']; }
     function base() { return { maintainAspectRatio: false, animation: { duration: 500 }, plugins: { legend: { display: false }, tooltip: { padding: 10, cornerRadius: 8 } } }; }
     function axes(extra) { var g = css('--border', '#dde6f0'), t = css('--text-2', '#5d646b'); return Object.assign({ x: { grid: { display: false }, ticks: { color: t, maxRotation: 0, autoSkip: true } }, y: { beginAtZero: true, grid: { color: g }, ticks: { color: t, precision: 0 } } }, extra || {}); }
     function mk(id, cfg) { var el = document.getElementById(id); if (!el) return; if (charts[id]) charts[id].destroy(); charts[id] = new Chart(el, cfg); }
