@@ -75,7 +75,14 @@ class CheckoutController extends Controller
 
     public function place(Request $request): RedirectResponse
     {
+        // Shopify-style form: first + last name fields become the one stored name
+        if ($request->filled('first_name') || $request->filled('last_name')) {
+            $request->merge(['name' => trim($request->input('first_name', '').' '.$request->input('last_name', ''))]);
+        }
+
         $data = $request->validate([
+            'first_name' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:60'], 'last_name' => ['nullable', new \App\Rules\NoMarkup, 'string', 'max:60'],
+            'news' => ['nullable', 'boolean'], 'country' => ['nullable', 'string', 'max:60'],
             'g-recaptcha-response' => Recaptcha::rules(),
             'name' => ['required', new \App\Rules\NoMarkup, 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190'],
@@ -94,7 +101,10 @@ class CheckoutController extends Controller
             'prescription.*' => ['file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:5120'],
         ]);
 
-        $order = $this->checkout->place($data, $request->user(), $request->file('prescription', []));
+        $order = $this->checkout->place(collect($data)->except(['first_name', 'last_name', 'news', 'country'])->all(), $request->user(), $request->file('prescription', []));
+        if (! empty($data['news'])) {
+            \App\Models\Subscriber::signUp($data['email']);   // "Email me with news and offers"
+        }
         session()->forget('coupon');
 
         $this->notify($order);
@@ -180,6 +190,7 @@ class CheckoutController extends Controller
             'shipping' => $q['rate'] ? ($q['shipping'] > 0 ? money($q['shipping']) : __('Free')) : null,
             'tax' => $q['tax'] > 0 ? money($q['tax']) : null,
             'tax_inclusive' => $q['tax_inclusive'],
+            'discount_raw' => round((float) $q['discount'], 2),
             'total' => money($q['total']),
             'coupon' => $q['coupon'] && ! $q['coupon_problem'] ? ['code' => $q['coupon']->code, 'label' => $q['coupon']->label()] : null,
             'coupon_error' => $q['coupon_problem'] ?? $q['coupon_error'],

@@ -153,17 +153,14 @@
     var box = document.querySelector('[data-fx-recent]');
     if (!box) return;
     function paint() {
-        var skip = box.getAttribute('data-current'), list = load().filter(function (x) { return String(x.id) !== String(skip); }).slice(0, 8);
+        var skip = box.getAttribute('data-current'), list = load().filter(function (x) { return String(x.id) !== String(skip); }).slice(0, 10);
         var row = box.querySelector('[data-fx-recent-row]'); row.innerHTML = '';
         if (list.length < 1) { box.hidden = true; return; }
-        list.forEach(function (x) {
-            var a = document.createElement('a'); a.className = 'fx-recent-item'; a.href = x.url;
-            var im = document.createElement('span'); im.className = 'im';
-            if (x.img) { var i = document.createElement('img'); i.src = x.img; i.alt = ''; i.loading = 'lazy'; im.appendChild(i); } else { var ic = document.createElement('i'); ic.className = 'bi bi-capsule'; im.appendChild(ic); }
-            var b = document.createElement('b'); b.textContent = x.name; var s = document.createElement('small'); s.textContent = x.price || '';
-            a.appendChild(im); a.appendChild(b); a.appendChild(s); row.appendChild(a);
-        });
-        box.hidden = false;
+        var ids = list.map(function (x) { return x.id; }).join(',');
+        fetch(box.getAttribute('data-url') + '?ids=' + encodeURIComponent(ids), { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (r) { if (!r.ok) throw 0; return r.text(); })
+            .then(function (html) { if (!html.trim()) { box.hidden = true; return; } row.innerHTML = html; box.hidden = false; row.dispatchEvent(new Event('scroll')); window.dispatchEvent(new Event('resize')); })
+            .catch(function () { box.hidden = true; });
     }
     paint();
     var clr = box.querySelector('[data-fx-recent-clear]');

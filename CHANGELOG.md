@@ -4,6 +4,15 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Checkout — rebuilt from Shopify's own checkout measurements
+- The checkout now uses the measurements of Shopify's current one-page checkout (read from its checkout shell): 10px scale, system font, 18px section headings, 48px floating-label fields, 580px form column + 480px summary on a `#F5F5F5` panel, `#DEDEDE` borders, `#005BD1` accent, 64px thumbnails with a 22px quantity badge, 12px pay button, and the 1000px breakpoint where the summary turns into an "Order summary" bar. No breadcrumbs, no site header / footer.
+- Fields and behaviour match too: Contact (+ "Email me with news and offers", which now really subscribes the address), Delivery with **Ship / Pick up**, Country/Region, **First name + Last name** (joined into the stored name on the server), Address, *Apartment, suite, etc.*, City, Postal code, Phone; shipping methods and delivery times as grouped radio rows; payment methods with the description opening under the chosen one; the button reads **Pay now** for card gateways and **Complete order** otherwise.
+
+### Mini cart, cart page, recently viewed
+- **Mini cart**: glass drawer with an animated free-delivery bar and glowing knob, line cards with Rx tag and per-line total / old price, quantity stepper, a "Complete your order" suggestion strip (one-tap add), savings line, shimmer Checkout button and trust row. `/cart.json` now returns `savings`, `free_over`, `suggest` and per-line `was` / `rx` (page HTML carries the light version).
+- **Cart page**: gradient hero with a step tracker, free-delivery progress card, large line cards (stepper, **Save for later**, remove, old price), sticky glass summary with **discount code preview** and estimated total, an empty-cart state, and a *Recommended for you* slider of the standard product cards.
+- **Recently viewed** now renders the standard product cards (same size, buttons and slider as everywhere else); the browser keeps only the ids and `/recent?ids=` returns the cards.
+
 ### Checkout — full Shopify layout
 - The checkout is its own page layout (no site header / footer): logo, *Cart › Information › Shipping › Payment* breadcrumbs, one long form on a white left side (Contact → Delivery → Shipping method → Delivery time → Prescription → Payment → notes) and the grey order summary on the right with the same full-height edge. Floating-label fields, grouped radio rows with a blue selected state, "All transactions are secure and encrypted", a big **Complete order** button with *Return to cart*, and the store's legal links underneath. On phones the summary becomes the collapsible "Show order summary" bar under the logo. Accent colour follows the design's blue. All server rules, live shipping / coupon updates, captcha and honeypot are unchanged.
 

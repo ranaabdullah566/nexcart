@@ -53,24 +53,47 @@
 
     function paintCart(cart) {
         $$('[data-cart-count]').forEach(function (b) { b.textContent = cart.count; b.hidden = !cart.count; });
-        var body = $('#sfDrawerBody'), foot = $('#sfDrawerFoot');
+        var body = $('#sfDrawerBody'), foot = $('#sfDrawerFoot'), ship = $('#mcShip'), cnt = $('#mcCount');
+        if (cnt) cnt.textContent = cart.count ? (cart.count + ' ' + (cart.count === 1 ? T.item : T.items)) : ' ';
         if (!body) return;
+        // free-delivery progress
+        if (ship) {
+            if (cart.free_over && cart.lines.length) {
+                var have = cart.subtotal_raw, left = Math.max(0, cart.free_over - have), pct = Math.min(100, have / cart.free_over * 100);
+                ship.hidden = false; ship.className = 'mc-ship' + (left <= 0 ? ' done' : '');
+                ship.innerHTML = '<div class="mc-ship-top"><i class="bi bi-truck"></i><span>' + (left <= 0 ? esc(T.freeDone) : esc(T.freeMore.replace(':amount', SF.money(left)))) + '</span></div>' +
+                    '<div class="mc-bar"><i style="width:' + pct.toFixed(1) + '%"></i><b style="left:' + pct.toFixed(1) + '%"></b></div>';
+            } else { ship.hidden = true; }
+        }
         if (!cart.lines.length) {
-            body.innerHTML = '<div class="sf-empty"><i class="bi bi-bag"></i>' + esc(T.cartEmpty) + '</div>';
+            body.innerHTML = '<div class="mc-empty"><span class="mc-orb"><i class="bi bi-bag"></i></span><h6>' + esc(T.cartEmpty) + '</h6><p>' + esc(T.cartEmptySub) + '</p><a href="' + esc(SF.routes.shop) + '" class="mc-cta mc-cta-sm">' + esc(T.startShopping) + ' <i class="bi bi-arrow-right mc-arrow"></i></a></div>';
             if (foot) foot.hidden = true;
             return;
         }
-        body.innerHTML = cart.lines.map(function (l) {
+        var html = cart.lines.map(function (l, i) {
             var opts = l.variant || '';
-            return '<div class="sf-line" data-key="' + esc(l.key) + '">' +
-                (l.image ? '<img src="' + esc(l.image) + '" alt="">' : '<span class="ph"><i class="bi bi-box-seam"></i></span>') +
-                '<div class="min-w-0"><a href="' + esc(l.url) + '">' + esc(l.name) + '</a>' +
+            return '<article class="mc-line sf-line" data-key="' + esc(l.key) + '" style="--i:' + i + '">' +
+                '<a class="mc-img" href="' + esc(l.url) + '">' + (l.image ? '<img src="' + esc(l.image) + '" alt="">' : '<span class="ph"><i class="bi bi-box-seam"></i></span>') + (l.rx ? '<em>Rx</em>' : '') + '</a>' +
+                '<div class="mc-info"><a class="mc-name" href="' + esc(l.url) + '">' + esc(l.name) + '</a>' +
                 (opts ? '<small>' + esc(opts) + '</small>' : '') +
+                '<small class="mc-unit">' + esc(l.unit) + ' ' + esc(T.each) + '</small>' +
                 (l.short ? '<small class="warn"><i class="bi bi-exclamation-triangle"></i> ' + esc(T.lowStock.replace(':n', l.available)) + '</small>' : '') +
-                '<div class="sf-mini-qty"><button type="button" data-cart-qty="-1" aria-label="-">−</button><span>' + l.qty + '</span><button type="button" data-cart-qty="1" aria-label="+">+</button></div></div>' +
-                '<div class="text-end"><div class="figure fw-bold">' + esc(l.total) + '</div><button type="button" class="rm mt-2" data-cart-remove aria-label="' + esc(T.remove) + '"><i class="bi bi-trash3"></i></button></div></div>';
+                '<div class="mc-ctl"><div class="mc-step sf-mini-qty"><button type="button" data-cart-qty="-1" aria-label="' + esc(T.less) + '">−</button><span>' + l.qty + '</span><button type="button" data-cart-qty="1" aria-label="' + esc(T.more) + '">+</button></div>' +
+                '<button type="button" class="mc-rm rm" data-cart-remove aria-label="' + esc(T.remove) + '"><i class="bi bi-trash3"></i></button></div></div>' +
+                '<div class="mc-price"><b>' + esc(l.total) + '</b>' + (l.was ? '<s>' + esc(l.was) + '</s>' : '') + '</div></article>';
         }).join('');
-        if (foot) { foot.hidden = false; $('#sfSubtotal').textContent = cart.subtotal; }
+        if (cart.suggest && cart.suggest.length) {
+            html += '<section class="mc-up"><h6><i class="bi bi-stars"></i> ' + esc(T.complete) + '</h6><div class="mc-up-row">' + cart.suggest.map(function (p) {
+                return '<div class="mc-up-card"><a href="' + esc(p.url) + '" class="mc-up-img">' + (p.image ? '<img src="' + esc(p.image) + '" alt="" loading="lazy">' : '<i class="bi bi-capsule"></i>') + '</a>' +
+                    '<a href="' + esc(p.url) + '" class="mc-up-name">' + esc(p.name) + '</a><div class="mc-up-foot"><b>' + esc(p.price) + '</b>' +
+                    (p.options ? '<button type="button" class="mc-up-add" data-quick="' + esc(p.quick) + '" aria-label="' + esc(T.chooseOption) + '"><i class="bi bi-sliders2"></i></button>' : '<button type="button" class="mc-up-add" data-add="' + p.id + '" aria-label="' + esc(T.addToCart) + '"><i class="bi bi-plus-lg"></i></button>') + '</div></div>';
+            }).join('') + '</div></section>';
+        }
+        body.innerHTML = html;
+        if (foot) {
+            foot.hidden = false; $('#sfSubtotal').textContent = cart.subtotal;
+            var sr = $('#mcSaveRow'); if (sr) { sr.hidden = !cart.savings; $('#mcSave').textContent = cart.savings || ''; }
+        }
     }
 
     function refreshCart() { return http('GET', SF.routes.cart).then(function (c) { SF.cart = c; paintCart(c); return c; }).catch(function () {}); }
@@ -110,6 +133,16 @@
             http('PATCH', SF.routes.cartBase + '/' + row.dataset.cartRow, { qty: nq }).then(function (c) { SF.cart = c; paintCart(c); refreshCartPage(c); }).catch(function (err) { toast(err.message, 'bad'); });
             return;
         }
+        var sv = row && e.target.closest('[data-page-save]');
+        if (sv) {
+            var pid = sv.dataset.pageSave, tok = (document.querySelector('meta[name=csrf-token]') || {}).content;
+            var toggle = function () { return fetch('/saved/' + pid, { method: 'POST', credentials: 'same-origin', headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': tok, 'X-Requested-With': 'XMLHttpRequest' } }).then(function (r) { return r.json(); }); };
+            toggle().then(function (r) { return r.added ? r : toggle(); })   // keep it saved: toggling an already-saved item would remove it
+                .then(function () { return http('DELETE', SF.routes.cartBase + '/' + row.dataset.cartRow); })
+                .then(function (c) { SF.cart = c; paintCart(c); refreshCartPage(c); toast(T.savedLater); })
+                .catch(function (err) { toast(err.message || T.error, 'bad'); });
+            return;
+        }
         if (row && e.target.closest('[data-page-remove]')) {
             http('DELETE', SF.routes.cartBase + '/' + row.dataset.cartRow).then(function (c) { SF.cart = c; paintCart(c); refreshCartPage(c); });
             return;
@@ -139,6 +172,13 @@
             $('.q', r).textContent = l.qty; $('.lt', r).textContent = l.total;
         });
         $$('[data-page-subtotal]').forEach(function (e) { e.textContent = c.subtotal; });
+        var label = c.count + ' ' + (c.count === 1 ? T.item : T.items);
+        $$('[data-page-count]').forEach(function (e) { e.textContent = label; });
+        $$('[data-page-count2]').forEach(function (e) { e.textContent = '· ' + label; });
+        $$('[data-page-saverow]').forEach(function (e) { e.hidden = !c.savings; });
+        $$('[data-page-save-amt]').forEach(function (e) { e.textContent = c.savings || ''; });
+        $$('[data-cart-row]', page).forEach(function (r) { var l = c.lines.filter(function (x) { return x.key === r.dataset.cartRow; })[0]; var s = $('.cx-total s', r); if (l && s) { s.textContent = l.was || ''; s.hidden = !l.was; } });
+        var est = $('#cxEst'); if (est) est.dataset.estBase = c.subtotal_raw;
         if (SF.cartPageHook) SF.cartPageHook(c);
     }
 

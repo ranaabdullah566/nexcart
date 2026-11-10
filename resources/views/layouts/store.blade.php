@@ -8,7 +8,7 @@
         $metaDesc = html_entity_decode(trim($__env->yieldContent('description')), ENT_QUOTES) ?: (setting('store.tagline') ?: $storeName);
         $ogImage = trim($__env->yieldContent('og_image')) ?: asset('assets/images/icon-512.png');
         $navCats = \App\Models\Category::where('is_active', true)->whereNull('parent_id')->orderBy('sort_order')->orderBy('name')->limit(8)->get();
-        $cartData = app(\App\Services\CartService::class)->toArray();
+        $cartData = app(\App\Services\CartService::class)->toArray(false);   // no suggestions in every page's HTML — the drawer fetches them
         $wishCount = count(app(\App\Services\Wishlist::class)->ids());
         $compareCount = count(app(\App\Services\Compare::class)->ids());
         $terms = (array) setting('business.terms', []);
@@ -33,6 +33,7 @@
     <link href="{{ asset('assets/css/store-market-pages.css') }}?v={{ @filemtime(public_path('assets/css/store-market-pages.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/store-future.css') }}?v={{ @filemtime(public_path('assets/css/store-future.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/store-tq.css') }}?v={{ @filemtime(public_path('assets/css/store-tq.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/cart-fx.css') }}?v={{ @filemtime(public_path('assets/css/cart-fx.css')) }}" rel="stylesheet">
     <style>.sf{--mk-ratio:{{ sf('cards.ratio') }};--mk-fit:{{ sf('cards.fit') }}}</style>
     @stack('head')
 </head>
@@ -280,20 +281,24 @@
 </nav>
 
 {{-- cart drawer --}}
-<div class="offcanvas offcanvas-end sf-drawer" tabindex="-1" id="sfDrawer" aria-labelledby="sfDrawerTitle">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="sfDrawerTitle"><i class="bi bi-bag me-2"></i>{{ __('Your cart') }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body" id="sfDrawerBody"></div>
-    <div class="p-3 border-top" id="sfDrawerFoot" hidden style="border-color:var(--border) !important">
-        <div class="d-flex justify-content-between mb-3"><span class="text-muted">{{ __('Subtotal') }}</span><b class="figure" id="sfSubtotal"></b></div>
-        <div class="d-grid gap-2">
-            @if (Route::has('store.checkout'))<a href="{{ route('store.checkout') }}" class="btn btn-primary btn-lg"><i class="bi bi-lock-fill me-1"></i> {{ __('Checkout') }}</a>@endif
-            <a href="{{ route('store.cart') }}" class="sf-btn-ghost justify-content-center">{{ __('View cart') }}</a>
+<div class="offcanvas offcanvas-end sf-drawer sf-mc" tabindex="-1" id="sfDrawer" aria-labelledby="sfDrawerTitle">
+    <div class="mc-glow" aria-hidden="true"></div>
+    <header class="mc-head">
+        <div class="mc-title"><span class="mc-ic"><i class="bi bi-bag-check"></i></span><div><h5 id="sfDrawerTitle">{{ __('Your cart') }}</h5><small id="mcCount">&nbsp;</small></div></div>
+        <button type="button" class="mc-x" data-bs-dismiss="offcanvas" aria-label="{{ __('Close') }}"><i class="bi bi-x-lg"></i></button>
+    </header>
+    <div class="mc-ship" id="mcShip" hidden></div>
+    <div class="mc-scroll" id="sfDrawerBody"></div>
+    <footer class="mc-foot" id="sfDrawerFoot" hidden>
+        <div class="mc-sum">
+            <div class="mc-row mc-save" id="mcSaveRow" hidden><span><i class="bi bi-stars"></i> {{ __('You save') }}</span><b id="mcSave"></b></div>
+            <div class="mc-row"><span>{{ __('Subtotal') }}</span><b class="mc-total" id="sfSubtotal"></b></div>
+            <small class="mc-note">{{ __('Shipping and tax are calculated at checkout.') }}</small>
         </div>
-        <div class="small text-muted text-center mt-2">{{ __('Shipping and tax are calculated at checkout.') }}</div>
-    </div>
+        @if (Route::has('store.checkout'))<a href="{{ route('store.checkout') }}" class="mc-cta"><i class="bi bi-lock-fill"></i> {{ __('Checkout') }} <i class="bi bi-arrow-right mc-arrow"></i></a>@endif
+        <a href="{{ route('store.cart') }}" class="mc-view">{{ __('View full cart') }}</a>
+        <ul class="mc-trust"><li><i class="bi bi-shield-check"></i> {{ __('Secure checkout') }}</li><li><i class="bi bi-patch-check"></i> {{ __('Genuine medicines') }}</li><li><i class="bi bi-truck"></i> {{ __('Fast delivery') }}</li></ul>
+    </footer>
 </div>
 
 {{-- quick view --}}
@@ -311,6 +316,8 @@
             'lowStock' => __('Only :n left in stock.'), 
             'chooseOption' => __('Choose an option first.'), 'outOfStock' => __('Out of stock'), 'addToCart' => __('Add to cart'),
             'seeAll' => __('See all results'), 'noResults' => __('No products found'),
+            'item' => __('item'), 'items' => __('items'), 'freeDone' => __('You get free delivery!'), 'freeMore' => __('Add :amount more for free delivery', ['amount' => ':amount']),
+            'cartEmptySub' => __('Looks like you have not added anything yet.'), 'startShopping' => __('Start shopping'), 'each' => __('each'), 'less' => __('Less'), 'more' => __('More'), 'complete' => __('Complete your order'), 'savedLater' => __('Saved for later'),
         ];
 @endphp
 @if (sf('header.show_location'))
@@ -328,7 +335,7 @@
 <script nonce="{{ csp_nonce() }}">
     window.SF = {
         cart: @json($cartData),
-        routes: { cart: @json(route('store.cart.json')), add: @json(route('store.cart.add')), cartBase: @json(url('/cart')), suggest: @json(route('store.suggest')) },
+        routes: { shop: @json(route('store.shop')), cart: @json(route('store.cart.json')), add: @json(route('store.cart.add')), cartBase: @json(url('/cart')), suggest: @json(route('store.suggest')) },
         t2: { copied: @json(__('Link copied')) },
         money: function (n) { return @json(setting('store.currency_symbol')) + ' ' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); },
         t: @json($jsT),

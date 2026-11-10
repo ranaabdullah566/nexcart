@@ -20,7 +20,7 @@ class CartController extends Controller
         $free = ShippingRate::where('is_active', true)->where('is_pickup', false)->whereNotNull('free_over')
             ->whereHas('zone', fn ($q) => $q->where('is_active', true))->min('free_over');
 
-        return view('store.cart', ['cart' => $this->cart->toArray(), 'freeOver' => $free !== null ? (float) $free : null]);
+        return view('store.cart', ['cart' => $this->cart->toArray(), 'freeOver' => $free !== null ? (float) $free : null, 'recommended' => $this->cart->recommended()]);
     }
 
     public function json(): JsonResponse

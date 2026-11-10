@@ -191,6 +191,7 @@ Route::get('/shop', [Store\ShopController::class, 'index'])->name('store.shop');
 Route::get('/category/{category}', [Store\ShopController::class, 'index'])->name('store.category');
 Route::get('/product/{slug}', [Store\ProductController::class, 'show'])->name('store.product');
 Route::get('/product/{slug}/quick', [Store\ProductController::class, 'quick'])->name('store.quick');
+Route::get('/recent', Store\RecentController::class)->middleware('throttle:60,1')->name('store.recent');
 Route::get('/search/suggest', [Store\SearchController::class, 'suggest'])->middleware('throttle:60,1')->name('store.suggest');
 Route::get('/cart', [Store\CartController::class, 'show'])->name('store.cart');
 Route::get('/cart.json', [Store\CartController::class, 'json'])->name('store.cart.json');

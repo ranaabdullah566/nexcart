@@ -130,7 +130,7 @@ class CheckoutTest extends TestCase
         $this->get('/checkout')->assertRedirect('/cart');
 
         $this->cart($this->product(['name' => 'Gadget']), 2);
-        $this->get('/checkout')->assertOk()->assertSee('Gadget')->assertSee('Cash on delivery')->assertSee('Order summary')->assertSee('Complete order')->assertSee('shck-side', false)->assertSee('Contact')->assertSee('Return to cart');
+        $this->get('/checkout')->assertOk()->assertSee('Gadget')->assertSee('Cash on delivery')->assertSee('Order summary')->assertSee('Complete order')->assertSee('shck-side', false)->assertSee('Contact')->assertSee('First name');
     }
 
     public function test_quote_endpoint_updates_methods_for_the_city_and_remembers_coupon(): void
@@ -419,5 +419,21 @@ class CheckoutTest extends TestCase
             $html = (new OrderPlaced($o))->render();
             $this->assertStringContainsString($o->number, $html);
         }
+    }
+
+    public function test_shopify_style_form_joins_first_and_last_name_and_signs_up_for_news(): void
+    {
+        $this->cart($this->product());
+        $form = $this->form(['name' => '', 'email' => 'news@example.com']);
+        unset($form['name']);
+        $this->post('/checkout', $form + ['first_name' => 'Sara', 'last_name' => 'Khan', 'news' => 1, 'country' => 'Pakistan'])->assertSessionHasNoErrors();
+        $this->assertSame('Sara Khan', Order::firstOrFail()->name);
+        $this->assertDatabaseHas('subscribers', ['email' => 'news@example.com', 'is_active' => true]);
+
+        $this->cart($this->product());
+        $this->post('/checkout', $this->form(['email' => 'nonews@example.com']))->assertSessionHasNoErrors();
+        $this->assertDatabaseMissing('subscribers', ['email' => 'nonews@example.com']);
+        $this->cart($this->product());
+        $this->post('/checkout', $this->form(['first_name' => '<script>x</script>']))->assertSessionHasErrors('first_name');
     }
 }

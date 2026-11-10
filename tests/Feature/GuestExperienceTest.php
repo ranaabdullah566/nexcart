@@ -139,7 +139,7 @@ class GuestExperienceTest extends TestCase
         $p->forceFill(['name' => 'Panadol', 'price' => 50, 'status' => 'active', 'track_stock' => false])->save();
         ShippingZone::create(['name' => 'All', 'cities' => null])->rates()->create(['name' => 'Standard', 'price' => 100]);
         $this->postJson('/cart/add', ['product_id' => $p->id, 'qty' => 1]);
-        $this->get('/checkout')->assertOk()->assertSee('No account needed');
+        $this->get('/checkout')->assertOk()->assertSee('Contact');
 
         $order = $this->placeGuestOrder();   // reuses the product and rate above
         $this->assertNull($order->user_id);
@@ -248,5 +248,27 @@ class GuestExperienceTest extends TestCase
         $this->get('/shop?on_sale=1')->assertSee('Sale Vitamin')->assertDontSee('Plain Syrup');
         $this->get('/shop?featured=1')->assertSee('Star Product')->assertDontSee('Plain Syrup');
         $this->get('/shop?type[]=bogus')->assertSessionHasErrors('type.0');
+    }
+
+    public function test_recently_viewed_returns_real_product_cards_and_cart_json_has_the_extras(): void
+    {
+        $a = new Product; $a->forceFill(['name' => 'Alpha Tab', 'price' => 50, 'status' => 'active', 'track_stock' => false, 'compare_price' => 80])->save();
+        $b = new Product; $b->forceFill(['name' => 'Beta Syrup', 'price' => 60, 'status' => 'active', 'track_stock' => false])->save();
+        $c = new Product; $c->forceFill(['name' => 'Hidden Draft', 'price' => 60, 'status' => 'draft', 'track_stock' => false])->save();
+
+        $html = $this->get('/recent?ids='.$b->id.','.$a->id.','.$c->id.',999')->assertOk()->getContent();
+        $this->assertStringContainsString('mk-card', $html);                  // the same card as everywhere else
+        $this->assertStringContainsString('tq-rail-item', $html);
+        $this->assertStringNotContainsString('Hidden Draft', $html);          // drafts never leak
+        $this->assertLessThan(strpos($html, 'Alpha Tab'), strpos($html, 'Beta Syrup'));   // order of the ids is kept
+        $this->get('/recent')->assertSessionHasErrors('ids');
+
+        $this->postJson('/cart/add', ['product_id' => $a->id, 'qty' => 2])->assertOk();
+        $j = $this->getJson('/cart.json')->assertOk()->json();
+        $this->assertSame(60.0, (float) $j['savings_raw']);                   // (80 - 50) x 2
+        $this->assertArrayHasKey('suggest', $j);
+        $this->assertSame($b->id, $j['suggest'][0]['id']);
+        $this->assertNotNull($j['lines'][0]['was']);
+        $this->get('/cart')->assertOk()->assertSee('cx-line', false)->assertSee('Save for later')->assertSee('Recommended for you')->assertSee('Beta Syrup');
     }
 }

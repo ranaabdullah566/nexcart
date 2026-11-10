@@ -104,14 +104,23 @@ class CartService
     }
 
     /** Shape consumed by the drawer / cart page JavaScript. */
-    public function toArray(): array
+    public function toArray(bool $withSuggestions = true): array
     {
         $lines = $this->lines();
+
+        $savings = (float) $lines->sum(fn ($l) => ! $l['variant'] && $l['product']->compare_price && (float) $l['product']->compare_price > $l['unit'] ? ((float) $l['product']->compare_price - $l['unit']) * $l['qty'] : 0);
+        $free = \App\Models\ShippingRate::where('is_active', true)->where('is_pickup', false)->whereNotNull('free_over')
+            ->whereHas('zone', fn ($q) => $q->where('is_active', true))->min('free_over');
 
         return [
             'count' => (int) $lines->sum('qty'),
             'subtotal' => money($lines->sum('total')),
             'subtotal_raw' => round((float) $lines->sum('total'), 2),
+            'savings' => $savings > 0 ? money($savings) : null,
+            'savings_raw' => round($savings, 2),
+            'free_over' => $free !== null ? (float) $free : null,
+            'free_over_fmt' => $free !== null ? money((float) $free) : null,
+            'suggest' => $withSuggestions ? $this->suggestions($lines) : [],
             'lines' => $lines->map(fn ($l) => [
                 'key' => $l['key'],
                 'name' => $l['product']->trans('name'),
@@ -123,8 +132,43 @@ class CartService
                 'url' => route('store.product', $l['product']->slug),
                 'short' => $l['short'],
                 'available' => $l['available'],
+                'wish' => $l['product']->id,
+                'was' => (! $l['variant'] && $l['product']->compare_price && (float) $l['product']->compare_price > $l['unit']) ? money((float) $l['product']->compare_price * $l['qty']) : null,
+                'rx' => (bool) $l['product']->requires_prescription,
             ])->all(),
         ];
+    }
+
+    /** Product models for the "Recommended for you" slider on the cart page. */
+    public function recommended(int $limit = 10): Collection
+    {
+        $lines = $this->lines();
+        $cats = $lines->pluck('product.category_id')->filter()->unique()->all();
+        $q = Product::active()->card()->with('category')->whereNotIn('id', $lines->pluck('product.id')->all())
+            ->where(fn ($w) => $w->where('track_stock', false)->orWhere('stock_qty', '>', 0)->orWhereHas('variants', fn ($v) => $v->where('stock_qty', '>', 0)));
+        $first = $cats ? (clone $q)->whereIn('category_id', $cats)->limit($limit)->get() : collect();
+
+        return $first->concat((clone $q)->whereNotIn('id', $first->pluck('id'))->orderByDesc('is_featured')->latest('id')->limit(max(0, $limit - $first->count()))->get())->values();
+    }
+
+    /** "Complete your order": a few in-stock products from the same categories as what is in the cart (or featured ones). */
+    public function suggestions(Collection $lines, int $limit = 4): array
+    {
+        $inCart = $lines->pluck('product.id')->all();
+        $cats = $lines->pluck('product.category_id')->filter()->unique()->all();
+
+        $q = Product::active()->card()->whereNotIn('id', $inCart)
+            ->where(fn ($w) => $w->where('track_stock', false)->orWhere('stock_qty', '>', 0)->orWhereHas('variants', fn ($v) => $v->where('stock_qty', '>', 0)));
+        $picked = $cats ? (clone $q)->whereIn('category_id', $cats)->inRandomOrder()->limit($limit)->get() : collect();
+        if ($picked->count() < $limit) {
+            $picked = $picked->concat((clone $q)->whereNotIn('id', $picked->pluck('id'))->orderByDesc('is_featured')->latest('id')->limit($limit - $picked->count())->get());
+        }
+
+        return $picked->map(fn (Product $p) => [
+            'id' => $p->id, 'name' => $p->trans('name'), 'price' => money($p->displayPrice()), 'image' => $p->thumbUrl(),
+            'url' => route('store.product', $p->slug), 'options' => $p->isVariable(),
+            'quick' => route('store.quick', $p->slug),
+        ])->values()->all();
     }
 
     private function assertSellable(Product $product): void
