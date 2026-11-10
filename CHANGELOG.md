@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Shop list view
+- The grid / list toggle's *list* mode was broken by the fixed-size card layout (details stacked in the middle, actions hidden). It is now a proper row: image | category, name, composition, chips, rating, price | button and quick icons; on phones the image sits beside the details and the buttons span the row below.
+
 ### Checkout — rebuilt from Shopify's own checkout measurements
 - The checkout now uses the measurements of Shopify's current one-page checkout (read from its checkout shell): 10px scale, system font, 18px section headings, 48px floating-label fields, 580px form column + 480px summary on a `#F5F5F5` panel, `#DEDEDE` borders, `#005BD1` accent, 64px thumbnails with a 22px quantity badge, 12px pay button, and the 1000px breakpoint where the summary turns into an "Order summary" bar. No breadcrumbs, no site header / footer.
 - Fields and behaviour match too: Contact (+ "Email me with news and offers", which now really subscribes the address), Delivery with **Ship / Pick up**, Country/Region, **First name + Last name** (joined into the stored name on the server), Address, *Apartment, suite, etc.*, City, Postal code, Phone; shipping methods and delivery times as grouped radio rows; payment methods with the description opening under the chosen one; the button reads **Pay now** for card gateways and **Complete order** otherwise.

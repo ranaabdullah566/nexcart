@@ -486,10 +486,6 @@
 .sf-tq .tq-actions { height: 2.2rem; }
 /* the list view of the shop keeps its own wide layout */
 .sf-tq .mk-list .mk-card { height: auto; }
-.sf-tq .mk-list .mk-card-media { width: 190px; aspect-ratio: auto; min-height: 170px; }
-.sf-tq .mk-list .mk-card-name { height: auto; -webkit-line-clamp: 3; }
-.sf-tq .mk-list .is-empty { display: none; }
-@media (max-width: 575.98px) { .sf-tq .mk-list .mk-card-media { width: 100%; min-height: 0; aspect-ratio: 16 / 10; } }
 .sf-tq .mk-card-body .mk-price { display: flex !important; flex-wrap: wrap; align-items: baseline; column-gap: .35rem; }
 .sf-tq .mk-card-body .mk-price small { display: inline !important; flex: none; margin: 0; }
 .sf-tq .mk-card-body .mk-price b { display: block; flex: 0 1 auto; min-width: 0; }
@@ -565,3 +561,24 @@
 .sp-trust { list-style: none; margin: 1.1rem 0 0; padding: 1rem 0 0; border-top: 1px solid #e1e1e1; display: grid; gap: .4rem; font-size: .82rem; color: #707070; } .sp-trust i { margin-inline-end: .4rem; color: #5a5a5a; }
 /* Shopify's big pay button */
 .sf-tq #placeBtn { height: 58px; font-size: 1.05rem; font-weight: 600; border-radius: 6px; letter-spacing: .01em; }
+
+/* ---- shop list view: a proper horizontal row (image | details | price + actions) ---- */
+.sf-tq .mk-list .row { --bs-gutter-y: .85rem; }
+.sf-tq .mk-list .row > .col { flex: 0 0 100%; max-width: 100%; width: 100%; }
+.sf-tq .mk-list .mk-card { display: grid; grid-template-columns: 200px minmax(0, 1fr) 230px; grid-template-areas: "media body foot"; align-items: stretch; height: auto; flex-direction: unset; }
+.sf-tq .mk-list .mk-card-media { grid-area: media; width: auto; min-height: 0; aspect-ratio: auto; height: 100%; min-height: 170px; }
+.sf-tq .mk-list .mk-card-body { grid-area: body; padding: 1rem 1.1rem; gap: .3rem; justify-content: flex-start; }
+.sf-tq .mk-list .mk-card-name { height: auto; -webkit-line-clamp: 2; font-size: 1.05rem; }
+.sf-tq .mk-list .fx-salt, .sf-tq .mk-list .fx-chips, .sf-tq .mk-list .mk-card-rate { height: auto; min-height: 0; }
+.sf-tq .mk-list .fx-chips { flex-wrap: wrap; }
+.sf-tq .mk-list .is-empty { display: none; }
+.sf-tq .mk-list .mk-card-body .mk-price { margin-top: .4rem; display: flex !important; flex-wrap: wrap; align-items: baseline; gap: .1rem .5rem; }
+.sf-tq .mk-list .mk-price s { flex: 0 0 auto; height: auto; line-height: 1.2; }
+.sf-tq .mk-list .mk-card-foot { grid-area: foot; align-self: center; padding: 1rem 1.1rem; border-inline-start: 1px dashed var(--tq-line); display: grid; gap: .6rem; }
+@media (max-width: 767.98px) {
+  .sf-tq .mk-list .mk-card { grid-template-columns: 110px minmax(0, 1fr); grid-template-areas: "media body" "foot foot"; }
+  .sf-tq .mk-list .mk-card-media { width: 100%; min-height: 0; aspect-ratio: auto; height: 100%; min-height: 124px; overflow: hidden; }
+  .sf-tq .mk-list .mk-card-body { padding: .8rem .9rem .5rem; }
+  .sf-tq .mk-list .mk-card-foot { border-inline-start: 0; border-top: 1px dashed var(--tq-line); padding: .7rem .9rem .9rem; grid-template-columns: 1fr auto; align-items: center; }
+  .sf-tq .mk-list .mk-card-foot .mk-add { height: 2.5rem; }
+}
