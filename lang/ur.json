@@ -1660,5 +1660,12 @@
     "On sale": "سیل پر",
     "Min": "کم از کم",
     "Max": "زیادہ سے زیادہ",
-    "Show sub-categories": "ذیلی زمرے دکھائیں"
+    "Show sub-categories": "ذیلی زمرے دکھائیں",
+    "Show order summary": "آرڈر کا خلاصہ دکھائیں",
+    "Hide order summary": "آرڈر کا خلاصہ چھپائیں",
+    "Enter shipping address": "ڈیلیوری کا پتہ درج کریں",
+    "Estimated taxes": "اندازاً ٹیکس",
+    "Including": "شامل",
+    "in taxes": "ٹیکس میں",
+    "Total savings": "کل بچت"
 }

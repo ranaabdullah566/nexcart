@@ -119,32 +119,49 @@
 
             {{-- ============ right: summary ============ --}}
             <div class="col-lg-5 order-1 order-lg-2">
-                <aside class="mk-summary ck-summary">
-                    <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="mb-0">{{ __('Order summary') }}</h2><a href="{{ route('store.cart') }}" class="small fw-bold">{{ __('Edit cart') }}</a></div>
-                    @foreach ($lines['lines'] as $l)
-                        <div class="ck-line">
-                            <div class="ck-thumb">@if ($l['image'])<img src="{{ $l['image'] }}" alt="">@else<i class="bi bi-box-seam"></i>@endif<span>{{ $l['qty'] }}</span></div>
-                            <div class="min-w-0"><div class="fw-semibold text-truncate">{{ $l['name'] }}</div>@php($o = $l['variant'])@if ($o)<small class="text-muted">{{ $o }}</small>@endif</div>
-                            <div class="figure">{{ $l['total'] }}</div>
+                @php
+                    $itemCount = collect($lines['lines'])->sum('qty');
+                    $cur = strtoupper((string) setting('store.currency', 'PKR'));
+                @endphp
+                <aside class="sp" aria-label="{{ __('Order summary') }}">
+                    {{-- phones: Shopify's collapsed "Show order summary" bar --}}
+                    <button type="button" class="sp-toggle d-lg-none" data-bs-toggle="collapse" data-bs-target="#spBody" aria-expanded="false" aria-controls="spBody">
+                        <span><i class="bi bi-cart3"></i> <span class="sp-show">{{ __('Show order summary') }}</span><span class="sp-hide">{{ __('Hide order summary') }}</span> <i class="bi bi-chevron-down sp-chev"></i></span>
+                        <b data-total>{{ money($q['total']) }}</b>
+                    </button>
+                    <div id="spBody" class="sp-body collapse d-lg-block">
+                        <div class="sp-lines">
+                            @foreach ($lines['lines'] as $l)
+                                <div class="sp-line">
+                                    <div class="sp-thumb">@if ($l['image'])<img src="{{ $l['image'] }}" alt="">@else<i class="bi bi-box-seam"></i>@endif<span class="sp-qty" aria-label="{{ __('Quantity') }}">{{ $l['qty'] }}</span></div>
+                                    <div class="sp-name"><b>{{ $l['name'] }}</b>@php($o = $l['variant'])@if ($o)<small>{{ $o }}</small>@endif</div>
+                                    <div class="sp-price">{{ $l['total'] }}</div>
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
 
-                    <div class="d-flex gap-2 my-3">
-                        <input type="text" id="couponInput" maxlength="40" class="form-control" placeholder="{{ __('Discount code') }}" value="{{ session('coupon') }}" autocomplete="off" aria-label="{{ __('Discount code') }}">
-                        <button type="button" class="btn btn-outline-secondary" id="couponBtn">{{ __('Apply') }}</button>
+                        <div class="sp-code">
+                            <input type="text" id="couponInput" maxlength="40" placeholder="{{ __('Discount code') }}" value="{{ session('coupon') }}" autocomplete="off" aria-label="{{ __('Discount code') }}">
+                            <button type="button" id="couponBtn">{{ __('Apply') }}</button>
+                        </div>
+                        <div class="sp-codemsg" id="couponMsg" role="status">@if ($q['coupon'] && ! $q['coupon_problem'])<span class="sp-tag"><i class="bi bi-tag-fill"></i> {{ $q['coupon']->code }}</span> <small>{{ $q['coupon']->label() }}</small>@endif</div>
+
+                        <dl class="sp-rows">
+                            <div class="sp-row"><dt>{{ __('Subtotal') }} <span class="sp-dim">· {{ trans_choice(':n item|:n items', $itemCount, ['n' => $itemCount]) }}</span></dt><dd data-sub>{{ money($q['subtotal']) }}</dd></div>
+                            <div class="sp-row" id="rowDiscount" @if ($q['discount'] <= 0) hidden @endif><dt>{{ __('Discount') }}</dt><dd class="sp-good" data-discount>−{{ money($q['discount']) }}</dd></div>
+                            <div class="sp-row"><dt>{{ __('Shipping') }}</dt><dd data-ship class="@unless ($q['rate']) sp-dim @endunless">{{ $q['rate'] ? ($q['shipping'] > 0 ? money($q['shipping']) : __('Free')) : __('Enter shipping address') }}</dd></div>
+                            <div class="sp-row" id="rowTax" @if ($q['tax'] <= 0 || $q['tax_inclusive']) hidden @endif><dt>{{ __('Estimated taxes') }}</dt><dd data-tax>{{ money($q['tax']) }}</dd></div>
+                        </dl>
+                        <div class="sp-total"><span>{{ __('Total') }}</span><span class="sp-totalamt"><small>{{ $cur }}</small> <b data-total>{{ money($q['total']) }}</b></span></div>
+                        <p class="sp-incl" id="rowInclTax" @if ($q['tax'] <= 0 || ! $q['tax_inclusive']) hidden @endif>{{ __('Including') }} <span data-tax-incl>{{ money($q['tax']) }}</span> {{ __('in taxes') }}</p>
+                        <p class="sp-save" id="rowSave" @if ($q['discount'] <= 0) hidden @endif><i class="bi bi-tag"></i> {{ __('Total savings') }} <b data-save>{{ money($q['discount']) }}</b></p>
+
+                        <ul class="sp-trust">
+                            <li><i class="bi bi-shield-lock"></i> {{ __('Secure checkout') }}</li>
+                            <li><i class="bi bi-truck"></i> {{ __('Delivery to your city') }}</li>
+                            <li><i class="bi bi-arrow-counterclockwise"></i> {{ __('Easy returns') }}</li>
+                        </ul>
                     </div>
-                    <div class="small mb-2" id="couponMsg">@if ($q['coupon'] && ! $q['coupon_problem'])<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>{{ $q['coupon']->code }} · {{ $q['coupon']->label() }}</span>@endif</div>
-
-                    <div class="ck-row"><span>{{ __('Subtotal') }}</span><b class="figure" data-sub>{{ money($q['subtotal']) }}</b></div>
-                    <div class="ck-row" id="rowDiscount" @if ($q['discount'] <= 0) hidden @endif><span>{{ __('Discount') }}</span><b class="figure text-success" data-discount>−{{ money($q['discount']) }}</b></div>
-                    <div class="ck-row"><span>{{ __('Shipping') }}</span><b class="figure" data-ship>{{ $q['rate'] ? ($q['shipping'] > 0 ? money($q['shipping']) : __('Free')) : '—' }}</b></div>
-                    <div class="ck-row" id="rowTax" @if ($q['tax'] <= 0) hidden @endif><span>{{ __('Tax') }} <small class="text-muted" data-taxnote>@if ($q['tax_inclusive'])({{ __('included') }})@endif</small></span><b class="figure" data-tax>{{ money($q['tax']) }}</b></div>
-                    <div class="ck-row ck-total"><span>{{ __('Total') }}</span><b class="figure" data-total>{{ money($q['total']) }}</b></div>
-                    <ul class="mk-sum-trust">
-                        <li><i class="bi bi-shield-check"></i> {{ __('Secure checkout') }}</li>
-                        <li><i class="bi bi-truck"></i> {{ __('Delivery to your city') }}</li>
-                        <li><i class="bi bi-arrow-counterclockwise"></i> {{ __('Easy returns') }}</li>
-                    </ul>
                 </aside>
             </div>
         </div>
@@ -178,7 +195,7 @@
 <script nonce="{{ csp_nonce() }}">
 (function () {
     var form = document.getElementById('ckForm'), csrf = document.querySelector('meta[name=csrf-token]').content;
-    var $ = function (s) { return form.querySelector(s); }, T = {{ \Illuminate\Support\Js::from(['enterCity' => __('Enter your city to see delivery options.'), 'free' => __('Free'), 'applied' => __('Applied')]) }};
+    var $ = function (s) { return form.querySelector(s); }, T = {{ \Illuminate\Support\Js::from(['enterCity' => __('Enter your city to see delivery options.'), 'free' => __('Free'), 'applied' => __('Applied'), 'enterShip' => __('Enter shipping address')]) }};
     var city = $('#ckCity'), couponInput = document.getElementById('couponInput'), couponField = document.getElementById('couponField'), timer;
 
     function selectedRate() { var r = $('input[name=shipping_rate_id]:checked'); return r ? +r.value : null; }
@@ -192,15 +209,17 @@
     function paint(d) {
         document.querySelectorAll('[data-sub]').forEach(function (e) { e.textContent = d.subtotal; });
         document.querySelectorAll('[data-total]').forEach(function (e) { e.textContent = d.total; });
-        $('#rowDiscount') && (document.getElementById('rowDiscount').hidden = !d.discount);
+        var rd = document.getElementById('rowDiscount'); rd.hidden = !d.discount;
         document.querySelector('[data-discount]').textContent = d.discount || '';
-        document.querySelector('[data-ship]').textContent = d.shipping || '—';
-        document.getElementById('rowTax').hidden = !d.tax;
+        var sv = document.getElementById('rowSave'); sv.hidden = !d.discount; document.querySelector('[data-save]').textContent = d.discount ? d.discount.replace('\u2212', '') : '';
+        var sh = document.querySelector('[data-ship]'); sh.textContent = d.shipping || T.enterShip; sh.classList.toggle('sp-dim', !d.shipping);
+        document.getElementById('rowTax').hidden = !d.tax || d.tax_inclusive;
         document.querySelector('[data-tax]').textContent = d.tax || '';
-        document.querySelector('[data-taxnote]').textContent = d.tax_inclusive ? '(' + {{ \Illuminate\Support\Js::from(__('included')) }} + ')' : '';
+        document.getElementById('rowInclTax').hidden = !d.tax || !d.tax_inclusive;
+        document.querySelector('[data-tax-incl]').textContent = d.tax || '';
         var msg = document.getElementById('couponMsg');
-        if (d.coupon) { msg.innerHTML = '<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>' + esc(d.coupon.code) + ' · ' + esc(d.coupon.label) + '</span>'; couponField.value = d.coupon.code; }
-        else { msg.innerHTML = d.coupon_error ? '<span class="text-danger">' + esc(d.coupon_error) + '</span>' : ''; couponField.value = ''; }
+        if (d.coupon) { msg.innerHTML = '<span class="sp-tag"><i class="bi bi-tag-fill"></i> ' + esc(d.coupon.code) + '</span> <small>' + esc(d.coupon.label) + '</small>'; couponField.value = d.coupon.code; }
+        else { msg.innerHTML = d.coupon_error ? '<span class="sp-err"><i class="bi bi-exclamation-circle"></i> ' + esc(d.coupon_error) + '</span>' : ''; couponField.value = ''; }
 
         var box = document.getElementById('rates'), keep = d.rate_id || selectedRate();
         if (!d.rates.length) { box.innerHTML = '<div class="text-muted small">' + esc(T.enterCity) + '</div>'; toggleAddress(); return; }

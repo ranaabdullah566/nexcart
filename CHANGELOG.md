@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Checkout summary and total (Shopify layout)
+- The order summary follows Shopify's checkout: grey panel, product thumbnails with a grey quantity badge, a discount-code field whose Apply button turns dark once you type, *Subtotal · n items*, *Shipping* ("Enter shipping address" until a city is chosen), *Estimated taxes* (or "Including Rs x in taxes" when tax is included), a large **Total** with the currency code, *Total savings* when a code is used, and a big Place order button. On phones it collapses into Shopify's "Show order summary · total" bar. All figures still update live when the city, delivery method or code changes.
+
 ### Shop sidebar and header search (tuqqa.com style)
 - The shop filters are now plain (no card): a filter search box, small-caps section headings, a 3-level **category tree** with expanders and counts, **brand** list with counts, **medicine type** (OTC / Rx), **availability & offers** (in stock, on sale, featured), product-field selects, **price** min / max and a *Clear all* button. New query options `type[]`, `on_sale`, `featured`.
 - The header search is a fixed ~520px wide on desktop (it no longer stretches to the icons).

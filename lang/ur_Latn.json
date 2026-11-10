@@ -1660,5 +1660,12 @@
     "On sale": "Sale par",
     "Min": "Kam az kam",
     "Max": "Ziada se ziada",
-    "Show sub-categories": "Sub-categories dikhayein"
+    "Show sub-categories": "Sub-categories dikhayein",
+    "Show order summary": "Order ka khulasa dikhayein",
+    "Hide order summary": "Order ka khulasa chhupayein",
+    "Enter shipping address": "Delivery ka pata darj karein",
+    "Estimated taxes": "Andazan tax",
+    "Including": "Shamil",
+    "in taxes": "tax mein",
+    "Total savings": "Kul bachat"
 }
