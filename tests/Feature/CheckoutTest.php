@@ -130,7 +130,7 @@ class CheckoutTest extends TestCase
         $this->get('/checkout')->assertRedirect('/cart');
 
         $this->cart($this->product(['name' => 'Gadget']), 2);
-        $this->get('/checkout')->assertOk()->assertSee('Gadget')->assertSee('Cash on delivery')->assertSee('Order summary')->assertSee('Place order');
+        $this->get('/checkout')->assertOk()->assertSee('Gadget')->assertSee('Cash on delivery')->assertSee('Order summary')->assertSee('Complete order')->assertSee('shck-side', false)->assertSee('Contact')->assertSee('Return to cart');
     }
 
     public function test_quote_endpoint_updates_methods_for_the_city_and_remembers_coupon(): void

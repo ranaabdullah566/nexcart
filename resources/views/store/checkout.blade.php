@@ -1,75 +1,71 @@
-@extends('layouts.store')
+@extends('layouts.checkout')
 @php $page = 'checkout'; @endphp
 @section('title', __('Checkout'))
 
 @section('content')
-<div class="sf-container py-3">
-    <nav class="sf-crumbs mk-crumbs" aria-label="Breadcrumb"><a href="{{ route('store.home') }}">{{ __('Home') }}</a><span>›</span><a href="{{ route('store.cart') }}">{{ __('Your cart') }}</a><span>›</span><span>{{ __('Checkout') }}</span></nav>
-    <div class="mk-page-head">
-        <h1>{{ __('Checkout') }}</h1>
-        <span class="mk-secure"><i class="bi bi-lock-fill"></i> {{ __('Secure checkout') }}</span>
-    </div>
-    <ol class="mk-progress" aria-label="{{ __('Checkout steps') }}">
-        <li class="done"><i class="bi bi-check-lg"></i><span>{{ __('Your cart') }}</span></li>
-        <li class="now"><b>2</b><span>{{ __('Details & payment') }}</span></li>
-        <li><b>3</b><span>{{ __('Done') }}</span></li>
-    </ol>
+@php $storeName = setting('store.name', config('app.name')); $footerMenu = \App\Models\MenuItem::resolved('footer'); @endphp
+<form method="POST" action="{{ route('store.checkout.place') }}" enctype="multipart/form-data" id="ckForm" class="shck" novalidate>
+    @csrf
+    <header class="shck-head">
+        <a href="{{ route('store.home') }}" class="shck-brand" aria-label="{{ $storeName }}"><span class="shck-logo"><img src="{{ brand_logo() }}" alt=""></span><span>{{ $storeName }}</span></a>
+        <a href="{{ route('store.cart') }}" class="shck-bag d-lg-none" aria-label="{{ __('Your cart') }}"><i class="bi bi-bag"></i></a>
+    </header>
 
-    <form method="POST" action="{{ route('store.checkout.place') }}" enctype="multipart/form-data" id="ckForm" novalidate>
-        @csrf
-        <div class="row g-4 g-xl-5">
-            {{-- ============ left: the form ============ --}}
-            <div class="col-lg-7 order-2 order-lg-1">
-                @if ($errors->any())
-                    <div class="sf-alert mb-3" role="alert"><i class="bi bi-exclamation-triangle-fill fs-5"></i><div>@foreach ($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div></div>
-                @endif
+    {{-- ============ left: the form ============ --}}
+    <div class="shck-main">
+        <nav class="shck-crumbs" aria-label="{{ __('Checkout steps') }}">
+            <a href="{{ route('store.cart') }}">{{ __('Cart') }}</a><i class="bi bi-chevron-right"></i>
+            <a href="#ckContact" class="on" aria-current="step">{{ __('Information') }}</a><i class="bi bi-chevron-right"></i>
+            <a href="#ckShip">{{ __('Shipping') }}</a><i class="bi bi-chevron-right"></i>
+            <a href="#ckPay">{{ __('Payment') }}</a>
+        </nav>
 
-                <section class="ck-sec">
-                    <div class="d-flex justify-content-between align-items-center"><h2><span class="mk-step">1</span>{{ __('Contact') }}</h2>
-                        @guest<a href="{{ route('login') }}" class="small fw-bold">{{ __('Have an account? Sign in') }}</a>@endguest</div>
-                    @guest<p class="fx-guest-note"><i class="bi bi-person-check"></i> {{ __('No account needed — you are checking out as a guest. You can create an account after ordering.') }}</p>@endguest
-                    <div class="row g-3">
-                        <div class="col-md-7"><label class="form-label" for="ckEmail">{{ __('Email') }}</label><input id="ckEmail" type="email" name="email" value="{{ old('email', $defaults['email']) }}" required maxlength="190" autocomplete="email" class="form-control @error('email') is-invalid @enderror"></div>
-                        <div class="col-md-5"><label class="form-label" for="ckPhone">{{ __('Phone') }}</label><input id="ckPhone" type="tel" name="phone" value="{{ old('phone', $defaults['phone']) }}" required autocomplete="tel" inputmode="tel" maxlength="40" pattern="[0-9+\-()\s]{6,}" title="{{ __('Digits, spaces, + - ( ) only') }}" class="form-control @error('phone') is-invalid @enderror"></div>
-                    </div>
-                </section>
+        @if ($errors->any())
+            <div class="shck-alert" role="alert"><i class="bi bi-exclamation-circle-fill"></i><div>@foreach ($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div></div>
+        @endif
 
-                <section class="ck-sec">
-                    <h2><span class="mk-step">2</span>{{ __('Delivery') }}</h2>
-                    <div class="row g-3" id="addrBox">
-                        <div class="col-12"><label class="form-label" for="ckName">{{ __('Full name') }}</label><input id="ckName" name="name" value="{{ old('name', $defaults['name']) }}" required maxlength="120" autocomplete="name" class="form-control @error('name') is-invalid @enderror"></div>
-                        <div class="col-12 addr-only"><label class="form-label" for="ckAddr">{{ __('Address') }}</label><input id="ckAddr" name="address_line" value="{{ old('address_line', $defaults['address_line']) }}" maxlength="255" autocomplete="street-address" class="form-control @error('address_line') is-invalid @enderror" placeholder="{{ __('House, street, landmark') }}"></div>
-                        <div class="col-md-5 addr-only"><label class="form-label" for="ckCity">{{ __('City') }}</label><input id="ckCity" name="city" value="{{ old('city', $defaults['city']) }}" maxlength="120" list="ckCities" autocomplete="address-level2" class="form-control @error('city') is-invalid @enderror">
-                            <datalist id="ckCities">@foreach ($cities as $c)<option value="{{ $c }}">@endforeach</datalist></div>
-                        @if (sf('checkout.show_area'))<div class="col-md-4 addr-only"><label class="form-label" for="ckArea">{{ __('Area') }}</label><input id="ckArea" name="area" value="{{ old('area', $defaults['area']) }}" maxlength="120" class="form-control"></div>@endif
-                        @if (sf('checkout.show_postal'))<div class="col-md-3 addr-only"><label class="form-label" for="ckPostal">{{ __('Postal code') }}</label><input id="ckPostal" name="postal_code" value="{{ old('postal_code', $defaults['postal_code']) }}" maxlength="20" autocomplete="postal-code" class="form-control figure"></div>@endif
-                    </div>
-                </section>
+        <section class="shck-sec" id="ckContact">
+            <div class="shck-h"><h2>{{ __('Contact') }}</h2>@guest<a href="{{ route('login') }}">{{ __('Sign in') }}</a>@endguest</div>
+            <div class="shf"><input id="ckEmail" type="email" name="email" value="{{ old('email', $defaults['email']) }}" placeholder=" " required maxlength="190" autocomplete="email" class="@error('email') is-invalid @enderror"><label for="ckEmail">{{ __('Email') }}</label>@error('email')<div class="shf-err">{{ $message }}</div>@enderror</div>
+            @guest<p class="shck-note">{{ __('No account needed — you are checking out as a guest. You can create an account after ordering.') }}</p>@endguest
+        </section>
 
-                <section class="ck-sec">
-                    <h2><span class="mk-step">3</span>{{ __('Shipping method') }}</h2>
-                    <div id="rates" class="d-grid gap-2" role="radiogroup">
-                        @forelse ($q['rates'] as $r)
-                            <label class="ck-opt"><input type="radio" name="shipping_rate_id" value="{{ $r->id }}" data-pickup="{{ $r->is_pickup ? 1 : 0 }}" @checked($q['rate']?->id === $r->id)>
-                                <span><b>{{ $r->name }}</b>@if ($r->eta)<small>{{ $r->eta }}</small>@endif</span>
-                                <em class="figure">{{ $r->costFor($q['subtotal']) > 0 ? money($r->costFor($q['subtotal'])) : __('Free') }}</em></label>
-                        @empty
-                            <div class="text-muted small" id="noRates">{{ __('Enter your city to see delivery options.') }}</div>
-                        @endforelse
-                    </div>
-                    @error('shipping_rate_id')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
-                </section>
+        <section class="shck-sec" id="ckDelivery">
+            <div class="shck-h"><h2>{{ __('Delivery') }}</h2></div>
+            <div class="shck-grid" id="addrBox">
+                <div class="shf g12"><input id="ckName" name="name" value="{{ old('name', $defaults['name']) }}" placeholder=" " required maxlength="120" autocomplete="name" class="@error('name') is-invalid @enderror"><label for="ckName">{{ __('Full name') }}</label>@error('name')<div class="shf-err">{{ $message }}</div>@enderror</div>
+                <div class="shf g12 addr-only"><input id="ckAddr" name="address_line" value="{{ old('address_line', $defaults['address_line']) }}" placeholder=" " maxlength="255" autocomplete="street-address" class="@error('address_line') is-invalid @enderror"><label for="ckAddr">{{ __('Address') }}</label>@error('address_line')<div class="shf-err">{{ $message }}</div>@enderror</div>
+                @if (sf('checkout.show_area'))<div class="shf g12 addr-only"><input id="ckArea" name="area" value="{{ old('area', $defaults['area']) }}" placeholder=" " maxlength="120" autocomplete="address-line2"><label for="ckArea">{{ __('Area') }} ({{ __('optional') }})</label></div>@endif
+                <div class="shf g6 addr-only"><input id="ckCity" name="city" value="{{ old('city', $defaults['city']) }}" placeholder=" " maxlength="120" list="ckCities" autocomplete="address-level2" class="@error('city') is-invalid @enderror"><label for="ckCity">{{ __('City') }}</label><datalist id="ckCities">@foreach ($cities as $c)<option value="{{ $c }}">@endforeach</datalist>@error('city')<div class="shf-err">{{ $message }}</div>@enderror</div>
+                @if (sf('checkout.show_postal'))<div class="shf g6 addr-only"><input id="ckPostal" name="postal_code" value="{{ old('postal_code', $defaults['postal_code']) }}" placeholder=" " maxlength="20" autocomplete="postal-code"><label for="ckPostal">{{ __('Postal code') }} ({{ __('optional') }})</label></div>@endif
+                <div class="shf g12"><input id="ckPhone" type="tel" name="phone" value="{{ old('phone', $defaults['phone']) }}" placeholder=" " required autocomplete="tel" inputmode="tel" maxlength="40" pattern="[0-9+\-()\s]{6,}" title="{{ __('Digits, spaces, + - ( ) only') }}" class="@error('phone') is-invalid @enderror"><label for="ckPhone">{{ __('Phone') }}</label>@error('phone')<div class="shf-err">{{ $message }}</div>@enderror</div>
+            </div>
+        </section>
+
+        <section class="shck-sec" id="ckShip">
+            <div class="shck-h"><h2>{{ __('Shipping method') }}</h2></div>
+            <div id="rates" class="shck-group" role="radiogroup" aria-label="{{ __('Shipping method') }}">
+                @forelse ($q['rates'] as $r)
+                    <label class="ck-opt"><input type="radio" name="shipping_rate_id" value="{{ $r->id }}" data-pickup="{{ $r->is_pickup ? 1 : 0 }}" @checked($q['rate']?->id === $r->id)>
+                        <span><b>{{ $r->name }}</b>@if ($r->eta)<small>{{ $r->eta }}</small>@endif</span>
+                        <em class="figure">{{ $r->costFor($q['subtotal']) > 0 ? money($r->costFor($q['subtotal'])) : __('Free') }}</em></label>
+                @empty
+                    <div class="shck-empty" id="noRates">{{ __('Enter your city to see delivery options.') }}</div>
+                @endforelse
+            </div>
+            @error('shipping_rate_id')<div class="shf-err">{{ $message }}</div>@enderror
+        </section>
 
                 @if ($slotDays)
-                    <section class="ck-sec" id="slotSec">
-                        <h2><span class="mk-step"><i class="bi bi-clock"></i></span>{{ __('Delivery time') }}</h2>
+                    <section class="shck-sec" id="slotSec">
+                        <div class="shck-h"><h2>{{ __('Delivery time') }}</h2></div>
                         <div class="sf-pills mb-3" id="slotDays" role="radiogroup" aria-label="{{ __('Delivery day') }}">
                             @foreach ($slotDays as $i => $d)
                                 <label class="sf-pill"><input type="radio" name="slot_date" value="{{ $d['date'] }}" @checked(old('slot_date', collect($slotDays)->first(fn ($x) => collect($x['slots'])->contains('open', true))['date'] ?? $slotDays[0]['date']) === $d['date'])><span>{{ $d['label'] }}</span></label>
                             @endforeach
                         </div>
                         @foreach ($slotDays as $d)
-                            <div class="d-grid gap-2 slot-day" data-date="{{ $d['date'] }}" hidden>
+                            <div class="shck-group slot-day" data-date="{{ $d['date'] }}" hidden>
                                 @foreach ($d['slots'] as $sl)
                                     <label class="ck-opt" style="{{ $sl['open'] ? '' : 'opacity:.45;cursor:not-allowed' }}"><input type="radio" name="delivery_slot_id" value="{{ $sl['id'] }}" @disabled(! $sl['open']) @checked((int) old('delivery_slot_id') === $sl['id'] && old('slot_date') === $d['date'])>
                                         <span><b>{{ $sl['label'] }}</b>@if (! $sl['open'])<small>{{ $sl['left'] === 0 ? __('Full') : __('Closed') }}</small>@elseif ($sl['left'] !== null && $sl['left'] <= 3)<small class="text-warning">{{ __(':n places left', ['n' => $sl['left']]) }}</small>@endif</span><i class="bi bi-clock"></i></label>
@@ -81,8 +77,8 @@
                 @endif
 
                 @if ($needsRx)
-                    <section class="ck-sec">
-                        <h2><i class="bi bi-prescription2 me-1"></i>{{ __('Prescription') }}</h2>
+                    <section class="shck-sec">
+                        <div class="shck-h"><h2>{{ __('Prescription') }}</h2></div>
                         <p class="text-muted small">{{ __('Your cart has items that need a prescription. Upload a clear photo or PDF — our pharmacist will verify it before dispatch.') }}</p>
                         <input type="file" name="prescription[]" multiple accept="image/jpeg,image/png,image/webp,application/pdf" class="form-control @error('prescription') is-invalid @enderror @error('prescription.*') is-invalid @enderror" required>
                         @error('prescription')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -90,35 +86,41 @@
                     </section>
                 @endif
 
-                <section class="ck-sec">
-                    <h2><span class="mk-step"><i class="bi bi-credit-card"></i></span>{{ __('Payment') }}</h2>
+                <section class="shck-sec" id="ckPay">
+                    <div class="shck-h"><h2>{{ __('Payment') }}</h2></div>
+                    <p class="shck-sub">{{ __('All transactions are secure and encrypted.') }}</p>
                     @if (empty($gateways))
-                        <div class="sf-alert">{{ __('No payment method is available right now. Please contact the store.') }}</div>
+                        <div class="shck-alert"><i class="bi bi-exclamation-circle-fill"></i><div>{{ __('No payment method is available right now. Please contact the store.') }}</div></div>
                     @endif
-                    <div class="d-grid gap-2" role="radiogroup">
+                    <div class="shck-group" role="radiogroup" aria-label="{{ __('Payment') }}">
                         @foreach ($gateways as $key => $g)
                             <label class="ck-opt"><input type="radio" name="payment_method" value="{{ $key }}" @checked(old('payment_method', array_key_first($gateways)) === $key) required>
                                 <span><b>{{ $g->label() }}</b><small>{{ $g->description() }}</small></span>
-                                <i class="bi bi-{{ ['cod' => 'cash-coin', 'bank' => 'bank', 'stripe' => 'credit-card-2-front'][$key] ?? 'wallet2' }} fs-5"></i></label>
+                                <i class="bi bi-{{ ['cod' => 'cash-coin', 'bank' => 'bank', 'stripe' => 'credit-card-2-front'][$key] ?? 'wallet2' }}"></i></label>
                         @endforeach
                     </div>
-                    @error('payment_method')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
+                    @error('payment_method')<div class="shf-err">{{ $message }}</div>@enderror
                 </section>
 
-                @if (sf('checkout.show_notes'))<section class="ck-sec">
-                    <label class="form-label" for="ckNotes">{{ __('Order notes') }} <span class="text-muted">({{ __('optional') }})</span></label>
-                    <textarea id="ckNotes" name="notes" rows="2" maxlength="500" class="form-control" placeholder="{{ __('Anything we should know?') }}">{{ old('notes') }}</textarea>
+                @if (sf('checkout.show_notes'))<section class="shck-sec">
+                    <div class="shf"><textarea id="ckNotes" name="notes" rows="2" maxlength="500" placeholder=" ">{{ old('notes') }}</textarea><label for="ckNotes">{{ __('Order notes') }} ({{ __('optional') }})</label></div>
                 </section>@endif
 
                 <input type="hidden" name="coupon" id="couponField" value="{{ old('coupon', session('coupon')) }}">
                 <x-honeypot />
                 <x-captcha />
-                <button type="submit" class="btn btn-primary btn-lg w-100 py-3" id="placeBtn" @disabled(empty($gateways))><i class="bi bi-lock-fill me-1"></i> {{ __('Place order') }} · <span data-total>{{ money($q['total']) }}</span></button>
-                <p class="text-center text-muted small mt-2">{{ __('By placing your order you agree to be contacted about its delivery.') }}</p>
-            </div>
+                <div class="shck-actions">
+                    <a href="{{ route('store.cart') }}" class="shck-back"><i class="bi bi-chevron-left"></i> {{ __('Return to cart') }}</a>
+                    <button type="submit" class="shck-pay" id="placeBtn" @disabled(empty($gateways))>{{ __('Complete order') }}</button>
+                </div>
+    </div>
 
-            {{-- ============ right: summary ============ --}}
-            <div class="col-lg-5 order-1 order-lg-2">
+    <footer class="shck-foot">
+        <nav aria-label="{{ __('Legal') }}">@foreach ($footerMenu->take(6) as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach</nav>
+    </footer>
+
+    {{-- ============ right: order summary ============ --}}
+    <div class="shck-side">
                 @php
                     $itemCount = collect($lines['lines'])->sum('qty');
                     $cur = strtoupper((string) setting('store.currency', 'PKR'));
@@ -163,32 +165,12 @@
                         </ul>
                     </div>
                 </aside>
-            </div>
-        </div>
-    </form>
-</div>
+    </div>
+</form>
 @endsection
 
 @push('head')
-<style>
-    .slot-day[hidden] { display: none !important; }   /* d-grid would otherwise win over the hidden attribute */
-    .ck-sec { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-    .ck-sec h2 { font-size: 1.1rem; margin-bottom: 1rem; }
-    .ck-opt { display: grid; grid-template-columns: auto 1fr auto; gap: .8rem; align-items: center; padding: .9rem 1rem; border: 1px solid var(--border-strong); border-radius: 14px; background: var(--surface); cursor: pointer; transition: .2s var(--ease); }
-    .ck-opt:hover { border-color: var(--acc-1); }
-    .ck-opt:has(input:checked) { border-color: var(--acc-1); background: color-mix(in srgb, var(--acc-1) 10%, var(--surface)); box-shadow: var(--glow); }
-    .ck-opt small { display: block; color: var(--text-2); font-size: .82rem; }
-    .ck-summary { position: sticky; top: 90px; }
-    .ck-line { display: grid; grid-template-columns: 56px 1fr auto; gap: .8rem; align-items: center; padding: .55rem 0; }
-    .ck-thumb { position: relative; width: 56px; height: 56px; border-radius: 12px; background: var(--surface-2); display: grid; place-items: center; }
-    .ck-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-    .ck-thumb span { position: absolute; top: -7px; inset-inline-end: -7px; min-width: 20px; height: 20px; border-radius: 99px; background: var(--grad); color: #fff; font-size: .7rem; font-weight: 700; display: grid; place-items: center; font-family: var(--font-mono); }
-    .ck-row { display: flex; justify-content: space-between; padding: .3rem 0; color: var(--text-2); }
-    .ck-row b { color: var(--text); font-weight: 600; }
-    .ck-total { border-top: 1px solid var(--border); margin-top: .5rem; padding-top: .8rem; font-size: 1.15rem; color: var(--text); }
-    .ck-total b { font-size: 1.35rem; }
-    .ck-opt input { accent-color: var(--acc-1); }
-</style>
+<style>.slot-day[hidden] { display: none !important; }</style>
 @endpush
 
 @push('scripts')

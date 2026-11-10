@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Checkout — full Shopify layout
+- The checkout is its own page layout (no site header / footer): logo, *Cart › Information › Shipping › Payment* breadcrumbs, one long form on a white left side (Contact → Delivery → Shipping method → Delivery time → Prescription → Payment → notes) and the grey order summary on the right with the same full-height edge. Floating-label fields, grouped radio rows with a blue selected state, "All transactions are secure and encrypted", a big **Complete order** button with *Return to cart*, and the store's legal links underneath. On phones the summary becomes the collapsible "Show order summary" bar under the logo. Accent colour follows the design's blue. All server rules, live shipping / coupon updates, captcha and honeypot are unchanged.
+
 ### Checkout summary and total (Shopify layout)
 - The order summary follows Shopify's checkout: grey panel, product thumbnails with a grey quantity badge, a discount-code field whose Apply button turns dark once you type, *Subtotal · n items*, *Shipping* ("Enter shipping address" until a city is chosen), *Estimated taxes* (or "Including Rs x in taxes" when tax is included), a large **Total** with the currency code, *Total savings* when a code is used, and a big Place order button. On phones it collapses into Shopify's "Show order summary · total" bar. All figures still update live when the city, delivery method or code changes.
 
