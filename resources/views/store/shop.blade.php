@@ -23,28 +23,44 @@
         @else<span>{{ __('Shop') }}</span>@endif
     </nav>
 
-    <header class="mk-shop-head">
-        <div>
+    @php
+        $keepQ = request()->query() ? '?'.http_build_query(request()->except(['page'])) : '';
+        $chipCats = $current ? ($subcategories->isNotEmpty() ? $subcategories : ($current->parent ? $current->parent->children()->where('is_active', true)->get() : collect())) : \App\Support\Storefront::tree();
+        $chipUp = $current ? ($subcategories->isNotEmpty() ? $current : ($current->parent ?? $current)) : null;
+        $keepForSearch = collect(request()->except(['q', 'page']))->filter(fn ($v) => is_scalar($v) || is_array($v));
+        $from = $products->firstItem() ?? 0; $to = $products->lastItem() ?? 0; $total = $products->total();
+    @endphp
+    <header class="sh-hero">
+        <div class="sh-hero-t">
             <h1>{{ $title }}</h1>
-            @if ($current && $current->trans('description'))<p class="mk-sub">{{ $current->trans('description') }}</p>@endif
+            @if ($current && $current->trans('description'))<p class="mk-sub">{{ $current->trans('description') }}</p>@else<p class="mk-sub">{{ __('Genuine medicines and health products, delivered safely.') }}</p>@endif
         </div>
-        <span class="mk-count-chip">{{ trans_choice(':n product|:n products', $products->total(), ['n' => $products->total()]) }}</span>
+        <form class="sh-search" role="search" method="GET" action="{{ url()->current() }}" data-no-validate>
+            @foreach ($keepForSearch as $k => $v)@if (is_array($v))@foreach ($v as $vv)@if (is_scalar($vv))<input type="hidden" name="{{ $k }}[]" value="{{ $vv }}">@endif @endforeach @elseif ($k !== 'sort' || filled($v))<input type="hidden" name="{{ $k }}" value="{{ $v }}">@endif @endforeach
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <label class="visually-hidden" for="shQ">{{ __('Search in this list') }}</label>
+            <input id="shQ" type="search" name="q" value="{{ $f['q'] ?? '' }}" maxlength="100" placeholder="{{ __('Search medicines, salts, brands…') }}" autocomplete="off">
+            <button type="submit">{{ __('Search') }}</button>
+        </form>
     </header>
 
-    @if ($subcategories->isNotEmpty())
-        <div class="mk-subcats">@foreach ($subcategories as $sc)<a href="{{ route('store.category', $sc->slug) }}"><i class="bi bi-tag"></i>{{ $sc->trans('name') }}</a>@endforeach</div>
+    @if ($chipCats->isNotEmpty())
+        <nav class="sh-cats" aria-label="{{ __('Categories') }}">
+            <a href="{{ $chipUp ? route('store.category', $chipUp->slug).$keepQ : route('store.shop').$keepQ }}" @class(['on' => ! $current || ($chipUp && $current->id === $chipUp->id)])>{{ $chipUp ? __('All :name', ['name' => $chipUp->trans('name')]) : __('All') }}</a>
+            @foreach ($chipCats as $sc)<a href="{{ route('store.category', $sc->slug) }}{{ $keepQ }}" @class(['on' => $current && $current->id === $sc->id])>{{ $sc->trans('name') }}@isset($sc->products_count)<small>{{ $sc->products_count }}</small>@endisset</a>@endforeach
+        </nav>
     @endif
 
     <div class="mk-shop">
-        <aside class="mk-filters">
-            <button class="mk-filter-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sfFilters" aria-expanded="false"><i class="bi bi-funnel"></i> {{ __('Filters') }} @if ($active->isNotEmpty())<b>{{ $active->count() }}</b>@endif</button>
-            <form id="shopForm" method="GET" action="{{ url()->current() }}" class="mk-filter-card collapse d-lg-block" data-autosubmit data-no-validate>
+        <aside class="mk-filters offcanvas-lg offcanvas-start" tabindex="-1" id="sfFilters" aria-labelledby="sfFiltersT">
+            <div class="sh-fhead d-lg-none"><b id="sfFiltersT"><i class="bi bi-funnel"></i> {{ __('Filters') }}</b><button type="button" class="sh-x" data-bs-dismiss="offcanvas" data-bs-target="#sfFilters" aria-label="{{ __('Close') }}"><i class="bi bi-x-lg"></i></button></div>
+            <div class="sh-fbody">
+            <form id="shopForm" method="GET" action="{{ url()->current() }}" class="mk-filter-card" data-autosubmit data-no-validate>
                 @if (filled($f['q'] ?? null))<input type="hidden" name="q" value="{{ $f['q'] }}">@endif
                 <input type="hidden" name="sort" value="{{ $sortNow }}">
                 <div class="tq-flt-search"><i class="bi bi-search"></i><input type="search" placeholder="{{ __('Search filters…') }}" aria-label="{{ __('Search filters…') }}" data-flt-search data-no-auto autocomplete="off" maxlength="40"></div>
 
-                @php $keepQ = request()->query() ? '?'.http_build_query(request()->except(['page'])) : ''; @endphp
-                <section class="tq-fsec" data-flt-sec>
+                                <section class="tq-fsec" data-flt-sec>
                     <h3>{{ __('Category') }}</h3>
                     <ul class="tq-cattree">
                         @foreach (\App\Support\Storefront::tree() as $c1)
@@ -127,15 +143,15 @@
 
                 <a class="tq-fclear" href="{{ url()->current() }}{{ filled($f['q'] ?? null) ? '?q='.urlencode($f['q']) : '' }}">{{ __('Clear all') }}</a>
                 <noscript><button class="btn btn-primary btn-sm mt-3 w-100">{{ __('Apply') }}</button></noscript>
+                <div class="sh-ffoot d-lg-none"><a href="{{ url()->current() }}{{ filled($f['q'] ?? null) ? '?q='.urlencode($f['q']) : '' }}" class="sh-fclear">{{ __('Clear all') }}</a><button type="submit" class="sh-fapply">{{ __('Show :n results', ['n' => $total]) }}</button></div>
             </form>
+            </div>
         </aside>
 
         <div class="mk-shop-main">
-            <div class="mk-toolbar">
-                <div class="mk-chips">
-                    @foreach ($active as $chip)<a class="mk-chip" href="{{ $chip['url'] }}">{{ $chip['label'] }} <i class="bi bi-x"></i></a>@endforeach
-                    @if (filled($f['q'] ?? null))<span class="mk-chip static"><i class="bi bi-search"></i> “{{ $f['q'] }}”</span>@endif
-                </div>
+            <div class="sh-bar">
+                <button class="sh-fbtn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sfFilters" aria-controls="sfFilters"><i class="bi bi-sliders2"></i> {{ __('Filters') }} @if ($active->isNotEmpty())<b>{{ $active->count() }}</b>@endif</button>
+                <p class="sh-count" aria-live="polite">@if ($total){{ __('Showing :from–:to of :total', ['from' => $from, 'to' => $to, 'total' => $total]) }}@else{{ __('No products found') }}@endif</p>
                 <div class="mk-toolbar-right">
                     <label class="mk-sort"><span class="d-none d-sm-inline">{{ __('Sort by') }}</span>
                         <select class="form-select form-select-sm" aria-label="{{ __('Sort by') }}" data-sort-select data-no-validate>
@@ -147,15 +163,30 @@
                     </div>
                 </div>
             </div>
+            @if ($active->isNotEmpty() || filled($f['q'] ?? null))
+                <div class="sh-chips" aria-label="{{ __('Active filters') }}">
+                    @if (filled($f['q'] ?? null))<a class="mk-chip" href="{{ request()->fullUrlWithQuery(['q' => null, 'page' => null]) }}"><i class="bi bi-search"></i> “{{ $f['q'] }}” <i class="bi bi-x"></i></a>@endif
+                    @foreach ($active as $chip)<a class="mk-chip" href="{{ $chip['url'] }}">{{ $chip['label'] }} <i class="bi bi-x"></i></a>@endforeach
+                    <a class="sh-clear" href="{{ url()->current() }}">{{ __('Clear all') }}</a>
+                </div>
+            @endif
 
             @if ($products->isEmpty())
-                <div class="mk-empty"><span><i class="bi bi-search"></i></span><h2>{{ __('No products found') }}</h2><p>{{ __('Try removing a filter or searching for something else.') }}</p>@if ($active->isNotEmpty() || filled($f['q'] ?? null))<a href="{{ route('store.shop') }}" class="btn btn-primary">{{ __('Clear filters') }}</a>@endif</div>
+                <div class="sh-empty">
+                    <span class="sh-orb"><i class="bi bi-search"></i></span>
+                    <h2>{{ __('No products found') }}</h2>
+                    <p>{{ __('Try removing a filter or searching for something else.') }}</p>
+                    <div class="sh-empty-cta">@if ($active->isNotEmpty() || filled($f['q'] ?? null))<a href="{{ route('store.shop') }}" class="sh-btn">{{ __('Clear filters') }}</a>@endif
+                        @if (\App\Support\BusinessProfile::hasModule('prescriptions'))<a href="{{ route('store.prescription.upload') }}" class="sh-btn ghost"><i class="bi bi-camera"></i> {{ __('Upload prescription') }}</a>@endif</div>
+                    <div class="sh-empty-cats">@foreach (\App\Support\Storefront::tree()->take(6) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach</div>
+                </div>
             @else
-                <div data-product-list>
+                <div data-product-list class="sh-grid">
                     @include('store._grid', ['products' => $products, 'cols' => 'row-cols-xl-'.max(2, (int) sf('cards.cols') - 1)])
                 </div>
-                <div class="mk-pager">
-                    <small>{{ __('Showing :from–:to of :total', ['from' => $products->firstItem(), 'to' => $products->lastItem(), 'total' => $products->total()]) }}</small>
+                <div class="sh-pager">
+                    <div class="sh-prog" role="img" aria-label="{{ __('Showing :from–:to of :total', ['from' => $from, 'to' => $to, 'total' => $total]) }}"><i style="width:{{ $total ? round($to / $total * 100) : 0 }}%"></i></div>
+                    <small>{{ __('You have seen :to of :total', ['to' => $to, 'total' => $total]) }}</small>
                     {{ $products->links('pagination::bootstrap-5') }}
                 </div>
             @endif

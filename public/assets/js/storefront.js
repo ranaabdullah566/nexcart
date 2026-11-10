@@ -278,7 +278,12 @@
 
     /* ---------- filters: submit on change ---------- */
     $$('[data-autosubmit]').forEach(function (f) {
-        f.addEventListener('change', function (e) { if (e.target.matches('[data-no-auto]')) return; f.submit(); });
+        f.addEventListener('change', function (e) {
+            if (e.target.matches('[data-no-auto]')) return;
+            // in the phone filter sheet people tick several things, then press "Show results"
+            if (f.closest('.offcanvas-lg') && window.matchMedia && window.matchMedia('(max-width: 991.98px)').matches) return;
+            f.submit();
+        });
     });
 
     /* ---------- shop sidebar: category expanders and filter search ---------- */

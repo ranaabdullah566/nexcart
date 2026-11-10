@@ -4,6 +4,11 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Shop page redesign (using the UI/UX Pro Max skill)
+- The skill's design-system search for "pharmacy online medicine e-commerce marketplace" recommended a **marketplace pattern** (search bar is the call to action, categories, trust) with an **accessible style** (16px+ text, visible 3px focus rings, 44px touch targets, WCAG contrast, reduced-motion). The shop follows it: a hero with a prominent *search in this list* field, scrolling category chips (sub-categories or siblings, with counts), a sticky toolbar (result count, sort, grid / list), removable active-filter chips with *Clear all*, an animated progress "you have seen n of N" pager with 44px page buttons, and a richer empty state (clear filters, upload prescription, popular categories).
+- On phones the filters open as a **slide-in sheet** with a sticky *Clear all* / *Show n results* footer (nothing reloads until you press it); on desktop they stay in the sidebar. Cards fade in with a short stagger (transform / opacity only) and not at all with reduced motion.
+- The skill's colour (green / blue) and Google-font suggestions were not applied: the store keeps its own palette (Admin → Theme) and the CSP only allows bundled fonts.
+
 ### Shop list view
 - The grid / list toggle's *list* mode was broken by the fixed-size card layout (details stacked in the middle, actions hidden). It is now a proper row: image | category, name, composition, chips, rating, price | button and quick icons; on phones the image sits beside the details and the buttons span the row below.
 
