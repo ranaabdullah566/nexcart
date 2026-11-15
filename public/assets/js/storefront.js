@@ -112,8 +112,13 @@
         // card "Add to cart" (simple products)
         var add = e.target.closest('[data-add]');
         if (add && !add.disabled) {
-            add.disabled = true;
-            addToCart({ product_id: +add.dataset.add, qty: 1 }).catch(function () {}).then(function () { add.disabled = false; });
+            var label = add.innerHTML, isBtn = add.classList.contains('mk-add');
+            add.disabled = true; if (isBtn) { add.classList.add('busy'); add.innerHTML = '<span class="mk-spin" aria-hidden="true"></span>'; }
+            addToCart({ product_id: +add.dataset.add, qty: 1 }).then(function () {
+                if (!isBtn) return;
+                add.classList.remove('busy'); add.classList.add('done'); add.innerHTML = '<i class="bi bi-check2"></i> ' + esc(T.added);
+                setTimeout(function () { add.classList.remove('done'); add.innerHTML = label; }, 1600);
+            }).catch(function () { if (isBtn) { add.classList.remove('busy'); add.innerHTML = label; } }).then(function () { add.disabled = false; });
             return;
         }
         var line = e.target.closest('.sf-line');

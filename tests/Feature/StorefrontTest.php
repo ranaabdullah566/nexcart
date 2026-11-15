@@ -313,4 +313,14 @@ class StorefrontTest extends TestCase
         setting()->set('sf.cards.new_days', 0);
         $this->get('/shop')->assertDontSee('mk-flag new', false);
     }
+
+    public function test_cards_warn_about_low_stock_only(): void
+    {
+        $this->product(['name' => 'Few left', 'track_stock' => true, 'stock_qty' => 3]);
+        $this->product(['name' => 'Plenty', 'track_stock' => true, 'stock_qty' => 80]);
+
+        $html = $this->get('/shop')->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, 'class="mk-low"'));
+        $this->assertStringContainsString('Only 3 left in stock.', $html);
+    }
 }

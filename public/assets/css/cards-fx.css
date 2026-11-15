@@ -54,3 +54,40 @@
 .sf-tq .mk-card-body .mk-price small { font-size: .68rem; }
 .sf-tq .mk-card-foot .mk-add { font-size: .82rem; height: 2.5rem; }
 .sf-tq .mk-disc, .sf-tq .mk-flags .mk-flag { font-size: .64rem; padding: .18rem .52rem; }
+
+/* ---- card polish: softer shape, hover lift, picture zoom, clearer states ---- */
+.sf-tq .mk-card { border-radius: 16px; border: 1px solid #e4eaf2; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); transition: transform .25s cubic-bezier(.2, .8, .3, 1), box-shadow .25s, border-color .2s; overflow: hidden; }
+.sf-tq .mk-card:hover, .sf-tq .mk-card:focus-within { transform: translateY(-3px); border-color: #cfdceb; box-shadow: 0 18px 34px -18px rgba(12, 59, 104, .35); }
+.sf-tq .mk-card-media { background: linear-gradient(180deg, #fbfcfe, #eef3f9); overflow: hidden; }
+.sf-tq .mk-card-media img { transition: transform .45s cubic-bezier(.2, .8, .3, 1); }
+.sf-tq .mk-card:hover .mk-card-media img { transform: scale(1.06); }
+.sf-tq .mk-card-name { transition: color .15s; }
+.sf-tq .mk-card:hover .mk-card-name { color: var(--tq-blue, #0b5cab); }
+
+/* low stock reminder on the picture */
+.mk-low { position: absolute; inset-inline-start: .55rem; bottom: .55rem; z-index: 2; display: inline-flex; align-items: center; gap: .25rem; max-width: calc(100% - 7.4rem); padding: .18rem .5rem; border-radius: 99px; background: #fff3e0; color: #b45309; font-size: .62rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 4px 12px -6px rgba(180, 83, 9, .5); }
+.mk-low i { color: #f59e0b; }
+
+/* out of stock: the picture and the button go quiet */
+.sf-tq .mk-card:has(.mk-flag.out) .mk-card-media img { filter: grayscale(1); opacity: .5; }
+.sf-tq .mk-card-foot .mk-add:disabled { background: #e8edf3; color: #7b8794; cursor: not-allowed; box-shadow: none; }
+
+/* add-to-cart feedback */
+.mk-add { transition: background .2s, transform .15s; }
+.mk-add:active:not(:disabled) { transform: scale(.97); }
+.mk-add.done { background: #15803d !important; }
+.mk-spin { width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, .45); border-top-color: #fff; border-radius: 50%; animation: mkSpin .6s linear infinite; }
+@keyframes mkSpin { to { transform: rotate(360deg); } }
+
+/* phones: two narrow columns, so the picture keeps only the heart and the badges shrink */
+@media (max-width: 575.98px) {
+    .mk-q-btn[data-compare-toggle], .mk-q-btn[data-quick] { display: none; }
+    .mk-q-btn { width: 30px; height: 30px; font-size: .85rem; }
+    .mk-q { inset-inline-end: .4rem; bottom: .4rem; }
+    .mk-low { max-width: calc(100% - 3rem); inset-inline-start: .4rem; bottom: .4rem; }
+    .mk-flags { top: .4rem; inset-inline-end: .4rem; }
+    .sf-tq .mk-card-body { padding-inline: .7rem; }
+    .sf-tq .mk-card-foot { padding-inline: .7rem; }
+    .sf-tq .mk-card:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .sf-tq .mk-card, .sf-tq .mk-card-media img, .mk-spin { transition: none; animation: none; } .sf-tq .mk-card:hover { transform: none; } .sf-tq .mk-card:hover .mk-card-media img { transform: none; } }

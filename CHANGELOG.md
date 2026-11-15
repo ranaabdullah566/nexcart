@@ -4,6 +4,12 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Improved: product card UX
+- Softer rounded card with a hover lift and a gentle picture zoom; the name turns blue on hover.
+- **Add to cart** gives feedback: a spinner while it works, then a green *Added to cart ✓* for 1.6 s.
+- **Low stock** shows an *Only N left in stock* chip on the picture (5 or fewer, when stock is tracked). **Out of stock** cards grey the picture and the button.
+- Phones: the picture keeps only the heart (compare and quick view are hidden to avoid crowding the two narrow columns), badges and paddings are smaller.
+
 ### Fixed: pictures not showing when the site is opened on another address than APP_URL
 - Picture links were built from `APP_URL` (e.g. `http://localhost:8000`), so opening the admin or store at `http://127.0.0.1:8000` made the browser block every uploaded picture (the Content-Security-Policy only allows images from the page's own address). Links now follow the address the visitor is on. E-mails and queued jobs still use `APP_URL`, so keep it set to your real domain in production.
 
