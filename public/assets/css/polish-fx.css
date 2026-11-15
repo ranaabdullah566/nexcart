@@ -1,0 +1,51 @@
+/* Storefront polish: one border colour, visible form fields, no boxes inside boxes, phone fixes */
+.sf-tq { --tq-line: #d9e1ec; --border-strong: #c3cedb; --sf-field-line: #bcc8d6; }
+
+/* form fields: a clearly visible border (the old one nearly vanished on white) */
+.sf-tq .form-control, .sf-tq .form-select, .sf-tq .mk-field input, .sf-tq textarea.form-control { border: 1.5px solid var(--sf-field-line) !important; border-radius: 10px !important; background-color: #fff !important; }
+.sf-tq .form-control:hover:not(:focus), .sf-tq .form-select:hover:not(:focus) { border-color: #9fb0c4 !important; }
+.sf-tq .form-control::placeholder { color: #8b97a6; }
+.sf-tq .form-check-input { border: 1.5px solid #9fb0c4; }
+.sf-tq .form-check-input:checked { border-color: var(--tq-blue, #0b5cab); }
+
+/* no box inside a box on the product page: the "delivery & returns" rows and the order-total strip become light rows */
+.sf-tq .mk-care li { background: transparent; border: 0; border-radius: 0; padding: .2rem 0; }
+.sf-tq .mk-care { gap: .2rem; }
+.sf-tq .mk-care li + li { border-top: 1px solid var(--tq-line); padding-top: .8rem; margin-top: .4rem; }
+.sf-tq .tq-total { border: 0; background: #f2f6fb; }
+.sf-tq .mk-policy { border-color: var(--tq-line); }
+
+/* the same soft card border everywhere */
+.sf-tq .mk-card, .sf-tq .mk-tile, .sf-tq .mk-quote, .sf-tq .mk-box, .sf-tq .mk-trust, .sf-tq .sf-cat { border-color: var(--tq-line); }
+.sf-tq .mk-card:hover, .sf-tq .mk-card:focus-within { border-color: #c5d3e3; }
+
+/* the "recently viewed" and cart rails: one card is as wide as the cards of every other row */
+.tq-rail > .tq-rail-item { max-width: none; }
+
+/* ---------------------------------------------------------------- phones */
+@media (max-width: 991.98px) {
+    /* the footer carries the room for the bottom bar, so there is no white strip under it */
+    .sf { padding-bottom: 0; }
+    .mk-footer.ft { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+    /* two floating buttons side by side instead of on top of each other */
+    .fx-rx-fab { inset-inline-end: auto; inset-inline-start: 12px; bottom: calc(86px + env(safe-area-inset-bottom)); padding: .6rem .9rem; font-size: .85rem; }
+    .mk-wa { bottom: calc(86px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 575.98px) {
+    /* price + cut price: allowed to wrap on narrow cards, so the price is never cut with "…" */
+    .sf-tq .mk-card-body .mk-price { flex-wrap: wrap; white-space: normal; }
+    .sf-tq .mk-card-body .mk-price b { overflow: visible; text-overflow: clip; white-space: nowrap; }
+    .sf-tq .mk-card-body .mk-price s { flex: 0 0 auto; }
+
+    /* footer: short link lists sit two by two instead of one long column */
+    .ft-grid, .ft-grid.has-map { grid-template-columns: 1fr 1fr; gap: 1.4rem 1rem; }
+    .ft-brand, .ft-contactcol { grid-column: 1 / -1; }
+    .ft-col[aria-label] { min-width: 0; }
+    .ft-cats { grid-column: 1 / -1; }   /* categories: long names get the full width */
+    .ft-map-box { aspect-ratio: 16 / 9; }
+    .ft-news-form { padding-block: .75rem; }
+
+    /* product page buy box and tabs breathe less */
+    .sf-tq .mk-pane { padding-inline: .2rem; }
+}
+@media (max-width: 420px) { .ft-grid, .ft-grid.has-map { grid-template-columns: 1fr 1fr; } }

@@ -4,6 +4,12 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Fixed: storefront borders and phone layout (`polish-fx.css`)
+- Form fields (contact, sign in, checkout, …) had a border so light it nearly vanished; they now have a clear one with a hover state. One softer line colour is used for cards across the store.
+- Product page: no more boxes inside boxes (the *Delivery & returns* rows and the *Order total* strip are now light rows).
+- Phones: the price on a card is never cut with “…” (the cut price wraps below); the footer lists sit two by two; the white strip under the footer is gone; the *Upload prescription* button moved to the left so it no longer sits on top of the WhatsApp button.
+- Checked 16 pages at 390 px and 1366 px (home, shop, category, product, cart, checkout, saved, compare, blog, article, contact, sign in, register, track, prescription, password reset): no sideways scrolling and no JavaScript errors.
+
 ### Added: card quantity stepper and “Save Rs X”
 - A card whose product is in the basket swaps *Add to cart* for **− qty +** (− at 1 removes it); it follows the basket everywhere (drawer, cart page, other cards of the same product). Stock and “max per order” limits still apply and show a message. Only for simple products — products with pack sizes keep *Choose options*.
 - Discounted cards show a green **Save Rs X** line under the price (the line is only reserved in a row when some card in it has a saving).

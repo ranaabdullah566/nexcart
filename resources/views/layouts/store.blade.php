@@ -37,6 +37,7 @@
     <link href="{{ asset('assets/css/shop-side.css') }}?v={{ @filemtime(public_path('assets/css/shop-side.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/footer-fx.css') }}?v={{ @filemtime(public_path('assets/css/footer-fx.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/cards-fx.css') }}?v={{ @filemtime(public_path('assets/css/cards-fx.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/polish-fx.css') }}?v={{ @filemtime(public_path('assets/css/polish-fx.css')) }}" rel="stylesheet">
     <style>.sf{--mk-ratio:{{ sf('cards.ratio') }};--mk-fit:{{ sf('cards.fit') }}}</style>
     @stack('head')
 </head>
@@ -236,7 +237,7 @@
                 @foreach ($colCompany as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach
             </nav>
             @if ($fCats->isNotEmpty())
-            <nav class="ft-col" aria-label="{{ sft('footer.categories_title') }}"><div class="ft-h">{{ sft('footer.categories_title') }}</div>
+            <nav class="ft-col ft-cats" aria-label="{{ sft('footer.categories_title') }}"><div class="ft-h">{{ sft('footer.categories_title') }}</div>
                 @foreach ($fCats as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach
                 <a class="ft-all" href="{{ route('store.shop') }}">{{ __('All categories') }} <i class="bi bi-arrow-right"></i></a>
             </nav>
