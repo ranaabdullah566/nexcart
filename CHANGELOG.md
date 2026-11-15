@@ -4,6 +4,10 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Added: card quantity stepper and “Save Rs X”
+- A card whose product is in the basket swaps *Add to cart* for **− qty +** (− at 1 removes it); it follows the basket everywhere (drawer, cart page, other cards of the same product). Stock and “max per order” limits still apply and show a message. Only for simple products — products with pack sizes keep *Choose options*.
+- Discounted cards show a green **Save Rs X** line under the price (the line is only reserved in a row when some card in it has a saving).
+
 ### Improved: product card UX
 - Softer rounded card with a hover lift and a gentle picture zoom; the name turns blue on hover.
 - **Add to cart** gives feedback: a spinner while it works, then a green *Added to cart ✓* for 1.6 s.

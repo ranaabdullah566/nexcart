@@ -51,7 +51,19 @@
     var drawerEl = $('#sfDrawer'), drawer = null;
     function openDrawer() { if (!drawerEl || !window.bootstrap) return; drawer = drawer || bootstrap.Offcanvas.getOrCreateInstance(drawerEl); drawer.show(); }
 
+    /* cards: a product that is in the cart shows − qty + instead of "Add to cart" */
+    function syncCards(cart) {
+        var by = {};
+        ((cart && cart.lines) || []).forEach(function (l) { if (!l.vid) { by[l.pid] = l; } });
+        $$('[data-step]').forEach(function (box) {
+            var l = by[box.dataset.step], add = box.parentNode.querySelector('.mk-add');
+            box.hidden = !l; if (add) add.hidden = !!l;
+            if (l) { box.dataset.key = l.key; $('[data-step-qty]', box).textContent = l.qty; }
+        });
+    }
+
     function paintCart(cart) {
+        syncCards(cart);
         $$('[data-cart-count]').forEach(function (b) { b.textContent = cart.count; b.hidden = !cart.count; });
         var body = $('#sfDrawerBody'), foot = $('#sfDrawerFoot'), ship = $('#mcShip'), cnt = $('#mcCount');
         if (cnt) cnt.textContent = cart.count ? (cart.count + ' ' + (cart.count === 1 ? T.item : T.items)) : ' ';
@@ -107,8 +119,19 @@
         }).catch(function (err) { toast(err.message, 'bad'); throw err; });
     }
     SF.addToCart = addToCart;
+    syncCards(SF.cart);
 
     document.addEventListener('click', function (e) {
+        var stepBtn = e.target.closest('[data-step-by]');
+        if (stepBtn) {
+            var box = stepBtn.closest('[data-step]'), q = +$('[data-step-qty]', box).textContent + (+stepBtn.dataset.stepBy);
+            box.classList.add('busy');
+            http('PATCH', SF.routes.cartBase + '/' + box.dataset.key, { qty: q })
+                .then(function (c) { SF.cart = c; paintCart(c); refreshCartPage(c); })
+                .catch(function (err) { toast(err.message, 'bad'); })
+                .then(function () { box.classList.remove('busy'); });
+            return;
+        }
         // card "Add to cart" (simple products)
         var add = e.target.closest('[data-add]');
         if (add && !add.disabled) {

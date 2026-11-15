@@ -35,6 +35,7 @@
             <b>{{ money($p->displayPrice()) }}</b>
             @if ($off)<s>{{ money($p->compare_price) }}</s>@endif
         </div>
+        @if ($off)<div class="mk-save"><i class="bi bi-piggy-bank-fill"></i> {{ __('Save :amount', ['amount' => money($p->compare_price - $p->price)]) }}</div>@else<div class="mk-save is-empty" aria-hidden="true"></div>@endif
     </div>
     <div class="mk-card-foot">
         @if ($out)
@@ -43,6 +44,11 @@
             <button type="button" class="mk-add" data-quick="{{ route('store.quick', $p->slug) }}"><i class="bi bi-sliders2"></i> {{ __('Choose options') }}</button>
         @else
             <button type="button" class="mk-add" data-add="{{ $p->id }}"><i class="bi bi-bag-plus"></i> {{ sft('cards.add_label') }}</button>
+            <div class="mk-step" data-step="{{ $p->id }}" hidden role="group" aria-label="{{ __('Quantity') }}">
+                <button type="button" data-step-by="-1" aria-label="{{ __('Less') }}"><i class="bi bi-dash-lg"></i></button>
+                <span class="mk-step-q" data-step-qty aria-live="polite">1</span>
+                <button type="button" data-step-by="1" aria-label="{{ __('More') }}"><i class="bi bi-plus-lg"></i></button>
+            </div>
         @endif
     </div>
 </article>

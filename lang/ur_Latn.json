@@ -1764,5 +1764,6 @@
     ":n sample pictures removed.": ":n sample pictures removed.",
     "Add sample pictures": "Add sample pictures",
     "Remove sample pictures": "Remove sample pictures",
-    "Show the “New” badge on products added in the last N days (0 = never)": "Show the “New” badge on products added in the last N days (0 = never)"
+    "Show the “New” badge on products added in the last N days (0 = never)": "Show the “New” badge on products added in the last N days (0 = never)",
+    "Save :amount": "Bachat :amount"
 }

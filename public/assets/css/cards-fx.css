@@ -21,7 +21,7 @@
 }
 
 /* a placeholder row is dropped when no card in that row has the thing (set by store-market.js) */
-.fx-salt.is-gone, .fx-chips.is-gone { display: none !important; }
+.fx-chips.is-gone, .mk-save.is-gone { display: none !important; }
 .mk-list .mk-q { position: static; }
 
 /* ---- home slider: arrows, dots, no scrollbar ---- */
@@ -91,3 +91,22 @@
     .sf-tq .mk-card:hover { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) { .sf-tq .mk-card, .sf-tq .mk-card-media img, .mk-spin { transition: none; animation: none; } .sf-tq .mk-card:hover { transform: none; } .sf-tq .mk-card:hover .mk-card-media img { transform: none; } }
+
+/* "Save Rs X" under the price */
+.mk-save { display: flex; align-items: center; gap: .3rem; margin-top: .15rem; font-size: .68rem; font-weight: 800; color: #15803d; }
+.mk-save i { font-size: .75rem; }
+.sf-tq .mk-save.is-empty { visibility: hidden; }
+.mk-list .mk-save.is-empty { display: none; }
+
+/* quantity stepper that replaces "Add to cart" once the product is in the basket */
+.mk-step { display: grid; grid-template-columns: 2.6rem 1fr 2.6rem; align-items: center; height: 2.5rem; border-radius: var(--tq-r-sm, 10px); background: var(--tq-blue, #0b5cab); color: #fff; overflow: hidden; box-shadow: 0 8px 18px -10px rgba(11, 92, 171, .8); }
+.mk-step[hidden] { display: none; }
+.mk-step button { height: 100%; border: 0; background: transparent; color: #fff; font-size: .95rem; display: grid; place-items: center; transition: background .15s; }
+.mk-step button:hover { background: rgba(255, 255, 255, .16); }
+.mk-step button:active { background: rgba(255, 255, 255, .26); }
+.mk-step-q { text-align: center; font-weight: 800; font-size: .92rem; font-variant-numeric: tabular-nums; }
+.mk-step.busy { opacity: .7; pointer-events: none; }
+.mk-add[hidden] { display: none !important; }
+.mk-card-foot { grid-template-columns: minmax(0, 1fr); }
+.mk-card-foot > .mk-step, .mk-card-foot > .mk-add { grid-column: 1 / -1; width: 100%; }
+.mk-list .mk-card-foot { grid-template-columns: minmax(0, 1fr); }

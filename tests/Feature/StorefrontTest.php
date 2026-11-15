@@ -323,4 +323,23 @@ class StorefrontTest extends TestCase
         $this->assertSame(1, substr_count($html, 'class="mk-low"'));
         $this->assertStringContainsString('Only 3 left in stock.', $html);
     }
+
+    public function test_cards_show_the_saving_and_a_stepper_that_follows_the_cart(): void
+    {
+        $sale = $this->product(['name' => 'On sale', 'price' => 80, 'compare_price' => 100]);
+        $this->product(['name' => 'Plain', 'price' => 50]);
+
+        $html = $this->get('/shop')->assertOk()->getContent();
+        $this->assertSame(1, substr_count($html, 'class="mk-save"'));
+        $this->assertStringContainsString('Save', $html);
+        $this->assertStringContainsString('data-step="'.$sale->id.'"', $html);
+
+        $cart = $this->postJson('/cart/add', ['product_id' => $sale->id, 'qty' => 1])->assertOk()->json();
+        $this->assertSame($sale->id, $cart['lines'][0]['pid']);
+        $key = $cart['lines'][0]['key'];
+        $c2 = $this->patchJson('/cart/'.$key, ['qty' => 3])->assertOk()->json();
+        $this->assertSame(3, $c2['lines'][0]['qty']);
+        $c3 = $this->patchJson('/cart/'.$key, ['qty' => 0])->assertOk()->json();
+        $this->assertSame([], $c3['lines']);
+    }
 }

@@ -152,7 +152,7 @@
     /* ---- cards: when no card in a row has a salt / tags line, that line takes no space in the row ---- */
     var tidyCards = function () {
         var cards = all('.mk-card');
-        cards.forEach(function (c) { all('.fx-salt, .fx-chips', c).forEach(function (e) { e.classList.remove('is-gone'); }); });
+        cards.forEach(function (c) { all('.fx-chips, .mk-save', c).forEach(function (e) { e.classList.remove('is-gone'); }); });
         var rows = {};
         cards.forEach(function (c) {
             if (c.closest('.mk-list')) return;
@@ -161,7 +161,7 @@
             (rows[id] = rows[id] || []).push(c);
         });
         Object.keys(rows).forEach(function (id) {
-            ['.fx-salt', '.fx-chips'].forEach(function (sel) {
+            ['.mk-save', '.fx-chips'].forEach(function (sel) {
                 var slots = rows[id].map(function (c) { return one(sel, c); }).filter(Boolean);
                 if (slots.length && slots.every(function (e) { return e.classList.contains('is-empty'); })) slots.forEach(function (e) { e.classList.add('is-gone'); });
             });

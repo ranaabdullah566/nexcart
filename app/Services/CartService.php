@@ -122,7 +122,7 @@ class CartService
             'free_over_fmt' => $free !== null ? money((float) $free) : null,
             'suggest' => $withSuggestions ? $this->suggestions($lines) : [],
             'lines' => $lines->map(fn ($l) => [
-                'key' => $l['key'],
+                'key' => $l['key'], 'pid' => $l['product']->id, 'vid' => $l['variant']?->id,
                 'name' => $l['product']->trans('name'),
                 'variant' => $l['variant']?->name,
                 'qty' => $l['qty'],
