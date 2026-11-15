@@ -4,6 +4,11 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Fixed: admin products page is fast with thousands of products
+- Admin → Products printed **every** product into the page (3,619 products = a 5 MB page that took about 4 s). The table now pages, searches (name, SKU, barcode) and sorts on the server, so the page is about 24 KB and opens in about 0.2 s; the three counters are database counts.
+- Admin → Categories: the old “3 levels” subtitle is replaced (categories are one flat level now). Home page list no longer shows `{…}` markers from the hero headline.
+- Checked 26 admin pages at 390 px and 1366 px: no sideways scrolling, no JavaScript errors, tables turn into stacked cards on phones.
+
 ### Fixed: storefront borders and phone layout (`polish-fx.css`)
 - Form fields (contact, sign in, checkout, …) had a border so light it nearly vanished; they now have a clear one with a hover state. One softer line colour is used for cards across the store.
 - Product page: no more boxes inside boxes (the *Delivery & returns* rows and the *Order total* strip are now light rows).

@@ -2,7 +2,7 @@
 @section('title', __('Categories'))
 
 @section('content')
-<x-page-header :title="__('Categories')" :eyebrow="__('Catalog')" :sub="__('Group medicines in up to 3 levels, e.g. Pain & fever › Pain relief › Tablets.')">
+<x-page-header :title="__('Categories')" :eyebrow="__('Catalog')" :sub="__('One flat list of categories, e.g. Pain & fever, Vitamins, Baby care. Only categories with products show in the store.')">
     <x-slot:actions>
         @can('categories.create')<a href="{{ route('admin.categories.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> {{ __('New category') }}</a>@endcan
     </x-slot:actions>

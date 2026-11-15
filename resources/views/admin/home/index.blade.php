@@ -37,7 +37,7 @@
         <div class="card" style="{{ $s->is_active ? '' : 'opacity:.6' }}"><div class="card-body d-flex align-items-center gap-3 flex-wrap">
             <span class="nx-chip-avatar"><i class="bi bi-{{ $meta[$s->type][0] }}"></i></span>
             <div class="flex-grow-1 min-w-0">
-                <div class="fw-semibold text-truncate">{{ $s->title ?: __($meta[$s->type][1]) }}</div>
+                <div class="fw-semibold text-truncate">{{ str_replace(['{', '}'], '', $s->title ?: __($meta[$s->type][1])) }}</div>
                 <div class="small text-muted">{{ __($meta[$s->type][1]) }} @unless ($s->is_active)· <span class="text-warning">{{ __('Hidden') }}</span>@endunless</div>
             </div>
             <div class="d-flex gap-1 align-items-center">

@@ -1469,12 +1469,6 @@
     "Tax excluded": "ٹیکس شامل نہیں",
     "Tax included": "ٹیکس شامل",
     "Up to four medicines side by side.": "چار ادویات تک ساتھ ساتھ۔",
-    "Categories can only be :n levels deep (category › sub-category › sub-sub-category).": "زمرے صرف :n لیول تک ہو سکتے ہیں (زمرہ › ذیلی زمرہ › ذیلی کا ذیلی زمرہ)۔",
-    "Up to 3 levels: Category › Sub-category › Sub-sub-category. Only categories that still have room are listed.": "زیادہ سے زیادہ 3 لیول: زمرہ › ذیلی زمرہ › ذیلی کا ذیلی زمرہ۔ صرف وہی زمرے دکھائے گئے ہیں جن میں گنجائش ہے۔",
-    "Level :n": "لیول :n",
-    "Add sub-category": "ذیلی زمرہ شامل کریں",
-    "Sub": "ذیلی",
-    "Group medicines in up to 3 levels, e.g. Pain & fever › Pain relief › Tablets.": "ادویات کو 3 لیول تک گروپ کریں، مثلاً درد اور بخار › درد سے آرام › گولیاں۔",
     "Account menu": "اکاؤنٹ مینو",
     "Add a new address": "نیا پتہ شامل کریں",
     "Address removed": "پتہ ہٹا دیا گیا",
@@ -1660,7 +1654,6 @@
     "On sale": "سیل پر",
     "Min": "کم از کم",
     "Max": "زیادہ سے زیادہ",
-    "Show sub-categories": "ذیلی زمرے دکھائیں",
     "Show order summary": "آرڈر کا خلاصہ دکھائیں",
     "Hide order summary": "آرڈر کا خلاصہ چھپائیں",
     "Enter shipping address": "ڈیلیوری کا پتہ درج کریں",
@@ -1765,5 +1758,6 @@
     "Add sample pictures": "نمونہ تصاویر شامل کریں",
     "Remove sample pictures": "نمونہ تصاویر ہٹائیں",
     "Show the “New” badge on products added in the last N days (0 = never)": "آخری N دنوں میں شامل پروڈکٹس پر “نیا” بیج دکھائیں (0 = کبھی نہیں)",
-    "Save :amount": "بچت :amount"
+    "Save :amount": "بچت :amount",
+    "One flat list of categories, e.g. Pain & fever, Vitamins, Baby care. Only categories with products show in the store.": "زمروں کی ایک سادہ فہرست، مثلاً درد اور بخار، وٹامنز، بچوں کی دیکھ بھال۔ اسٹور میں صرف وہی زمرے دکھتے ہیں جن میں پروڈکٹس ہوں۔"
 }

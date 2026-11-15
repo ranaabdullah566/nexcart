@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\StockMovement;
 use App\Rules\UniqueActive;
 use App\Support\BusinessProfile;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,12 +23,47 @@ class ProductController extends Controller
     {
         $this->authorizeTo('products.view');
 
-        $products = Product::with(['category', 'variants', 'media'])->orderByDesc('id')->get();
+        $lowSql = "track_stock = 1 and (case when type = 'variable' then (select coalesce(sum(stock_qty), 0) from product_variants v where v.product_id = products.id and v.is_active = 1) else stock_qty end) <= low_stock_threshold";
 
         return view('admin.products.index', [
-            'products' => $products,
-            'lowStock' => $products->filter->isLowStock()->count(),
-            'activeCount' => $products->where('status', 'active')->count(),
+            'total' => Product::count(),
+            'lowStock' => Product::whereRaw($lowSql)->count(),
+            'activeCount' => Product::where('status', 'active')->count(),
+        ]);
+    }
+
+    /** Rows for the products table (server-side paging: a catalogue can hold thousands of products). */
+    public function data(Request $request): JsonResponse
+    {
+        $this->authorizeTo('products.view');
+        $q = Product::query()->with(['category', 'variants', 'media'])->select('products.*');
+        $total = Product::count();
+
+        if (filled($term = trim((string) $request->input('search.value')))) {
+            $like = '%'.addcslashes(mb_substr($term, 0, 80), '%_\\').'%';
+            $q->where(fn ($w) => $w->where('products.name', 'like', $like)->orWhere('products.sku', 'like', $like)->orWhere('products.barcodes', 'like', $like));
+        }
+        $filtered = (clone $q)->toBase()->getCountForPagination();
+
+        $col = (int) $request->input('order.0.column', -1);
+        $dir = $request->input('order.0.dir') === 'asc' ? 'asc' : 'desc';
+        match ($col) {
+            0 => $q->orderBy('products.name', $dir),
+            1 => $q->leftJoin('categories', 'categories.id', '=', 'products.category_id')->orderBy('categories.name', $dir),
+            2 => $q->orderBy('products.price', $dir),
+            3 => $q->orderBy('products.stock_qty', $dir),
+            4 => $q->orderBy('products.status', $dir),
+            default => $q->orderByDesc('products.id'),
+        };
+
+        $rows = $q->skip(max(0, (int) $request->input('start', 0)))->take(min(100, max(1, (int) $request->input('length', 25))))->get();
+        $cell = fn (string $name, $p) => trim(view('admin.products.cells.'.$name, ['p' => $p])->render());
+
+        return response()->json([
+            'draw' => (int) $request->input('draw'),
+            'recordsTotal' => $total,
+            'recordsFiltered' => $filtered,
+            'data' => $rows->map(fn ($p) => array_map(fn ($n) => $cell($n, $p), ['name', 'category', 'price', 'stock', 'status', 'actions']))->all(),
         ]);
     }
 

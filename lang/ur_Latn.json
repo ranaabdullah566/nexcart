@@ -1469,12 +1469,6 @@
     "Tax excluded": "Tax shamil nahi",
     "Tax included": "Tax shamil",
     "Up to four medicines side by side.": "Char adviyaat tak saath saath.",
-    "Categories can only be :n levels deep (category › sub-category › sub-sub-category).": "Categories sirf :n level tak ho sakti hain (category › sub-category › sub-sub-category).",
-    "Up to 3 levels: Category › Sub-category › Sub-sub-category. Only categories that still have room are listed.": "Ziada se ziada 3 level: Category › Sub-category › Sub-sub-category. Sirf wohi categories dikhai gayi hain jin mein gunjaish hai.",
-    "Level :n": "Level :n",
-    "Add sub-category": "Sub-category shamil karein",
-    "Sub": "Sub",
-    "Group medicines in up to 3 levels, e.g. Pain & fever › Pain relief › Tablets.": "Adviyaat ko 3 level tak group karein, masalan Pain & fever › Pain relief › Tablets.",
     "Account menu": "Account menu",
     "Add a new address": "Naya pata shamil karein",
     "Address removed": "Pata hata diya gaya",
@@ -1660,7 +1654,6 @@
     "On sale": "Sale par",
     "Min": "Kam az kam",
     "Max": "Ziada se ziada",
-    "Show sub-categories": "Sub-categories dikhayein",
     "Show order summary": "Order ka khulasa dikhayein",
     "Hide order summary": "Order ka khulasa chhupayein",
     "Enter shipping address": "Delivery ka pata darj karein",
@@ -1765,5 +1758,6 @@
     "Add sample pictures": "Add sample pictures",
     "Remove sample pictures": "Remove sample pictures",
     "Show the “New” badge on products added in the last N days (0 = never)": "Show the “New” badge on products added in the last N days (0 = never)",
-    "Save :amount": "Bachat :amount"
+    "Save :amount": "Bachat :amount",
+    "One flat list of categories, e.g. Pain & fever, Vitamins, Baby care. Only categories with products show in the store.": "Categories ki ek sada list, masalan Pain & fever, Vitamins, Baby care. Store me sirf wahi categories dikhti hain jin me products hon."
 }

@@ -87,6 +87,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::post('product-sync', [ProductSyncController::class, 'store'])->middleware('throttle:6,1')->name('product-sync.store');
     Route::get('product-sync/export', [ProductSyncController::class, 'export'])->name('product-sync.export');
     Route::get('product-sync/{sync}', [ProductSyncController::class, 'show'])->name('product-sync.show');
+    Route::get('products/data', [ProductController::class, 'data'])->name('products.data');
     Route::get('products/export', [ProductCsvController::class, 'export'])->name('products.export');
     Route::post('products/import', [ProductCsvController::class, 'import'])->name('products.import');
     Route::delete('products/{product}/images/{media}', [ProductController::class, 'destroyImage'])->name('products.images.destroy');

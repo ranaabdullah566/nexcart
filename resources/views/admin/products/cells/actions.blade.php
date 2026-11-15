@@ -1,0 +1,1 @@
+<x-row-actions :edit="route('admin.products.edit', $p)" :delete="route('admin.products.destroy', $p)" :can="['edit' => 'products.update', 'delete' => 'products.delete']" :confirm="__('Delete this product?')" />
