@@ -118,12 +118,12 @@ class PharmacyUxTest extends TestCase
         $this->put("/admin/prescription-requests/{$r->id}", ['status' => 'closed'])->assertForbidden();
     }
 
-    public function test_cards_show_composition_and_dosage_chips_and_search_finds_by_salt(): void
+    public function test_cards_show_dosage_chips_and_search_still_finds_by_salt(): void
     {
         $this->med(['name' => 'Panadol', 'specs' => ['composition' => 'Paracetamol 500mg', 'dosage_form' => 'Tablet', 'strength' => '500mg']]);
         $this->med(['name' => 'Vitamin Shot']);
 
-        $this->get('/shop')->assertSee('Paracetamol 500mg')->assertSee('Tablet');
+        $this->get('/shop')->assertSee('Tablet')->assertDontSee('fx-salt', false);   // the salt line is gone from cards; it stays on the product page and in search
         $this->get('/shop?q=paracetamol')->assertSee('Panadol')->assertDontSee('Vitamin Shot');
         $this->getJson('/search/suggest?q=paracetamol')->assertJsonPath('results.0.name', 'Panadol');
     }

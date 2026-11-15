@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Changed: no salt line on cards
+- Product cards no longer show the composition (salt) line; the form / strength chips stay. The composition is still on the product page, drives the *same salt* alternatives, and search still finds products by it.
+
 ### Changed: product cards and the home slider
 - Cards: the star-rating line is gone (and its *Show ratings* option); price and cut price sit on **one line**; the small icon row under *Add to cart* (heart, compare, cart, quick view) is replaced by three round icons on the picture — save, compare, quick view (always visible on touch, fade in on hover with a mouse); the extra cart icon is dropped.
 - A row of cards no longer reserves space for the salt line or the tags line when **no card in that row** has one (a row where only some have them keeps the alignment).

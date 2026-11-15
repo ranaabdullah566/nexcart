@@ -26,8 +26,7 @@
     <div class="mk-card-body">
         <div class="mk-card-cat">@if ($p->category && sf('cards.show_category')){{ $p->category->trans('name') }}@else&nbsp;@endif</div>
         <a href="{{ route('store.product', $p->slug) }}" class="mk-card-name">{{ $p->trans('name') }}</a>
-        @php $salt = trim((string) ($p->specs['composition'] ?? '')); $form = trim((string) ($p->specs['dosage_form'] ?? '')); $strength = trim((string) ($p->specs['strength'] ?? '')); @endphp
-        @if ($salt !== '' && $salt !== '—')<div class="fx-salt" title="{{ $salt }}"><i class="bi bi-eyedropper"></i><span>{{ \Illuminate\Support\Str::limit($salt, 38) }}</span></div>@else<div class="fx-salt is-empty" aria-hidden="true"></div>@endif
+        @php $form = trim((string) ($p->specs['dosage_form'] ?? '')); $strength = trim((string) ($p->specs['strength'] ?? '')); @endphp
         @if (($form !== '' && $form !== 'Other') || ($strength !== '' && $strength !== '—') || $p->isVariable())<div class="fx-chips">@if ($form !== '' && $form !== 'Other')<span>{{ $form }}</span>@endif @if ($strength !== '' && $strength !== '—')<span>{{ $strength }}</span>@endif @if ($p->isVariable())<span class="alt">{{ __('Pack sizes') }}</span>@endif</div>@else<div class="fx-chips is-empty" aria-hidden="true"></div>@endif
         <div class="mk-price">
             @if ($p->isVariable())<small>{{ __('from') }}</small>@endif
