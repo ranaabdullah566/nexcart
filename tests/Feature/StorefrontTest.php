@@ -288,4 +288,14 @@ class StorefrontTest extends TestCase
         setting()->setMany(['sf.footer.show_map' => true, 'sf.footer.map_url' => 'https://evil.test/maps']);
         $this->get('/')->assertDontSee('evil.test', false);
     }
+
+    public function test_whatsapp_link_uses_the_country_code(): void
+    {
+        $this->assertSame('923004462436', \App\Support\Storefront::waNumber('0300 4462436'));
+        $this->assertSame('923004462436', \App\Support\Storefront::waNumber('+92 300 4462436'));
+        $this->assertSame('923004462436', \App\Support\Storefront::waNumber('03004462436'));
+        $this->assertSame('923004462436', \App\Support\Storefront::waNumber('00923004462436'));
+        setting()->set('store.whatsapp', '03004462436');
+        $this->get('/')->assertSee('https://wa.me/923004462436', false);
+    }
 }

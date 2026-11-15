@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Fixed: WhatsApp button
+- Official WhatsApp green with a white glyph, a white ring and a soft pulse (off for reduced motion). The `wa.me` link now carries the country code (`03004462436` → `923004462436`, code from Settings → phone code; before, a local number with a leading 0 opened a wrong chat).
+
 ### Changed: footer columns
 - Four headed columns after the brand: **Store** (Menus → Footer – Shop, else All products / Deals), **Support** (Footer – Help and Footer – Company links, else Track an order / Contact us / My account), **Categories** (at most 5, busiest first) and **Contact Us** (phone, e-mail, address, hours, then the map and *Get directions*). The brand column keeps the logo, text and social icons. Titles are editable in Storefront options → Footer.
 

@@ -31,6 +31,24 @@ class Storefront
         return filled($q = trim((string) sf('footer.map_query'))) ? $q : (filled($a = setting('store.address')) ? $a : null);
     }
 
+    /** wa.me wants the number with the country code and no leading zero: 0300 4462436 → 923004462436 (code from Settings). */
+    public static function waNumber(string $raw): string
+    {
+        $digits = preg_replace('/\D/', '', $raw);
+        if (str_starts_with(trim($raw), '+')) {
+            return $digits;
+        }
+        $code = (string) (setting('store.phone_code') ?: '92');
+        if (str_starts_with($digits, '00')) {
+            return substr($digits, 2);
+        }
+        if (str_starts_with($digits, '0')) {
+            return $code.substr($digits, 1);
+        }
+
+        return str_starts_with($digits, $code) && strlen($digits) > 10 ? $digits : $code.$digits;
+    }
+
     /** @return array<string, array{url:string, label:string, icon:string}> social links the owner filled in */
     public static function socials(): array
     {
@@ -42,7 +60,7 @@ class Storefront
             }
         }
         if (filled($wa = setting('store.whatsapp'))) {
-            $out['whatsapp'] = ['url' => 'https://wa.me/'.preg_replace('/\D/', '', $wa), 'label' => 'WhatsApp', 'icon' => 'whatsapp'];
+            $out['whatsapp'] = ['url' => 'https://wa.me/'.self::waNumber($wa), 'label' => 'WhatsApp', 'icon' => 'whatsapp'];
         }
 
         return $out;
