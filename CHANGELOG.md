@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Added: sample pictures
+- Admin → Home page → **Add sample pictures** (or `php artisan nexcart:demo-images [--products=60]`) draws pictures with GD — no internet needed: a bottle, capsule, tablet or pack on a soft gradient for products (chosen from the name / dosage form), one for every category that has products, and wide art for hero / banner / call-to-action sections. Only things **without** a picture get one; uploaded pictures are never touched. **Remove sample pictures** (`--remove`) deletes exactly the drawn ones. The sample medicines (`nexcart:demo`) now use the same drawings.
+
 ### Added: sample home sections
 - Admin → Home page → **Add sample sections** (or `php artisan nexcart:home-demo`) adds one switched-on sample of every kind — hero, highlights, category tiles, three product rows, promo banner, call-to-action, steps, customer quotes, reviews, blog, FAQ, text — so each block can be seen and tested. **Remove sample sections** (or `--remove`) deletes exactly those and nothing else. Reviews and blog stay hidden until a review is approved / an article is published; `php artisan nexcart:demo` loads sample medicines, reviews and articles for that.
 

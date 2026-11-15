@@ -71,6 +71,9 @@ class HomeDemo
         $add('text', 'Sample text block', ['title' => 'Sample: about our pharmacy', 'body' => "We are a licensed pharmacy.\n\nEvery order is checked by a pharmacist before it leaves our shop. This block is plain text you can use for an introduction, a notice or opening hours."]);
 
         setting()->set('demo.home_ids', $ids);
+        if (app(DemoImages::class)->loaded()) {
+            app(DemoImages::class)->sections();   // pictures were added already: the new hero / banner / CTA get theirs too
+        }
 
         $warn = [];
         if (! Review::query()->where('status', 'approved')->exists()) {

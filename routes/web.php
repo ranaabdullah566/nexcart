@@ -180,6 +180,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::resource('menu-items', MenuItemController::class)->except('show')->parameters(['menu-items' => 'menuItem']);
     Route::post('home-sections/demo', [HomeSectionController::class, 'demo'])->name('home-sections.demo');
     Route::delete('home-sections/demo', [HomeSectionController::class, 'demoRemove'])->name('home-sections.demo.remove');
+    Route::post('home-sections/images', [HomeSectionController::class, 'images'])->middleware('throttle:6,1')->name('home-sections.images');
+    Route::delete('home-sections/images', [HomeSectionController::class, 'imagesRemove'])->name('home-sections.images.remove');
     Route::post('home-sections/{homeSection}/toggle', [HomeSectionController::class, 'toggle'])->name('home-sections.toggle');
     Route::post('home-sections/{homeSection}/move', [HomeSectionController::class, 'move'])->name('home-sections.move');
     Route::resource('home-sections', HomeSectionController::class)->except('show')->parameters(['home-sections' => 'homeSection']);

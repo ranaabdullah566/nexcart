@@ -1757,5 +1757,11 @@
     "Remove sample sections": "Remove sample sections",
     "The reviews section stays hidden until at least one review is approved (Admin → Reviews, or load the sample medicines).": "The reviews section stays hidden until at least one review is approved (Admin → Reviews, or load the sample medicines).",
     "The blog section stays hidden until at least one article is published (Admin → Blog, or load the sample medicines).": "The blog section stays hidden until at least one article is published (Admin → Blog, or load the sample medicines).",
-    "There are no products yet, so the product rows are empty.": "There are no products yet, so the product rows are empty."
+    "There are no products yet, so the product rows are empty.": "There are no products yet, so the product rows are empty.",
+    "The PHP GD extension is needed to draw sample pictures.": "The PHP GD extension is needed to draw sample pictures.",
+    "Sample pictures are already added. Remove them first to add them again.": "Sample pictures are already added. Remove them first to add them again.",
+    "Sample pictures added: :c categories, :p products, :s sections.": "Sample pictures added: :c categories, :p products, :s sections.",
+    ":n sample pictures removed.": ":n sample pictures removed.",
+    "Add sample pictures": "Add sample pictures",
+    "Remove sample pictures": "Remove sample pictures"
 }

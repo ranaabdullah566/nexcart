@@ -63,6 +63,25 @@ class HomeSectionController extends Controller
         return back()->with('success', __(':n sample sections removed.', ['n' => $demo->remove()]));
     }
 
+    public function images(\App\Services\DemoImages $images): RedirectResponse
+    {
+        $this->authorizeTo('storefront.manage');
+        try {
+            $r = $images->load();
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', __('Sample pictures added: :c categories, :p products, :s sections.', ['c' => $r['categories'], 'p' => $r['products'], 's' => $r['sections']]));
+    }
+
+    public function imagesRemove(\App\Services\DemoImages $images): RedirectResponse
+    {
+        $this->authorizeTo('storefront.manage');
+
+        return back()->with('success', __(':n sample pictures removed.', ['n' => $images->remove()]));
+    }
+
     public function create(Request $request): View
     {
         $this->authorizeTo('storefront.manage');

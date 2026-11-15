@@ -220,42 +220,10 @@ Skin that blisters, a mole that changes shape or colour, or sunburn that does no
     /** A generated gradient picture — no downloads, no licensing questions. */
     private function attachImage(HasMedia $p, int $hue, string $seed, string $collection = 'images', int $w = 640, int $h = 640): void
     {
-        if (! function_exists('imagecreatetruecolor')) {
-            return;
+        $file = app(DemoImages::class)->productFile($seed, '', $collection.'-'.$p->getKey());
+        if ($file) {
+            $p->addMedia($file)->toMediaCollection($collection);   // moves the temp file
         }
-        $im = imagecreatetruecolor($w, $h);
-        [$r1, $g1, $b1] = $this->hsv($hue, .55, .95);
-        [$r2, $g2, $b2] = $this->hsv(($hue + 50) % 360, .65, .55);
-        for ($y = 0; $y < $h; $y++) {
-            $t = $y / $h;
-            imageline($im, 0, $y, $w, $y, imagecolorallocate($im, (int) ($r1 + ($r2 - $r1) * $t), (int) ($g1 + ($g2 - $g1) * $t), (int) ($b1 + ($b2 - $b1) * $t)));
-        }
-        imagealphablending($im, true);
-        mt_srand(crc32($seed));
-        $m = min($w, $h);
-        for ($k = 0; $k < 4; $k++) {
-            $d = mt_rand((int) ($m * .22), (int) ($m * .6));
-            imagefilledellipse($im, mt_rand(60, $w - 60), mt_rand(60, $h - 60), $d, $d, imagecolorallocatealpha($im, 255, 255, 255, mt_rand(104, 116)));
-        }
-        imagefilledellipse($im, (int) ($w / 2), (int) ($h / 2), (int) ($m * .36), (int) ($m * .36), imagecolorallocatealpha($im, 255, 255, 255, 40));
-        imagefilledellipse($im, (int) ($w / 2), (int) ($h / 2), (int) ($m * .27), (int) ($m * .27), imagecolorallocatealpha($im, $r2, $g2, $b2, 40));
-
-        File::ensureDirectoryExists($dir = storage_path('app/tmp'));
-        $file = $dir.'/demo-'.$collection.'-'.$p->getKey().'.png';
-        imagepng($im, $file);
-        imagedestroy($im);
-
-        $p->addMedia($file)->toMediaCollection($collection);   // moves the temp file
-    }
-
-    private function hsv(int $h, float $s, float $v): array
-    {
-        $i = (int) floor($h / 60) % 6;
-        $f = $h / 60 - floor($h / 60);
-        [$p, $q, $t] = [$v * (1 - $s), $v * (1 - $f * $s), $v * (1 - (1 - $f) * $s)];
-        [$r, $g, $b] = [[$v, $t, $p], [$q, $v, $p], [$p, $v, $t], [$p, $q, $v], [$t, $p, $v], [$v, $p, $q]][$i];
-
-        return [(int) ($r * 255), (int) ($g * 255), (int) ($b * 255)];
     }
 
     private function dataset(): array

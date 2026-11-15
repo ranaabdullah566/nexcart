@@ -18,6 +18,11 @@
         @else
             <form method="POST" action="{{ route('admin.home-sections.demo') }}" data-no-ajax>@csrf<button class="btn btn-outline-secondary"><i class="bi bi-magic me-1"></i> {{ __('Add sample sections') }}</button></form>
         @endif
+        @if (setting('demo.image_ids'))
+            <form method="POST" action="{{ route('admin.home-sections.images.remove') }}" data-no-ajax>@csrf @method('DELETE')<button class="btn btn-outline-danger"><i class="bi bi-images me-1"></i> {{ __('Remove sample pictures') }}</button></form>
+        @else
+            <form method="POST" action="{{ route('admin.home-sections.images') }}" data-no-ajax>@csrf<button class="btn btn-outline-secondary"><i class="bi bi-images me-1"></i> {{ __('Add sample pictures') }}</button></form>
+        @endif
         <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-plus-lg me-1"></i> {{ __('Add section') }}</button>
             <ul class="dropdown-menu dropdown-menu-end">

@@ -1757,5 +1757,11 @@
     "Remove sample sections": "نمونہ سیکشنز ہٹائیں",
     "The reviews section stays hidden until at least one review is approved (Admin → Reviews, or load the sample medicines).": "ریویوز سیکشن تب تک چھپا رہتا ہے جب تک کم از کم ایک ریویو منظور نہ ہو (Admin → Reviews، یا نمونہ ادویات لوڈ کریں)۔",
     "The blog section stays hidden until at least one article is published (Admin → Blog, or load the sample medicines).": "بلاگ سیکشن تب تک چھپا رہتا ہے جب تک کم از کم ایک مضمون شائع نہ ہو (Admin → Blog، یا نمونہ ادویات لوڈ کریں)۔",
-    "There are no products yet, so the product rows are empty.": "ابھی کوئی پروڈکٹ نہیں، اس لیے پروڈکٹ قطاریں خالی ہیں۔"
+    "There are no products yet, so the product rows are empty.": "ابھی کوئی پروڈکٹ نہیں، اس لیے پروڈکٹ قطاریں خالی ہیں۔",
+    "The PHP GD extension is needed to draw sample pictures.": "نمونہ تصاویر بنانے کے لیے PHP GD ایکسٹینشن چاہیے۔",
+    "Sample pictures are already added. Remove them first to add them again.": "نمونہ تصاویر پہلے سے شامل ہیں۔ دوبارہ شامل کرنے کے لیے پہلے انہیں ہٹائیں۔",
+    "Sample pictures added: :c categories, :p products, :s sections.": "نمونہ تصاویر شامل: :c کیٹیگریز، :p پروڈکٹس، :s سیکشنز۔",
+    ":n sample pictures removed.": ":n نمونہ تصاویر ہٹا دی گئیں۔",
+    "Add sample pictures": "نمونہ تصاویر شامل کریں",
+    "Remove sample pictures": "نمونہ تصاویر ہٹائیں"
 }
