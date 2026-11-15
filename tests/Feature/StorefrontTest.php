@@ -342,4 +342,12 @@ class StorefrontTest extends TestCase
         $c3 = $this->patchJson('/cart/'.$key, ['qty' => 0])->assertOk()->json();
         $this->assertSame([], $c3['lines']);
     }
+
+    public function test_home_product_rows_use_the_slider_markup(): void
+    {
+        $p = $this->product(['name' => 'Slide me', 'is_featured' => true]);
+        \App\Models\HomeSection::create(['type' => 'products', 'title' => 'Slider test', 'settings' => ['title' => 'Slider test', 'source' => 'featured', 'limit' => 8], 'sort_order' => 1, 'is_active' => true]);
+
+        $this->get('/')->assertOk()->assertSee('data-pslider', false)->assertSee('data-ps-track', false)->assertSee('data-ps-prev', false)->assertSee('data-ps-bar', false)->assertSee('assets/js/product-slider.js', false)->assertSee('Slide me');
+    }
 }

@@ -38,6 +38,7 @@
     <link href="{{ asset('assets/css/footer-fx.css') }}?v={{ @filemtime(public_path('assets/css/footer-fx.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/cards-fx.css') }}?v={{ @filemtime(public_path('assets/css/cards-fx.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/polish-fx.css') }}?v={{ @filemtime(public_path('assets/css/polish-fx.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/slider-fx.css') }}?v={{ @filemtime(public_path('assets/css/slider-fx.css')) }}" rel="stylesheet">
     <style>.sf{--mk-ratio:{{ sf('cards.ratio') }};--mk-fit:{{ sf('cards.fit') }}}</style>
     @stack('head')
 </head>
@@ -360,6 +361,7 @@
 <script defer src="{{ asset('assets/js/nx-validate.js') }}?v={{ @filemtime(public_path('assets/js/nx-validate.js')) }}"></script>
 <script defer src="{{ asset('assets/js/store-market.js') }}?v={{ @filemtime(public_path('assets/js/store-market.js')) }}"></script>
 <script defer src="{{ asset('assets/js/storefront.js') }}?v={{ @filemtime(public_path('assets/js/storefront.js')) }}"></script>
+<script defer src="{{ asset('assets/js/product-slider.js') }}?v={{ @filemtime(public_path('assets/js/product-slider.js')) }}"></script>
 <script defer src="{{ asset('assets/js/store-future.js') }}?v={{ @filemtime(public_path('assets/js/store-future.js')) }}"></script>
 @stack('jsonld')
 @stack('scripts')
