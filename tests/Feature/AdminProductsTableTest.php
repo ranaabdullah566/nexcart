@@ -41,4 +41,41 @@ class AdminProductsTableTest extends TestCase
         $this->actingAs(User::factory()->create());
         $this->getJson('/admin/products/data')->assertForbidden();
     }
+
+    public function test_category_pickers_in_admin_forms_show_the_category_names(): void
+    {
+        (new RolesSeeder)->run();
+        setting()->set('system.installed', true);
+        BusinessProfile::apply('pharmacy');
+        $this->actingAs(tap(User::factory()->create(), fn ($u) => $u->assignRole('owner')));
+        $c = \App\Models\Category::create(['name' => 'Pickable cat', 'is_active' => true]);
+        $p = (new Product)->forceFill(['name' => 'P', 'price' => 1, 'status' => 'active', 'track_stock' => false, 'category_id' => $c->id]);
+        $p->save();
+
+        $this->get("/admin/products/{$p->id}/edit")->assertOk()->assertSee('>Pickable cat</option>', false);
+        $this->get('/admin/products/create')->assertOk()->assertSee('>Pickable cat</option>', false);
+        $this->get('/admin/home-sections/create?type=categories')->assertOk()->assertSee('Pickable cat');
+        $this->get('/admin/home-sections/create?type=products')->assertOk()->assertSee('Pickable cat');
+    }
+
+    public function test_product_form_saves_barcodes_and_the_order_limit(): void
+    {
+        (new RolesSeeder)->run();
+        setting()->set('system.installed', true);
+        BusinessProfile::apply('pharmacy');
+        $this->actingAs(tap(User::factory()->create(), fn ($u) => $u->assignRole('owner')));
+        $p = (new Product)->forceFill(['name' => 'Coded', 'price' => 10, 'status' => 'active', 'track_stock' => false]);
+        $p->save();
+
+        $this->put("/admin/products/{$p->id}", ['name' => 'Coded', 'type' => 'simple', 'status' => 'active', 'price' => 10, 'max_per_order' => 4, 'barcodes' => "111\n222, 111\n  \n333"])->assertSessionHasNoErrors();
+        $p->refresh();
+        $this->assertSame(['111', '222', '333'], $p->barcodes);
+        $this->assertSame(4, $p->max_per_order);
+        $this->get("/admin/products/{$p->id}/edit")->assertOk()->assertSee('333');
+
+        $this->put("/admin/products/{$p->id}", ['name' => 'Coded', 'type' => 'simple', 'status' => 'active', 'price' => 10, 'max_per_order' => 0])->assertSessionHasErrors('max_per_order');
+        $this->put("/admin/products/{$p->id}", ['name' => 'Coded', 'type' => 'simple', 'status' => 'active', 'price' => 10, 'max_per_order' => '', 'barcodes' => ''])->assertSessionHasNoErrors();
+        $this->assertNull($p->fresh()->barcodes);
+        $this->assertNull($p->fresh()->max_per_order);
+    }
 }

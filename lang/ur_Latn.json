@@ -1759,5 +1759,12 @@
     "Remove sample pictures": "Remove sample pictures",
     "Show the “New” badge on products added in the last N days (0 = never)": "Show the “New” badge on products added in the last N days (0 = never)",
     "Save :amount": "Bachat :amount",
-    "One flat list of categories, e.g. Pain & fever, Vitamins, Baby care. Only categories with products show in the store.": "Categories ki ek sada list, masalan Pain & fever, Vitamins, Baby care. Store me sirf wahi categories dikhti hain jin me products hon."
+    "One flat list of categories, e.g. Pain & fever, Vitamins, Baby care. Only categories with products show in the store.": "Categories ki ek sada list, masalan Pain & fever, Vitamins, Baby care. Store me sirf wahi categories dikhti hain jin me products hon.",
+    "Most one customer can order": "Most one customer can order",
+    "The most of this item one basket may hold.": "The most of this item one basket may hold.",
+    "No limit": "No limit",
+    "Barcodes": "Barcodes",
+    "One per line (up to 10). Customers can find the product by barcode.": "One per line (up to 10). Customers can find the product by barcode.",
+    "Created by the product sheet — the next upload of the sheet can overwrite the name, price, barcodes and limits, but never the stock, pictures or description.": "Created by the product sheet — the next upload of the sheet can overwrite the name, price, barcodes and limits, but never the stock, pictures or description.",
+    "Last synced": "Last synced"
 }

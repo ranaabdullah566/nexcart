@@ -144,6 +144,8 @@ class ProductController extends Controller
             'cost' => ['nullable', 'numeric', 'min:0', 'max:99999999'],
             'stock_qty' => ['nullable', 'integer', 'min:0', 'max:9999999'],
             'low_stock_threshold' => ['nullable', 'integer', 'min:0', 'max:9999999'],
+            'max_per_order' => ['nullable', 'integer', 'min:1', 'max:65535'],
+            'barcodes' => ['nullable', 'string', 'max:800'],
             'tr' => ['nullable', 'array'],
             'meta_title' => ['nullable', 'string', 'max:120'], 'meta_description' => ['nullable', 'string', 'max:300'],
             'variants' => ['required_if:type,variable', 'nullable', 'array', 'max:100'],
@@ -192,6 +194,8 @@ class ProductController extends Controller
                 'cost' => $data['cost'] ?? null,
                 'track_stock' => $request->boolean('track_stock'),
                 'low_stock_threshold' => $data['low_stock_threshold'] ?? 5,
+                'max_per_order' => $data['max_per_order'] ?? null,
+                'barcodes' => $this->barcodes($data['barcodes'] ?? null),
                 'requires_prescription' => BusinessProfile::hasModule('prescriptions') && $request->boolean('requires_prescription'),
                 'is_featured' => $request->boolean('is_featured'),
                 'meta_title' => $data['meta_title'] ?? null, 'meta_description' => $data['meta_description'] ?? null,
@@ -264,5 +268,13 @@ class ProductController extends Controller
             'boolean' => ['nullable'],
             default => [$required, 'string', 'max:255'],
         };
+    }
+
+    /** @return list<string>|null one barcode per line, trimmed, unique, at most 10 of up to 64 characters */
+    private function barcodes(?string $raw): ?array
+    {
+        $codes = collect(preg_split('/[\r\n,;]+/', (string) $raw))->map(fn ($c) => mb_substr(trim($c), 0, 64))->filter()->unique()->take(10)->values()->all();
+
+        return $codes ?: null;
     }
 }

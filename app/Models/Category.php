@@ -56,6 +56,12 @@ class Category extends Model implements HasMedia
         return $this->hasMany(Product::class);
     }
 
+    /** The label shown in pickers (admin product / home section / menu forms). One flat level, so it is just the name. */
+    public function getPathAttribute(): string
+    {
+        return (string) $this->name;
+    }
+
     /** Categories are one flat level, so a category's products are just its own (kept for callers that ask for "this and everything below"). */
     public function descendantIds(): array
     {

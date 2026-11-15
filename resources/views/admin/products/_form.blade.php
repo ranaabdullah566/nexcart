@@ -87,6 +87,9 @@
                 @endif
             </div>
             <div class="col-md-4"><label class="form-label fw-medium">{{ __('Low-stock alert at') }}</label><input type="number" min="0" name="low_stock_threshold" value="{{ $v('low_stock_threshold', 5) }}" class="form-control figure"></div>
+            <div class="col-md-4"><label class="form-label fw-medium">{{ __('Most one customer can order') }}</label><input type="number" min="1" max="65535" name="max_per_order" value="{{ old('max_per_order', $product->max_per_order ?? '') }}" class="form-control figure @error('max_per_order') is-invalid @enderror" placeholder="{{ __('No limit') }}">@error('max_per_order')<div class="invalid-feedback">{{ $message }}</div>@enderror<div class="form-text">{{ __('The most of this item one basket may hold.') }}</div></div>
+            <div class="col-md-8"><label class="form-label fw-medium">{{ __('Barcodes') }}</label><textarea name="barcodes" rows="2" class="form-control figure @error('barcodes') is-invalid @enderror" placeholder="8901234567890">{{ old('barcodes', implode("\n", $product->barcodes ?? [])) }}</textarea>@error('barcodes')<div class="invalid-feedback">{{ $message }}</div>@enderror<div class="form-text">{{ __('One per line (up to 10). Customers can find the product by barcode.') }}</div></div>
+            @if ($product->exists && $product->source === 'sheet')<div class="col-12"><div class="small text-muted"><i class="bi bi-arrow-repeat me-1"></i>{{ __('Created by the product sheet — the next upload of the sheet can overwrite the name, price, barcodes and limits, but never the stock, pictures or description.') }}@if ($product->synced_at) {{ __('Last synced') }}: {{ $product->synced_at->diffForHumans() }}.@endif</div></div>@endif
         </div></div></div></div>
 
         {{-- VARIANTS --}}
@@ -102,7 +105,7 @@
                 @foreach ($variantRows as $i => $r)
                     <tr class="var-row">
                         <td><input type="hidden" name="variants[{{ $i }}][id]" value="{{ $r['id'] ?? '' }}"><input name="variants[{{ $i }}][name]" value="{{ $r['name'] ?? '' }}" class="form-control" style="min-width:140px"></td>
-                        <td><input name="variants[{{ $i }}][sku]" value="{{ $r['sku'] ?? '' }}" class="form-control figure" style="min-width:110px"></td>
+                        <td><input name="variants[{{ $i }}][sku]" value="{{ $r['sku'] ?? '' }}" class="form-control figure" style="min-width:160px"></td>
                         <td><input type="number" step="0.01" min="0" name="variants[{{ $i }}][price]" value="{{ $r['price'] ?? '' }}" class="form-control figure" style="min-width:100px"></td>
                         <td><input type="number" step="0.01" min="0" name="variants[{{ $i }}][compare_price]" value="{{ $r['compare_price'] ?? '' }}" class="form-control figure" style="min-width:100px"></td>
                         <td>@if (! empty($r['id']))<input class="form-control figure" value="{{ $r['stock_qty'] ?? 0 }}" disabled style="min-width:80px">@else<input type="number" min="0" name="variants[{{ $i }}][stock_qty]" value="{{ $r['stock_qty'] ?? 0 }}" class="form-control figure" style="min-width:80px">@endif</td>
@@ -199,7 +202,7 @@
             var i = next++, tr = document.createElement('tr');
             tr.className = 'var-row';
             tr.innerHTML = '<td><input type="hidden" name="variants[' + i + '][id]" value=""><input name="variants[' + i + '][name]" class="form-control" style="min-width:140px" placeholder="Large / Red"></td>' +
-                '<td><input name="variants[' + i + '][sku]" class="form-control figure" style="min-width:110px"></td>' +
+                '<td><input name="variants[' + i + '][sku]" class="form-control figure" style="min-width:160px"></td>' +
                 '<td><input type="number" step="0.01" min="0" name="variants[' + i + '][price]" class="form-control figure" style="min-width:100px"></td>' +
                 '<td><input type="number" step="0.01" min="0" name="variants[' + i + '][compare_price]" class="form-control figure" style="min-width:100px"></td>' +
                 '<td><input type="number" min="0" name="variants[' + i + '][stock_qty]" value="0" class="form-control figure" style="min-width:80px"></td>' +

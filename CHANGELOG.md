@@ -4,6 +4,10 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Fixed: product edit page
+- **Category pickers were blank** since categories became one level (the picker label came from a removed field). The category list in the product form, the home-section forms and the menu form shows names again.
+- Product form → *Pricing & stock* now has **Most one customer can order** (the cart limit) and **Barcodes** (one per line, up to 10; storefront search finds products by them), with a note on products created by the sheet that the next sheet upload can overwrite name, price, barcodes and limits but never stock, pictures or description. Variant SKU boxes are wider.
+
 ### Fixed: admin products page is fast with thousands of products
 - Admin → Products printed **every** product into the page (3,619 products = a 5 MB page that took about 4 s). The table now pages, searches (name, SKU, barcode) and sorts on the server, so the page is about 24 KB and opens in about 0.2 s; the three counters are database counts.
 - Admin → Categories: the old “3 levels” subtitle is replaced (categories are one flat level now). Home page list no longer shows `{…}` markers from the hero headline.
