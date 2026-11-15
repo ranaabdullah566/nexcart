@@ -50,14 +50,14 @@ class PharmacyUxTest extends TestCase
         return $o + ['name' => 'Sara', 'phone' => '0300 1234567', 'city' => 'Lahore', 'files' => [UploadedFile::fake()->image('rx.jpg', 400, 400)]];
     }
 
-    public function test_header_shows_city_picker_upload_button_and_trending_chips(): void
+    public function test_header_shows_city_picker_upload_button_(): void
     {
-        $html = $this->get('/')->assertOk()->assertSee('data-fx-loc', false)->assertSee('Upload prescription')->assertSee('Trending')->assertSee('Paracetamol')->getContent();
+        $html = $this->get('/')->assertOk()->assertSee('data-fx-loc', false)->assertSee('Upload prescription')->assertDontSee('fx-trend', false)->getContent();
         $this->assertStringContainsString('id="fxLoc"', $html);
         $this->assertStringContainsString('Karachi', $html);
 
-        setting()->setMany(['sf.header.show_rx' => false, 'sf.header.show_location' => false, 'sf.header.show_trending' => false]);
-        $this->get('/')->assertDontSee('data-fx-loc', false)->assertDontSee('fx-rx-btn', false)->assertDontSee('fx-trend', false);
+        setting()->setMany(['sf.header.show_rx' => false, 'sf.header.show_location' => false]);
+        $this->get('/')->assertDontSee('data-fx-loc', false)->assertDontSee('fx-rx-btn', false);
     }
 
     public function test_customer_can_send_a_prescription_without_an_order(): void

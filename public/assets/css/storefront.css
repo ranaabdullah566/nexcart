@@ -227,3 +227,8 @@
 .sf-review { padding: 1rem 0; border-bottom: 1px solid var(--border); } .sf-review:last-child { border-bottom: 0; }
 .sf-reply { margin-top: .6rem; padding: .7rem .9rem; border-radius: 12px; background: var(--surface-2); border-inline-start: 3px solid var(--acc-1); font-size: .92rem; }
 #reviews, [id] { scroll-margin-top: 96px; }
+
+/* instant search: category + product groups, with room to read */
+.sf-suggest { max-height: min(70vh, 560px); overflow-y: auto; }
+.sf-suggest .sg-h { padding: .55rem .9rem .2rem; font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); }
+.sf-suggest a.sg-cat img, .sf-suggest a.sg-cat .ph { border-radius: 50%; display: grid; place-items: center; }

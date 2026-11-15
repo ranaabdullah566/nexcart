@@ -62,7 +62,6 @@
         <span class="mk-top-links d-none d-md-flex">
             @forelse ($topLinks as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
             @empty
-                <a href="{{ route('store.track') }}">{{ sft('header.track_label') }}</a>
                 @if (setting('store.phone'))<a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('store.phone')) }}" dir="ltr"><i class="bi bi-telephone"></i> {{ setting('store.phone') }}</a>@endif
             @endforelse
         </span>
@@ -150,10 +149,6 @@
         @if (sf('header.show_location'))<button type="button" class="fx-loc" data-fx-loc aria-haspopup="dialog"><i class="bi bi-geo-alt-fill"></i><span><small>{{ __('Deliver to') }}</small><b data-fx-loc-name>{{ __('Choose area') }}</b></span><i class="bi bi-chevron-down"></i></button>@endif
         @if (sf('header.show_rx') && \App\Support\BusinessProfile::hasModule('prescriptions'))<a href="{{ route('store.prescription.upload') }}" class="fx-rx-btn"><i class="bi bi-camera-fill"></i> {{ sft('header.rx_label') }}</a>@endif
     </div>
-    @php $trend = array_filter(array_map('trim', explode(',', sft('header.trending')))); @endphp
-    @if ($trend && sf('header.show_trending'))
-        <div class="sf-container fx-trend"><b>{{ sft('header.trending_label') }}:</b>@foreach ($trend as $term)<a href="{{ route('store.shop', ['q' => $term]) }}">{{ $term }}</a>@endforeach</div>
-    @endif
 </nav>
 
 {{-- mobile drawer --}}
@@ -308,7 +303,7 @@
             'added' => __('Added to cart'), 'cartEmpty' => __('Your cart is empty'), 'remove' => __('Remove'), 'error' => __('Something went wrong. Please try again.'),
             'lowStock' => __('Only :n left in stock.'), 
             'chooseOption' => __('Choose an option first.'), 'outOfStock' => __('Out of stock'), 'addToCart' => __('Add to cart'),
-            'seeAll' => __('See all results'), 'noResults' => __('No products found'),
+            'seeAll' => __('See all results'), 'categories' => __('Categories'), 'medicines' => __('Medicines'), 'noResults' => __('No products found'),
             'item' => __('item'), 'items' => __('items'), 'freeDone' => __('You get free delivery!'), 'freeMore' => __('Add :amount more for free delivery', ['amount' => ':amount']),
             'cartEmptySub' => __('Looks like you have not added anything yet.'), 'startShopping' => __('Start shopping'), 'each' => __('each'), 'less' => __('Less'), 'more' => __('More'), 'complete' => __('Complete your order'), 'savedLater' => __('Saved for later'),
         ];

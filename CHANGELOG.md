@@ -4,6 +4,10 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Changed: header search and clean-up
+- The header search is wider and the instant dropdown now lists matching **categories** (only ones with products) above the **medicines**; searching in the shop also matches category names. The Ctrl+K search shows categories too.
+- Removed the *Track an order* link from the top bar and the *Trending* chips under the header (their Storefront options are gone). On wide screens the Shop icon next to the search is hidden (the menu bar already has *Shop*).
+
 ### Changed: 20 products per page, and only categories with products are listed
 - The shop shows 20 products per page by default (Storefront options → Products per page; a value you saved earlier is kept).
 - Header menu, drawer, footer, shop sidebar and tiles, and the home *categories* section list only categories that have at least one active product. Empty categories stay in the admin and their direct links still work.

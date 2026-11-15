@@ -78,9 +78,12 @@
         list.innerHTML = '<div class="fx-cmd-h">Quick links</div>' + shortcuts.map(function (s) { return '<a class="fx-cmd-item" href="' + s[2] + '"><span class="ph"><i class="bi ' + s[0] + '"></i></span><b>' + esc(s[1]) + '</b><i class="bi bi-arrow-right go"></i></a>'; }).join('');
         sel = -1;
     }
-    function render(q, res) {
-        if (!res.length) { list.innerHTML = '<div class="fx-cmd-empty"><i class="bi bi-emoji-neutral fs-3 d-block mb-2"></i>' + esc('No results for “' + q + '”') + '</div>'; sel = -1; return; }
-        list.innerHTML = '<div class="fx-cmd-h">Medicines</div>' + res.map(function (r) {
+    function render(q, res, cats) {
+        cats = cats || [];
+        if (!res.length && !cats.length) { list.innerHTML = '<div class="fx-cmd-empty"><i class="bi bi-emoji-neutral fs-3 d-block mb-2"></i>' + esc('No results for “' + q + '”') + '</div>'; sel = -1; return; }
+        list.innerHTML = (cats.length ? '<div class="fx-cmd-h">Categories</div>' + cats.map(function (c) {
+            return '<a class="fx-cmd-item" href="' + esc(c.url) + '">' + (c.image ? '<img src="' + esc(c.image) + '" alt="" loading="lazy">' : '<span class="ph"><i class="bi bi-grid-3x3-gap"></i></span>') + '<span><b>' + esc(c.name) + '</b><small>' + c.count + '</small></span></a>';
+        }).join('') : '') + (res.length ? '<div class="fx-cmd-h">Medicines</div>' : '') + res.map(function (r) {
             return '<a class="fx-cmd-item" href="' + esc(r.url) + '">' + (r.image ? '<img src="' + esc(r.image) + '" alt="" loading="lazy">' : '<span class="ph"><i class="bi bi-capsule"></i></span>') + '<span><b>' + esc(r.name) + '</b><small>' + esc(r.category || '') + '</small></span><span class="go figure">' + esc(r.price || '') + '</span></a>';
         }).join('') + '<a class="fx-cmd-item" href="/shop?q=' + encodeURIComponent(q) + '"><span class="ph"><i class="bi bi-search"></i></span><b>See all results for “' + esc(q) + '”</b><i class="bi bi-arrow-right go"></i></a>';
         mark(0);
@@ -88,7 +91,7 @@
     function search(q) {
         if (!suggestUrl) return;
         fetch(suggestUrl + (suggestUrl.indexOf('?') > -1 ? '&' : '?') + 'q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
-            .then(function (r) { return r.json(); }).then(function (d) { if (inp.value.trim() === q) render(q, d.results || []); }).catch(function () { });
+            .then(function (r) { return r.json(); }).then(function (d) { if (inp.value.trim() === q) render(q, d.results || [], d.categories || []); }).catch(function () { });
     }
     function open() { prevFocus = document.activeElement; cmd.classList.add('open'); document.body.classList.add('mk-lock'); inp.value = ''; home(); setTimeout(function () { inp.focus(); }, 30); }
     function close() { cmd.classList.remove('open'); document.body.classList.remove('mk-lock'); if (prevFocus && prevFocus.focus) prevFocus.focus(); }

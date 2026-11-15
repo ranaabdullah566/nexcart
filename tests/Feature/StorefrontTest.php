@@ -261,4 +261,14 @@ class StorefrontTest extends TestCase
         $this->get('/')->assertOk()->assertDontSee('Emptycat');
         $this->assertSame(20, \App\Models\Product::active()->paginate((int) sf('cards.per_page'))->count());
     }
+
+    public function test_instant_search_returns_matching_categories_and_the_shop_finds_products_by_category_name(): void
+    {
+        $c = Category::create(['name' => 'Painrelief']);
+        Category::create(['name' => 'Painempty']);
+        $this->product(['name' => 'Zed', 'category_id' => $c->id]);
+        $json = $this->getJson('/search/suggest?q=pain')->assertOk()->json();
+        $this->assertSame(['Painrelief'], array_column($json['categories'], 'name'));
+        $this->get('/shop?q=Painrelief')->assertSee('Zed');
+    }
 }

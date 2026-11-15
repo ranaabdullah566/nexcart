@@ -252,11 +252,16 @@
                 fetch(SF.routes.suggest + '?q=' + encodeURIComponent(q), { signal: ctrl.signal, credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
                     .then(function (r) { return r.json(); })
                     .then(function (d) {
-                        box.innerHTML = d.results.length
-                            ? d.results.map(function (r) {
+                        var cats = d.categories || [];
+                        box.innerHTML = (d.results.length || cats.length)
+                            ? (cats.length ? '<div class="sg-h">' + esc(T.categories || 'Categories') + '</div>' + cats.map(function (c) {
+                                return '<a class="sg-cat" href="' + esc(c.url) + '">' + (c.image ? '<img src="' + esc(c.image) + '" alt="">' : '<span class="ph"><i class="bi bi-grid-3x3-gap"></i></span>') +
+                                    '<span class="min-w-0"><span class="d-block text-truncate fw-semibold">' + esc(c.name) + '</span><small class="figure text-muted">' + c.count + '</small></span></a>';
+                            }).join('') : '') +
+                              (d.results.length ? '<div class="sg-h">' + esc(T.medicines || 'Medicines') + '</div>' + d.results.map(function (r) {
                                 return '<a href="' + esc(r.url) + '">' + (r.image ? '<img src="' + esc(r.image) + '" alt="">' : '<span class="ph"></span>') +
                                     '<span class="min-w-0"><span class="d-block text-truncate fw-semibold">' + esc(r.name) + '</span><small class="figure text-muted">' + esc(r.price) + '</small></span></a>';
-                            }).join('') + '<a class="more" href="' + esc(d.more) + '">' + esc(T.seeAll) + ' <i class="bi bi-arrow-right"></i></a>'
+                            }).join('') : '') + '<a class="more" href="' + esc(d.more) + '">' + esc(T.seeAll) + ' <i class="bi bi-arrow-right"></i></a>'
                             : '<div class="empty">' + esc(T.noResults) + '</div>';
                         box.classList.add('show');
                     }).catch(function () {});

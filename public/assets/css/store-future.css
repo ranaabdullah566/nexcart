@@ -587,3 +587,16 @@ a.fx-contact-card:hover { transform: translateY(-3px); border-color: var(--fx-a)
 .mk-hd-light .mk-rec-grid a { background: #fff; }
 .mk-hd-light .mk-rec-grid a:hover { border-color: var(--hd-orange); box-shadow: 0 10px 26px -14px var(--hd-orange); }
 .mk-hd-light .mk-mega-main button.is-active { background: #eef2f7; }
+
+/* header search gets the room: the Shop shortcut duplicates the menu bar link, so it goes on wide screens */
+@media (min-width: 992px) {
+    .mk-hd-light .mk-header-row { gap: 1rem 1.2rem; }
+    .mk-hd-light .mk-search { flex: 1 1 0; min-width: 460px; }
+    .mk-hd-light .mk-icons > .mk-ic:first-child:has(.bi-shop) { display: none !important; }
+}
+@media (min-width: 992px) {
+    .mk-hd-light .mk-icons { gap: .1rem; }
+    .mk-hd-light .mk-icons .mk-ic { padding-inline: .45rem; }
+    .mk-hd-light .mk-lang .mk-ic { padding-inline: .5rem; }
+    .mk-hd-light .mk-search { min-width: 560px; }
+}

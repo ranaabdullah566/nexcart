@@ -42,7 +42,6 @@ class Sf
             'header.mega_rec_sub' => $t('header', 'Popular tiles subtitle', 'A quick way into what shoppers look for most.'),
             'header.show_location' => $b('header', 'Show the “Deliver to” city picker'), 'header.cities' => $t('header', 'Cities in the picker (comma separated)', 'Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar, Quetta'),
             'header.show_rx' => $b('header', 'Show the “Upload prescription” button'), 'header.rx_label' => $t('header', 'Upload prescription button text', 'Upload prescription'),
-            'header.show_trending' => $b('header', 'Show trending searches under the header'), 'header.trending' => $t('header', 'Trending searches (comma separated)', 'Paracetamol, Fever, Vitamin C, Cough, Diabetes'), 'header.trending_label' => $t('header', 'Trending label', 'Trending'),
             'header.show_blog' => $b('header', 'Show the “Health blog” link in the menu bar'), 'header.blog_label' => $t('header', 'Health blog link text', 'Health blog'),
             'footer.show_newsletter' => $b('footer', 'Show the e-mail sign-up box'), 'footer.newsletter_title' => $t('footer', 'Sign-up title', 'Get health tips & offers'), 'footer.newsletter_sub' => $t('footer', 'Sign-up text', 'One useful email now and then. Unsubscribe any time.'),
             'header.show_deals' => $b('header', 'Show the Deals link'), 'header.deals_label' => $t('header', 'Deals link text', 'Deals'),

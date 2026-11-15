@@ -95,6 +95,7 @@ class ShopController extends Controller
 
         $query->where(fn ($q) => $q->where('name', 'like', $like)->orWhere('sku', 'like', $like)->orWhere('barcodes', 'like', $like)
             ->orWhere('short_description', 'like', $like)->orWhere('specs', 'like', $like)->orWhere('translations', 'like', $like)
+            ->orWhereHas('category', fn ($c) => $c->where('name', 'like', $like))
             ->orWhereHas('variants', fn ($v) => $v->where('sku', 'like', $like)));
     }
 
