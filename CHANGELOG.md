@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Changed: smaller card text
+- Every text on product cards is about a notch smaller (category, name, tags, price, cut price, button and badges).
+
 ### Changed: no salt line on cards
 - Product cards no longer show the composition (salt) line; the form / strength chips stay. The composition is still on the product page, drives the *same salt* alternatives, and search still finds products by it.
 

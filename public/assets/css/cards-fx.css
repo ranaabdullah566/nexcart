@@ -43,3 +43,14 @@
 .sf-tq .mk-card-body .mk-price b { font-size: 1.08rem; min-width: 0; text-overflow: ellipsis; overflow: hidden; }
 .sf-tq .mk-card-body .mk-price s { font-size: .76rem; flex: none; }
 .sf-tq .mk-card-body .mk-price small { flex: none; }
+
+/* a notch smaller text on every product card */
+.sf-tq .mk-card-cat { font-size: .63rem; }
+.sf-tq .mk-card-name { font-size: .86rem; }
+.sf-tq .mk-list .mk-card-name { font-size: .96rem; }
+.fx-chips span { font-size: .62rem; padding: .08rem .45rem; }
+.sf-tq .mk-card-body .mk-price b { font-size: .98rem; }
+.sf-tq .mk-card-body .mk-price s { font-size: .7rem; }
+.sf-tq .mk-card-body .mk-price small { font-size: .68rem; }
+.sf-tq .mk-card-foot .mk-add { font-size: .82rem; height: 2.5rem; }
+.sf-tq .mk-disc, .sf-tq .mk-flags .mk-flag { font-size: .64rem; padding: .18rem .52rem; }
