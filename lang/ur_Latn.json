@@ -1730,5 +1730,7 @@
     "Missing or too long SKU": "SKU ghayab ya bohat lamba hai",
     "Missing name": "Naam ghayab hai",
     "Price is not a valid number": "Qeemat durust number nahi",
-    "You can order at most :n of this item.": "Aap is item ke ziyada se ziyada :n order kar sakte hain."
+    "You can order at most :n of this item.": "Aap is item ke ziyada se ziyada :n order kar sakte hain.",
+    "Find a category…": "Category talash karein…",
+    "No category matches.": "Koi category nahi mili."
 }

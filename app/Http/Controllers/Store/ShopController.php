@@ -84,7 +84,7 @@ class ShopController extends Controller
             'filterAttrs' => $filterAttrs,
             'priceBounds' => ['min' => (float) (clone $base)->min('price'), 'max' => (float) (clone $base)->max('price')],
             'f' => $f,
-            'subcategories' => $current ? $current->children()->where('is_active', true)->get() : collect(),
+            'subcategories' => collect(),
         ]);
     }
 

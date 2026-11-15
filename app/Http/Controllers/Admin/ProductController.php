@@ -83,7 +83,7 @@ class ProductController extends Controller
     {
         return [
             'product' => $product,
-            'categories' => Category::with('parent.parent')->orderBy('name')->get()->sortBy(fn ($c) => $c->path)->values(),
+            'categories' => Category::orderBy('name')->get(),
             'attributes' => CatalogAttribute::forBusiness()->orderBy('sort_order')->orderBy('label')->get(),
             'showRx' => BusinessProfile::hasModule('prescriptions'),
             'terms' => (array) setting('business.terms', []),

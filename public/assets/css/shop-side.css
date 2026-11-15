@@ -87,3 +87,6 @@
 .sf-tq .sx-row.on .sx-name { color: var(--sx-navy); }
 .sf-tq .sx-chips a { color: var(--sx-ink); } .sf-tq .sx-chips a.on { color: #fff; }
 .sf-tq .sh-tiles a, .sf-tq .sh-tiles a b { color: var(--sx-ink); } .sf-tq .sh-tiles a.on b { color: var(--sx-navy); }
+
+/* flat category list: every category, scrolls inside the card instead of stretching the page */
+.sx-tree.sx-flat { max-height: 460px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-inline-end: .2rem; }

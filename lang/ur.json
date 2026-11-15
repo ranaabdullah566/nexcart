@@ -1730,5 +1730,7 @@
     "Missing or too long SKU": "SKU غائب یا بہت لمبا ہے",
     "Missing name": "نام غائب ہے",
     "Price is not a valid number": "قیمت درست عدد نہیں",
-    "You can order at most :n of this item.": "آپ اس آئٹم کے زیادہ سے زیادہ :n آرڈر کر سکتے ہیں۔"
+    "You can order at most :n of this item.": "آپ اس آئٹم کے زیادہ سے زیادہ :n آرڈر کر سکتے ہیں۔",
+    "Find a category…": "کیٹیگری تلاش کریں…",
+    "No category matches.": "کوئی کیٹیگری نہیں ملی۔"
 }

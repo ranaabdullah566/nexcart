@@ -43,51 +43,19 @@ class CatalogTest extends TestCase
         }
     }
 
-    public function test_categories_are_limited_to_three_levels(): void
-    {
-        $a = Category::create(['name' => 'Pain & fever', 'is_active' => true]);
-        $this->post('/admin/categories', ['name' => 'Pain relief', 'parent_id' => $a->id, 'is_active' => 1])->assertRedirect('/admin/categories');
-        $b = Category::firstWhere('name', 'Pain relief');
-        $this->post('/admin/categories', ['name' => 'Tablets', 'parent_id' => $b->id, 'is_active' => 1])->assertRedirect('/admin/categories');
-        $c = Category::firstWhere('name', 'Tablets');
-        $this->assertSame([1, 2, 3], [$a->depth(), $b->fresh()->depth(), $c->fresh()->depth()]);
-
-        // a fourth level is refused, and a branch that would grow past three levels cannot be moved
-        $this->post('/admin/categories', ['name' => 'Too deep', 'parent_id' => $c->id])->assertSessionHasErrors('parent_id');
-        $x = Category::create(['name' => 'Other', 'is_active' => true]);
-        $x->children()->create(['name' => 'Other child', 'is_active' => true]);
-        $this->put("/admin/categories/{$x->id}", ['name' => 'Other', 'parent_id' => $b->id])->assertSessionHasErrors('parent_id');
-
-        // the parent list only offers categories that still have room
-        $html = $this->get("/admin/categories/create")->assertOk()->getContent();
-        $this->assertStringContainsString('Pain &amp; fever › Pain relief', $html);
-        $this->assertStringNotContainsString('Pain relief › Tablets</option>', $html);
-
-        // the storefront menu shows all three levels
-        $p = new Product;
-        $p->forceFill(['name' => 'Panadol', 'price' => 5, 'status' => 'active', 'track_stock' => false, 'category_id' => $c->id])->save();
-        $this->get('/')->assertOk()->assertSee('Tablets')->assertSee('mk-l3', false);
-        $this->get('/category/'.$c->slug)->assertOk()->assertSee('Panadol');
-        $this->get('/category/'.$a->slug)->assertOk()->assertSee('Panadol');   // parent lists its descendants' products
-    }
-
-    public function test_category_tree_and_loop_protection(): void
+    public function test_categories_are_one_flat_level(): void
     {
         $this->post('/admin/categories', ['name' => 'Drinks', 'is_active' => 1])->assertRedirect('/admin/categories');
         $drinks = Category::firstWhere('name', 'Drinks');
-        $this->post('/admin/categories', ['name' => 'Cold', 'parent_id' => $drinks->id])->assertRedirect();
+        // a parent sent by an old form is ignored: everything stays top level
+        $this->post('/admin/categories', ['name' => 'Cold', 'parent_id' => $drinks->id, 'is_active' => 1])->assertRedirect();
         $cold = Category::firstWhere('name', 'Cold');
-
-        $this->assertSame('Drinks › Cold', $cold->path);
-        $this->assertSame([$drinks->id, $cold->id], $drinks->descendantIds());
-
-        // a category cannot become its own child
-        $this->put("/admin/categories/{$drinks->id}", ['name' => 'Drinks', 'parent_id' => $cold->id])->assertSessionHasErrors('parent_id');
-        $this->put("/admin/categories/{$drinks->id}", ['name' => 'Drinks', 'parent_id' => $drinks->id])->assertSessionHasErrors('parent_id');
+        $this->assertNull($cold->parent_id);
+        $this->assertSame([$cold->id], $cold->descendantIds());
+        $this->get('/admin/categories/create')->assertOk()->assertDontSee('Parent category');
 
         $this->delete("/admin/categories/{$drinks->id}")->assertRedirect();
         $this->assertSoftDeleted($drinks);
-        $this->assertSame('Cold', $cold->fresh()->path);   // the child simply shows without its deleted parent
     }
 
     public function test_translations_and_urdu_slugs(): void
@@ -257,10 +225,8 @@ class CatalogTest extends TestCase
     {
         Storage::fake('public');
         $top = Category::create(['name' => 'Pain & fever', 'is_active' => true]);
-        $sub = Category::create(['name' => 'Pain relief', 'parent_id' => $top->id, 'is_active' => true]);
-        $leaf = Category::create(['name' => 'Tablets', 'parent_id' => $sub->id, 'is_active' => true]);
         $p = new Product;
-        $p->forceFill(['name' => 'Panadol', 'price' => 5, 'status' => 'active', 'track_stock' => false, 'category_id' => $leaf->id])->save();
+        $p->forceFill(['name' => 'Panadol', 'price' => 5, 'status' => 'active', 'track_stock' => false, 'category_id' => $top->id])->save();
         $p->addMedia(UploadedFile::fake()->image('pan.jpg', 300, 300))->toMediaCollection('images');
 
         // no own picture yet: the first product picture of the branch is used
@@ -274,9 +240,9 @@ class CatalogTest extends TestCase
         $this->put("/admin/categories/{$top->id}", ['name' => 'Pain & fever', 'is_active' => 1, 'remove_image' => 1])->assertSessionHasNoErrors();
         $this->assertNull($top->fresh()->getFirstMedia('image'));
 
-        // the shop shows all three levels with pictures, counts that include the branch, and the new filter controls
+        // the shop lists every category with pictures and counts, and the new filter controls
         $html = $this->get('/shop')->assertOk()->getContent();
-        foreach (['Shop by category', 'Pain relief', 'Tablets', 'sx-img', 'sx-chips', 'data-sx-price', 'sx-switches', 'sx-seg', 'sh-tiles'] as $needle) {
+        foreach (['Shop by category', 'Pain &amp; fever', 'sx-img', 'data-sx-price', 'sx-switches', 'sx-seg', 'sh-tiles'] as $needle) {
             $this->assertStringContainsString($needle, $html);
         }
         $this->get('/category/'.$top->slug)->assertOk()->assertSee('sh-tile-img', false);

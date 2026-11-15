@@ -86,7 +86,7 @@ class DemoData
                 $n++;
             }
             // shared things are only removed when nothing real hangs on them
-            Category::whereIn('id', $ids['categories'] ?? [])->get()->each(fn ($c) => $c->products()->exists() || $c->children()->exists() ? null : $c->delete());
+            Category::whereIn('id', $ids['categories'] ?? [])->get()->each(fn ($c) => $c->products()->exists() ? null : $c->delete());
         });
 
         setting()->set('demo.ids', null);

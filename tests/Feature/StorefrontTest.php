@@ -56,14 +56,13 @@ class StorefrontTest extends TestCase
     public function test_shop_lists_only_active_products_and_filters(): void
     {
         $drinks = Category::create(['name' => 'Drinks']);
-        $cold = Category::create(['name' => 'Cold', 'parent_id' => $drinks->id]);
+        $cold = $drinks;
         $this->product(['name' => 'Cola', 'price' => 50, 'category_id' => $cold->id]);
         $this->product(['name' => 'Water', 'price' => 20, 'category_id' => $cold->id, 'stock_qty' => 0]);
         $this->product(['name' => 'Gadget', 'price' => 900]);
         $this->product(['name' => 'Hidden', 'status' => 'draft']);
 
         $this->get('/shop')->assertOk()->assertSee('Cola')->assertSee('Gadget')->assertDontSee('Hidden');
-        // parent category includes sub-category products
         $this->get('/category/'.$drinks->slug)->assertSee('Cola')->assertSee('Water')->assertDontSee('Gadget');
         $this->get('/shop?price_min=30&price_max=100')->assertSee('Cola')->assertDontSee('Water')->assertDontSee('Gadget');
         $this->get('/shop?in_stock=1')->assertSee('Cola')->assertDontSee('Water');

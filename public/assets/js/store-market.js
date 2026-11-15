@@ -7,6 +7,17 @@
     function toast(m, bad) { if (window.SF && SF.toast) SF.toast(m, bad ? 'bad' : 'ok'); }
     function t2() { return (window.SF && SF.t2) || {}; }
 
+    /* ---- category finder (header menu + drawer) ---- */
+    all('[data-cat-filter]').forEach(function (inp) {
+        var scope = inp.closest('.mk-mega-panel, [data-drawer-panel]') || document;
+        var list = one('[data-cat-list]', scope), none = list && one('.mk-mega-none', list);
+        inp.addEventListener('input', function () {
+            var q = inp.value.trim().toLowerCase(), shown = 0;
+            all('a[data-name]', list).forEach(function (a) { var ok = !q || a.dataset.name.indexOf(q) > -1; a.hidden = !ok; if (ok) shown++; });
+            if (none) none.hidden = shown > 0;
+        });
+    });
+
     /* ---- mega menu ---- */
     var mega = one('[data-mega]');
     if (mega) {

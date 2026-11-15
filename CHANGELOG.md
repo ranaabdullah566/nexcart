@@ -4,6 +4,10 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Changed: categories are one flat level, and every category is shown
+- Header menu, mobile drawer, footer, shop sidebar and the round tiles above the shop grid now list **all** active categories (they used to stop at 12 top-level ones and show 2nd / 3rd levels). The header *All categories* menu is a searchable multi-column list with product counts; the drawer has the same finder; the sidebar list scrolls inside its card.
+- Admin → Categories no longer has *Parent category*, levels or *Sub* buttons; a parent sent by an old form is ignored. Migration `flatten_categories` turns existing sub-categories into normal categories (nothing is deleted). Category picture fallback now uses only the category's own products.
+
 ### Added: Product sync (Admin → Catalog → Product sync)
 - Upload the weekly product sheet (.xlsx or .csv; columns sku, name, price, active, maximumSalesQuantity, isWeighted, baseWeight, baseWeightUnit, pricePerBaseUnit, barcode 1–5, category 1). The **SKU is the key**: new SKUs are added, known SKUs are updated, identical rows are skipped, so the same file can be uploaded every week. Options: update existing, use the sheet's *active* column for visibility, hide synced products missing from the sheet.
 - Everything in the sheet is stored (barcodes, max per order, weighted / base weight / unit / price per base unit; unknown extra columns in `products.source_data`). Categories are created when missing. Stock, pictures and descriptions edited in the admin are never overwritten. Each run is kept in a history with counts and skipped rows; *Download current sheet* exports the same layout.

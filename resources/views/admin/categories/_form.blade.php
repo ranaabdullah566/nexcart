@@ -7,15 +7,6 @@
             <input name="name" value="{{ old('name', $category->name ?? '') }}" required autofocus class="form-control @error('name') is-invalid @enderror">
             @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
-        <div class="col-md-6">
-            <label class="form-label fw-medium">{{ __('Parent category') }}</label>
-            <select name="parent_id" class="form-select @error('parent_id') is-invalid @enderror">
-                <option value="">— {{ __('Top level') }} —</option>
-                @foreach ($parents as $p)<option value="{{ $p->id }}" @selected((string) old('parent_id', $category->parent_id ?? ($preParent ?? '')) === (string) $p->id)>{{ $p->path }}</option>@endforeach
-            </select>
-            @error('parent_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            <div class="form-text">{{ __('Up to 3 levels: Category › Sub-category › Sub-sub-category. Only categories that still have room are listed.') }}</div>
-        </div>
         <div class="col-12">
             <label class="form-label fw-medium" for="catImage">{{ __('Picture') }}</label>
             @if ($editing && $category->getFirstMedia('image'))<div class="mb-2 d-flex align-items-center gap-3"><img src="{{ $category->imageUrl() }}" alt="" style="height:72px;width:72px;object-fit:cover;border-radius:50%;border:1px solid var(--border)"><div class="form-check"><input class="form-check-input" type="checkbox" name="remove_image" value="1" id="catRmImg"><label class="form-check-label" for="catRmImg">{{ __('Remove picture') }}</label></div></div>@endif

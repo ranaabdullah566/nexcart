@@ -7,7 +7,6 @@
         $pageTitle = html_entity_decode(trim($__env->yieldContent('title')), ENT_QUOTES);   // @section('x', $value) is already escaped once
         $metaDesc = html_entity_decode(trim($__env->yieldContent('description')), ENT_QUOTES) ?: (setting('store.tagline') ?: $storeName);
         $ogImage = trim($__env->yieldContent('og_image')) ?: asset('assets/images/icon-512.png');
-        $navCats = \App\Models\Category::where('is_active', true)->whereNull('parent_id')->orderBy('sort_order')->orderBy('name')->limit(8)->get();
         $cartData = app(\App\Services\CartService::class)->toArray(false);   // no suggestions in every page's HTML — the drawer fetches them
         $wishCount = count(app(\App\Services\Wishlist::class)->ids());
         $compareCount = count(app(\App\Services\Compare::class)->ids());
@@ -45,7 +44,7 @@
 @php
     $tree = \App\Support\Storefront::tree();
     $socials = \App\Support\Storefront::socials();
-    $recommended = $tree->flatMap(fn ($c) => $c->children->isNotEmpty() ? $c->children->take(2) : collect([$c]))->take(6);
+    $recommended = $tree->where('products_count', '>', 0)->sortByDesc('products_count')->take(6);
     $ann = announcement();
     $loc = app()->getLocale();
     $topLinks = \App\Models\MenuItem::resolved('topbar');
@@ -130,21 +129,13 @@
                         <div class="mk-mega-title"><div><b>{{ sft('header.mega_rec_title') }}</b><small>{{ sft('header.mega_rec_sub') }}</small></div><a href="{{ route('store.shop') }}">{{ __('Browse everything') }} →</a></div>
                         <div class="mk-rec-grid">@foreach ($recommended as $c)<a href="{{ route('store.category', $c->slug) }}"><span class="mk-mark"><i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c->name) }}"></i></span><b>{{ $c->trans('name') }}</b></a>@endforeach</div>
                     </div>@endif
-                    <div class="mk-mega-browser">
-                        <div class="mk-mega-main" role="tablist">
-                            @foreach ($tree as $c)<button type="button" role="tab" data-mega-target="mg-{{ $c->id }}" class="{{ $loop->first ? 'is-active' : '' }}"><span class="mk-mark sm"><i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c->name) }}"></i></span><b>{{ $c->trans('name') }}</b><i class="bi bi-chevron-right"></i></button>@endforeach
-                        </div>
-                        <div class="mk-mega-sub">
-                            @foreach ($tree as $c)
-                                <section id="mg-{{ $c->id }}" class="{{ $loop->first ? 'is-active' : '' }}">
-                                    <header><h3>{{ $c->trans('name') }}</h3><a href="{{ route('store.category', $c->slug) }}">{{ __('Browse all') }} →</a></header>
-                                    <div class="mk-sub-grid">
-                                        @forelse ($c->children as $ch)<a href="{{ route('store.category', $ch->slug) }}"><span class="mk-mark"><i class="bi bi-tag"></i></span><b>{{ $ch->trans('name') }}</b><small>{{ trans_choice(':n item|:n items', $ch->products_count, ['n' => $ch->products_count]) }}</small></a>@foreach ($ch->children as $gc)<a class="mk-l3" href="{{ route('store.category', $gc->slug) }}"><i class="bi bi-arrow-return-right"></i>{{ $gc->trans('name') }}<small>{{ $gc->products_count }}</small></a>@endforeach
-                                        @empty<a href="{{ route('store.category', $c->slug) }}"><span class="mk-mark"><i class="bi bi-grid-1x2"></i></span><b>{{ __('All :name', ['name' => $c->trans('name')]) }}</b><small>{{ trans_choice(':n item|:n items', $c->products_count, ['n' => $c->products_count]) }}</small></a>@endforelse
-                                    </div>
-                                </section>
-                            @endforeach
-                        </div>
+                    <div class="mk-mega-all-head">
+                        <b>{{ __('All categories') }} <small>{{ $tree->count() }}</small></b>
+                        <label class="mk-mega-find"><i class="bi bi-search"></i><input type="search" data-cat-filter placeholder="{{ __('Find a category…') }}" aria-label="{{ __('Find a category…') }}" autocomplete="off" maxlength="40"></label>
+                    </div>
+                    <div class="mk-mega-all" data-cat-list>
+                        @foreach ($tree as $c)<a href="{{ route('store.category', $c->slug) }}" data-name="{{ mb_strtolower($c->name.' '.$c->trans('name')) }}"><span class="mk-mark sm"><i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c->name) }}"></i></span><b>{{ $c->trans('name') }}</b><small>{{ $c->products_count }}</small></a>@endforeach
+                        <p class="mk-mega-none" hidden>{{ __('No category matches.') }}</p>
                     </div>
                 @endif
             </div>
@@ -190,11 +181,11 @@
             </section>
             <section data-drawer-panel="cats" hidden>
                 <a class="mk-drawer-all" href="{{ route('store.shop') }}">{{ __('Browse everything') }} <i class="bi bi-arrow-right"></i></a>
-                @foreach ($tree as $c)
-                    <details><summary><span class="mk-mark sm"><i class="bi bi-grid-1x2"></i></span><span><b>{{ $c->trans('name') }}</b><small>{{ trans_choice(':n item|:n items', $c->products_count, ['n' => $c->products_count]) }}</small></span><i class="bi bi-chevron-down"></i></summary>
-                        <div class="mk-drawer-children"><a href="{{ route('store.category', $c->slug) }}">{{ __('All :name', ['name' => $c->trans('name')]) }}</a>@foreach ($c->children as $ch)<a href="{{ route('store.category', $ch->slug) }}">{{ $ch->trans('name') }}<small>{{ $ch->products_count }}</small></a>@foreach ($ch->children as $gc)<a class="l3" href="{{ route('store.category', $gc->slug) }}">↳ {{ $gc->trans('name') }}<small>{{ $gc->products_count }}</small></a>@endforeach @endforeach</div>
-                    </details>
-                @endforeach
+                <label class="mk-mega-find mk-drawer-find"><i class="bi bi-search"></i><input type="search" data-cat-filter placeholder="{{ __('Find a category…') }}" aria-label="{{ __('Find a category…') }}" autocomplete="off" maxlength="40"></label>
+                <div class="mk-drawer-flat" data-cat-list>
+                    @foreach ($tree as $c)<a href="{{ route('store.category', $c->slug) }}" data-name="{{ mb_strtolower($c->name.' '.$c->trans('name')) }}"><span class="mk-mark sm"><i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c->name) }}"></i></span><b>{{ $c->trans('name') }}</b><small>{{ $c->products_count }}</small></a>@endforeach
+                    <p class="mk-mega-none" hidden>{{ __('No category matches.') }}</p>
+                </div>
             </section>
         </div>
     </aside>

@@ -18,14 +18,14 @@
 <div class="sf-container">
     <nav class="sf-crumbs mk-crumbs" aria-label="Breadcrumb">
         <a href="{{ route('store.home') }}">{{ __('Home') }}</a><span>›</span>
-        @if ($current)<a href="{{ route('store.shop') }}">{{ __('Shop') }}</a>@if ($current->parent)<span>›</span><a href="{{ route('store.category', $current->parent->slug) }}">{{ $current->parent->trans('name') }}</a>@endif<span>›</span><span>{{ $current->trans('name') }}</span>
+        @if ($current)<a href="{{ route('store.shop') }}">{{ __('Shop') }}</a><span>›</span><span>{{ $current->trans('name') }}</span>
         @else<span>{{ __('Shop') }}</span>@endif
     </nav>
 
     @php
         $keepQ = request()->query() ? '?'.http_build_query(request()->except(['page'])) : '';
-        $chipCats = $current ? ($subcategories->isNotEmpty() ? $subcategories : ($current->parent ? $current->parent->children()->where('is_active', true)->get() : collect())) : \App\Support\Storefront::tree();
-        $chipUp = $current ? ($subcategories->isNotEmpty() ? $current : ($current->parent ?? $current)) : null;
+        $chipCats = \App\Support\Storefront::tree();
+        $chipUp = null;
         $keepForSearch = collect(request()->except(['q', 'page']))->filter(fn ($v) => is_scalar($v) || is_array($v));
         $from = $products->firstItem() ?? 0; $to = $products->lastItem() ?? 0; $total = $products->total();
     @endphp
@@ -66,38 +66,16 @@
                                 {{-- ===== categories: picture, sub-categories and third level ===== --}}
                 <section class="tq-fsec sx-cats" data-flt-sec>
                     <h3>{{ __('Shop by category') }}</h3>
-                    <ul class="sx-tree">
+                    <ul class="sx-tree sx-flat">
                         @foreach (\App\Support\Storefront::tree() as $c1)
-                            @php $open1 = $current && ($current->id === $c1->id || in_array($current->id, $c1->descendantIds())); $img1 = $c1->imageUrl(); $n1 = $c1->products_count + $c1->children->sum(fn ($x) => $x->products_count + $x->children->sum('products_count')); @endphp
-                            <li class="sx-c1 @if ($open1) is-open @endif" data-flt-item>
+                            @php $img1 = $c1->imageUrl(); @endphp
+                            <li class="sx-c1" data-flt-item>
                                 <div class="sx-row @if ($current && $current->id === $c1->id) on @endif">
                                     <a class="sx-link" href="{{ route('store.category', $c1->slug) }}{{ $keepQ }}">
                                         <span class="sx-img">@if ($img1)<img src="{{ $img1 }}" alt="" loading="lazy">@else<i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c1->name) }}"></i>@endif</span>
-                                        <span class="sx-name">{{ $c1->trans('name') }}</span><small>{{ $n1 }}</small>
+                                        <span class="sx-name">{{ $c1->trans('name') }}</span><small>{{ $c1->products_count }}</small>
                                     </a>
-                                    @if ($c1->children->isNotEmpty())<button type="button" class="tq-exp sx-exp" aria-expanded="{{ $open1 ? 'true' : 'false' }}" aria-label="{{ __('Show sub-categories') }}"><i class="bi bi-chevron-down"></i></button>@endif
                                 </div>
-                                @if ($c1->children->isNotEmpty())
-                                <ul class="sx-sub" @unless ($open1) hidden @endunless>
-                                    @foreach ($c1->children as $c2)
-                                        @php $open2 = $current && ($current->id === $c2->id || in_array($current->id, $c2->descendantIds())); $img2 = $c2->imageUrl(); $n2 = $c2->products_count + $c2->children->sum('products_count'); @endphp
-                                        <li data-flt-item>
-                                            <div class="sx-row sx-row2 @if ($current && $current->id === $c2->id) on @endif">
-                                                <a class="sx-link" href="{{ route('store.category', $c2->slug) }}{{ $keepQ }}">
-                                                    <span class="sx-img sm">@if ($img2)<img src="{{ $img2 }}" alt="" loading="lazy">@else<i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c2->name) }}"></i>@endif</span>
-                                                    <span class="sx-name">{{ $c2->trans('name') }}</span><small>{{ $n2 }}</small>
-                                                </a>
-                                                @if ($c2->children->isNotEmpty())<button type="button" class="tq-exp sx-exp" aria-expanded="{{ $open2 ? 'true' : 'false' }}" aria-label="{{ __('Show sub-categories') }}"><i class="bi bi-chevron-down"></i></button>@endif
-                                            </div>
-                                            @if ($c2->children->isNotEmpty())
-                                            <div class="sx-chips" @unless ($open2) hidden @endunless>
-                                                @foreach ($c2->children as $c3)<a data-flt-item href="{{ route('store.category', $c3->slug) }}{{ $keepQ }}" @class(['on' => $current && $current->id === $c3->id])>{{ $c3->trans('name') }} <small>{{ $c3->products_count }}</small></a>@endforeach
-                                            </div>
-                                            @endif
-                                        </li>
-                                    @endforeach
-                                </ul>
-                                @endif
                             </li>
                         @endforeach
                     </ul>
@@ -188,7 +166,7 @@
                     <p>{{ __('Try removing a filter or searching for something else.') }}</p>
                     <div class="sh-empty-cta">@if ($active->isNotEmpty() || filled($f['q'] ?? null))<a href="{{ route('store.shop') }}" class="sh-btn">{{ __('Clear filters') }}</a>@endif
                         @if (\App\Support\BusinessProfile::hasModule('prescriptions'))<a href="{{ route('store.prescription.upload') }}" class="sh-btn ghost"><i class="bi bi-camera"></i> {{ __('Upload prescription') }}</a>@endif</div>
-                    <div class="sh-empty-cats">@foreach (\App\Support\Storefront::tree()->take(6) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach</div>
+                    <div class="sh-empty-cats">@foreach (\App\Support\Storefront::tree()->sortByDesc('products_count')->take(6) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach</div>
                 </div>
             @else
                 <div data-product-list class="sh-grid">

@@ -62,7 +62,7 @@ class HomeController extends Controller
         $ids = array_filter((array) ($s->settings['category_ids'] ?? []));
 
         return Category::withCount(['products' => fn ($q) => $q->active()])->where('is_active', true)
-            ->when($ids, fn ($q) => $q->whereIn('id', $ids), fn ($q) => $q->whereNull('parent_id'))
+            ->when($ids, fn ($q) => $q->whereIn('id', $ids), fn ($q) => $q)
             ->orderBy('sort_order')->orderBy('name')->limit((int) ($s->settings['limit'] ?? 8))->get();
     }
 

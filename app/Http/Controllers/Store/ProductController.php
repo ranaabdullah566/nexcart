@@ -46,7 +46,7 @@ class ProductController extends Controller
 
     private function find(string $slug): Product
     {
-        return Product::active()->with(['variants' => fn ($q) => $q->where('is_active', true), 'media', 'category.parent'])
+        return Product::active()->with(['variants' => fn ($q) => $q->where('is_active', true), 'media', 'category'])
             ->where('slug', $slug)->firstOrFail();
     }
 
