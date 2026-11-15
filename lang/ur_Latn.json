@@ -1696,5 +1696,10 @@
     "Search in this list": "Is fehrist mein talash karein",
     "Search medicines, salts, brands…": "Adviyaat, salt, brand talash karein…",
     "Show :n results": ":n nataij dikhayein",
-    "You have seen :to of :total": "Aap ne :total mein se :to dekhe"
+    "You have seen :to of :total": "Aap ne :total mein se :to dekhe",
+    "Picture": "Tasveer",
+    "Remove picture": "Tasveer hatayein",
+    "Shown in the shop sidebar and category chips. If empty, a product picture from this category is used.": "Shop ki sidebar aur category chips mein dikhai jati hai. Khali ho to is category ke kisi product ki tasveer istemal hoti hai.",
+    "Over :n": "Over :n",
+    "Under :n": "Under :n"
 }

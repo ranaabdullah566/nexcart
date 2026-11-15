@@ -9,10 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Category extends Model
+class Category extends Model implements HasMedia
 {
-    use Audited;
+    use Audited, InteractsWithMedia;
 
     use HasSlug, HasTranslations, SoftDeletes;
 
@@ -24,6 +28,31 @@ class Category extends Model
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('image')->singleFile();
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')->width(200)->height(200)->format('webp')->nonQueued();
+    }
+
+    /** The picture shown in the shop sidebar and category chips: the uploaded one, else a product from this branch (so every category has a face). */
+    public function imageUrl(): ?string
+    {
+        $m = $this->getFirstMedia('image');
+        if ($m) {
+            return $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl();
+        }
+
+        return Cache::remember('cat-img-'.$this->id.'-'.($this->updated_at?->timestamp ?? 0), 600, function () {
+            $p = Product::active()->whereIn('category_id', $this->descendantIds())->with('media')->orderByDesc('is_featured')->latest('id')->get()->first(fn ($x) => $x->thumbUrl());
+
+            return $p?->thumbUrl();
+        });
     }
 
     public function parent(): BelongsTo

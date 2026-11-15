@@ -45,9 +45,13 @@
     </header>
 
     @if ($chipCats->isNotEmpty())
-        <nav class="sh-cats" aria-label="{{ __('Categories') }}">
-            <a href="{{ $chipUp ? route('store.category', $chipUp->slug).$keepQ : route('store.shop').$keepQ }}" @class(['on' => ! $current || ($chipUp && $current->id === $chipUp->id)])>{{ $chipUp ? __('All :name', ['name' => $chipUp->trans('name')]) : __('All') }}</a>
-            @foreach ($chipCats as $sc)<a href="{{ route('store.category', $sc->slug) }}{{ $keepQ }}" @class(['on' => $current && $current->id === $sc->id])>{{ $sc->trans('name') }}@isset($sc->products_count)<small>{{ $sc->products_count }}</small>@endisset</a>@endforeach
+        <nav class="sh-tiles" aria-label="{{ __('Categories') }}">
+            <a href="{{ $chipUp ? route('store.category', $chipUp->slug).$keepQ : route('store.shop').$keepQ }}" @class(['on' => ! $current || ($chipUp && $current->id === $chipUp->id)])>
+                <span class="sh-tile-img all"><i class="bi bi-grid-3x3-gap-fill"></i></span><b>{{ $chipUp ? __('All') : __('All') }}</b></a>
+            @foreach ($chipCats as $sc)@php $im = $sc->imageUrl(); @endphp
+                <a href="{{ route('store.category', $sc->slug) }}{{ $keepQ }}" @class(['on' => $current && $current->id === $sc->id])>
+                    <span class="sh-tile-img">@if ($im)<img src="{{ $im }}" alt="" loading="lazy">@else<i class="bi bi-{{ \App\Support\Storefront::categoryIcon($sc->name) }}"></i>@endif</span><b>{{ $sc->trans('name') }}</b></a>
+            @endforeach
         </nav>
     @endif
 
@@ -60,31 +64,36 @@
                 <input type="hidden" name="sort" value="{{ $sortNow }}">
                 <div class="tq-flt-search"><i class="bi bi-search"></i><input type="search" placeholder="{{ __('Search filters…') }}" aria-label="{{ __('Search filters…') }}" data-flt-search data-no-auto autocomplete="off" maxlength="40"></div>
 
-                                <section class="tq-fsec" data-flt-sec>
-                    <h3>{{ __('Category') }}</h3>
-                    <ul class="tq-cattree">
+                                {{-- ===== categories: picture, sub-categories and third level ===== --}}
+                <section class="tq-fsec sx-cats" data-flt-sec>
+                    <h3>{{ __('Shop by category') }}</h3>
+                    <ul class="sx-tree">
                         @foreach (\App\Support\Storefront::tree() as $c1)
-                            @php $open1 = $current && ($current->id === $c1->id || in_array($current->id, $c1->descendantIds())); @endphp
-                            <li data-flt-item>
-                                <div class="tq-catrow @if ($current && $current->id === $c1->id) on @endif">
-                                    <a href="{{ route('store.category', $c1->slug) }}{{ $keepQ }}">{{ $c1->trans('name') }}</a><small>{{ $c1->products_count }}</small>
-                                    @if ($c1->children->isNotEmpty())<button type="button" class="tq-exp" aria-expanded="{{ $open1 ? 'true' : 'false' }}" aria-label="{{ __('Show sub-categories') }}"><i class="bi bi-chevron-down"></i></button>@endif
+                            @php $open1 = $current && ($current->id === $c1->id || in_array($current->id, $c1->descendantIds())); $img1 = $c1->imageUrl(); $n1 = $c1->products_count + $c1->children->sum(fn ($x) => $x->products_count + $x->children->sum('products_count')); @endphp
+                            <li class="sx-c1 @if ($open1) is-open @endif" data-flt-item>
+                                <div class="sx-row @if ($current && $current->id === $c1->id) on @endif">
+                                    <a class="sx-link" href="{{ route('store.category', $c1->slug) }}{{ $keepQ }}">
+                                        <span class="sx-img">@if ($img1)<img src="{{ $img1 }}" alt="" loading="lazy">@else<i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c1->name) }}"></i>@endif</span>
+                                        <span class="sx-name">{{ $c1->trans('name') }}</span><small>{{ $n1 }}</small>
+                                    </a>
+                                    @if ($c1->children->isNotEmpty())<button type="button" class="tq-exp sx-exp" aria-expanded="{{ $open1 ? 'true' : 'false' }}" aria-label="{{ __('Show sub-categories') }}"><i class="bi bi-chevron-down"></i></button>@endif
                                 </div>
                                 @if ($c1->children->isNotEmpty())
-                                <ul @unless ($open1) hidden @endunless>
+                                <ul class="sx-sub" @unless ($open1) hidden @endunless>
                                     @foreach ($c1->children as $c2)
-                                        @php $open2 = $current && ($current->id === $c2->id || in_array($current->id, $c2->descendantIds())); @endphp
+                                        @php $open2 = $current && ($current->id === $c2->id || in_array($current->id, $c2->descendantIds())); $img2 = $c2->imageUrl(); $n2 = $c2->products_count + $c2->children->sum('products_count'); @endphp
                                         <li data-flt-item>
-                                            <div class="tq-catrow @if ($current && $current->id === $c2->id) on @endif">
-                                                <a href="{{ route('store.category', $c2->slug) }}{{ $keepQ }}">{{ $c2->trans('name') }}</a><small>{{ $c2->products_count }}</small>
-                                                @if ($c2->children->isNotEmpty())<button type="button" class="tq-exp" aria-expanded="{{ $open2 ? 'true' : 'false' }}" aria-label="{{ __('Show sub-categories') }}"><i class="bi bi-chevron-down"></i></button>@endif
+                                            <div class="sx-row sx-row2 @if ($current && $current->id === $c2->id) on @endif">
+                                                <a class="sx-link" href="{{ route('store.category', $c2->slug) }}{{ $keepQ }}">
+                                                    <span class="sx-img sm">@if ($img2)<img src="{{ $img2 }}" alt="" loading="lazy">@else<i class="bi bi-{{ \App\Support\Storefront::categoryIcon($c2->name) }}"></i>@endif</span>
+                                                    <span class="sx-name">{{ $c2->trans('name') }}</span><small>{{ $n2 }}</small>
+                                                </a>
+                                                @if ($c2->children->isNotEmpty())<button type="button" class="tq-exp sx-exp" aria-expanded="{{ $open2 ? 'true' : 'false' }}" aria-label="{{ __('Show sub-categories') }}"><i class="bi bi-chevron-down"></i></button>@endif
                                             </div>
                                             @if ($c2->children->isNotEmpty())
-                                            <ul @unless ($open2) hidden @endunless>
-                                                @foreach ($c2->children as $c3)
-                                                    <li data-flt-item><div class="tq-catrow @if ($current && $current->id === $c3->id) on @endif"><a href="{{ route('store.category', $c3->slug) }}{{ $keepQ }}">{{ $c3->trans('name') }}</a><small>{{ $c3->products_count }}</small></div></li>
-                                                @endforeach
-                                            </ul>
+                                            <div class="sx-chips" @unless ($open2) hidden @endunless>
+                                                @foreach ($c2->children as $c3)<a data-flt-item href="{{ route('store.category', $c3->slug) }}{{ $keepQ }}" @class(['on' => $current && $current->id === $c3->id])>{{ $c3->trans('name') }} <small>{{ $c3->products_count }}</small></a>@endforeach
+                                            </div>
                                             @endif
                                         </li>
                                     @endforeach
@@ -98,26 +107,26 @@
                 @if ($brands->isNotEmpty())
                 <section class="tq-fsec" data-flt-sec>
                     <h3>{{ __('Brand') }}</h3>
-                    <div class="tq-fchecks">@foreach ($brands as $b)
-                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="brand[]" value="{{ $b->id }}" @checked(in_array($b->id, $f['brand'] ?? []))><span>{{ $b->trans('name') }}</span><small>{{ $b->products_count }}</small></label>
+                    <div class="sx-brands">@foreach ($brands as $b)
+                        <label class="sx-brand" data-flt-item><input type="checkbox" name="brand[]" value="{{ $b->id }}" @checked(in_array($b->id, $f['brand'] ?? []))><span><b>{{ $b->trans('name') }}</b><small>{{ $b->products_count }}</small></span></label>
                     @endforeach</div>
                 </section>
                 @endif
 
                 <section class="tq-fsec" data-flt-sec>
                     <h3>{{ __('Medicine type') }}</h3>
-                    <div class="tq-fchecks">
-                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="type[]" value="otc" @checked(in_array('otc', $f['type'] ?? []))><span>{{ __('Over the counter') }}</span></label>
-                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="type[]" value="rx" @checked(in_array('rx', $f['type'] ?? []))><span><i class="bi bi-prescription2"></i> {{ __('Prescription (Rx)') }}</span></label>
+                    <div class="sx-seg" role="group">
+                        <label><input type="checkbox" name="type[]" value="otc" @checked(in_array('otc', $f['type'] ?? []))><span><i class="bi bi-bag-check"></i> {{ __('Over the counter') }}</span></label>
+                        <label><input type="checkbox" name="type[]" value="rx" @checked(in_array('rx', $f['type'] ?? []))><span><i class="bi bi-prescription2"></i> {{ __('Prescription (Rx)') }}</span></label>
                     </div>
                 </section>
 
                 <section class="tq-fsec" data-flt-sec>
                     <h3>{{ __('Availability & offers') }}</h3>
-                    <div class="tq-fchecks">
-                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="in_stock" value="1" @checked(! empty($f['in_stock']))><span>{{ __('In stock only') }}</span></label>
-                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="on_sale" value="1" @checked(! empty($f['on_sale']))><span>{{ __('On sale') }}</span></label>
-                        <label class="tq-fcheck" data-flt-item><input type="checkbox" name="featured" value="1" @checked(! empty($f['featured']))><span>{{ __('Featured') }}</span></label>
+                    <div class="sx-switches">
+                        <label class="sx-sw"><span><i class="bi bi-box-seam"></i> {{ __('In stock only') }}</span><input type="checkbox" role="switch" name="in_stock" value="1" @checked(! empty($f['in_stock']))><i class="sx-knob"></i></label>
+                        <label class="sx-sw"><span><i class="bi bi-percent"></i> {{ __('On sale') }}</span><input type="checkbox" role="switch" name="on_sale" value="1" @checked(! empty($f['on_sale']))><i class="sx-knob"></i></label>
+                        <label class="sx-sw"><span><i class="bi bi-stars"></i> {{ __('Featured') }}</span><input type="checkbox" role="switch" name="featured" value="1" @checked(! empty($f['featured']))><i class="sx-knob"></i></label>
                     </div>
                 </section>
 
@@ -132,13 +141,24 @@
                     </section>
                 @endforeach
 
-                <section class="tq-fsec">
+                @php
+                    $pmin = (int) floor($priceBounds['min']); $pmax = (int) ceil($priceBounds['max']); $pmax = max($pmax, $pmin + 1);
+                    $vmin = (int) ($f['price_min'] ?? $pmin); $vmax = (int) ($f['price_max'] ?? $pmax);
+                    $step = max(1, (int) round(($pmax - $pmin) / 100));
+                    $quick = collect([[0, 500], [500, 1000], [1000, 3000], [3000, null]])->filter(fn ($q) => $q[0] < $pmax && ($q[1] === null || $q[1] > $pmin));
+                @endphp
+                <section class="tq-fsec sx-price" data-sx-price data-min="{{ $pmin }}" data-max="{{ $pmax }}">
                     <h3>{{ __('Price') }} ({{ setting('store.currency_symbol', 'Rs') }})</h3>
-                    <div class="tq-fprice">
-                        <input type="number" min="0" step="any" name="price_min" value="{{ $f['price_min'] ?? '' }}" placeholder="{{ __('Min') }}" class="form-control form-control-sm" aria-label="{{ __('Min price') }}">
-                        <input type="number" min="0" step="any" name="price_max" value="{{ $f['price_max'] ?? '' }}" placeholder="{{ __('Max') }}" class="form-control form-control-sm" aria-label="{{ __('Max price') }}">
+                    <div class="sx-range" aria-hidden="false">
+                        <div class="sx-track"><i class="sx-fill"></i></div>
+                        <input type="range" class="sx-r1" min="{{ $pmin }}" max="{{ $pmax }}" step="{{ $step }}" value="{{ min(max($vmin, $pmin), $pmax) }}" aria-label="{{ __('Min price') }}" data-no-auto>
+                        <input type="range" class="sx-r2" min="{{ $pmin }}" max="{{ $pmax }}" step="{{ $step }}" value="{{ min(max($vmax, $pmin), $pmax) }}" aria-label="{{ __('Max price') }}" data-no-auto>
                     </div>
-                    <p class="tq-fhint">{{ money($priceBounds['min']) }} – {{ money($priceBounds['max']) }}</p>
+                    <div class="tq-fprice">
+                        <input type="number" min="0" step="any" name="price_min" value="{{ $f['price_min'] ?? '' }}" placeholder="{{ $pmin }}" class="form-control form-control-sm" aria-label="{{ __('Min price') }}">
+                        <input type="number" min="0" step="any" name="price_max" value="{{ $f['price_max'] ?? '' }}" placeholder="{{ $pmax }}" class="form-control form-control-sm" aria-label="{{ __('Max price') }}">
+                    </div>
+                    <div class="sx-quick">@foreach ($quick as [$lo, $hi])<button type="button" data-lo="{{ $lo }}" data-hi="{{ $hi }}">{{ $hi === null ? __('Over :n', ['n' => number_format($lo)]) : ($lo == 0 ? __('Under :n', ['n' => number_format($hi)]) : number_format($lo).'–'.number_format($hi)) }}</button>@endforeach</div>
                 </section>
 
                 <a class="tq-fclear" href="{{ url()->current() }}{{ filled($f['q'] ?? null) ? '?q='.urlencode($f['q']) : '' }}">{{ __('Clear all') }}</a>

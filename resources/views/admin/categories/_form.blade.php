@@ -1,5 +1,5 @@
 @php($editing = isset($category))
-<form method="POST" action="{{ $editing ? route('admin.categories.update', $category) : route('admin.categories.store') }}">
+<form method="POST" action="{{ $editing ? route('admin.categories.update', $category) : route('admin.categories.store') }}" enctype="multipart/form-data">
     @csrf @if ($editing) @method('PUT') @endif
     <div class="row g-3">
         <div class="col-md-6">
@@ -15,6 +15,12 @@
             </select>
             @error('parent_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
             <div class="form-text">{{ __('Up to 3 levels: Category › Sub-category › Sub-sub-category. Only categories that still have room are listed.') }}</div>
+        </div>
+        <div class="col-12">
+            <label class="form-label fw-medium" for="catImage">{{ __('Picture') }}</label>
+            @if ($editing && $category->getFirstMedia('image'))<div class="mb-2 d-flex align-items-center gap-3"><img src="{{ $category->imageUrl() }}" alt="" style="height:72px;width:72px;object-fit:cover;border-radius:50%;border:1px solid var(--border)"><div class="form-check"><input class="form-check-input" type="checkbox" name="remove_image" value="1" id="catRmImg"><label class="form-check-label" for="catRmImg">{{ __('Remove picture') }}</label></div></div>@endif
+            <input type="file" id="catImage" name="image" accept="image/jpeg,image/png,image/webp" class="form-control @error('image') is-invalid @enderror">@error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <div class="form-text">{{ __('Shown in the shop sidebar and category chips. If empty, a product picture from this category is used.') }}</div>
         </div>
         <div class="col-12">
             <label class="form-label fw-medium">{{ __('Description') }}</label>

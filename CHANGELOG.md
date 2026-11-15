@@ -4,6 +4,11 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Shop sidebar — image-led filters (inspired by ronin.pk's round category pictures)
+- **Shop by category** card: every top-level category has a round, ring-bordered picture, name and product count; it expands to its **sub-categories** (smaller pictures) and a third level as pills; counts include everything below a category; the current branch is highlighted and opened. The same pictures appear as **round category tiles** above the grid.
+- **Pictures**: Admin → Categories → *Picture* (JPG / PNG / WebP, up to 3 MB); without an upload the first product picture of that branch is used, then an icon. Category pictures use `Category::imageUrl()`.
+- New controls: brand **pills** with counts, **Over the counter / Prescription** segmented cards, **switches** for in stock / on sale / featured, a **dual-handle price slider** with Min / Max boxes and quick ranges (Under 500, 500–1,000 …). Each group is a soft white card; phones keep the slide-in filter sheet.
+
 ### Shop page redesign (using the UI/UX Pro Max skill)
 - The skill's design-system search for "pharmacy online medicine e-commerce marketplace" recommended a **marketplace pattern** (search bar is the call to action, categories, trust) with an **accessible style** (16px+ text, visible 3px focus rings, 44px touch targets, WCAG contrast, reduced-motion). The shop follows it: a hero with a prominent *search in this list* field, scrolling category chips (sub-categories or siblings, with counts), a sticky toolbar (result count, sort, grid / list), removable active-filter chips with *Clear all*, an animated progress "you have seen n of N" pager with 44px page buttons, and a richer empty state (clear filters, upload prescription, popular categories).
 - On phones the filters open as a **slide-in sheet** with a sticky *Clear all* / *Show n results* footer (nothing reloads until you press it); on desktop they stay in the sidebar. Cards fade in with a short stagger (transform / opacity only) and not at all with reduced motion.

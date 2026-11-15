@@ -254,4 +254,33 @@ class CatalogTest extends TestCase
         $this->get('/admin/inventory/adjust')->assertForbidden();
         $this->assertSame(0, Product::count());
     }
+
+    public function test_category_pictures_upload_fall_back_to_product_pictures_and_appear_in_the_shop_sidebar(): void
+    {
+        Storage::fake('public');
+        $top = Category::create(['name' => 'Pain & fever', 'is_active' => true]);
+        $sub = Category::create(['name' => 'Pain relief', 'parent_id' => $top->id, 'is_active' => true]);
+        $leaf = Category::create(['name' => 'Tablets', 'parent_id' => $sub->id, 'is_active' => true]);
+        $p = new Product;
+        $p->forceFill(['name' => 'Panadol', 'price' => 5, 'status' => 'active', 'track_stock' => false, 'category_id' => $leaf->id])->save();
+        $p->addMedia(UploadedFile::fake()->image('pan.jpg', 300, 300))->toMediaCollection('images');
+
+        // no own picture yet: the first product picture of the branch is used
+        $this->assertNotNull($top->fresh()->imageUrl());
+        $this->assertSame($p->thumbUrl(), $top->fresh()->imageUrl());
+
+        // admin uploads a picture; it replaces the fallback, and can be removed again
+        $this->put("/admin/categories/{$top->id}", ['name' => 'Pain & fever', 'is_active' => 1, 'image' => UploadedFile::fake()->image('cat.png', 200, 200)])->assertSessionHasNoErrors();
+        $this->assertNotNull($top->fresh()->getFirstMedia('image'));
+        $this->put("/admin/categories/{$top->id}", ['name' => 'Pain & fever', 'is_active' => 1, 'image' => UploadedFile::fake()->create('x.svg', 5, 'image/svg+xml')])->assertSessionHasErrors('image');
+        $this->put("/admin/categories/{$top->id}", ['name' => 'Pain & fever', 'is_active' => 1, 'remove_image' => 1])->assertSessionHasNoErrors();
+        $this->assertNull($top->fresh()->getFirstMedia('image'));
+
+        // the shop shows all three levels with pictures, counts that include the branch, and the new filter controls
+        $html = $this->get('/shop')->assertOk()->getContent();
+        foreach (['Shop by category', 'Pain relief', 'Tablets', 'sx-img', 'sx-chips', 'data-sx-price', 'sx-switches', 'sx-seg', 'sh-tiles'] as $needle) {
+            $this->assertStringContainsString($needle, $html);
+        }
+        $this->get('/category/'.$top->slug)->assertOk()->assertSee('sh-tile-img', false);
+    }
 }

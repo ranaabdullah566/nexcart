@@ -1696,5 +1696,10 @@
     "Search in this list": "اس فہرست میں تلاش کریں",
     "Search medicines, salts, brands…": "ادویات، سالٹ، برانڈ تلاش کریں…",
     "Show :n results": ":n نتائج دکھائیں",
-    "You have seen :to of :total": "آپ نے :total میں سے :to دیکھے"
+    "You have seen :to of :total": "آپ نے :total میں سے :to دیکھے",
+    "Picture": "تصویر",
+    "Remove picture": "تصویر ہٹائیں",
+    "Shown in the shop sidebar and category chips. If empty, a product picture from this category is used.": "شاپ کی سائڈبار اور زمرے کے چپس میں دکھائی جاتی ہے۔ خالی ہو تو اس زمرے کے کسی پروڈکٹ کی تصویر استعمال ہوتی ہے۔",
+    "Over :n": "ان سے اوپر :n",
+    "Under :n": "اس سے کم :n"
 }

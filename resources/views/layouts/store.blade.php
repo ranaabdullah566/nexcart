@@ -35,6 +35,7 @@
     <link href="{{ asset('assets/css/store-tq.css') }}?v={{ @filemtime(public_path('assets/css/store-tq.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/cart-fx.css') }}?v={{ @filemtime(public_path('assets/css/cart-fx.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/shop-fx.css') }}?v={{ @filemtime(public_path('assets/css/shop-fx.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/shop-side.css') }}?v={{ @filemtime(public_path('assets/css/shop-side.css')) }}" rel="stylesheet">
     <style>.sf{--mk-ratio:{{ sf('cards.ratio') }};--mk-fit:{{ sf('cards.fit') }}}</style>
     @stack('head')
 </head>

@@ -289,8 +289,21 @@
     /* ---------- shop sidebar: category expanders and filter search ---------- */
     document.addEventListener('click', function (e) {
         var b = e.target.closest ? e.target.closest('.tq-exp') : null; if (!b) return;
-        var ul = b.closest('li').querySelector(':scope > ul'); if (!ul) return;
+        var host = b.closest('li'), ul = host.querySelector(':scope > ul, :scope > .sx-chips'); if (!ul) return;
         var open = b.getAttribute('aria-expanded') === 'true'; b.setAttribute('aria-expanded', open ? 'false' : 'true'); ul.hidden = open;
+    });
+    /* price: dual-handle slider + quick ranges, synced with the Min / Max boxes */
+    $$('[data-sx-price]').forEach(function (box) {
+        var lo = +box.dataset.min, hi = +box.dataset.max, r1 = $('.sx-r1', box), r2 = $('.sx-r2', box), fill = $('.sx-fill', box), form = box.closest('form');
+        var n1 = $('[name=price_min]', box), n2 = $('[name=price_max]', box), t;
+        function paintFill() { var a = (+r1.value - lo) / (hi - lo) * 100, b = (+r2.value - lo) / (hi - lo) * 100; fill.style.insetInlineStart = Math.min(a, b) + '%'; fill.style.insetInlineEnd = (100 - Math.max(a, b)) + '%'; }
+        function toBoxes() { var a = Math.min(+r1.value, +r2.value), b = Math.max(+r1.value, +r2.value); n1.value = a > lo ? a : ''; n2.value = b < hi ? b : ''; paintFill(); }
+        function fromBoxes() { r1.value = n1.value === '' ? lo : n1.value; r2.value = n2.value === '' ? hi : n2.value; paintFill(); }
+        function go() { clearTimeout(t); t = setTimeout(function () { if (!(window.matchMedia && window.matchMedia('(max-width: 991.98px)').matches)) form.submit(); }, 450); }
+        [r1, r2].forEach(function (r) { r.addEventListener('input', toBoxes); r.addEventListener('change', function () { toBoxes(); go(); }); });
+        [n1, n2].forEach(function (n) { n.addEventListener('input', fromBoxes); });
+        $$('.sx-quick button', box).forEach(function (btn) { btn.addEventListener('click', function () { n1.value = +btn.dataset.lo > lo ? btn.dataset.lo : ''; n2.value = btn.dataset.hi === '' ? '' : btn.dataset.hi; fromBoxes(); go(); }); });
+        fromBoxes();
     });
     $$('[data-flt-search]').forEach(function (inp) {
         var form = inp.closest('form');

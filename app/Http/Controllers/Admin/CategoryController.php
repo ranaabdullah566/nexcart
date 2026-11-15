@@ -73,6 +73,7 @@ class CategoryController extends Controller
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:65535'],
             'tr' => ['nullable', 'array'],
             'meta_title' => ['nullable', 'string', 'max:120'], 'meta_description' => ['nullable', 'string', 'max:300'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],   // no SVG: it can carry scripts
         ]);
 
         if (! empty($data['parent_id'])) {
@@ -93,6 +94,13 @@ class CategoryController extends Controller
         ]);
         $category->setTranslationsFrom($data['tr'] ?? null, ['name', 'description']);
         $category->save();
+
+        if ($request->boolean('remove_image')) {
+            $category->clearMediaCollection('image');
+        }
+        if ($request->hasFile('image')) {
+            $category->addMediaFromRequest('image')->toMediaCollection('image');
+        }
     }
 
     /** Every category except the one being edited and its descendants (no loops). */
