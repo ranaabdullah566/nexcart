@@ -298,4 +298,19 @@ class StorefrontTest extends TestCase
         setting()->set('store.whatsapp', '03004462436');
         $this->get('/')->assertSee('https://wa.me/923004462436', false);
     }
+
+    public function test_cards_show_new_and_featured_badges_instead_of_genuine(): void
+    {
+        $this->product(['name' => 'Fresh item']);
+        $old = $this->product(['name' => 'Old item']);
+        \App\Models\Product::whereKey($old->id)->update(['created_at' => now()->subDays(90)]);
+        $this->product(['name' => 'Star item', 'is_featured' => true]);
+
+        $html = $this->get('/shop')->assertOk()->assertDontSee('Genuine product')->assertDontSee('mk-flag ok', false)->getContent();
+        $this->assertSame(1, substr_count($html, 'mk-flag feat'));
+        $this->assertSame(1, substr_count($html, 'mk-flag new'));   // Fresh item; Star item is featured, Old item is neither
+
+        setting()->set('sf.cards.new_days', 0);
+        $this->get('/shop')->assertDontSee('mk-flag new', false);
+    }
 }

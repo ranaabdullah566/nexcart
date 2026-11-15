@@ -298,3 +298,10 @@ body.mk-lock { overflow: hidden; }
 .mk-wa::after { content: ''; position: absolute; inset: -3px; border-radius: 50%; border: 2px solid #25d366; opacity: 0; animation: mkWaRing 2.6s ease-out infinite; pointer-events: none; }
 @keyframes mkWaRing { 0% { transform: scale(1); opacity: .55; } 100% { transform: scale(1.5); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .mk-wa::after { animation: none; } }
+
+/* card badges: Rx / Featured / New, stacked at the top right (the discount stays top left) */
+.mk-flags { position: absolute; top: .6rem; inset-inline-end: .6rem; inset-inline-start: auto; bottom: auto; display: flex; flex-direction: column; align-items: flex-end; gap: .3rem; z-index: 2; }
+.mk-flags .mk-flag, .sf-tq .mk-flags .mk-flag { position: static; inset: auto; display: inline-flex; align-items: center; gap: .3rem; padding: .22rem .6rem; border-radius: 99px; font-size: .7rem; font-weight: 800; letter-spacing: .02em; box-shadow: 0 4px 12px -6px rgba(15, 23, 42, .5); }
+.mk-flags .mk-flag.feat, .sf-tq .mk-flags .mk-flag.feat { background: #fff4d6; color: #8a5a00; }
+.mk-flags .mk-flag.feat i { color: #f59e0b; }
+.mk-flags .mk-flag.new, .sf-tq .mk-flags .mk-flag.new { background: #e6f7ee; color: #0b7a43; }

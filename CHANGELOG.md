@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Changed: card badges
+- Product cards no longer say *Genuine* (picture badge) or *Genuine product* (line above the price). The top-right badges are now **Out of stock**, **Rx**, **Featured** (products marked featured) and **New** (added in the last 14 days; Storefront options → Product cards → *“New” badge days*, 0 turns it off — set 0 or a small number after a big import, because every freshly imported product counts as new).
+
 ### Added: sample pictures
 - Admin → Home page → **Add sample pictures** (or `php artisan nexcart:demo-images [--products=60]`) draws pictures with GD — no internet needed: a bottle, capsule, tablet or pack on a soft gradient for products (chosen from the name / dosage form), one for every category that has products, and wide art for hero / banner / call-to-action sections. Only things **without** a picture get one; uploaded pictures are never touched. **Remove sample pictures** (`--remove`) deletes exactly the drawn ones. The sample medicines (`nexcart:demo`) now use the same drawings.
 

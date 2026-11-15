@@ -115,6 +115,14 @@ class Product extends Model implements HasMedia
         $this->addMediaConversion('thumb')->width(240)->height(240)->format('webp')->nonQueued();
     }
 
+    /** Added within the last "New" window (Storefront options → Product cards; 0 turns the badge off). */
+    public function isNew(): bool
+    {
+        $days = (int) sf('cards.new_days');
+
+        return $days > 0 && $this->created_at && $this->created_at->gte(now()->subDays($days));
+    }
+
     public function thumbUrl(): ?string
     {
         $m = $this->getFirstMedia('images');

@@ -8,7 +8,15 @@
     <div class="mk-card-media">
         <a href="{{ route('store.product', $p->slug) }}" class="fx-img-link" tabindex="-1" aria-hidden="true">@if ($thumb)<img src="{{ $thumb }}" alt="" loading="lazy">@else<span class="ph"><i class="bi bi-box-seam"></i></span>@endif</a>
         @if ($off && sf('cards.show_discount'))<span class="mk-disc">−{{ $off }}%</span>@endif
-        @if ($out)<span class="mk-flag out">{{ __('Out of stock') }}</span>@elseif ($p->requires_prescription)<span class="mk-flag rx"><i class="bi bi-prescription2"></i> Rx</span>@else<span class="mk-flag ok"><i class="bi bi-patch-check-fill"></i> {{ __('Genuine') }}</span>@endif
+        @if ($out || $p->requires_prescription || $p->is_featured || $p->isNew())
+        <span class="mk-flags">
+            @if ($out)<span class="mk-flag out">{{ __('Out of stock') }}</span>
+            @else
+                @if ($p->requires_prescription)<span class="mk-flag rx"><i class="bi bi-prescription2"></i> Rx</span>@endif
+                @if ($p->is_featured)<span class="mk-flag feat"><i class="bi bi-star-fill"></i> {{ __('Featured') }}</span>@elseif ($p->isNew())<span class="mk-flag new"><i class="bi bi-stars"></i> {{ __('New') }}</span>@endif
+            @endif
+        </span>
+        @endif
     </div>
     <div class="mk-card-body">
         <div class="mk-card-cat">@if ($p->category && sf('cards.show_category')){{ $p->category->trans('name') }}@else&nbsp;@endif</div>
@@ -17,7 +25,6 @@
         @if ($salt !== '' && $salt !== '—')<div class="fx-salt" title="{{ $salt }}"><i class="bi bi-eyedropper"></i><span>{{ \Illuminate\Support\Str::limit($salt, 38) }}</span></div>@else<div class="fx-salt is-empty" aria-hidden="true"></div>@endif
         @if (($form !== '' && $form !== 'Other') || ($strength !== '' && $strength !== '—') || $p->isVariable())<div class="fx-chips">@if ($form !== '' && $form !== 'Other')<span>{{ $form }}</span>@endif @if ($strength !== '' && $strength !== '—')<span>{{ $strength }}</span>@endif @if ($p->isVariable())<span class="alt">{{ __('Pack sizes') }}</span>@endif</div>@else<div class="fx-chips is-empty" aria-hidden="true"></div>@endif
         @if (sf('cards.show_rating') && ($p->approved_reviews_count ?? 0) > 0)<div class="mk-card-rate"><span class="sf-stars" aria-hidden="true">@include('store._stars', ['value' => (float) $p->approved_reviews_avg_rating])</span><span class="figure">{{ number_format((float) $p->approved_reviews_avg_rating, 1) }} ({{ $p->approved_reviews_count }})</span></div>@else<div class="mk-card-rate is-empty" aria-hidden="true"></div>@endif
-        <div class="tq-seller"><i class="bi bi-check2"></i> {{ __('Genuine product') }}</div>
         <div class="mk-price">
             @if ($p->isVariable())<small>{{ __('from') }}</small>@endif
             <b>{{ money($p->displayPrice()) }}</b>

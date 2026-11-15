@@ -1763,5 +1763,6 @@
     "Sample pictures added: :c categories, :p products, :s sections.": "نمونہ تصاویر شامل: :c کیٹیگریز، :p پروڈکٹس، :s سیکشنز۔",
     ":n sample pictures removed.": ":n نمونہ تصاویر ہٹا دی گئیں۔",
     "Add sample pictures": "نمونہ تصاویر شامل کریں",
-    "Remove sample pictures": "نمونہ تصاویر ہٹائیں"
+    "Remove sample pictures": "نمونہ تصاویر ہٹائیں",
+    "Show the “New” badge on products added in the last N days (0 = never)": "آخری N دنوں میں شامل پروڈکٹس پر “نیا” بیج دکھائیں (0 = کبھی نہیں)"
 }
