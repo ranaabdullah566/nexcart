@@ -231,7 +231,7 @@ class CatalogTest extends TestCase
 
         // no own picture yet: the first product picture of the branch is used
         $this->assertNotNull($top->fresh()->imageUrl());
-        $this->assertSame($p->thumbUrl(), $top->fresh()->imageUrl());
+        $this->assertSame(parse_url($p->thumbUrl(), PHP_URL_PATH), parse_url($top->fresh()->imageUrl(), PHP_URL_PATH));
 
         // admin uploads a picture; it replaces the fallback, and can be removed again
         $this->put("/admin/categories/{$top->id}", ['name' => 'Pain & fever', 'is_active' => 1, 'image' => UploadedFile::fake()->image('cat.png', 200, 200)])->assertSessionHasNoErrors();

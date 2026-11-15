@@ -44,6 +44,9 @@ return new class extends Migration
     {
         Schema::dropIfExists('product_syncs');
         Schema::table('products', function (Blueprint $table) {
+            $table->dropIndex(['source']);   // the index goes first (SQLite cannot drop an indexed column)
+        });
+        Schema::table('products', function (Blueprint $table) {
             $table->dropColumn(['barcodes', 'max_per_order', 'is_weighted', 'base_weight', 'base_weight_unit', 'price_per_base_unit', 'source', 'source_hash', 'source_data', 'synced_at']);
         });
     }

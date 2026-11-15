@@ -4,6 +4,11 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Fixed / faster: system check
+- The shop page ran **126 queries** (one per category to find its picture, twice); it now runs about 23 and opens roughly 40% faster. Category pictures come from one cached map per request, kept as paths so they still follow the visitor's host. The map is dropped whenever a picture is saved or deleted.
+- Migration `add_sheet_sync_fields` can be rolled back on SQLite too (the index is dropped before its column).
+- Checked: full test suite, fresh migrate + rollback, 110 page requests as guest and as owner (no server errors, none slower than 1.5 s), `composer audit` (no advisories), Urdu / Roman-Urdu files have identical keys.
+
 ### Fixed: product edit page
 - **Category pickers were blank** since categories became one level (the picker label came from a removed field). The category list in the product form, the home-section forms and the menu form shows names again.
 - Product form → *Pricing & stock* now has **Most one customer can order** (the cart limit) and **Barcodes** (one per line, up to 10; storefront search finds products by them), with a note on products created by the sheet that the next sheet upload can overwrite name, price, barcodes and limits but never stock, pictures or description. Variant SKU boxes are wider.

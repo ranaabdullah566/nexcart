@@ -22,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // a saved or deleted picture drops this request's category-picture map
+        $forget = fn () => $this->app->forgetInstance('nx.category-image-map');
+        \Spatie\MediaLibrary\MediaCollections\Models\Media::saved($forget);
+        \Spatie\MediaLibrary\MediaCollections\Models\Media::deleted($forget);
+
         // owner-edited interface words win over the built-in translations (one JSON per language, loaded last)
         $loader = $this->app['translator']->getLoader();
         if (method_exists($loader, 'addJsonPath')) {

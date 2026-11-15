@@ -36,19 +36,54 @@ class Category extends Model implements HasMedia
         $this->addMediaConversion('thumb')->width(200)->height(200)->format('webp')->nonQueued();
     }
 
-    /** The picture shown in the shop sidebar and category chips: the uploaded one, else a product from this branch (so every category has a face). */
+    /** The picture shown in the shop sidebar and category chips: the uploaded one, else a product from this category (so every category has a face). */
     public function imageUrl(): ?string
     {
-        $m = $this->getFirstMedia('image');
-        if ($m) {
-            return $m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl();
+        $path = static::imagePaths()[$this->id] ?? null;
+
+        return $path ? url($path) : null;
+    }
+
+    /**
+     * Picture path (not a full URL, so it follows whichever host the visitor is on) for every category, worked out once per
+     * request from one cached map: a category page lists a hundred categories and must not run a query for each.
+     *
+     * @return array<int, string|null>
+     */
+    public static function imagePaths(): array
+    {
+        if (app()->bound('nx.category-image-map')) {
+            return app('nx.category-image-map');   // one map per request (dropped whenever a picture is saved or deleted)
         }
+        $key = 'cat-img-map-'.(int) static::max('id').'-'.(static::max('updated_at') ?? 0).'-'.(int) Media::max('id');
 
-        return Cache::remember('cat-img-'.$this->id.'-'.($this->updated_at?->timestamp ?? 0), 600, function () {
-            $p = Product::active()->where('category_id', $this->id)->whereHas('media')->with('media')->orderByDesc('is_featured')->latest('id')->first();
+        $map = Cache::remember($key, 600, function () {
+            $path = fn (?Media $m) => $m ? parse_url($m->hasGeneratedConversion('thumb') ? $m->getUrl('thumb') : $m->getUrl(), PHP_URL_PATH) : null;
+            $own = Media::where('model_type', static::class)->where('collection_name', 'image')->orderBy('id')->get()->groupBy('model_id')->map(fn ($g) => $path($g->first()));
 
-            return $p?->thumbUrl();
+            $map = [];
+            $missing = [];
+            foreach (static::pluck('id') as $id) {
+                if ($own->get($id)) {
+                    $map[$id] = $own->get($id);
+                } else {
+                    $missing[] = $id;
+                }
+            }
+            if ($missing) {
+                // first product picture of each category (featured, then newest)
+                $prods = Product::active()->whereIn('category_id', $missing)->whereHas('media')->with('media')->orderByDesc('is_featured')->orderByDesc('id')->get()->groupBy('category_id');
+                foreach ($missing as $id) {
+                    $p = $prods->get($id)?->first(fn ($x) => $x->thumbUrl());
+                    $map[$id] = $p ? parse_url($p->thumbUrl(), PHP_URL_PATH) : null;
+                }
+            }
+
+            return $map;
         });
+        app()->instance('nx.category-image-map', $map);
+
+        return $map;
     }
 
     public function products(): HasMany
