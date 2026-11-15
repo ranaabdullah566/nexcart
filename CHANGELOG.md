@@ -7,8 +7,8 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 ### Redesigned: home product slider
 - **Drag with the mouse** (with momentum, landing on a card; a drag never opens a card by mistake), native swipe on phones, arrow keys / Home / End on the keyboard.
 - **Depth**: cards at the edges sit a little back, the others are full size; soft edge fades appear only when there is more to see; cards rise one after another the first time the row scrolls into view.
-- **Progress bar** that doubles as a scrubber (click or drag it), a *2–6 / 12* counter, round arrow buttons that dim at either end and a play / pause button.
-- **Autoplay** moves one card every 4.8 s and glides back to the start; it stops while the mouse is over the row, while a keyboard user is inside it, while dragging, or when paused with the button; it is off for “reduce motion”. A mouse click on an arrow no longer freezes it.
+- Round arrow buttons that fade out at either end (no footer bar under the row).
+- **Autoplay** moves one card every 4.8 s and glides back to the start; it stops while the mouse is over the row, while a keyboard user is inside it, or while dragging; it is off for “reduce motion”. A mouse click on an arrow no longer freezes it.
 - The arrows float **at the middle of the cards** (not in the header), clear of the cards: in the page margin on wide screens (1300 px and up), a little over the edge on smaller ones. They fade out at either end. The low-stock chip now says *Only 3 left*.
 - New files: `slider-fx.css`, `product-slider.js`. The old rail (blog, reviews, cart, product page) is unchanged.
 

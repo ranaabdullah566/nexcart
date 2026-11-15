@@ -18,10 +18,5 @@
         </div>
     </div>
     </div>
-    <div class="ps-foot">
-        <div class="ps-bar" data-ps-bar role="presentation"><i data-ps-thumb></i></div>
-        <span class="ps-count" data-ps-count aria-live="off"></span>
-        <button type="button" class="ps-play" data-ps-play aria-pressed="true" aria-label="{{ __('Pause') }}"><i class="bi bi-pause-fill"></i></button>
-    </div>
 </section>
 @endif
