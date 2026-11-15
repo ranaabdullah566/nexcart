@@ -1,0 +1,45 @@
+/* Product cards v2: no star row, price + cut price on one line, round quick icons on the picture, tidy empty rows */
+
+/* price and cut price side by side */
+.sf-tq .mk-card-body .mk-price { display: flex !important; flex-wrap: wrap; align-items: baseline; column-gap: .45rem; row-gap: 0; }
+.sf-tq .mk-card-body .mk-price s { flex: 0 1 auto; display: inline; height: auto; line-height: 1.25; font-size: .85rem; color: #8a93a0; }
+.sf-tq .mk-card-body .mk-price b { flex: 0 1 auto; display: inline; }
+
+/* the icons live on the picture: always visible on touch, fade in on hover for a mouse */
+.mk-card-media { position: relative; }
+.mk-q { position: absolute; inset-inline-end: .55rem; bottom: .55rem; display: flex; gap: .35rem; z-index: 3; }
+.mk-q-btn { width: 34px; height: 34px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fff; color: #51606f; font-size: .95rem; line-height: 1; box-shadow: 0 6px 16px -6px rgba(15, 23, 42, .45), 0 0 0 1px rgba(15, 23, 42, .06); transition: transform .2s cubic-bezier(.3, 1.5, .5, 1), color .15s, background .15s, opacity .2s; }
+.mk-q-btn:hover { color: var(--tq-blue, #0b5cab); transform: translateY(-2px) scale(1.06); }
+.mk-q-btn.on { color: #d6341f; background: #fff1ee; }
+.mk-q-btn.on i::before { content: '\f415'; }
+.mk-q-btn[data-compare-toggle].on i::before { content: '\f132'; }
+.mk-q-btn:focus-visible { outline: 2px solid var(--tq-blue, #0b5cab); outline-offset: 2px; }
+@media (hover: hover) and (pointer: fine) {
+    .mk-card .mk-q-btn:not(.on) { opacity: 0; transform: translateY(6px); }
+    .mk-card:hover .mk-q-btn, .mk-card:focus-within .mk-q-btn { opacity: 1; transform: none; }
+    .mk-card:hover .mk-q-btn:nth-child(2) { transition-delay: .04s; } .mk-card:hover .mk-q-btn:nth-child(3) { transition-delay: .08s; }
+}
+
+/* a placeholder row is dropped when no card in that row has the thing (set by store-market.js) */
+.fx-salt.is-gone, .fx-chips.is-gone { display: none !important; }
+.mk-list .mk-q { position: static; }
+
+/* ---- home slider: arrows, dots, no scrollbar ---- */
+.tq-slider-wrap { position: relative; }
+.tq-slider .tq-rail { scrollbar-width: none; padding-bottom: .6rem; }
+.tq-slider .tq-rail::-webkit-scrollbar { display: none; }
+.tq-nav { position: absolute; top: 42%; transform: translateY(-50%); z-index: 4; width: 44px; height: 44px; border-radius: 50%; border: 0; background: #fff; color: var(--tq-blue, #0b5cab); display: grid; place-items: center; font-size: 1.1rem; box-shadow: 0 10px 26px -8px rgba(15, 23, 42, .5), 0 0 0 1px rgba(15, 23, 42, .06); transition: transform .2s, opacity .2s, background .2s, color .2s; }
+.tq-nav.prev { inset-inline-start: -14px; } .tq-nav.next { inset-inline-end: -14px; }
+.tq-nav:hover:not(:disabled) { background: var(--tq-blue, #0b5cab); color: #fff; transform: translateY(-50%) scale(1.08); }
+.tq-nav:disabled { opacity: 0; pointer-events: none; }
+[dir="rtl"] .tq-nav i { transform: scaleX(-1); }
+.tq-dots { display: flex; justify-content: center; gap: .4rem; margin-top: .2rem; }
+.tq-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 99px; background: #c6d0dc; transition: width .25s, background .25s; }
+.tq-dots button.on { width: 24px; background: var(--tq-orange, #e8590c); }
+.tq-dots:empty { display: none; }
+@media (max-width: 767.98px) { .tq-nav { width: 38px; height: 38px; } .tq-nav.prev { inset-inline-start: -6px; } .tq-nav.next { inset-inline-end: -6px; } }
+@media (prefers-reduced-motion: reduce) { .mk-q-btn, .tq-nav, .tq-dots button { transition: none; } }
+.sf-tq .mk-card-body .mk-price { flex-wrap: nowrap; white-space: nowrap; overflow: hidden; align-items: baseline; }
+.sf-tq .mk-card-body .mk-price b { font-size: 1.08rem; min-width: 0; text-overflow: ellipsis; overflow: hidden; }
+.sf-tq .mk-card-body .mk-price s { font-size: .76rem; flex: none; }
+.sf-tq .mk-card-body .mk-price small { flex: none; }

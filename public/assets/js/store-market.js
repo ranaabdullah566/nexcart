@@ -110,20 +110,66 @@
     all('[data-rail]').forEach(function (r) {
         var tr = one('[data-rail-track]', r), rtl = getComputedStyle(tr).direction === 'rtl';
         var step = function () { return Math.max(240, tr.clientWidth * 0.8); };
-        var b = one('[data-rail-prev]', r), f = one('[data-rail-next]', r);
-        if (b) b.addEventListener('click', function () { tr.scrollBy({ left: (rtl ? 1 : -1) * step(), behavior: 'smooth' }); });
-        if (f) f.addEventListener('click', function () { tr.scrollBy({ left: (rtl ? -1 : 1) * step(), behavior: 'smooth' }); });
+        var b = one('[data-rail-prev]', r), f = one('[data-rail-next]', r), dots = one('[data-rail-dots]', r);
+        var go = function (dir) { tr.scrollBy({ left: (rtl ? -1 : 1) * dir * step(), behavior: 'smooth' }); };
+        if (b) b.addEventListener('click', function () { go(-1); });
+        if (f) f.addEventListener('click', function () { go(1); });
         // arrows only when there is something to scroll; dim at either end
         var ctrl = one('[data-rail-ctrl]', r) || one('.mk-rail-ctrl', r);
+        var pages = 1;
         var sync = function () {
             var max = tr.scrollWidth - tr.clientWidth, pos = Math.abs(tr.scrollLeft);
             if (ctrl) ctrl.hidden = max <= 4;
             var atStart = pos <= 2, atEnd = pos >= max - 2;
             if (b) b.disabled = atStart; if (f) f.disabled = atEnd;
+            if (dots) {
+                var n = max <= 4 ? 0 : Math.ceil(tr.scrollWidth / tr.clientWidth - 0.05);
+                if (n !== pages) { pages = n; dots.innerHTML = ''; for (var i = 0; i < n; i++) { (function (i) { var d = document.createElement('button'); d.type = 'button'; d.setAttribute('aria-label', 'Slide ' + (i + 1)); d.addEventListener('click', function () { tr.scrollTo({ left: (rtl ? -1 : 1) * Math.min(max, i * tr.clientWidth), behavior: 'smooth' }); }); dots.appendChild(d); })(i); } }
+                var cur = max <= 4 ? 0 : (atEnd ? pages - 1 : Math.round(pos / (max / Math.max(1, pages - 1))));
+                Array.prototype.forEach.call(dots.children, function (d, i) { d.classList.toggle('on', i === cur); });
+            }
         };
         tr.addEventListener('scroll', function () { window.requestAnimationFrame(sync); }, { passive: true });
         window.addEventListener('resize', sync); sync(); setTimeout(sync, 400);
+
+        // home slider: moves by itself, loops back to the start, and stops while someone is using it
+        var every = parseInt(r.getAttribute('data-autoplay') || '0', 10);
+        if (every > 0 && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+            var held = false, timer = null;
+            var tick = function () {
+                if (held || document.hidden) return;
+                var max = tr.scrollWidth - tr.clientWidth;
+                if (max <= 4) return;
+                if (Math.abs(tr.scrollLeft) >= max - 2) tr.scrollTo({ left: 0, behavior: 'smooth' }); else go(1);
+            };
+            var hold = function () { held = true; }, free = function () { held = false; };
+            ['mouseenter', 'focusin', 'touchstart', 'pointerdown'].forEach(function (ev) { r.addEventListener(ev, hold, { passive: true }); });
+            ['mouseleave', 'focusout', 'touchend'].forEach(function (ev) { r.addEventListener(ev, free, { passive: true }); });
+            timer = setInterval(tick, every);
+        }
     });
+
+    /* ---- cards: when no card in a row has a salt / tags line, that line takes no space in the row ---- */
+    var tidyCards = function () {
+        var cards = all('.mk-card');
+        cards.forEach(function (c) { all('.fx-salt, .fx-chips', c).forEach(function (e) { e.classList.remove('is-gone'); }); });
+        var rows = {};
+        cards.forEach(function (c) {
+            if (c.closest('.mk-list')) return;
+            var box = c.closest('[data-rail-track], .row, .mk-grid, .sf-grid') || c.parentNode.parentNode, k = c.getBoundingClientRect().top + window.scrollY;
+            var id = (box.__rid = box.__rid || ++tidyCards.n) + ':' + Math.round(k / 6);
+            (rows[id] = rows[id] || []).push(c);
+        });
+        Object.keys(rows).forEach(function (id) {
+            ['.fx-salt', '.fx-chips'].forEach(function (sel) {
+                var slots = rows[id].map(function (c) { return one(sel, c); }).filter(Boolean);
+                if (slots.length && slots.every(function (e) { return e.classList.contains('is-empty'); })) slots.forEach(function (e) { e.classList.add('is-gone'); });
+            });
+        });
+    };
+    tidyCards.n = 0;
+    var tidyT; var tidyLater = function () { clearTimeout(tidyT); tidyT = setTimeout(tidyCards, 120); };
+    tidyCards(); window.addEventListener('load', tidyCards); window.addEventListener('resize', tidyLater);
     document.addEventListener('click', function (e) {
         var sh = e.target.closest('[data-share]');
         if (!sh) return;

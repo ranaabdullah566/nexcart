@@ -307,7 +307,7 @@ class GrowthTest extends TestCase
         auth()->logout();
 
         $this->get('/product/'.$p->slug)->assertSee('Very bright lamp')->assertSee('Verified buyer')->assertSee('Thank you!')->assertSee('"ratingValue":"4"', false)->assertSee('"reviewCount":"1"', false);
-        $this->get('/shop')->assertSee('4.0 (1)');
+        $this->get('/shop')->assertDontSee('4.0 (1)');   // cards no longer carry a star row
 
         $this->actingAs($admin)->put("/admin/reviews/{$review->id}", ['status' => 'hidden']);
         auth()->logout();

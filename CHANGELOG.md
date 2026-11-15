@@ -4,6 +4,11 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Changed: product cards and the home slider
+- Cards: the star-rating line is gone (and its *Show ratings* option); price and cut price sit on **one line**; the small icon row under *Add to cart* (heart, compare, cart, quick view) is replaced by three round icons on the picture — save, compare, quick view (always visible on touch, fade in on hover with a mouse); the extra cart icon is dropped.
+- A row of cards no longer reserves space for the salt line or the tags line when **no card in that row** has one (a row where only some have them keeps the alignment).
+- Home product rows are a real **slider**: no scrollbar, round arrows, page dots, auto-advance every 5.5 s that loops, pauses while hovered / focused / touched and is off for reduced-motion users.
+
 ### Changed: card badges
 - Product cards no longer say *Genuine* (picture badge) or *Genuine product* (line above the price). The top-right badges are now **Out of stock**, **Rx**, **Featured** (products marked featured) and **New** (added in the last 14 days; Storefront options → Product cards → *“New” badge days*, 0 turns it off — set 0 or a small number after a big import, because every freshly imported product counts as new).
 

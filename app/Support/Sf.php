@@ -56,7 +56,7 @@ class Sf
             'cards.cols' => ['group' => 'cards', 'type' => 'select', 'label' => 'Products per row (desktop)', 'default' => '5', 'options' => ['3' => '3', '4' => '4', '5' => '5', '6' => '6']],
             'cards.new_days' => $n('cards', 'Show the “New” badge on products added in the last N days (0 = never)', 14, 0, 365),
             'cards.per_page' => $n('cards', 'Products per page in the shop', 20, 4, 48),
-            'cards.show_category' => $b('cards', 'Show the category name'), 'cards.show_rating' => $b('cards', 'Show ratings'), 'cards.show_discount' => $b('cards', 'Show the discount badge'),
+            'cards.show_category' => $b('cards', 'Show the category name'), 'cards.show_discount' => $b('cards', 'Show the discount badge'),
             'cards.show_quick' => $b('cards', 'Quick view button'), 'cards.show_wish' => $b('cards', 'Save (heart) button'), 'cards.show_compare' => $b('cards', 'Compare button'),
             'cards.add_label' => $t('cards', 'Add-to-cart button text', 'Add to cart'),
 
