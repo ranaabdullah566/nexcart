@@ -19,7 +19,7 @@ class Product extends Model implements HasMedia
     use Audited;
 
     /** Stock moves on every sale and has its own ledger (Inventory). */
-    protected array $auditExcept = ['stock_qty'];
+    protected array $auditExcept = ['stock_qty', 'source_hash', 'source_data', 'synced_at'];
 
     use HasSlug, HasTranslations, InteractsWithMedia, SoftDeletes;
 
@@ -29,6 +29,7 @@ class Product extends Model implements HasMedia
         'category_id', 'name', 'slug', 'sku', 'type', 'status', 'short_description', 'description',
         'price', 'compare_price', 'cost', 'track_stock', 'stock_qty', 'low_stock_threshold',
         'requires_prescription', 'is_featured', 'specs', 'meta_title', 'meta_description',
+        'barcodes', 'max_per_order', 'is_weighted', 'base_weight', 'base_weight_unit', 'price_per_base_unit',
     ];
 
     protected function casts(): array
@@ -36,7 +37,8 @@ class Product extends Model implements HasMedia
         return [
             'price' => 'decimal:2', 'compare_price' => 'decimal:2', 'cost' => 'decimal:2',
             'track_stock' => 'boolean', 'requires_prescription' => 'boolean', 'is_featured' => 'boolean',
-            'specs' => 'array',
+            'specs' => 'array', 'barcodes' => 'array', 'source_data' => 'array', 'is_weighted' => 'boolean', 'synced_at' => 'datetime',
+            'base_weight' => 'decimal:3', 'price_per_base_unit' => 'decimal:2',
         ];
     }
 

@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\PrescriptionController;
 use App\Http\Controllers\Admin\PrescriptionRequestController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCsvController;
+use App\Http\Controllers\Admin\ProductSyncController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReportHubController;
 use App\Http\Controllers\Admin\ReviewController;
@@ -82,6 +83,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     // Catalog
     Route::resource('categories', CategoryController::class)->except('show');
     Route::resource('attributes', AttributeController::class)->except('show');
+    Route::get('product-sync', [ProductSyncController::class, 'index'])->name('product-sync.index');
+    Route::post('product-sync', [ProductSyncController::class, 'store'])->middleware('throttle:6,1')->name('product-sync.store');
+    Route::get('product-sync/export', [ProductSyncController::class, 'export'])->name('product-sync.export');
+    Route::get('product-sync/{sync}', [ProductSyncController::class, 'show'])->name('product-sync.show');
     Route::get('products/export', [ProductCsvController::class, 'export'])->name('products.export');
     Route::post('products/import', [ProductCsvController::class, 'import'])->name('products.import');
     Route::delete('products/{product}/images/{media}', [ProductController::class, 'destroyImage'])->name('products.images.destroy');

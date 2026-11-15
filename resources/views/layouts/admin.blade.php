@@ -35,6 +35,7 @@
         ],
         'Catalog' => [
             ['admin.products.index', 'admin.products.*', 'box-seam-fill', 'Products', 'products.view', null],
+            ['admin.product-sync.index', 'admin.product-sync.*', 'arrow-repeat', 'Product sync', 'products.view', null],
             ['admin.categories.index', 'admin.categories.*', 'diagram-3-fill', 'Categories', 'categories.view', null],
             ['admin.inventory.index', 'admin.inventory.*', 'clipboard2-data-fill', 'Inventory', 'inventory.view', null],
             ['admin.attributes.index', 'admin.attributes.*', 'sliders2', 'Product fields', 'catalog_settings.manage', null],

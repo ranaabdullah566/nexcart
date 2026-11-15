@@ -194,6 +194,9 @@ class CartService
     /** Total across lines that draw from the same stock (e.g. the same product added twice). */
     private function assertStock(Product $product, ?ProductVariant $variant, int $qty, string $key, array $cart): void
     {
+        if ($product->max_per_order && $qty > $product->max_per_order) {
+            throw ValidationException::withMessages(['qty' => __('You can order at most :n of this item.', ['n' => $product->max_per_order])]);
+        }
         if (! $product->track_stock) {
             return;
         }

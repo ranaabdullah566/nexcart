@@ -4,6 +4,11 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Added: Product sync (Admin → Catalog → Product sync)
+- Upload the weekly product sheet (.xlsx or .csv; columns sku, name, price, active, maximumSalesQuantity, isWeighted, baseWeight, baseWeightUnit, pricePerBaseUnit, barcode 1–5, category 1). The **SKU is the key**: new SKUs are added, known SKUs are updated, identical rows are skipped, so the same file can be uploaded every week. Options: update existing, use the sheet's *active* column for visibility, hide synced products missing from the sheet.
+- Everything in the sheet is stored (barcodes, max per order, weighted / base weight / unit / price per base unit; unknown extra columns in `products.source_data`). Categories are created when missing. Stock, pictures and descriptions edited in the admin are never overwritten. Each run is kept in a history with counts and skipped rows; *Download current sheet* exports the same layout.
+- Storefront: search matches barcodes; `maximumSalesQuantity` caps the quantity per order in the cart. Migration `add_sheet_sync_fields`; new dependency `openspout/openspout`.
+
 ### Removed: Brand module
 - Brands are gone everywhere: Admin → Brands (menu, pages, Recycle Bin entry), the *Brand* field on products, the *brand* column of the product CSV, the *By brand* report, the shop's brand filter and pills, brand names on product cards / product page / compare / structured data, and the home page *Brands strip* section. Migration `drop_brands` deletes brand home sections, drops `products.brand_id` and the `brands` table (back up first — brand names are discarded). Old CSV files that still have a `brand` column import fine (the column is ignored).
 
