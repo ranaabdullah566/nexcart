@@ -7,16 +7,16 @@
         </div>
         <div class="ps-tools">
             <a href="{{ route('store.shop') }}" class="ps-all">{{ __('See all') }} <i class="bi bi-arrow-right"></i></a>
-            <div class="ps-nav">
-                <button type="button" class="ps-btn" data-ps-prev aria-label="{{ __('Previous') }}"><i class="bi bi-arrow-left"></i></button>
-                <button type="button" class="ps-btn" data-ps-next aria-label="{{ __('Next') }}"><i class="bi bi-arrow-right"></i></button>
-            </div>
         </div>
     </div>
+    <div class="ps-stage">
+    <button type="button" class="ps-btn ps-prev" data-ps-prev aria-label="{{ __('Previous') }}"><i class="bi bi-chevron-left"></i></button>
+    <button type="button" class="ps-btn ps-next" data-ps-next aria-label="{{ __('Next') }}"><i class="bi bi-chevron-right"></i></button>
     <div class="ps-viewport" data-ps-viewport>
         <div class="ps-track" data-ps-track tabindex="0" role="group" aria-label="{{ __('Products') }}">
             @foreach ($products as $p)<div class="ps-item" role="group" aria-roledescription="slide" aria-label="{{ $loop->iteration }} / {{ $loop->count }}">@include('store._card', ['p' => $p])</div>@endforeach
         </div>
+    </div>
     </div>
     <div class="ps-foot">
         <div class="ps-bar" data-ps-bar role="presentation"><i data-ps-thumb></i></div>

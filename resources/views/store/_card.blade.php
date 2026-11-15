@@ -18,7 +18,7 @@
         </span>
         @endif
         @php $left = $p->track_stock ? $p->totalStock() : null; @endphp
-        @if ($left !== null && $left > 0 && $left <= 5 && ! $out)<span class="mk-low"><i class="bi bi-lightning-charge-fill"></i> {{ __('Only :n left in stock.', ['n' => $left]) }}</span>@endif
+        @if ($left !== null && $left > 0 && $left <= 5 && ! $out)<span class="mk-low"><i class="bi bi-lightning-charge-fill"></i> {{ __('Only :n left', ['n' => $left]) }}</span>@endif
         <div class="mk-q">
             @if (sf('cards.show_wish'))<button type="button" class="mk-q-btn @if (app(\App\Services\Wishlist::class)->has($p->id)) on @endif" data-wish="{{ $p->id }}" aria-label="{{ __('Save') }}" aria-pressed="{{ app(\App\Services\Wishlist::class)->has($p->id) ? 'true' : 'false' }}" title="{{ __('Save') }}"><i class="bi bi-heart"></i></button>@endif
             @if (sf('cards.show_compare'))<button type="button" class="mk-q-btn @if (app(\App\Services\Compare::class)->has($p->id)) on @endif" data-compare-toggle="{{ $p->id }}" aria-label="{{ __('Compare') }}" aria-pressed="{{ app(\App\Services\Compare::class)->has($p->id) ? 'true' : 'false' }}" title="{{ __('Compare') }}"><i class="bi bi-arrow-left-right"></i></button>@endif

@@ -1766,5 +1766,6 @@
     "Barcodes": "بارکوڈز",
     "One per line (up to 10). Customers can find the product by barcode.": "ہر لائن میں ایک (زیادہ سے زیادہ 10)۔ گاہک بارکوڈ سے پروڈکٹ تلاش کر سکتے ہیں۔",
     "Created by the product sheet — the next upload of the sheet can overwrite the name, price, barcodes and limits, but never the stock, pictures or description.": "یہ پروڈکٹ شیٹ سے بنی ہے — شیٹ کا اگلا اپلوڈ نام، قیمت، بارکوڈ اور حدیں بدل سکتا ہے، مگر اسٹاک، تصاویر یا تفصیل کبھی نہیں۔",
-    "Last synced": "آخری سنک"
+    "Last synced": "آخری سنک",
+    "Only :n left": "صرف :n باقی"
 }

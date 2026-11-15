@@ -321,7 +321,7 @@ class StorefrontTest extends TestCase
 
         $html = $this->get('/shop')->assertOk()->getContent();
         $this->assertSame(1, substr_count($html, 'class="mk-low"'));
-        $this->assertStringContainsString('Only 3 left in stock.', $html);
+        $this->assertStringContainsString('Only 3 left', $html);
     }
 
     public function test_cards_show_the_saving_and_a_stepper_that_follows_the_cart(): void

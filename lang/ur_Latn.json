@@ -1766,5 +1766,6 @@
     "Barcodes": "Barcodes",
     "One per line (up to 10). Customers can find the product by barcode.": "One per line (up to 10). Customers can find the product by barcode.",
     "Created by the product sheet — the next upload of the sheet can overwrite the name, price, barcodes and limits, but never the stock, pictures or description.": "Created by the product sheet — the next upload of the sheet can overwrite the name, price, barcodes and limits, but never the stock, pictures or description.",
-    "Last synced": "Last synced"
+    "Last synced": "Last synced",
+    "Only :n left": "Sirf :n baqi"
 }

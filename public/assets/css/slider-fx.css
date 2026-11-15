@@ -4,11 +4,15 @@
 .ps-tools { display: flex; align-items: center; gap: .9rem; }
 .ps-all { display: inline-flex; align-items: center; gap: .4rem; font-weight: 700; font-size: .88rem; color: var(--tq-blue, #0b5cab); text-decoration: none; padding: .45rem .2rem; border-bottom: 2px solid transparent; transition: border-color .2s, gap .2s; }
 .ps-all:hover { border-color: currentColor; gap: .65rem; }
-.ps-nav { display: flex; gap: .45rem; }
-.ps-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #d3dde9; background: #fff; color: var(--tq-navy, #0c3b68); display: grid; place-items: center; font-size: 1.05rem; transition: transform .2s cubic-bezier(.3, 1.5, .5, 1), background .2s, color .2s, border-color .2s, opacity .2s, box-shadow .2s; }
-.ps-btn:hover:not(:disabled) { background: var(--tq-navy, #0c3b68); color: #fff; border-color: var(--tq-navy, #0c3b68); transform: scale(1.08); box-shadow: 0 12px 22px -12px rgba(12, 59, 104, .7); }
+/* the arrows float at the middle of the cards, a little outside the row, never touching a card */
+.ps-stage { position: relative; }
+.ps-btn { position: absolute; top: calc(50% - .2rem); z-index: 6; width: 48px; height: 48px; margin-top: -24px; border-radius: 50%; border: 0; background: #fff; color: var(--tq-navy, #0c3b68); display: grid; place-items: center; font-size: 1.15rem; box-shadow: 0 14px 30px -10px rgba(12, 59, 104, .55), 0 0 0 1px rgba(12, 59, 104, .07); transition: transform .22s cubic-bezier(.3, 1.5, .5, 1), background .2s, color .2s, opacity .2s, box-shadow .2s; }
+.ps-prev { inset-inline-start: -16px; } .ps-next { inset-inline-end: -16px; }
+@media (min-width: 1300px) { .ps-prev { inset-inline-start: -68px; } .ps-next { inset-inline-end: -68px; } }   /* wide screens: fully outside the cards, in the page margin */
+.ps-btn:hover:not(:disabled) { background: var(--tq-navy, #0c3b68); color: #fff; transform: scale(1.1); box-shadow: 0 18px 34px -12px rgba(12, 59, 104, .75); }
 .ps-btn:active:not(:disabled) { transform: scale(.94); }
-.ps-btn:disabled { opacity: .35; cursor: default; }
+.ps-btn:disabled { opacity: 0; pointer-events: none; transform: scale(.7); }
+.ps-btn:focus-visible { outline: 3px solid rgba(27, 116, 187, .45); outline-offset: 2px; }
 [dir="rtl"] .ps-btn i, [dir="rtl"] .ps-all i { transform: scaleX(-1); }
 
 /* the window: cards fade out softly at both edges while there is more to see */
@@ -25,7 +29,8 @@
 @media (min-width: 576px) { .ps-track { --n: 3; --gap: 1rem; } }
 @media (min-width: 768px) { .ps-track { --n: 4; } }
 @media (min-width: 1100px) { .ps-track { --n: 5; } }
-@media (max-width: 575.98px) { .ps-track { --n: 1.9; } .ps-btn { width: 38px; height: 38px; } .ps-all { display: none; } }
+@media (max-width: 767.98px) { .ps-btn { width: 40px; height: 40px; margin-top: -20px; font-size: 1rem; } .ps-prev { inset-inline-start: -6px; } .ps-next { inset-inline-end: -6px; } }
+@media (max-width: 575.98px) { .ps-track { --n: 1.9; } .ps-all { display: none; } }
 
 /* depth: cards at the edges sit a little back (the script sets --v from 0 to 1) */
 .ps-item { transition: opacity .6s ease, transform .7s cubic-bezier(.2, .8, .3, 1); }
@@ -44,7 +49,7 @@
 .ps-play { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #d3dde9; background: #fff; color: #5d6a7a; display: grid; place-items: center; font-size: .9rem; transition: background .2s, color .2s; }
 .ps-play:hover { background: #eef3f9; color: var(--tq-navy, #0c3b68); }
 .ps:not([data-autoplay]) .ps-play, .ps.no-auto .ps-play { display: none; }
-.ps.no-scroll .ps-nav, .ps.no-scroll .ps-foot { display: none; }
+.ps.no-scroll .ps-btn, .ps.no-scroll .ps-foot { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
     .sf-js .ps:not(.is-in) .ps-item { opacity: 1; transform: none; }
