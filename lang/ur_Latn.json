@@ -1732,5 +1732,19 @@
     "Price is not a valid number": "Qeemat durust number nahi",
     "You can order at most :n of this item.": "Aap is item ke ziyada se ziyada :n order kar sakte hain.",
     "Find a category…": "Category talash karein…",
-    "No category matches.": "Koi category nahi mili."
+    "No category matches.": "Koi category nahi mili.",
+    "Get directions": "Directions hasil karein",
+    "Find us": "Hamein talash karein",
+    "Show the contact details (phone, e-mail, address, hours) in the footer": "Show the contact details (phone, e-mail, address, hours) in the footer",
+    "Contact details: show the phone number": "Contact details: show the phone number",
+    "Contact details: show the e-mail": "Contact details: show the e-mail",
+    "Contact details: show the address": "Contact details: show the address",
+    "Contact details: show the opening hours": "Contact details: show the opening hours",
+    "Show a Categories column": "Show a Categories column",
+    "Categories column title": "Categories column title",
+    "How many categories in the footer (busiest first)": "How many categories in the footer (busiest first)",
+    "Show the Google Map": "Show the Google Map",
+    "Map title": "Map title",
+    "Google Maps link (opens when someone taps “Get directions”)": "Google Maps link (opens when someone taps “Get directions”)",
+    "Place shown on the map (address or business name; empty = the store address)": "Place shown on the map (address or business name; empty = the store address)"
 }

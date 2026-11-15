@@ -1732,5 +1732,19 @@
     "Price is not a valid number": "قیمت درست عدد نہیں",
     "You can order at most :n of this item.": "آپ اس آئٹم کے زیادہ سے زیادہ :n آرڈر کر سکتے ہیں۔",
     "Find a category…": "کیٹیگری تلاش کریں…",
-    "No category matches.": "کوئی کیٹیگری نہیں ملی۔"
+    "No category matches.": "کوئی کیٹیگری نہیں ملی۔",
+    "Get directions": "ہدایات حاصل کریں",
+    "Find us": "ہمیں تلاش کریں",
+    "Show the contact details (phone, e-mail, address, hours) in the footer": "فوٹر میں رابطے کی تفصیل (فون، ای میل، پتہ، اوقات) دکھائیں",
+    "Contact details: show the phone number": "رابطہ: فون نمبر دکھائیں",
+    "Contact details: show the e-mail": "رابطہ: ای میل دکھائیں",
+    "Contact details: show the address": "رابطہ: پتہ دکھائیں",
+    "Contact details: show the opening hours": "رابطہ: کھلنے کے اوقات دکھائیں",
+    "Show a Categories column": "کیٹیگریز کا کالم دکھائیں",
+    "Categories column title": "کیٹیگریز کالم کا عنوان",
+    "How many categories in the footer (busiest first)": "فوٹر میں کتنی کیٹیگریز (زیادہ پروڈکٹس والی پہلے)",
+    "Show the Google Map": "گوگل میپ دکھائیں",
+    "Map title": "میپ کا عنوان",
+    "Google Maps link (opens when someone taps “Get directions”)": "گوگل میپس لنک (“ہدایات حاصل کریں” پر کھلتا ہے)",
+    "Place shown on the map (address or business name; empty = the store address)": "میپ پر دکھائی جانے والی جگہ (پتہ یا کاروبار کا نام؛ خالی = اسٹور کا پتہ)"
 }

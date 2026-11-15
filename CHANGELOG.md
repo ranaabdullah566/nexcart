@@ -4,6 +4,11 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Redesigned: footer
+- Slim one-line sign-up bar with just an e-mail box (the big card is gone); *Install app* and *Cookie settings* removed from the footer.
+- New layout: logo + short text, **contact details** (phone, e-mail, address, opening hours — from Settings), **social icons** (Facebook, Instagram, TikTok, X, YouTube, LinkedIn, WhatsApp — from Settings), a **Categories** column (busiest first), Shop / Help / Company columns and a **Google Map** with a *Get directions* button.
+- Admin → Storefront options → Footer: switches for every part (phone, e-mail, address, hours, socials, categories + how many, map), the Google Maps link and the place shown on the map (empty = store address). The map embed needs `https://www.google.com/maps` in the CSP `frame-src` (added); the directions link only accepts https Google Maps addresses.
+
 ### Changed: header search and clean-up
 - The header search is wider and the instant dropdown now lists matching **categories** (only ones with products) above the **medicines**; searching in the shop also matches category names. The Ctrl+K search shows categories too.
 - Removed the *Track an order* link from the top bar and the *Trending* chips under the header (their Storefront options are gone). On wide screens the Shop icon next to the search is hidden (the menu bar already has *Shop*).

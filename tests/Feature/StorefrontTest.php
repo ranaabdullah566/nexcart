@@ -271,4 +271,21 @@ class StorefrontTest extends TestCase
         $this->assertSame(['Painrelief'], array_column($json['categories'], 'name'));
         $this->get('/shop?q=Painrelief')->assertSee('Zed');
     }
+
+    public function test_footer_shows_contact_socials_categories_and_map_with_switches(): void
+    {
+        $c = Category::create(['name' => 'Footcat']);
+        $this->product(['name' => 'P1', 'category_id' => $c->id]);
+        setting()->setMany(['store.phone' => '0300 1112223', 'store.address' => '12 Mall Road, Lahore', 'store.email' => 'hi@shop.test', 'store.facebook' => 'https://facebook.com/x']);
+
+        $r = $this->get('/')->assertOk()->assertSee('0300 1112223')->assertSee('12 Mall Road, Lahore')->assertSee('Footcat')->assertSee('https://facebook.com/x', false)
+            ->assertSee('output=embed', false)->assertSee('https://maps.app.goo.gl/RPd2uKp3ua8RYgDx8', false)->assertDontSee('data-cookie-settings', false)->assertDontSee('data-fx-install', false);
+
+        setting()->setMany(['sf.footer.show_phone' => false, 'sf.footer.show_map' => false, 'sf.footer.show_categories' => false, 'sf.footer.show_socials' => false]);
+        $this->get('/')->assertDontSee('bi-telephone-fill', false)->assertDontSee('output=embed', false)->assertDontSee('ft-socials', false)->assertSee('12 Mall Road, Lahore');
+
+        // a map link that is not Google Maps is never printed as an href
+        setting()->setMany(['sf.footer.show_map' => true, 'sf.footer.map_url' => 'https://evil.test/maps']);
+        $this->get('/')->assertDontSee('evil.test', false);
+    }
 }

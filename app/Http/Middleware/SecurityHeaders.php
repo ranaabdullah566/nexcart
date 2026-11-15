@@ -44,7 +44,7 @@ class SecurityHeaders
                 "img-src 'self' data: blob: https:",
                 "font-src 'self' data:",
                 "connect-src 'self'",
-                "frame-src 'self'".($captcha ? ' https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/' : ''),
+                "frame-src 'self' https://www.google.com/maps https://www.google.com/maps/".($captcha ? ' https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/' : ''),
                 "frame-ancestors 'self'",
                 "object-src 'none'",
                 "base-uri 'self'",

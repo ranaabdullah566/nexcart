@@ -180,7 +180,7 @@ class GuestExperienceTest extends TestCase
         $json = json_decode(html_entity_decode($m[1], ENT_QUOTES), true);
         $this->assertSame(["Children's Syrup", $p->id], [$json['name'], $json['id']]);
 
-        $this->get('/')->assertSee('data-fx-recent', false)->assertSee('data-fx-install', false);
+        $this->get('/')->assertSee('data-fx-recent', false)->assertDontSee('data-fx-install', false);
         $this->get('/cart')->assertSee('data-fx-recent', false);
         $this->assertStringContainsString('You are offline', file_get_contents(public_path('sw.js')));
     }

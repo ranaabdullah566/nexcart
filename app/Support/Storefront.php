@@ -15,6 +15,22 @@ class Storefront
             ->withCount(['products' => fn ($p) => $p->active()])->whereHas('products', fn ($p) => $p->active())->get());
     }
 
+    /** The owner's Google Maps link, only if it really is an https Google Maps address (it is an href, so nothing else may get through). */
+    public static function mapUrl(): ?string
+    {
+        $u = trim((string) sf('footer.map_url'));
+        $host = strtolower((string) parse_url($u, PHP_URL_HOST));
+        $ok = str_starts_with($u, 'https://') && in_array($host, ['maps.app.goo.gl', 'goo.gl', 'maps.google.com', 'www.google.com', 'google.com', 'maps.google.com.pk', 'www.google.com.pk'], true);
+
+        return $ok && ($host !== 'goo.gl' || str_starts_with((string) parse_url($u, PHP_URL_PATH), '/maps')) && ($host !== 'www.google.com' && $host !== 'google.com' || str_starts_with((string) parse_url($u, PHP_URL_PATH), '/maps')) ? $u : null;
+    }
+
+    /** What the embedded map shows: the owner's place text, else the store address. */
+    public static function mapQuery(): ?string
+    {
+        return filled($q = trim((string) sf('footer.map_query'))) ? $q : (filled($a = setting('store.address')) ? $a : null);
+    }
+
     /** @return array<string, array{url:string, label:string, icon:string}> social links the owner filled in */
     public static function socials(): array
     {

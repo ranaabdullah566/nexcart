@@ -35,6 +35,7 @@
     <link href="{{ asset('assets/css/cart-fx.css') }}?v={{ @filemtime(public_path('assets/css/cart-fx.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/shop-fx.css') }}?v={{ @filemtime(public_path('assets/css/shop-fx.css')) }}" rel="stylesheet">
     <link href="{{ asset('assets/css/shop-side.css') }}?v={{ @filemtime(public_path('assets/css/shop-side.css')) }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/footer-fx.css') }}?v={{ @filemtime(public_path('assets/css/footer-fx.css')) }}" rel="stylesheet">
     <style>.sf{--mk-ratio:{{ sf('cards.ratio') }};--mk-fit:{{ sf('cards.fit') }}}</style>
     @stack('head')
 </head>
@@ -188,57 +189,82 @@
 
 <main id="main">@yield('content')</main>
 
-<footer class="mk-footer">
-    <div class="sf-container">
-        <div class="mk-fgrid">
-            <div class="mk-fbrand">
-                <a href="{{ route('store.home') }}" class="sf-brand mb-3"><span class="sf-brand-logo"><img src="{{ brand_logo() }}" alt=""></span><span class="sf-brand-name">{{ $storeName }}</span></a>
-                @php $about = sft('footer.about') ?: setting('store.tagline'); @endphp
+<footer class="mk-footer ft">
+    @if (sf('footer.show_newsletter'))
+    <div class="ft-news"><div class="sf-container">
+        <form method="POST" action="{{ route('store.subscribe') }}" class="ft-news-form" data-no-ajax>
+            @csrf
+            <b><i class="bi bi-envelope-heart"></i> {{ sft('footer.newsletter_title') }}</b>
+            <div class="ft-news-in"><input type="email" name="email" required maxlength="190" autocomplete="email" placeholder="{{ __('Your email') }}" aria-label="{{ __('Your email') }}"><button type="submit" aria-label="{{ __('Subscribe') }}"><span>{{ __('Subscribe') }}</span><i class="bi bi-arrow-right"></i></button></div>
+            <x-honeypot />
+        </form>
+    </div></div>
+    @endif
+    @php
+        $mapUrl = sf('footer.show_map') ? \App\Support\Storefront::mapUrl() : null;
+        $mapQ = sf('footer.show_map') ? \App\Support\Storefront::mapQuery() : null;
+        $showMap = sf('footer.show_map') && ($mapUrl || $mapQ);
+        $fPhone = sf('footer.show_contact') && sf('footer.show_phone') ? setting('store.phone') : null;
+        $fMail = sf('footer.show_contact') && sf('footer.show_email') ? setting('store.email') : null;
+        $fAddr = sf('footer.show_contact') && sf('footer.show_address') ? setting('store.address') : null;
+        $fHours = sf('footer.show_contact') && sf('footer.show_hours') ? setting('store.hours') : null;
+        $fCats = sf('footer.show_categories') ? $tree->sortByDesc('products_count')->take((int) sf('footer.categories_count')) : collect();
+        $about = sft('footer.about') ?: setting('store.tagline');
+    @endphp
+    <div class="sf-container ft-main">
+        <div class="ft-grid @if ($showMap) has-map @endif">
+            <div class="ft-brand">
+                <a href="{{ route('store.home') }}" class="sf-brand ft-logo"><span class="sf-brand-logo"><img src="{{ brand_logo() }}" alt=""></span><span class="sf-brand-name">{{ $storeName }}</span></a>
                 @if ($about)<p dir="auto">{{ $about }}</p>@endif
+                @if ($fPhone || $fMail || $fAddr || $fHours)
+                <ul class="ft-contact">
+                    @if ($fPhone)<li><i class="bi bi-telephone-fill"></i><a href="tel:{{ preg_replace('/[^0-9+]/', '', $fPhone) }}" dir="ltr">{{ $fPhone }}</a></li>@endif
+                    @if ($fMail)<li><i class="bi bi-envelope-fill"></i><a href="mailto:{{ $fMail }}" dir="ltr">{{ $fMail }}</a></li>@endif
+                    @if ($fAddr)<li><i class="bi bi-geo-alt-fill"></i><span dir="auto">{{ $fAddr }}</span></li>@endif
+                    @if ($fHours)<li><i class="bi bi-clock-fill"></i><span dir="auto">{{ $fHours }}</span></li>@endif
+                </ul>
+                @endif
+                @if ($socials && sf('footer.show_socials'))<div class="ft-socials" aria-label="{{ __('Follow us') }}">@foreach ($socials as $so)<a href="{{ $so['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $so['label'] }}" title="{{ $so['label'] }}"><i class="bi bi-{{ $so['icon'] }}"></i></a>@endforeach</div>@endif
             </div>
-            <div class="mk-fcol"><div class="mk-fh">{{ sft('footer.shop_title') }}</div>
+            @if ($fCats->isNotEmpty())
+            <nav class="ft-col" aria-label="{{ sft('footer.categories_title') }}"><div class="ft-h">{{ sft('footer.categories_title') }}</div>
+                @foreach ($fCats as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach
+                <a class="ft-all" href="{{ route('store.shop') }}">{{ __('All categories') }} <i class="bi bi-arrow-right"></i></a>
+            </nav>
+            @endif
+            <nav class="ft-col" aria-label="{{ sft('footer.shop_title') }}"><div class="ft-h">{{ sft('footer.shop_title') }}</div>
                 @forelse ($colShop as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
                 @empty
                     <a href="{{ route('store.shop') }}">{{ __('All products') }}</a>
                     <a href="{{ route('store.shop', ['sort' => 'discount']) }}">{{ sft('header.deals_label') }}</a>
-                    @foreach ($tree->take(4) as $c)<a href="{{ route('store.category', $c->slug) }}">{{ $c->trans('name') }}</a>@endforeach
                 @endforelse
-            </div>
-            <div class="mk-fcol"><div class="mk-fh">{{ sft('footer.help_title') }}</div>
+            </nav>
+            <nav class="ft-col" aria-label="{{ sft('footer.help_title') }}"><div class="ft-h">{{ sft('footer.help_title') }}</div>
                 @forelse ($colHelp as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>
                 @empty
                     <a href="{{ route('store.track') }}">{{ sft('header.track_label') }}</a>
                     <a href="{{ route('store.contact') }}">{{ __('Contact us') }}</a>
                     <a href="{{ auth()->check() ? route('store.account') : route('login') }}">{{ __('My account') }}</a>
                 @endforelse
-            </div>
-            <div class="mk-fcol"><div class="mk-fh">{{ sft('footer.company_title') }}</div>
+            </nav>
+            <nav class="ft-col" aria-label="{{ sft('footer.company_title') }}"><div class="ft-h">{{ sft('footer.company_title') }}</div>
                 @forelse ($colCompany as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@empty<a href="{{ route('store.home') }}">{{ $storeName }}</a>@endforelse
-                @if (sf('footer.show_contact'))
-                    @if (setting('store.email'))<a href="mailto:{{ setting('store.email') }}" dir="ltr"><i class="bi bi-envelope me-1"></i>{{ setting('store.email') }}</a>@endif
-                    @if (setting('store.phone'))<a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('store.phone')) }}" dir="ltr"><i class="bi bi-telephone me-1"></i>{{ setting('store.phone') }}</a>@endif
-                @endif
-            </div>
-            @if ($socials && sf('footer.show_socials'))
-            <div class="mk-fcol mk-ffollow"><div class="mk-fh">{{ __('Follow us') }}</div>
-                @if ($socials && sf('footer.show_socials'))<div class="mk-socials" aria-label="{{ __('Follow us') }}">@foreach ($socials as $so)<a href="{{ $so['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $so['label'] }}"><i class="bi bi-{{ $so['icon'] }}"></i></a>@endforeach</div>@endif
+            </nav>
+            @if ($showMap)
+            <div class="ft-map">
+                <div class="ft-h">{{ sft('footer.map_title') }}</div>
+                <div class="ft-map-box">
+                    @if ($mapQ)<iframe title="{{ sft('footer.map_title') }}" src="https://www.google.com/maps?q={{ rawurlencode($mapQ) }}&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                    @else<div class="ft-map-ph"><i class="bi bi-geo-alt-fill"></i></div>@endif
+                </div>
+                @if ($mapUrl)<a class="ft-dir" href="{{ $mapUrl }}" target="_blank" rel="noopener noreferrer"><i class="bi bi-sign-turn-right-fill"></i> {{ __('Get directions') }}</a>@endif
             </div>
             @endif
         </div>
-        @if (sf('footer.show_newsletter'))
-        <form method="POST" action="{{ route('store.subscribe') }}" class="fx-news" data-no-ajax>
-            @csrf
-            <div class="fx-news-text"><b><i class="bi bi-envelope-heart me-1"></i>{{ sft('footer.newsletter_title') }}</b><small>{{ sft('footer.newsletter_sub') }}</small></div>
-            <div class="fx-news-in"><input type="email" name="email" required maxlength="190" autocomplete="email" placeholder="{{ __('Your email') }}" aria-label="{{ __('Your email') }}"><button class="btn btn-primary">{{ __('Subscribe') }}</button></div>
-            <x-honeypot />
-        </form>
-        @endif
-        <div class="mk-fbot">
+        <div class="ft-bot">
             <span>{{ sft('footer.copyright') ?: '© '.date('Y').' '.$storeName.'. '.__('All rights reserved.') }}</span>
-            <nav class="mk-legal" aria-label="{{ __('Legal') }}">
+            <nav class="ft-legal" aria-label="{{ __('Legal') }}">
                 @if (sf('footer.show_legal'))@foreach ($footerMenu->take(6) as $m)<a href="{{ $m['href'] }}">{{ $m['label'] }}</a>@endforeach @endif
-                <button type="button" class="fx-install" data-fx-install hidden><i class="bi bi-download"></i> {{ __('Install app') }}</button>
-                @if ($cookieOn)<button type="button" data-cookie-settings>{{ __('Cookie settings') }}</button>@endif
                 @if (\App\Support\License::showBranding())<span>{{ __('Powered by NexCart') }}</span>@endif
             </nav>
         </div>
