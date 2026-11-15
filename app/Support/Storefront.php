@@ -8,11 +8,11 @@ use Illuminate\Support\Collection;
 /** Data the storefront header / footer need on every page. */
 class Storefront
 {
-    /** Every active category (one flat level) with its live product count, for the header menu, the drawer, the footer and the shop sidebar. */
+    /** Every active category that has at least one live product (one flat level), with its count, for the header menu, the drawer, the footer and the shop sidebar. */
     public static function tree(): Collection
     {
         return once(fn () => Category::where('is_active', true)->orderBy('sort_order')->orderBy('name')
-            ->withCount(['products' => fn ($p) => $p->active()])->get());
+            ->withCount(['products' => fn ($p) => $p->active()])->whereHas('products', fn ($p) => $p->active())->get());
     }
 
     /** @return array<string, array{url:string, label:string, icon:string}> social links the owner filled in */

@@ -55,7 +55,7 @@ class Sf
             'cards.ratio' => ['group' => 'cards', 'type' => 'select', 'label' => 'Image shape', 'default' => '1 / 1', 'options' => ['1 / 1' => 'Square', '4 / 3' => 'Landscape 4:3', '3 / 4' => 'Portrait 3:4', '16 / 9' => 'Wide 16:9']],
             'cards.fit' => ['group' => 'cards', 'type' => 'select', 'label' => 'Image fit', 'default' => 'contain', 'options' => ['contain' => 'Show the whole picture', 'cover' => 'Fill the box (crop)']],
             'cards.cols' => ['group' => 'cards', 'type' => 'select', 'label' => 'Products per row (desktop)', 'default' => '5', 'options' => ['3' => '3', '4' => '4', '5' => '5', '6' => '6']],
-            'cards.per_page' => $n('cards', 'Products per page in the shop', 12, 4, 48),
+            'cards.per_page' => $n('cards', 'Products per page in the shop', 20, 4, 48),
             'cards.show_category' => $b('cards', 'Show the category name'), 'cards.show_rating' => $b('cards', 'Show ratings'), 'cards.show_discount' => $b('cards', 'Show the discount badge'),
             'cards.show_quick' => $b('cards', 'Quick view button'), 'cards.show_wish' => $b('cards', 'Save (heart) button'), 'cards.show_compare' => $b('cards', 'Compare button'),
             'cards.add_label' => $t('cards', 'Add-to-cart button text', 'Add to cart'),

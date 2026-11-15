@@ -4,6 +4,10 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Changed: 20 products per page, and only categories with products are listed
+- The shop shows 20 products per page by default (Storefront options → Products per page; a value you saved earlier is kept).
+- Header menu, drawer, footer, shop sidebar and tiles, and the home *categories* section list only categories that have at least one active product. Empty categories stay in the admin and their direct links still work.
+
 ### Changed: categories are one flat level, and every category is shown
 - Header menu, mobile drawer, footer, shop sidebar and the round tiles above the shop grid now list **all** active categories (they used to stop at 12 top-level ones and show 2nd / 3rd levels). The header *All categories* menu is a searchable multi-column list with product counts; the drawer has the same finder; the sidebar list scrolls inside its card.
 - Admin → Categories no longer has *Parent category*, levels or *Sub* buttons; a parent sent by an old form is ignored. Migration `flatten_categories` turns existing sub-categories into normal categories (nothing is deleted). Category picture fallback now uses only the category's own products.

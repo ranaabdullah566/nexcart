@@ -249,4 +249,16 @@ class StorefrontTest extends TestCase
         $this->get('/admin/home-sections')->assertForbidden();
         $this->post('/admin/home-sections', ['type' => 'text', 'body' => 'x'])->assertForbidden();
     }
+
+    public function test_only_categories_with_products_are_listed_and_shop_shows_twenty(): void
+    {
+        $full = Category::create(['name' => 'Fullcat']);
+        Category::create(['name' => 'Emptycat']);
+        for ($i = 1; $i <= 21; $i++) {
+            $this->product(['name' => 'Item'.$i, 'category_id' => $full->id]);
+        }
+        $this->get('/shop')->assertOk()->assertSee('Fullcat')->assertDontSee('Emptycat');
+        $this->get('/')->assertOk()->assertDontSee('Emptycat');
+        $this->assertSame(20, \App\Models\Product::active()->paginate((int) sf('cards.per_page'))->count());
+    }
 }

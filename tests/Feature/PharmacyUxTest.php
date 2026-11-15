@@ -154,7 +154,8 @@ class PharmacyUxTest extends TestCase
 
     public function test_default_home_has_pharmacy_sections(): void
     {
-        Category::create(['name' => 'Pain & fever', 'is_active' => true]);
+        $c = Category::create(['name' => 'Pain & fever', 'is_active' => true]);   // only categories with products are shown
+        (new \App\Models\Product)->forceFill(['name' => 'Panadol', 'price' => 5, 'status' => 'active', 'track_stock' => false, 'category_id' => $c->id])->save();
         $this->get('/')->assertOk()->assertSee('100% genuine')->assertSee('Have a prescription? Just send a photo.')->assertSee('How ordering works')->assertSee('Shop by need');
     }
 
