@@ -1742,9 +1742,12 @@
     "Contact details: show the opening hours": "Contact details: show the opening hours",
     "Show a Categories column": "Show a Categories column",
     "Categories column title": "Categories column title",
-    "How many categories in the footer (busiest first)": "How many categories in the footer (busiest first)",
     "Show the Google Map": "Show the Google Map",
     "Map title": "Map title",
     "Google Maps link (opens when someone taps “Get directions”)": "Google Maps link (opens when someone taps “Get directions”)",
-    "Place shown on the map (address or business name; empty = the store address)": "Place shown on the map (address or business name; empty = the store address)"
+    "Place shown on the map (address or business name; empty = the store address)": "Place shown on the map (address or business name; empty = the store address)",
+    "How many categories in the footer (busiest first, at most 5)": "How many categories in the footer (busiest first)",
+    "Store column title": "Store column title",
+    "Support column title": "Support column title",
+    "Contact column title": "Contact column title"
 }

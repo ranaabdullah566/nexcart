@@ -18,8 +18,7 @@
 .ft-news-in:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--ft-acc) 45%, transparent); }
 
 .ft-main { padding-top: 2.6rem; padding-bottom: 1.2rem; }
-.ft-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr; gap: 2rem 2.2rem; }
-.ft-grid.has-map { grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1.5fr; }
+.ft-grid { display: grid; grid-template-columns: 1.35fr .8fr .9fr 1fr 1.5fr; gap: 2rem 2.2rem; }
 .ft-logo { display: inline-flex; align-items: center; gap: .6rem; margin-bottom: .9rem; }
 .mk-footer.ft .ft-logo .sf-brand-name { color: #fff; font-weight: 800; font-size: 1.45rem; }
 .ft-logo .sf-brand-logo { background: #fff; }
@@ -58,13 +57,12 @@
 .mk-footer.ft a:focus-visible, .ft-news-in button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radius: 6px; }
 
 @media (max-width: 1199.98px) {
-    .ft-grid, .ft-grid.has-map { grid-template-columns: repeat(3, 1fr); }
-    .ft-brand { grid-column: 1 / -1; }
-    .ft-map { grid-column: 1 / -1; }
+    .ft-grid { grid-template-columns: repeat(2, 1fr); }
+    .ft-brand, .ft-contactcol { grid-column: 1 / -1; }
     .ft-map-box { aspect-ratio: 16 / 7; }
 }
 @media (max-width: 767.98px) {
-    .ft-grid, .ft-grid.has-map { grid-template-columns: 1fr 1fr; gap: 1.6rem 1.2rem; }
+    .ft-grid { grid-template-columns: 1fr 1fr; gap: 1.6rem 1.2rem; }
     .ft-news-form { flex-direction: column; align-items: stretch; gap: .6rem; }
     .ft-news-in { flex-basis: auto; }
     .ft-bot { flex-direction: column; text-align: center; }
@@ -73,8 +71,11 @@
     /* leave room for the phone bottom bar */
     .mk-footer.ft { padding-bottom: 64px; }
 }
-@media (max-width: 420px) { .ft-grid, .ft-grid.has-map { grid-template-columns: 1fr; } }
+@media (max-width: 420px) { .ft-grid { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .ft-socials a, .ft-news-in button, .mk-footer.ft .ft-col a, .mk-footer.ft a.ft-dir { transition: none; } }
 .ft-news-in input { width: 0; }
 .ft-news-in button { flex: none; white-space: nowrap; min-height: 40px; }
 @media (max-width: 767.98px) { .ft-map-box { aspect-ratio: 16 / 10; } }
+
+.ft-contactcol .ft-contact { margin-bottom: 1rem; }
+.ft-contactcol .ft-map-box { aspect-ratio: 16 / 9; }

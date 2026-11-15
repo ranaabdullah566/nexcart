@@ -1742,9 +1742,12 @@
     "Contact details: show the opening hours": "رابطہ: کھلنے کے اوقات دکھائیں",
     "Show a Categories column": "کیٹیگریز کا کالم دکھائیں",
     "Categories column title": "کیٹیگریز کالم کا عنوان",
-    "How many categories in the footer (busiest first)": "فوٹر میں کتنی کیٹیگریز (زیادہ پروڈکٹس والی پہلے)",
     "Show the Google Map": "گوگل میپ دکھائیں",
     "Map title": "میپ کا عنوان",
     "Google Maps link (opens when someone taps “Get directions”)": "گوگل میپس لنک (“ہدایات حاصل کریں” پر کھلتا ہے)",
-    "Place shown on the map (address or business name; empty = the store address)": "میپ پر دکھائی جانے والی جگہ (پتہ یا کاروبار کا نام؛ خالی = اسٹور کا پتہ)"
+    "Place shown on the map (address or business name; empty = the store address)": "میپ پر دکھائی جانے والی جگہ (پتہ یا کاروبار کا نام؛ خالی = اسٹور کا پتہ)",
+    "How many categories in the footer (busiest first, at most 5)": "فوٹر میں کتنی کیٹیگریز (زیادہ پروڈکٹس والی پہلے)",
+    "Store column title": "اسٹور کالم کا عنوان",
+    "Support column title": "سپورٹ کالم کا عنوان",
+    "Contact column title": "رابطہ کالم کا عنوان"
 }
