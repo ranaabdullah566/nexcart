@@ -13,6 +13,11 @@
 <x-page-header :title="__('Home page')" :eyebrow="__('Storefront')" :sub="__('Build what shoppers see first. Reorder, hide or edit any section.')">
     <x-slot:actions>
         <a href="{{ route('store.home') }}" target="_blank" class="btn btn-outline-secondary" data-no-modal><i class="bi bi-box-arrow-up-right me-1"></i> {{ __('View store') }}</a>
+        @if (setting('demo.home_ids'))
+            <form method="POST" action="{{ route('admin.home-sections.demo.remove') }}" data-no-ajax>@csrf @method('DELETE')<button class="btn btn-outline-danger"><i class="bi bi-trash3 me-1"></i> {{ __('Remove sample sections') }}</button></form>
+        @else
+            <form method="POST" action="{{ route('admin.home-sections.demo') }}" data-no-ajax>@csrf<button class="btn btn-outline-secondary"><i class="bi bi-magic me-1"></i> {{ __('Add sample sections') }}</button></form>
+        @endif
         <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-plus-lg me-1"></i> {{ __('Add section') }}</button>
             <ul class="dropdown-menu dropdown-menu-end">

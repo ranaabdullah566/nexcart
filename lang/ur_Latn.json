@@ -1749,5 +1749,13 @@
     "How many categories in the footer (busiest first, at most 5)": "How many categories in the footer (busiest first)",
     "Store column title": "Store column title",
     "Support column title": "Support column title",
-    "Contact column title": "Contact column title"
+    "Contact column title": "Contact column title",
+    "Sample sections are already added. Remove them first to add them again.": "Sample sections are already added. Remove them first to add them again.",
+    ":n sample sections added and switched on.": ":n sample sections added and switched on.",
+    ":n sample sections removed.": ":n sample sections removed.",
+    "Add sample sections": "Add sample sections",
+    "Remove sample sections": "Remove sample sections",
+    "The reviews section stays hidden until at least one review is approved (Admin → Reviews, or load the sample medicines).": "The reviews section stays hidden until at least one review is approved (Admin → Reviews, or load the sample medicines).",
+    "The blog section stays hidden until at least one article is published (Admin → Blog, or load the sample medicines).": "The blog section stays hidden until at least one article is published (Admin → Blog, or load the sample medicines).",
+    "There are no products yet, so the product rows are empty.": "There are no products yet, so the product rows are empty."
 }

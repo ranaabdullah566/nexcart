@@ -178,6 +178,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
     Route::post('menu-items/{menuItem}/move', [MenuItemController::class, 'move'])->name('menu-items.move');
     Route::post('menu-items/{menuItem}/toggle', [MenuItemController::class, 'toggle'])->name('menu-items.toggle');
     Route::resource('menu-items', MenuItemController::class)->except('show')->parameters(['menu-items' => 'menuItem']);
+    Route::post('home-sections/demo', [HomeSectionController::class, 'demo'])->name('home-sections.demo');
+    Route::delete('home-sections/demo', [HomeSectionController::class, 'demoRemove'])->name('home-sections.demo.remove');
     Route::post('home-sections/{homeSection}/toggle', [HomeSectionController::class, 'toggle'])->name('home-sections.toggle');
     Route::post('home-sections/{homeSection}/move', [HomeSectionController::class, 'move'])->name('home-sections.move');
     Route::resource('home-sections', HomeSectionController::class)->except('show')->parameters(['home-sections' => 'homeSection']);

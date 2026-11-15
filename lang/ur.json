@@ -1749,5 +1749,13 @@
     "How many categories in the footer (busiest first, at most 5)": "فوٹر میں کتنی کیٹیگریز (زیادہ پروڈکٹس والی پہلے)",
     "Store column title": "اسٹور کالم کا عنوان",
     "Support column title": "سپورٹ کالم کا عنوان",
-    "Contact column title": "رابطہ کالم کا عنوان"
+    "Contact column title": "رابطہ کالم کا عنوان",
+    "Sample sections are already added. Remove them first to add them again.": "نمونہ سیکشنز پہلے سے شامل ہیں۔ دوبارہ شامل کرنے کے لیے پہلے انہیں ہٹائیں۔",
+    ":n sample sections added and switched on.": ":n نمونہ سیکشنز شامل کر کے آن کر دیے گئے۔",
+    ":n sample sections removed.": ":n نمونہ سیکشنز ہٹا دیے گئے۔",
+    "Add sample sections": "نمونہ سیکشنز شامل کریں",
+    "Remove sample sections": "نمونہ سیکشنز ہٹائیں",
+    "The reviews section stays hidden until at least one review is approved (Admin → Reviews, or load the sample medicines).": "ریویوز سیکشن تب تک چھپا رہتا ہے جب تک کم از کم ایک ریویو منظور نہ ہو (Admin → Reviews، یا نمونہ ادویات لوڈ کریں)۔",
+    "The blog section stays hidden until at least one article is published (Admin → Blog, or load the sample medicines).": "بلاگ سیکشن تب تک چھپا رہتا ہے جب تک کم از کم ایک مضمون شائع نہ ہو (Admin → Blog، یا نمونہ ادویات لوڈ کریں)۔",
+    "There are no products yet, so the product rows are empty.": "ابھی کوئی پروڈکٹ نہیں، اس لیے پروڈکٹ قطاریں خالی ہیں۔"
 }

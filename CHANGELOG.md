@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Added: sample home sections
+- Admin → Home page → **Add sample sections** (or `php artisan nexcart:home-demo`) adds one switched-on sample of every kind — hero, highlights, category tiles, three product rows, promo banner, call-to-action, steps, customer quotes, reviews, blog, FAQ, text — so each block can be seen and tested. **Remove sample sections** (or `--remove`) deletes exactly those and nothing else. Reviews and blog stay hidden until a review is approved / an article is published; `php artisan nexcart:demo` loads sample medicines, reviews and articles for that.
+
 ### Fixed: WhatsApp button
 - Official WhatsApp green with a white glyph, a white ring and a soft pulse (off for reduced motion). The `wa.me` link now carries the country code (`03004462436` → `923004462436`, code from Settings → phone code; before, a local number with a leading 0 opened a wrong chat).
 

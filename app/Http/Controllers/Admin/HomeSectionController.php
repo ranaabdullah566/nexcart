@@ -43,6 +43,26 @@ class HomeSectionController extends Controller
         return view('admin.home.index', ['sections' => HomeSection::orderBy('sort_order')->orderBy('id')->get(), 'types' => HomeSection::TYPES]);
     }
 
+    /** One sample section of every kind, all switched on, to test the home page. */
+    public function demo(\App\Services\HomeDemo $demo): RedirectResponse
+    {
+        $this->authorizeTo('storefront.manage');
+        try {
+            $r = $demo->load();
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', __(':n sample sections added and switched on.', ['n' => $r['added']]).' '.implode(' ', $r['warnings']));
+    }
+
+    public function demoRemove(\App\Services\HomeDemo $demo): RedirectResponse
+    {
+        $this->authorizeTo('storefront.manage');
+
+        return back()->with('success', __(':n sample sections removed.', ['n' => $demo->remove()]));
+    }
+
     public function create(Request $request): View
     {
         $this->authorizeTo('storefront.manage');
