@@ -22,7 +22,6 @@ class HomeSectionController extends Controller
         'products' => ['title'],
         'text' => ['title', 'body'],
         'features' => [],
-        'brands' => ['title', 'subtitle'],
         'cta' => ['eyebrow', 'title', 'subtitle', 'button_label', 'button2_label'],
         'steps' => ['title', 'subtitle'],
         'testimonials' => ['title', 'subtitle'],
@@ -150,7 +149,6 @@ class HomeSectionController extends Controller
             'features', 'steps', 'testimonials', 'faq' => $this->itemRules($type),
             'blog' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:1', 'max:6']],
             'reviews' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:3', 'max:24'], 'min_rating' => ['required', Rule::in([1, 2, 3, 4, 5])], 'show_summary' => ['nullable', 'boolean']],
-            'brands' => ['title' => ['nullable', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'], 'limit' => ['nullable', 'integer', 'min:1', 'max:30']],
             'cta' => ['eyebrow' => ['nullable', 'string', 'max:80'], 'title' => ['required', 'string', 'max:120'], 'subtitle' => ['nullable', 'string', 'max:300'],
                 'button_label' => ['nullable', 'string', 'max:40'], 'button_url' => $url, 'button2_label' => ['nullable', 'string', 'max:40'], 'button2_url' => $url],
         };

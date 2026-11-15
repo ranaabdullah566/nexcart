@@ -36,15 +36,6 @@
 .sx-chips a.on { background: var(--sx-navy); border-color: var(--sx-navy); color: #fff; } .sx-chips a.on small { color: #cfe0f2; }
 @keyframes sxIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
-/* ------------------------------------------------------------------ brands */
-.sx-brands { display: flex; flex-wrap: wrap; gap: .45rem; }
-.sx-brand { cursor: pointer; margin: 0; } .sx-brand input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.sx-brand span { display: inline-flex; align-items: center; gap: .45rem; min-height: 38px; padding: 0 .8rem; border-radius: 99px; border: 1px solid var(--sx-line); background: #fff; transition: border-color .2s, background-color .2s, color .2s; }
-.sx-brand b { font-size: .84rem; font-weight: 600; color: var(--sx-ink); } .sx-brand small { color: #6b7480; font-size: .72rem; font-weight: 700; }
-.sx-brand:hover span { border-color: var(--sx-blue); }
-.sx-brand input:checked + span { background: var(--sx-navy); border-color: var(--sx-navy); } .sx-brand input:checked + span b { color: #fff; } .sx-brand input:checked + span small { color: #cfe0f2; }
-.sx-brand input:focus-visible + span { outline: 3px solid color-mix(in srgb, var(--sx-blue) 55%, transparent); outline-offset: 2px; }
-
 /* ----------------------------------------- segmented type + switch toggles */
 .sx-seg { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
 .sx-seg label { margin: 0; cursor: pointer; } .sx-seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }

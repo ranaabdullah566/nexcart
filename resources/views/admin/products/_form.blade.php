@@ -43,13 +43,6 @@
                     @foreach ($categories as $c)<option value="{{ $c->id }}" @selected((string) $v('category_id') === (string) $c->id)>{{ $c->path }}</option>@endforeach
                 </select>
             </div>
-            <div class="col-md-6">
-                <label class="form-label fw-medium">{{ __('Brand') }}</label>
-                <select name="brand_id" class="form-select" data-select>
-                    <option value="">— {{ __('None') }} —</option>
-                    @foreach ($brands as $b)<option value="{{ $b->id }}" @selected((string) $v('brand_id') === (string) $b->id)>{{ $b->name }}</option>@endforeach
-                </select>
-            </div>
             <div class="col-12">
                 <label class="form-label fw-medium">{{ __('Short description') }}</label>
                 <input name="short_description" maxlength="300" value="{{ $v('short_description') }}" class="form-control">

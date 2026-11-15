@@ -6,7 +6,7 @@ next to **Visit site** (opens your shop in a new tab) and the **bell** (your ale
 ## First day
 1. **Store settings** — name, tagline, contact, address and opening hours (shown on the Contact page), WhatsApp and social links, currency, tax, timezone, payment methods and reminders.
 2. **Shipping** — zones by city with delivery prices, free-over amounts and store pickup. No zone = nobody can check out.
-3. **Catalog** — categories, brands, products (simple or with pack-size variants), product fields, inventory.
+3. **Catalog** — categories, products (simple or with pack-size variants), product fields, inventory.
 4. **Storefront** — *Home page* sections, *Theme* (live preview), *Storefront options*, *Interface text*, *Pages*, *Menus*, *Email templates*. See [CUSTOMIZING.md](CUSTOMIZING.md).
 5. **Security** — turn on two-factor for yourself, then decide if the whole team needs it. Add reCAPTCHA / Google sign-in keys if you want them.
 6. **System health** — turn red/orange items green. **Backups** — switch on nightly backups.

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Brand;
 use App\Models\Category;
 use App\Models\HomeSection;
 use App\Models\MenuItem;
@@ -63,20 +62,18 @@ class StorefrontDynamicTest extends TestCase
     public function test_new_home_section_types_can_be_built_and_shown(): void
     {
         $this->actingAs($this->owner);
-        $b = Brand::create(['name' => 'Acme', 'is_active' => true]);
-        $this->product(['brand_id' => $b->id]);
 
         $this->post('/admin/home-sections', ['type' => 'steps', 'title' => 'Easy as 1-2-3', 'items' => [['icon' => 'search', 'title' => 'Find it', 'text' => 'Search the shop'], ['icon' => '', 'title' => 'Order it', 'text' => 'Pay on delivery'], ['title' => '', 'text' => 'dropped']], 'is_active' => 1])->assertRedirect('/admin/home-sections');
         $this->post('/admin/home-sections', ['type' => 'faq', 'title' => 'FAQ', 'items' => [['title' => 'Do you deliver?', 'text' => 'Yes, everywhere.']], 'is_active' => 1])->assertRedirect();
         $this->post('/admin/home-sections', ['type' => 'testimonials', 'items' => [['title' => 'Sara', 'role' => 'Lahore', 'text' => 'Great service!']], 'is_active' => 1])->assertRedirect();
-        $this->post('/admin/home-sections', ['type' => 'brands', 'title' => 'Our brands', 'limit' => 6, 'is_active' => 1])->assertRedirect();
+        $this->post('/admin/home-sections', ['type' => 'brands', 'title' => 'Our brands', 'limit' => 6, 'is_active' => 1])->assertStatus(422);   // the brands strip no longer exists
         $this->post('/admin/home-sections', ['type' => 'cta', 'title' => 'Join us today', 'button_label' => 'Start', 'button_url' => '/shop', 'is_active' => 1])->assertRedirect();
         $this->post('/admin/home-sections', ['type' => 'cta', 'title' => 'Bad', 'button_url' => 'javascript:alert(1)', 'is_active' => 1])->assertSessionHasErrors('button_url');
         $this->assertSame(2, collect(HomeSection::where('type', 'steps')->where('title', 'Easy as 1-2-3')->first()->settings['items'])->count());   // empty item dropped
         $this->get('/admin/home-sections/create?type=faq')->assertOk();
 
         auth()->logout();
-        $this->get('/')->assertOk()->assertSee('Easy as 1-2-3')->assertSee('Order it')->assertSee('Do you deliver?')->assertSee('Great service!')->assertSee('Lahore')->assertSee('Our brands')->assertSee('Acme')->assertSee('Join us today');
+        $this->get('/')->assertOk()->assertSee('Easy as 1-2-3')->assertSee('Order it')->assertSee('Do you deliver?')->assertSee('Great service!')->assertSee('Lahore')->assertDontSee('Our brands')->assertSee('Join us today');
     }
 
     public function test_seo_fields_reach_the_page_head(): void

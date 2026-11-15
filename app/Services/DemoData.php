@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Article;
-use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Review;
@@ -34,7 +33,7 @@ class DemoData
         }
         $this->reviewIds = [];
         $set = $this->dataset();
-        $ids = ['products' => [], 'categories' => [], 'brands' => [], 'reviews' => [], 'articles' => []];
+        $ids = ['products' => [], 'categories' => [], 'reviews' => [], 'articles' => []];
 
         DB::transaction(function () use ($set, &$ids) {
             $cats = [];
@@ -42,15 +41,10 @@ class DemoData
                 $cats[$key] = Category::create(['name' => $name, 'is_active' => true, 'sort_order' => count($cats)]);
                 $ids['categories'][] = $cats[$key]->id;
             }
-            $brands = [];
-            foreach ($set['brands'] ?? [] as $name) {
-                $brands[$name] = Brand::create(['name' => $name, 'is_active' => true]);
-                $ids['brands'][] = $brands[$name]->id;
-            }
             foreach ($set['products'] as $i => $d) {
                 $p = new Product;
                 $p->forceFill([
-                    'category_id' => $cats[$d['cat']]->id, 'brand_id' => isset($d['brand']) ? $brands[$d['brand']]->id : null,
+                    'category_id' => $cats[$d['cat']]->id,
                     'name' => $d['name'], 'sku' => 'DEMO-PHA-'.str_pad((string) ($i + 1), 3, '0', STR_PAD_LEFT),
                     'type' => isset($d['variants']) ? 'variable' : 'simple', 'status' => 'active', 'short_description' => $d['short'] ?? null, 'description' => $d['desc'] ?? ($d['short'] ?? null),
                     'price' => isset($d['variants']) ? min(array_column($d['variants'], 1)) : $d['price'], 'compare_price' => $d['compare'] ?? null,
@@ -93,7 +87,6 @@ class DemoData
             }
             // shared things are only removed when nothing real hangs on them
             Category::whereIn('id', $ids['categories'] ?? [])->get()->each(fn ($c) => $c->products()->exists() || $c->children()->exists() ? null : $c->delete());
-            Brand::whereIn('id', $ids['brands'] ?? [])->get()->each(fn ($b) => $b->products()->exists() ? null : $b->delete());
         });
 
         setting()->set('demo.ids', null);
@@ -271,21 +264,20 @@ Skin that blisters, a mole that changes shape or colour, or sunburn that does no
 
         return [
             'categories' => ['pain' => 'Pain & fever', 'cold' => 'Cold, flu & allergy', 'stomach' => 'Stomach & digestion', 'vit' => 'Vitamins & supplements', 'diabetes' => 'Diabetes care', 'baby' => 'Baby & mother care', 'skin' => 'Skin care', 'devices' => 'Health devices', 'rx' => 'Prescription medicines'],
-            'brands' => ['GSK', 'Getz Pharma', 'Searle', 'Abbott', 'Omron'],
             'products' => [
-                ['name' => 'Panadol 500mg (20 tablets)', 'cat' => 'pain', 'brand' => 'GSK', 'price' => 45, 'featured' => true, 'short' => 'Paracetamol for pain and fever.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'GSK'), 'stock' => 120, 'hue' => 205],
-                ['name' => 'Paracip 500mg (20 tablets)', 'cat' => 'pain', 'brand' => 'Getz Pharma', 'price' => 38, 'short' => 'Paracetamol for pain and fever — a lower-priced alternative.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'Getz Pharma'), 'stock' => 90, 'hue' => 150],
-                ['name' => 'Fevadol 500mg (20 tablets)', 'cat' => 'pain', 'brand' => 'Searle', 'price' => 52, 'short' => 'Paracetamol for pain and fever.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'Searle'), 'stock' => 70, 'hue' => 275],
-                ['name' => 'Brufen 400mg', 'cat' => 'pain', 'brand' => 'Abbott', 'short' => 'Ibuprofen anti-inflammatory.', 'variants' => [['10 tablets', 70, 60], ['30 tablets', 190, 60]], 'specs' => $m('Ibuprofen 400mg', 'Tablet', '400mg', 'Abbott'), 'expires_in' => 40, 'hue' => 25],
-                ['name' => 'Calpol Suspension 120ml', 'cat' => 'pain', 'brand' => 'GSK', 'price' => 160, 'short' => 'Paracetamol syrup for children.', 'specs' => $m('Paracetamol 120mg/5ml', 'Syrup', '120mg/5ml', 'GSK'), 'stock' => 50, 'hue' => 190],
+                ['name' => 'Panadol 500mg (20 tablets)', 'cat' => 'pain', 'price' => 45, 'featured' => true, 'short' => 'Paracetamol for pain and fever.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'GSK'), 'stock' => 120, 'hue' => 205],
+                ['name' => 'Paracip 500mg (20 tablets)', 'cat' => 'pain', 'price' => 38, 'short' => 'Paracetamol for pain and fever — a lower-priced alternative.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'Getz Pharma'), 'stock' => 90, 'hue' => 150],
+                ['name' => 'Fevadol 500mg (20 tablets)', 'cat' => 'pain', 'price' => 52, 'short' => 'Paracetamol for pain and fever.', 'specs' => $m('Paracetamol 500mg', 'Tablet', '500mg', 'Searle'), 'stock' => 70, 'hue' => 275],
+                ['name' => 'Brufen 400mg', 'cat' => 'pain', 'short' => 'Ibuprofen anti-inflammatory.', 'variants' => [['10 tablets', 70, 60], ['30 tablets', 190, 60]], 'specs' => $m('Ibuprofen 400mg', 'Tablet', '400mg', 'Abbott'), 'expires_in' => 40, 'hue' => 25],
+                ['name' => 'Calpol Suspension 120ml', 'cat' => 'pain', 'price' => 160, 'short' => 'Paracetamol syrup for children.', 'specs' => $m('Paracetamol 120mg/5ml', 'Syrup', '120mg/5ml', 'GSK'), 'stock' => 50, 'hue' => 190],
                 ['name' => 'Disprin (10 tablets)', 'cat' => 'pain', 'price' => 30, 'short' => 'Soluble aspirin.', 'specs' => $m('Aspirin 300mg', 'Tablet', '300mg', 'Reckitt'), 'stock' => 90, 'hue' => 15],
                 ['name' => 'Arinac Forte (12 tablets)', 'cat' => 'cold', 'price' => 140, 'short' => 'Cold, flu and congestion relief.', 'specs' => $m('Ibuprofen + pseudoephedrine', 'Tablet', '200mg/30mg', 'Abbott'), 'stock' => 70, 'hue' => 160],
                 ['name' => 'Avil 25mg (20 tablets)', 'cat' => 'cold', 'price' => 85, 'short' => 'Antihistamine for allergy relief.', 'specs' => $m('Pheniramine 25mg', 'Tablet', '25mg', 'Sanofi'), 'stock' => 65, 'hue' => 120],
                 ['name' => 'Cough Syrup 100ml', 'cat' => 'cold', 'price' => 180, 'short' => 'Soothing syrup for dry cough.', 'specs' => $m('Dextromethorphan', 'Syrup', '15mg/5ml', 'Searle'), 'stock' => 40, 'hue' => 30],
                 ['name' => 'Gaviscon Liquid 150ml', 'cat' => 'stomach', 'price' => 620, 'short' => 'Fast relief from heartburn and acidity.', 'specs' => $m('Sodium alginate', 'Syrup', '500mg/10ml', 'Reckitt'), 'stock' => 30, 'hue' => 95],
                 ['name' => 'ORS Sachets (10 pack)', 'cat' => 'stomach', 'price' => 120, 'short' => 'Oral rehydration salts.', 'specs' => $m('Glucose + electrolytes', 'Other', '—', 'Searle'), 'stock' => 100, 'hue' => 175],
-                ['name' => 'Vitamin C 1000mg (20 effervescent)', 'cat' => 'vit', 'brand' => 'Getz Pharma', 'price' => 280, 'compare' => 340, 'featured' => true, 'short' => 'Daily immune support.', 'specs' => $m('Ascorbic acid 1000mg', 'Tablet', '1000mg', 'Getz Pharma'), 'stock' => 60, 'hue' => 40],
-                ['name' => 'Multivitamin Daily', 'cat' => 'vit', 'brand' => 'Searle', 'short' => 'Multivitamin and mineral.', 'variants' => [['30 capsules', 950, 35], ['60 capsules', 1700, 25]], 'specs' => $m('Vitamins A–E, zinc, iron', 'Capsule', 'Daily', 'Searle'), 'low' => 10, 'hue' => 330],
+                ['name' => 'Vitamin C 1000mg (20 effervescent)', 'cat' => 'vit', 'price' => 280, 'compare' => 340, 'featured' => true, 'short' => 'Daily immune support.', 'specs' => $m('Ascorbic acid 1000mg', 'Tablet', '1000mg', 'Getz Pharma'), 'stock' => 60, 'hue' => 40],
+                ['name' => 'Multivitamin Daily', 'cat' => 'vit', 'short' => 'Multivitamin and mineral.', 'variants' => [['30 capsules', 950, 35], ['60 capsules', 1700, 25]], 'specs' => $m('Vitamins A–E, zinc, iron', 'Capsule', 'Daily', 'Searle'), 'low' => 10, 'hue' => 330],
                 ['name' => 'Calcium + D3 (30 tablets)', 'cat' => 'vit', 'price' => 690, 'short' => 'Bone and joint support.', 'specs' => $m('Calcium 500mg + D3', 'Tablet', '500mg', 'Getz Pharma'), 'stock' => 40, 'hue' => 55],
                 ['name' => 'Glucometer Kit', 'cat' => 'diabetes', 'price' => 4200, 'featured' => true, 'short' => 'Meter, lancets and 10 test strips.', 'specs' => $m('—', 'Other', '—', 'Accu-Chek'), 'stock' => 20, 'hue' => 150],
                 ['name' => 'Glucose Test Strips (50)', 'cat' => 'diabetes', 'price' => 2300, 'short' => 'Compatible with the Glucometer Kit.', 'specs' => $m('—', 'Other', '—', 'Accu-Chek'), 'stock' => 35, 'expires_in' => 200, 'hue' => 140],
@@ -293,11 +285,11 @@ Skin that blisters, a mole that changes shape or colour, or sunburn that does no
                 ['name' => 'Baby Rash Cream 50g', 'cat' => 'baby', 'price' => 340, 'short' => 'Protects against diaper rash.', 'specs' => $m('Zinc oxide', 'Cream / Ointment', '—', 'Sudocrem'), 'stock' => 38, 'hue' => 320],
                 ['name' => 'Betnovate-N Cream 15g', 'cat' => 'skin', 'price' => 110, 'short' => 'Antibiotic and steroid skin cream.', 'specs' => $m('Betamethasone + neomycin', 'Cream / Ointment', '0.1%', 'GSK'), 'stock' => 55, 'hue' => 345],
                 ['name' => 'Sunblock SPF 50 (60ml)', 'cat' => 'skin', 'price' => 1450, 'short' => 'Broad-spectrum sun protection.', 'specs' => $m('—', 'Cream / Ointment', 'SPF 50', 'Local'), 'stock' => 25, 'hue' => 45],
-                ['name' => 'Digital BP Monitor', 'cat' => 'devices', 'brand' => 'Omron', 'price' => 8900, 'compare' => 9800, 'featured' => true, 'short' => 'Upper-arm automatic blood pressure monitor.', 'specs' => $m('—', 'Other', '—', 'Omron'), 'stock' => 15, 'hue' => 200],
+                ['name' => 'Digital BP Monitor', 'cat' => 'devices', 'price' => 8900, 'compare' => 9800, 'featured' => true, 'short' => 'Upper-arm automatic blood pressure monitor.', 'specs' => $m('—', 'Other', '—', 'Omron'), 'stock' => 15, 'hue' => 200],
                 ['name' => 'Infrared Thermometer', 'cat' => 'devices', 'price' => 3500, 'short' => 'Non-contact, 1-second reading.', 'specs' => $m('—', 'Other', '—', 'Local'), 'stock' => 30, 'hue' => 260],
                 ['name' => 'Surgical Masks (box of 50)', 'cat' => 'devices', 'price' => 450, 'short' => '3-ply disposable masks.', 'specs' => $m('—', 'Other', '—', 'Local'), 'stock' => 100, 'hue' => 190],
-                ['name' => 'Amoxicillin 500mg (12 capsules)', 'cat' => 'rx', 'brand' => 'Searle', 'price' => 320, 'rx' => true, 'short' => 'Antibiotic — prescription required.', 'specs' => $m('Amoxicillin 500mg', 'Capsule', '500mg', 'Searle'), 'stock' => 50, 'expires_in' => 300, 'hue' => 350],
-                ['name' => 'Augmentin 625mg (14 tablets)', 'cat' => 'rx', 'brand' => 'GSK', 'price' => 780, 'rx' => true, 'short' => 'Antibiotic — prescription required.', 'specs' => $m('Amoxicillin + clavulanic acid', 'Tablet', '625mg', 'GSK'), 'stock' => 3, 'low' => 5, 'hue' => 300],
+                ['name' => 'Amoxicillin 500mg (12 capsules)', 'cat' => 'rx', 'price' => 320, 'rx' => true, 'short' => 'Antibiotic — prescription required.', 'specs' => $m('Amoxicillin 500mg', 'Capsule', '500mg', 'Searle'), 'stock' => 50, 'expires_in' => 300, 'hue' => 350],
+                ['name' => 'Augmentin 625mg (14 tablets)', 'cat' => 'rx', 'price' => 780, 'rx' => true, 'short' => 'Antibiotic — prescription required.', 'specs' => $m('Amoxicillin + clavulanic acid', 'Tablet', '625mg', 'GSK'), 'stock' => 3, 'low' => 5, 'hue' => 300],
                 ['name' => 'Metformin 500mg (30 tablets)', 'cat' => 'rx', 'price' => 95, 'rx' => true, 'short' => 'For type 2 diabetes — prescription required.', 'specs' => $m('Metformin 500mg', 'Tablet', '500mg', 'Getz Pharma'), 'stock' => 80, 'hue' => 20],
             ],
         ];

@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\AlertController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\BackupController;
-use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -82,7 +81,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'staff', 'staff.sess
 
     // Catalog
     Route::resource('categories', CategoryController::class)->except('show');
-    Route::resource('brands', BrandController::class)->except('show');
     Route::resource('attributes', AttributeController::class)->except('show');
     Route::get('products/export', [ProductCsvController::class, 'export'])->name('products.export');
     Route::post('products/import', [ProductCsvController::class, 'import'])->name('products.import');

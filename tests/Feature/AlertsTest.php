@@ -29,9 +29,9 @@ class AlertsTest extends TestCase
     public function test_notify_messages_land_in_the_alerts_page_and_header_has_visit_site(): void
     {
         $owner = $this->as('owner');
-        $this->actingAs($owner)->post('/admin/brands', ['name' => 'Acme'])->assertRedirect();
+        $this->actingAs($owner)->post('/admin/categories', ['name' => 'Acme'])->assertRedirect();
         $this->assertDatabaseHas('admin_alerts', ['user_id' => $owner->id, 'type' => 'success', 'source' => 'notify']);
-        $this->get('/admin/alerts')->assertOk()->assertSee('Brand')->assertSee('Visit site');
+        $this->get('/admin/alerts')->assertOk()->assertSee('Category')->assertSee('Visit site');
     }
 
     public function test_new_order_and_low_stock_alert_staff_and_read_state_is_per_person(): void

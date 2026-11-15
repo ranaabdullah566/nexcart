@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Removed: Brand module
+- Brands are gone everywhere: Admin → Brands (menu, pages, Recycle Bin entry), the *Brand* field on products, the *brand* column of the product CSV, the *By brand* report, the shop's brand filter and pills, brand names on product cards / product page / compare / structured data, and the home page *Brands strip* section. Migration `drop_brands` deletes brand home sections, drops `products.brand_id` and the `brands` table (back up first — brand names are discarded). Old CSV files that still have a `brand` column import fine (the column is ignored).
+
 ### Shop sidebar — image-led filters (inspired by ronin.pk's round category pictures)
 - **Shop by category** card: every top-level category has a round, ring-bordered picture, name and product count; it expands to its **sub-categories** (smaller pictures) and a third level as pills; counts include everything below a category; the current branch is highlighted and opened. The same pictures appear as **round category tiles** above the grid.
 - **Pictures**: Admin → Categories → *Picture* (JPG / PNG / WebP, up to 3 MB); without an upload the first product picture of that branch is used, then an icon. Category pictures use `Category::imageUrl()`.

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductBatch;
@@ -534,7 +533,6 @@ class ProductizationTest extends TestCase
             $this->assertNotNull(Category::find($mine->category_id), 'a category that real products use stays');
             $mine->forceDelete();
             Category::query()->delete();
-            Brand::query()->delete();
         }
     }
 

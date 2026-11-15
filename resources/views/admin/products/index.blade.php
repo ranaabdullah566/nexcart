@@ -21,7 +21,7 @@
             <input type="file" name="file" accept=".csv,text/csv" required class="form-control">
         </div>
         <div class="col-md-3"><button class="btn btn-primary w-100"><i class="bi bi-upload me-1"></i> {{ __('Import') }}</button></div>
-        <div class="col-12 form-text">{{ __('Columns: sku, name, category, brand, price, compare_price, cost, stock_qty, status, description. Rows with an existing SKU are updated. Variable products are managed in the product form.') }}</div>
+        <div class="col-12 form-text">{{ __('Columns: sku, name, category, price, compare_price, cost, stock_qty, status, description. Rows with an existing SKU are updated. Variable products are managed in the product form.') }}</div>
     </form>
 </div></div></div>
 @endcan

@@ -133,7 +133,7 @@ class ReportHubController extends Controller
     {
         $live = $this->live($from, $to);
         $items = $this->items($live);
-        $products = Product::withTrashed()->with('category', 'brand')->get()->keyBy('id');
+        $products = Product::withTrashed()->with('category')->get()->keyBy('id');
         $lines = $items->groupBy(fn ($i) => $i->product_id ?: 'n:'.$i->name)->map(function (Collection $g) use ($products) {
             $p = $products[$g->first()->product_id] ?? null;
             $revenue = (float) $g->sum('total');
@@ -164,8 +164,6 @@ class ReportHubController extends Controller
                     Product::where('status', 'active')->whereNotIn('id', $soldIds)->orderBy('name')->limit(200)->get()->map(fn ($p) => [$p->name, $p->sku ?? '', (float) $p->price, $p->totalStock()])->all()),
                 $this->table('category', 'By category', ['Category', 'Units', 'Revenue'], ['text', 'int', 'money'],
                     $lines->groupBy('category')->map(fn ($g, $c) => [$c, (int) $g->sum('qty'), (float) $g->sum('revenue')])->sortByDesc(2)->values()->all()),
-                $this->table('brand', 'By brand', ['Brand', 'Units', 'Revenue'], ['text', 'int', 'money'],
-                    $items->groupBy(fn ($i) => ($products[$i->product_id] ?? null)?->brand?->name ?? __('No brand'))->map(fn ($g, $b) => [$b, (int) $g->sum('qty'), (float) $g->sum('total')])->sortByDesc(2)->values()->all()),
                 $this->table('variant', 'By variant / option', ['Product', 'Variant', 'Units', 'Revenue'], ['text', 'text', 'int', 'money'],
                     $items->whereNotNull('variant_id')->groupBy('variant_id')->map(fn ($g) => [$g->first()->name, $g->first()->variant_name, (int) $g->sum('qty'), (float) $g->sum('total')])->sortByDesc(3)->values()->take(50)->all()),
             ],

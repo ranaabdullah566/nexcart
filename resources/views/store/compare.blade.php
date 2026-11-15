@@ -23,7 +23,6 @@
                 <tbody>
                     <tr><th>{{ __('Price') }}</th>@foreach ($products as $p)<td><b class="figure">{{ money($p->displayPrice()) }}</b>@if (! $p->isVariable() && $p->compare_price > $p->price)<s class="text-muted small ms-1">{{ money($p->compare_price) }}</s>@endif</td>@endforeach</tr>
                     <tr><th>{{ __('Category') }}</th>@foreach ($products as $p)<td>{{ $p->category?->trans('name') ?? '—' }}</td>@endforeach</tr>
-                    <tr><th>{{ __('Brand') }}</th>@foreach ($products as $p)<td>{{ $p->brand?->name ?? '—' }}</td>@endforeach</tr>
                     <tr><th>{{ __('Rating') }}</th>@foreach ($products as $p)<td>@if ($p->approved_reviews_count)<span class="sf-stars">@include('store._stars', ['value' => (float) $p->approved_reviews_avg_rating])</span> <span class="small text-muted">({{ $p->approved_reviews_count }})</span>@else<span class="text-muted">—</span>@endif</td>@endforeach</tr>
                     <tr><th>{{ __('Availability') }}</th>@foreach ($products as $p)<td>@if ($p->track_stock && $p->totalStock() <= 0)<span class="text-danger">{{ __('Out of stock') }}</span>@else<span class="text-success">{{ __('In stock') }}</span>@endif</td>@endforeach</tr>
                     @foreach ($attrs as $a)

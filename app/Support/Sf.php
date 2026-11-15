@@ -63,7 +63,7 @@ class Sf
             'product.show_trust' => $b('product', 'Show the trust lines under the photos'),
             'product.trust_items' => $lines('product', 'Trust lines', "shield-check|Secure checkout\ntruck|Delivery to your city", 'One per line: icon|text  (icons: Bootstrap Icons names, e.g. shield-check, truck, award)'),
             'product.show_listed' => $b('product', 'Show “Listed … ago”'),
-            'product.show_meta' => $b('product', 'Show the details table (SKU, availability, brand…)'),
+            'product.show_meta' => $b('product', 'Show the details table (SKU, availability…)'),
             'product.show_disclaimer' => $b('product', 'Show the notice under the photos'), 'product.disclaimer' => $t('product', 'Notice under the photos', 'Always read the leaflet and follow your doctor’s or pharmacist’s advice. Prescription medicines are supplied only against a valid prescription.'),
             'product.show_share' => $b('product', 'Share button'), 'product.show_save' => $b('product', 'Save button'), 'product.show_compare' => $b('product', 'Compare button'), 'product.show_whatsapp' => $b('product', 'WhatsApp “Ask us” button'),
             'product.bb_trust' => $lines('product', 'Small badges under the buttons', "patch-check-fill|Genuine products\nlock-fill|Private & secure\ntruck|Fast delivery", 'One per line: icon|text. Leave empty to hide.'),

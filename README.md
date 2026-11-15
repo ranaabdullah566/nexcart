@@ -15,7 +15,7 @@ a cart with a free-delivery bar, one-page checkout, order tracking, customer acc
 a **health blog**, a **Contact** page, an e-mail sign-up box, recently viewed medicines, an *Install app* button and branded
 error pages. Everything works on phones, in Urdu right-to-left, and respects *reduce motion*.
 
-**Admin** — medicines (pack sizes, custom fields such as composition / strength, SEO), categories, brands, inventory with batches and
+**Admin** — medicines (pack sizes, custom fields such as composition / strength, SEO), categories, inventory with batches and
 expiry, orders, prescriptions and **prescription requests**, customers (add / edit / delete), coupons, shipping zones, delivery slots,
 reviews, the **health blog** (with scheduling), a **messages** inbox with the newsletter list, reports
 (sales, products, customers, inventory, finance & tax, operations, marketing — all exportable to CSV),
@@ -70,7 +70,7 @@ Open the site once: `/install` (database) and `/setup` (store details, owner acc
 php artisan db:seed --class=DemoRecordsSeeder
 ```
 
-Adds 100 medicines (some with pack sizes), 100 customers and 100 orders, plus categories, brands and shipping.
+Adds 100 medicines (some with pack sizes), 100 customers and 100 orders, plus categories and shipping.
 Every demo customer signs in with the password `Demo-pass-123`. Running it again adds another batch.
 For a small sample medicine catalogue use `php artisan nexcart:demo` (and `--remove` to undo).
 

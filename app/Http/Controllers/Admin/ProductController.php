@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
 use App\Models\Product;
@@ -85,7 +84,6 @@ class ProductController extends Controller
         return [
             'product' => $product,
             'categories' => Category::with('parent.parent')->orderBy('name')->get()->sortBy(fn ($c) => $c->path)->values(),
-            'brands' => Brand::orderBy('name')->get(),
             'attributes' => CatalogAttribute::forBusiness()->orderBy('sort_order')->orderBy('label')->get(),
             'showRx' => BusinessProfile::hasModule('prescriptions'),
             'terms' => (array) setting('business.terms', []),
@@ -101,7 +99,6 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:190'],
             'sku' => ['nullable', 'string', 'max:64', new UniqueActive('products', 'sku', $product->id)],
             'category_id' => ['nullable', 'exists:categories,id'],
-            'brand_id' => ['nullable', 'exists:brands,id'],
             'type' => ['required', Rule::in(['simple', 'variable'])],
             'status' => ['required', Rule::in(Product::STATUSES)],
             'short_description' => ['nullable', 'string', 'max:300'],
@@ -148,7 +145,6 @@ class ProductController extends Controller
             $variable = $data['type'] === 'variable';
             $product->fill([
                 'category_id' => $data['category_id'] ?? null,
-                'brand_id' => $data['brand_id'] ?? null,
                 'name' => $data['name'],
                 'sku' => filled($data['sku'] ?? null) ? $data['sku'] : null,
                 'type' => $data['type'],

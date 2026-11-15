@@ -50,6 +50,6 @@ class Compare
     {
         $ids = $this->ids();
 
-        return Product::active()->card()->with(['category', 'brand'])->whereIn('id', $ids)->get()->sortBy(fn ($p) => array_search($p->id, $ids))->values();
+        return Product::active()->card()->with(['category'])->whereIn('id', $ids)->get()->sortBy(fn ($p) => array_search($p->id, $ids))->values();
     }
 }

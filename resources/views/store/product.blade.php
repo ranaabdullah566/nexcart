@@ -45,7 +45,6 @@
             @if ($product->category)<a class="mk-pd-cat" href="{{ route('store.category', $product->category->slug) }}"><span class="mk-mark sm"><i class="bi bi-grid-1x2"></i></span>{{ $product->category->trans('name') }}</a>@endif
             <h1>{{ $product->trans('name') }}</h1>
             <div class="mk-pd-badges">
-                @if ($product->brand)<span class="mk-badge">{{ $product->brand->trans('name') }}</span>@endif
                 @if ($inStock)<span class="mk-badge ok"><i class="bi bi-check-circle-fill"></i> {{ __('In stock') }}</span>@else<span class="mk-badge bad">{{ __('Out of stock') }}</span>@endif
                 @if ($product->is_featured)<span class="mk-badge hot"><i class="bi bi-stars"></i> {{ __('Featured') }}</span>@endif
                 @if ($rating['count'])<a href="#reviews" class="mk-badge"><span class="sf-stars" aria-hidden="true">@include('store._stars', ['value' => $rating['avg']])</span> <b class="figure">{{ $rating['avg'] }}</b> ({{ $rating['count'] }})</a>@endif
@@ -71,7 +70,6 @@
                 @if ($product->sku)<div><span>SKU</span><b class="figure">{{ $product->sku }}</b></div>@endif
                 <div><span>{{ __('Availability') }}</span><b>{{ $inStock ? __('In stock') : __('Out of stock') }}</b></div>
                 @if ($product->track_stock && $inStock && $product->totalStock() <= 10)<div><span>{{ __('Available quantity') }}</span><b>{{ $product->totalStock() }}</b></div>@endif
-                @if ($product->brand)<div><span>{{ __('Brand') }}</span><b>{{ $product->brand->trans('name') }}</b></div>@endif
                 @if ($product->category)<div><span>{{ __('Category') }}</span><b>{{ $product->category->trans('name') }}</b></div>@endif
             </div>
             @endif
@@ -148,7 +146,6 @@
     '@context' => 'https://schema.org', '@type' => 'Product',
     'name' => $product->name, 'sku' => $product->sku, 'description' => strip_tags((string) ($product->short_description ?: $product->description)),
     'image' => $product->getMedia('images')->map->getUrl()->all() ?: null,
-    'brand' => $product->brand ? ['@type' => 'Brand', 'name' => $product->brand->name] : null,
     'aggregateRating' => $rating['count'] ? ['@type' => 'AggregateRating', 'ratingValue' => (string) $rating['avg'], 'reviewCount' => (string) $rating['count']] : null,
     'offers' => ['@type' => 'Offer', 'url' => url()->current(), 'priceCurrency' => setting('store.currency'), 'price' => (string) $product->displayPrice(),
         'availability' => 'https://schema.org/'.($inStock ? 'InStock' : 'OutOfStock')],

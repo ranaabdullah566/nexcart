@@ -2,7 +2,6 @@
 @php
     $page = 'shop';
     $active = collect();
-    foreach ($brands as $b) { if (in_array($b->id, $f['brand'] ?? [])) $active->push(['label' => $b->trans('name'), 'url' => request()->fullUrlWithQuery(['brand' => array_values(array_diff($f['brand'], [$b->id])), 'page' => null])]); }
     if (isset($f['price_min'])) $active->push(['label' => '≥ '.money($f['price_min']), 'url' => request()->fullUrlWithQuery(['price_min' => null, 'page' => null])]);
     if (isset($f['price_max'])) $active->push(['label' => '≤ '.money($f['price_max']), 'url' => request()->fullUrlWithQuery(['price_max' => null, 'page' => null])]);
     foreach (['on_sale' => __('On sale'), 'featured' => __('Featured')] as $k => $l) { if (! empty($f[$k])) $active->push(['label' => $l, 'url' => request()->fullUrlWithQuery([$k => null, 'page' => null])]); }
@@ -39,7 +38,7 @@
             @foreach ($keepForSearch as $k => $v)@if (is_array($v))@foreach ($v as $vv)@if (is_scalar($vv))<input type="hidden" name="{{ $k }}[]" value="{{ $vv }}">@endif @endforeach @elseif ($k !== 'sort' || filled($v))<input type="hidden" name="{{ $k }}" value="{{ $v }}">@endif @endforeach
             <i class="bi bi-search" aria-hidden="true"></i>
             <label class="visually-hidden" for="shQ">{{ __('Search in this list') }}</label>
-            <input id="shQ" type="search" name="q" value="{{ $f['q'] ?? '' }}" maxlength="100" placeholder="{{ __('Search medicines, salts, brands…') }}" autocomplete="off">
+            <input id="shQ" type="search" name="q" value="{{ $f['q'] ?? '' }}" maxlength="100" placeholder="{{ __('Search medicines, salts…') }}" autocomplete="off">
             <button type="submit">{{ __('Search') }}</button>
         </form>
     </header>
@@ -103,15 +102,6 @@
                         @endforeach
                     </ul>
                 </section>
-
-                @if ($brands->isNotEmpty())
-                <section class="tq-fsec" data-flt-sec>
-                    <h3>{{ __('Brand') }}</h3>
-                    <div class="sx-brands">@foreach ($brands as $b)
-                        <label class="sx-brand" data-flt-item><input type="checkbox" name="brand[]" value="{{ $b->id }}" @checked(in_array($b->id, $f['brand'] ?? []))><span><b>{{ $b->trans('name') }}</b><small>{{ $b->products_count }}</small></span></label>
-                    @endforeach</div>
-                </section>
-                @endif
 
                 <section class="tq-fsec" data-flt-sec>
                     <h3>{{ __('Medicine type') }}</h3>

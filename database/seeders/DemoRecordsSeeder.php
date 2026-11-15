@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * 100 medicines, 100 customers and 100 orders (plus categories, brands, shipping) so the storefront and every
+ * 100 medicines, 100 customers and 100 orders (plus categories, shipping) so the storefront and every
  * admin screen can be tried with real-looking data.   php artisan db:seed --class=DemoRecordsSeeder
  * Run it again to add another batch. (The small hand-made medicine set is separate: nexcart:demo.)
  */
@@ -29,7 +28,6 @@ class DemoRecordsSeeder extends Seeder
         DB::transaction(function () use ($pick) {
             $cats = collect(['Pain & fever', 'Cold, flu & allergy', 'Stomach & digestion', 'Vitamins & supplements', 'Diabetes care', 'Baby & mother care', 'Skin care', 'Health devices'])
                 ->map(fn ($n) => Category::firstOrCreate(['name' => $n], ['is_active' => true]));
-            $brands = collect(['GSK', 'Getz Pharma', 'Searle', 'Abbott', 'Sanofi', 'Hilton Pharma'])->map(fn ($n) => Brand::firstOrCreate(['name' => $n], ['is_active' => true]));
 
             if (! ShippingZone::exists()) {
                 $z = ShippingZone::create(['name' => 'Everywhere', 'cities' => null, 'is_active' => true]);
@@ -46,7 +44,7 @@ class DemoRecordsSeeder extends Seeder
                 $variable = $i % 10 === 0;
                 $p = new Product;
                 $p->forceFill([
-                    'category_id' => $cats->random()->id, 'brand_id' => $brands->random()->id,
+                    'category_id' => $cats->random()->id,
                     'name' => $pick($adjs).' '.$pick($nouns).' '.str_pad((string) $i, 3, '0', STR_PAD_LEFT),
                     'sku' => 'DEMO-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT).'-'.Str::upper(Str::random(3)),
                     'type' => $variable ? 'variable' : 'simple', 'status' => 'active',

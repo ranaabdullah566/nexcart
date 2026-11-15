@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
@@ -25,18 +25,18 @@ class TrashTest extends TestCase
 
     public function test_delete_restore_and_erase_cycle(): void
     {
-        $brand = Brand::create(['name' => 'Acme', 'slug' => 'acme']);
-        $this->actingAs($this->owner)->delete("/admin/brands/{$brand->id}")->assertRedirect();
-        $this->assertSoftDeleted('brands', ['id' => $brand->id]);
+        $brand = Category::create(['name' => 'Acme']);
+        $this->actingAs($this->owner)->delete("/admin/categories/{$brand->id}")->assertRedirect();
+        $this->assertSoftDeleted('categories', ['id' => $brand->id]);
 
-        $this->get('/admin/trash?type=brands')->assertOk()->assertSee('Acme');
+        $this->get('/admin/trash?type=categories')->assertOk()->assertSee('Acme');
 
-        $this->post("/admin/trash/brands/{$brand->id}/restore")->assertRedirect();
-        $this->assertNotSoftDeleted('brands', ['id' => $brand->id]);
+        $this->post("/admin/trash/categories/{$brand->id}/restore")->assertRedirect();
+        $this->assertNotSoftDeleted('categories', ['id' => $brand->id]);
 
         $brand->delete();
-        $this->delete("/admin/trash/brands/{$brand->id}")->assertRedirect();
-        $this->assertDatabaseMissing('brands', ['id' => $brand->id]);
+        $this->delete("/admin/trash/categories/{$brand->id}")->assertRedirect();
+        $this->assertDatabaseMissing('categories', ['id' => $brand->id]);
         $this->assertDatabaseHas('activity_log', ['event' => 'trash.erased']);
     }
 
@@ -56,11 +56,11 @@ class TrashTest extends TestCase
 
     public function test_purge_command_removes_old_items(): void
     {
-        $b = Brand::create(['name' => 'Old', 'slug' => 'old']);
+        $b = Category::create(['name' => 'Old']);
         $b->delete();
-        \DB::table('brands')->where('id', $b->id)->update(['deleted_at' => now()->subDays(40)]);
+        \DB::table('categories')->where('id', $b->id)->update(['deleted_at' => now()->subDays(40)]);
         $this->artisan('nexcart:trash:purge', ['--days' => 30])->assertSuccessful();
-        $this->assertDatabaseMissing('brands', ['id' => $b->id]);
+        $this->assertDatabaseMissing('categories', ['id' => $b->id]);
     }
 
     public function test_log_viewer_is_owner_only(): void

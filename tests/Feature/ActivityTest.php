@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
@@ -20,18 +20,18 @@ class ActivityTest extends TestCase
         $owner = tap(User::factory()->create(['name' => 'Boss']), fn ($u) => $u->assignRole('owner'));
         $this->actingAs($owner);
 
-        $b = Brand::create(['name' => 'Acme', 'slug' => 'acme']);
+        $b = Category::create(['name' => 'Acme']);
         $b->update(['name' => 'Acme 2']);
         $b->delete();
         $b->restore();
 
-        $events = \Spatie\Activitylog\Models\Activity::where('subject_type', Brand::class)->pluck('event')->all();
+        $events = \Spatie\Activitylog\Models\Activity::where('subject_type', Category::class)->pluck('event')->all();
         $this->assertEqualsCanonicalizing(['created', 'updated', 'deleted', 'restored'], $events);
         $upd = \Spatie\Activitylog\Models\Activity::where('event', 'updated')->first();
         $this->assertSame('Acme', $upd->properties['old']['name']);
         $this->assertSame($owner->id, $upd->causer_id);
 
-        $this->get('/admin/activity?event=deleted&user='.$owner->id)->assertOk()->assertSee('Brand #'.$b->id, false)->assertDontSee('Acme 2 </', false);
+        $this->get('/admin/activity?event=deleted&user='.$owner->id)->assertOk()->assertSee('Category #'.$b->id, false)->assertDontSee('Acme 2 </', false);
         $this->get('/admin/activity?q=Acme')->assertOk()->assertSee('Boss');
         $this->get('/admin/activity/export')->assertOk();
     }

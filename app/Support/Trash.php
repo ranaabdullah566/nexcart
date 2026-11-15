@@ -3,7 +3,6 @@
 namespace App\Support;
 
 use App\Models\Article;
-use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
 use App\Models\ContactMessage;
@@ -32,7 +31,6 @@ class Trash
         return [
             'products' => ['label' => 'Products', 'icon' => 'box-seam-fill', 'model' => Product::class, 'name' => fn ($m) => $m->name, 'permission' => 'products.delete'],
             'categories' => ['label' => 'Categories', 'icon' => 'diagram-3-fill', 'model' => Category::class, 'name' => fn ($m) => $m->name, 'permission' => 'categories.delete'],
-            'brands' => ['label' => 'Brands', 'icon' => 'award-fill', 'model' => Brand::class, 'name' => fn ($m) => $m->name, 'permission' => 'products.delete'],
             'attributes' => ['label' => 'Product fields', 'icon' => 'sliders2', 'model' => CatalogAttribute::class, 'name' => fn ($m) => $m->label, 'permission' => 'catalog_settings.manage'],
             'coupons' => ['label' => 'Coupons', 'icon' => 'ticket-perforated-fill', 'model' => Coupon::class, 'name' => fn ($m) => $m->code, 'permission' => 'sales_settings.manage'],
             'shipping' => ['label' => 'Shipping zones', 'icon' => 'truck', 'model' => ShippingZone::class, 'name' => fn ($m) => $m->name, 'permission' => 'sales_settings.manage'],

@@ -59,7 +59,6 @@ Add, reorder, hide and edit sections. Thirteen types:
 | Hero banner | the big slider; several hero sections become slides |
 | Category tiles | round tiles for chosen categories |
 | Product row | newest, featured or one category |
-| Brands strip | shop-by-brand pills |
 | Promo banner / Call-to-action banner | a message with one or two buttons and a background image |
 | Highlights | up to 4 icon + title + text items (shown as a trust strip under the hero) |
 | How it works | up to 6 numbered or icon steps |

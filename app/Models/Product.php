@@ -26,7 +26,7 @@ class Product extends Model implements HasMedia
     public const STATUSES = ['draft', 'active', 'archived'];
 
     protected $fillable = [
-        'category_id', 'brand_id', 'name', 'slug', 'sku', 'type', 'status', 'short_description', 'description',
+        'category_id', 'name', 'slug', 'sku', 'type', 'status', 'short_description', 'description',
         'price', 'compare_price', 'cost', 'track_stock', 'stock_qty', 'low_stock_threshold',
         'requires_prescription', 'is_featured', 'specs', 'meta_title', 'meta_description',
     ];
@@ -43,11 +43,6 @@ class Product extends Model implements HasMedia
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function brand(): BelongsTo
-    {
-        return $this->belongsTo(Brand::class);
     }
 
     public function reviews(): HasMany
@@ -83,7 +78,7 @@ class Product extends Model implements HasMedia
     /** Everything a product card needs, loaded in one go. */
     public function scopeCard(Builder $q): Builder
     {
-        return $q->with(['variants', 'media', 'brand:id,name', 'category:id,name,slug,translations'])->withCount('approvedReviews')->withAvg('approvedReviews', 'rating');
+        return $q->with(['variants', 'media', 'category:id,name,slug,translations'])->withCount('approvedReviews')->withAvg('approvedReviews', 'rating');
     }
 
     public function scopeActive(Builder $q): Builder

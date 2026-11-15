@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +13,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 /** CSV round-trip for simple products (variants are managed in the product form). */
 class ProductCsvController extends Controller
 {
-    private const COLUMNS = ['sku', 'name', 'category', 'brand', 'price', 'compare_price', 'cost', 'stock_qty', 'status', 'description'];
+    private const COLUMNS = ['sku', 'name', 'category', 'price', 'compare_price', 'cost', 'stock_qty', 'status', 'description'];
 
     public function export(): StreamedResponse
     {
@@ -23,10 +22,10 @@ class ProductCsvController extends Controller
         return response()->streamDownload(function () {
             $out = fopen('php://output', 'w');
             fputcsv($out, self::COLUMNS);
-            Product::with(['category', 'brand'])->where('type', 'simple')->orderBy('id')->chunk(500, function ($chunk) use ($out) {
+            Product::with(['category'])->where('type', 'simple')->orderBy('id')->chunk(500, function ($chunk) use ($out) {
                 foreach ($chunk as $p) {
                     fputcsv($out, array_map([$this, 'safe'], [
-                        $p->sku, $p->name, $p->category?->name, $p->brand?->name, $p->price, $p->compare_price, $p->cost, $p->stock_qty, $p->status, $p->description,
+                        $p->sku, $p->name, $p->category?->name, $p->price, $p->compare_price, $p->cost, $p->stock_qty, $p->status, $p->description,
                     ]));
                 }
             });
@@ -79,7 +78,6 @@ class ProductCsvController extends Controller
                     'cost' => is_numeric($row['cost'] ?? null) ? $row['cost'] : null,
                     'description' => trim((string) ($row['description'] ?? '')) ?: null,
                     'category_id' => filled($row['category'] ?? null) ? Category::firstOrCreate(['name' => trim($row['category'])])->id : null,
-                    'brand_id' => filled($row['brand'] ?? null) ? Brand::firstOrCreate(['name' => trim($row['brand'])])->id : null,
                 ]);
                 if ($isNew) {
                     $product->stock_qty = max(0, (int) ($row['stock_qty'] ?? 0));   // later changes go through Inventory

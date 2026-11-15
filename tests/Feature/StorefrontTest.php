@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
 use App\Models\HomeSection;
@@ -58,8 +57,7 @@ class StorefrontTest extends TestCase
     {
         $drinks = Category::create(['name' => 'Drinks']);
         $cold = Category::create(['name' => 'Cold', 'parent_id' => $drinks->id]);
-        $acme = Brand::create(['name' => 'Acme']);
-        $this->product(['name' => 'Cola', 'price' => 50, 'category_id' => $cold->id, 'brand_id' => $acme->id]);
+        $this->product(['name' => 'Cola', 'price' => 50, 'category_id' => $cold->id]);
         $this->product(['name' => 'Water', 'price' => 20, 'category_id' => $cold->id, 'stock_qty' => 0]);
         $this->product(['name' => 'Gadget', 'price' => 900]);
         $this->product(['name' => 'Hidden', 'status' => 'draft']);
@@ -67,7 +65,6 @@ class StorefrontTest extends TestCase
         $this->get('/shop')->assertOk()->assertSee('Cola')->assertSee('Gadget')->assertDontSee('Hidden');
         // parent category includes sub-category products
         $this->get('/category/'.$drinks->slug)->assertSee('Cola')->assertSee('Water')->assertDontSee('Gadget');
-        $this->get('/shop?brand[]='.$acme->id)->assertSee('Cola')->assertDontSee('Gadget');
         $this->get('/shop?price_min=30&price_max=100')->assertSee('Cola')->assertDontSee('Water')->assertDontSee('Gadget');
         $this->get('/shop?in_stock=1')->assertSee('Cola')->assertDontSee('Water');
         $this->get('/shop?q=gad')->assertSee('Gadget')->assertDontSee('Cola');

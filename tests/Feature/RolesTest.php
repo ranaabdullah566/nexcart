@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Brand;
+use App\Models\Category;
 use App\Models\User;
 use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -70,12 +70,12 @@ class RolesTest extends TestCase
 
     public function test_trash_actions_need_their_own_permission(): void
     {
-        $brand = Brand::create(['name' => 'Acme', 'slug' => 'acme']);
+        $brand = Category::create(['name' => 'Acme']);
         $brand->delete();
         Role::create(['name' => 'limited', 'guard_name' => 'web'])->syncPermissions(['products.view', 'products.delete']);
         $this->actingAs($this->as('limited'))->get('/admin/trash')->assertOk();
-        $this->post("/admin/trash/brands/{$brand->id}/restore")->assertForbidden();
-        $this->delete("/admin/trash/brands/{$brand->id}")->assertForbidden();
+        $this->post("/admin/trash/categories/{$brand->id}/restore")->assertForbidden();
+        $this->delete("/admin/trash/categories/{$brand->id}")->assertForbidden();
     }
 
     public function test_updates_keep_customised_roles_and_only_add_new_permissions(): void

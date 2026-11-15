@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
 use App\Models\Product;
@@ -34,12 +33,11 @@ class CatalogTest extends TestCase
     {
         BusinessProfile::apply('pharmacy');
         $cat = Category::create(['name' => 'Burgers']);
-        $brand = Brand::create(['name' => 'Hub']);
         $attr = CatalogAttribute::first();
         $product = Product::create(['name' => 'Zinger', 'price' => 500, 'status' => 'active', 'category_id' => $cat->id]);
 
         foreach (['', '/products', '/products/create', "/products/{$product->id}/edit", '/categories', '/categories/create', "/categories/{$cat->id}/edit",
-            '/brands', '/brands/create', "/brands/{$brand->id}/edit", '/attributes', '/attributes/create', "/attributes/{$attr->id}/edit",
+            '/attributes', '/attributes/create', "/attributes/{$attr->id}/edit",
             '/inventory', '/inventory/adjust'] as $path) {
             $this->get('/admin'.$path)->assertOk();
         }
@@ -104,8 +102,8 @@ class CatalogTest extends TestCase
         $this->assertSame('Medicines', $c->trans('name', 'en'));
         $this->assertSame('Medicines', $c->trans('description') ?? 'Medicines');
 
-        $this->post('/admin/brands', ['name' => 'دوا ساز']);
-        $this->assertNotEmpty(Brand::first()->slug);   // Urdu-only name still gets a slug
+        $this->post('/admin/categories', ['name' => 'دوا ساز']);
+        $this->assertNotEmpty(Category::firstWhere('name', 'دوا ساز')->slug);   // Urdu-only name still gets a slug
     }
 
     public function test_simple_product_with_opening_stock_logs_a_movement(): void
@@ -227,7 +225,7 @@ class CatalogTest extends TestCase
         $this->assertStringContainsString('sku,name,category', $csv);
         $this->assertStringContainsString("'=cmd|calc", $csv);   // formula injection neutralised
 
-        $file = UploadedFile::fake()->createWithContent('p.csv', "sku,name,category,brand,price,stock_qty,status\nA1,Renamed,Snacks,Acme,25,99,active\nB2,Fresh,Snacks,,5,4,\n,,,,,,\nC3,BadPrice,,,abc,1,\n");
+        $file = UploadedFile::fake()->createWithContent('p.csv', "sku,name,category,price,stock_qty,status\nA1,Renamed,Snacks,25,99,active\nB2,Fresh,Snacks,5,4,\n,,,,,\nC3,BadPrice,,abc,1,\n");
         $this->post('/admin/products/import', ['file' => $file])->assertSessionHas('success');
 
         $a1 = Product::firstWhere('sku', 'A1');

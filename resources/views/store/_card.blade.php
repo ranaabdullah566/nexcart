@@ -17,7 +17,7 @@
         @if ($salt !== '' && $salt !== '—')<div class="fx-salt" title="{{ $salt }}"><i class="bi bi-eyedropper"></i><span>{{ \Illuminate\Support\Str::limit($salt, 38) }}</span></div>@else<div class="fx-salt is-empty" aria-hidden="true"></div>@endif
         @if (($form !== '' && $form !== 'Other') || ($strength !== '' && $strength !== '—') || $p->isVariable())<div class="fx-chips">@if ($form !== '' && $form !== 'Other')<span>{{ $form }}</span>@endif @if ($strength !== '' && $strength !== '—')<span>{{ $strength }}</span>@endif @if ($p->isVariable())<span class="alt">{{ __('Pack sizes') }}</span>@endif</div>@else<div class="fx-chips is-empty" aria-hidden="true"></div>@endif
         @if (sf('cards.show_rating') && ($p->approved_reviews_count ?? 0) > 0)<div class="mk-card-rate"><span class="sf-stars" aria-hidden="true">@include('store._stars', ['value' => (float) $p->approved_reviews_avg_rating])</span><span class="figure">{{ number_format((float) $p->approved_reviews_avg_rating, 1) }} ({{ $p->approved_reviews_count }})</span></div>@else<div class="mk-card-rate is-empty" aria-hidden="true"></div>@endif
-        <div class="tq-seller"><i class="bi bi-check2"></i> {{ __('Genuine product') }}@if ($p->brand) · {{ $p->brand->name }}@endif</div>
+        <div class="tq-seller"><i class="bi bi-check2"></i> {{ __('Genuine product') }}</div>
         <div class="mk-price">
             @if ($p->isVariable())<small>{{ __('from') }}</small>@endif
             <b>{{ money($p->displayPrice()) }}</b>

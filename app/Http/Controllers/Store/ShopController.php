@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
 use App\Models\CatalogAttribute;
 use App\Models\Category;
 use App\Models\Product;
@@ -22,7 +21,6 @@ class ShopController extends Controller
 
         $f = $request->validate([
             'q' => ['nullable', 'string', 'max:100'],
-            'brand' => ['nullable', 'array'], 'brand.*' => ['integer'],
             'price_min' => ['nullable', 'numeric', 'min:0'], 'price_max' => ['nullable', 'numeric', 'min:0'],
             'in_stock' => ['nullable', 'boolean'], 'on_sale' => ['nullable', 'boolean'], 'featured' => ['nullable', 'boolean'],
             'type' => ['nullable', 'array'], 'type.*' => ['in:rx,otc'],
@@ -37,9 +35,6 @@ class ShopController extends Controller
         }
         if (filled($f['q'] ?? null)) {
             $this->search($query, $f['q']);
-        }
-        if (! empty($f['brand'])) {
-            $query->whereIn('brand_id', $f['brand']);
         }
         if (isset($f['price_min'])) {
             $query->where('price', '>=', $f['price_min']);
@@ -86,7 +81,6 @@ class ShopController extends Controller
             'title' => $title,
             'products' => $query->paginate((int) sf('cards.per_page'))->withQueryString(),
             'current' => $current,
-            'brands' => Brand::where('is_active', true)->whereHas('products', fn ($q) => $q->active())->withCount(['products' => fn ($q) => $q->active()])->orderBy('name')->get(),
             'filterAttrs' => $filterAttrs,
             'priceBounds' => ['min' => (float) (clone $base)->min('price'), 'max' => (float) (clone $base)->max('price')],
             'f' => $f,

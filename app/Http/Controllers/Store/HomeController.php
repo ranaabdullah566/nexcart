@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
-use App\Models\Brand;
 use App\Models\Category;
 use App\Models\HomeSection;
 use App\Models\Product;
@@ -21,7 +20,6 @@ class HomeController extends Controller
                 $data = match ($s->type) {
                     'categories' => ['categories' => $this->categories($s)],
                     'products' => ['products' => $this->products($s)],
-                    'brands' => ['brands' => Brand::where('is_active', true)->whereHas('products', fn ($q) => $q->active())->withCount(['products' => fn ($q) => $q->active()])->orderBy('name')->limit(max(1, (int) ($s->settings['limit'] ?? 12)))->get()],
                     'reviews' => ['reviewData' => $this->reviews($s)],
                     'blog' => ['articles' => Article::live()->with('media')->orderByDesc('published_at')->orderByDesc('id')->limit(max(1, min(6, (int) ($s->settings['limit'] ?? 3))))->get()],
                     default => [],
