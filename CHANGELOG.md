@@ -4,6 +4,9 @@ All notable changes to NexCart. Versions follow [semver](https://semver.org).
 
 ## Unreleased
 
+### Fixed: pictures not showing when the site is opened on another address than APP_URL
+- Picture links were built from `APP_URL` (e.g. `http://localhost:8000`), so opening the admin or store at `http://127.0.0.1:8000` made the browser block every uploaded picture (the Content-Security-Policy only allows images from the page's own address). Links now follow the address the visitor is on. E-mails and queued jobs still use `APP_URL`, so keep it set to your real domain in production.
+
 ### Changed: smaller card text
 - Every text on product cards is about a notch smaller (category, name, tags, price, cut price, button and badges).
 

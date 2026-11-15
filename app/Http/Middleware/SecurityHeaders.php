@@ -13,6 +13,11 @@ class SecurityHeaders
     public function handle(Request $request, Closure $next): Response
     {
         $nonce = csp_nonce();   // created before rendering so views and header agree
+
+        // Picture links follow the address the visitor used (127.0.0.1, localhost or the real domain), not only APP_URL:
+        // an <img> from another host is blocked by img-src 'self' below. Queued jobs and e-mails keep APP_URL.
+        config(['filesystems.disks.public.url' => $request->getSchemeAndHttpHost().'/storage']);
+        app('filesystem')->forgetDisk('public');
         $response = $next($request);
         $h = $response->headers;
 
